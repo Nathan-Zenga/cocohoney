@@ -1,0 +1,28 @@
+{
+  "name": "cocohoney",
+  "version": "1.0.0",
+  "description": "cosmetics store website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "async": "^3.2.0",
+    "body-parser": "^1.19.0",
+    "cloudinary": "^1.22.0",
+    "cookie-parser": "^1.4.5",
+    "ejs": "^2.7.4",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "googleapis": "^48.0.0",
+    "memorystore": "^1.6.2",
+    "mongoose": "^5.9.21",
+    "nodemailer": "^6.4.10"
+  },
+  "engines": {
+    "node": "*",
+    "npm": "*"
+  },
+  "author": "Nathan Zengamambu",
+  "license": "ISC"
+}
