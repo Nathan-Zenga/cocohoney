@@ -16,4 +16,10 @@ $(function() {
     $("#nav-toggle").click(function() { $("nav").fadeIn() });
 
     $("#nav-close-icon").click(function() { $("nav").fadeOut() });
+
+    window.onload = function() {
+        $(".image-highlight").delay(700).each(function(i) {
+            $(this).delay(i * 1000).fadeIn(2000);
+        })
+    }
 });

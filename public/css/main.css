@@ -28,6 +28,58 @@ nav a:link {
 }
 
 main {
-    background-color: lightsalmon;
     min-height: 200px;
+}
+
+section {
+    position: relative;
+}
+
+#update-banner {
+    position: relative;
+    padding: 30px 30px 170px;
+    font-size: 2.5em;
+    width: 75%;
+    z-index: 100;
+    -webkit-animation: fadeIn 1s ease-in-out;
+    -webkit-animation-fill-mode: backwards;
+    animation: fadeIn 1s ease-in-out;
+    animation-fill-mode: backwards;
+}
+
+@-webkit-keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.image-highlight {
+    position: absolute;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, .5);
+    bottom: 0;
+    right: 30px;
+}
+
+.image-highlight.behind-above {
+    width: 285px;
+    height: 370px;
+    -webkit-transform: translate(30px, -60px);
+    transform: translate(30px, -60px);
+}
+
+@media (min-width: 768px) {
+    #update-banner {
+        padding: 30px;
+    }
+
+    .image-highlight.behind-above {
+        -webkit-transform: translate(10px, 135px);
+        transform: translate(10px, 135px);
+    }
+}
+
+.image-highlight.infront-below {
+    -webkit-transform: translate(-17vw, 90px);
+    transform: translate(-17vw, 90px);
+    width: 280px;
+    height: 190px;
 }
