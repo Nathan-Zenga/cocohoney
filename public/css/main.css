@@ -1,5 +1,5 @@
 ﻿header {
-    padding: 30px 0;
+    padding: 30px;
 }
 
 nav {
@@ -49,13 +49,6 @@ section {
     color: white;
 }
 
-#overview-gallery {
-    background-position: center;
-    background-size: cover;
-    height: 400px;
-    filter: contrast(0.7);
-}
-
 .bg-underlay {
     width: 100%;
     height: 100%;
@@ -72,7 +65,7 @@ section {
     content: " ";
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, .9), rgba(255, 255, 255, .5));
+    background-image: linear-gradient(to bottom, rgb(250, 128, 114, .97), rgb(250, 128, 114, .7));
     z-index: 5;
 }
 
@@ -88,41 +81,58 @@ section {
 
 header, main, footer {
     position: relative;
-    z-index: 50;
 }
 
-@media (min-width: 768px) {
-    #overview {
-        background-color: rgba(250, 126, 112, .8);
-    }
+#overview {
+    margin-top: 30px;
+}
+
+#overview .text {
+    margin-top: -20px;
+    padding: 0 10px 20px;
+    font-weight: 700;
+}
+
+#overview .text h1 {
+    color: gold;
+    text-shadow: 0 5px 10px rgba(0, 0, 0, .4);
 }
 
 #overview .media-wrapper {
     height: 400px;
+    padding: 0 10px;
+}
+
+#overview .media-wrapper .main-media {
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
 }
 
 #overview .media-wrapper .main-media.large {
     position: relative;
     max-width: 100%;
     max-height: 100%;
-    border-radius: 0 15px 15px 0;
 }
 
 #overview .media-wrapper .main-media.mini {
     position: absolute;
-    right: 0;
+    right: 10px;
     top: 50%;
     height: 250px;
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
-    border-radius: 15px 0 0 15px;
 }
 
 @media (min-width: 768px) {
-    #overview .media-wrapper .main-media {
-        border-radius: 0!important;
+    #overview .text {
+        margin-top: 0;
+        padding: 50px 120px 50px 30px;
     }
 
+    #overview .media-wrapper {
+        padding: 0;
+    }
+    
     #overview .media-wrapper .main-media.mini {
         left: 0;
         right: auto;
