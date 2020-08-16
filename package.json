@@ -17,7 +17,8 @@
     "googleapis": "^48.0.0",
     "memorystore": "^1.6.2",
     "mongoose": "^5.9.21",
-    "nodemailer": "^6.4.10"
+    "nodemailer": "^6.4.10",
+    "stripe": "^8.84.0"
   },
   "engines": {
     "node": "*",

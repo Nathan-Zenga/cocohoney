@@ -64,6 +64,14 @@ a:hover {
     }
 }
 
+.row {
+    margin: 0;
+}
+
+[class*="col-"] {
+    padding: 0;
+}
+
 .btn {
     border: none;
 }

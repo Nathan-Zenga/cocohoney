@@ -17,18 +17,24 @@
 </head>
 
 <body id="<%= typeof pagename != 'undefined' && pagename ? pagename+'-page' : '' %>">
+    <div class="bg-underlay bg-body">
+        <video playsinline autoplay muted loop><source src="/img/honey drip p2.mp4"></video>
+    </div>
 
     <header>
         <div class="inner-header container">
             <div class="row">
-                <div class="logo-container header-content-container col-sm-9 col-xs-7">
-                    <div id="chc-logo">COCOHONEY COSMETICS</div>
+                <div class="logo-container header-content-container col-sm-9 col-xs-6">
+                    <div id="chc-logo">
+                        <a href="/">COCOHONEY COSMETICS</a>
+                    </div>
                 </div>
-                <div class="col-sm-3 col-xs-5">
+                <div class="col-sm-3 col-xs-6">
                     <div class="row">
                         <div class="nav-container header-content-container col-xs-6 col-xs-push-6" style="text-align: right">
                             <div style="display: inline-block" id="nav-toggle"><a>MENU</a></div>
                             <nav>
+                                <div class="container" style="position: relative;">
                                 <a class="fas fa-times" id="nav-close-icon"></a>
                                 <a href="/">HOME</a>
                                 <a href="/about">ABOUT US</a>
@@ -38,6 +44,7 @@
                                 <a href="/events">EVENTS</a>
                                 <a href="/lookbook">LOOKBOOK</a>
                                 <a href="/shipping">SHIPPING</a>
+                                </div>
                             </nav>
                         </div>
                         <div class="socials-container header-content-container col-xs-6 col-xs-pull-6" style="text-align: right">
@@ -49,12 +56,15 @@
         </div>
     </header>
     <main>
-        <section style="background-color: lightsalmon">
-            <div id="update-banner">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium voluptatum natus debitis!
+        <section id="overview" class="row">
+            <div class="col-sm-7">
             </div>
-            <div class="image-highlight behind-above" style="display: none; background-image: url('/img/lashes/IMG_4086.jpg');"> </div>
-            <div class="image-highlight infront-below" style="display: none; background-image: url('/img/lashes/16f021d9-e594-40fa-b35f-1c4fe7a84576.jpg');"> </div>
+            <div class="col-sm-5 media-wrapper">
+                <img class="main-media large" src="/img/magnetic/WhatsApp Image 2020-08-12 at 21.39.34.jpeg" alt="magnetic-pallete">
+                <video class="main-media mini" playsinline autoplay muted loop>
+                    <source src="/img/magnetic/WhatsApp Video 2020-08-12 at 21.39.29.mp4">
+                </video>
+            </div>
         </section>
     </main>
     <footer>

@@ -4,20 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="/img/cs-icon.png">
-    <title><%= title ? title + " | " : "" %>CS Records</title>
-    <meta name="keywords" content="cosmetics, london, merch, merchandise">
-    <meta name="description" content="Creative Souls. Culture Consolidated.">
+    <title><%= typeof title != "undefined" && title ? title + " | " : "" %>COCOHONEY COSMETICS</title>
+    <meta name="keywords" content="cosmetics, london, beauty, fashion">
+    <meta name="description" content="Community, Beauty Network, Family">
     <meta name="robots" content="index, follow">
-
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@thecsrecords" />
-    <meta name="twitter:creator" content="@thecsrecords" />
-    <meta name="twitter:description" content="Culture Consolidated." />
-    <meta name="twitter:image" content="<%- location_origin %>/img/cs-logo.png" />
-    <meta property="og:url" content="<%- location_origin %>" />
-    <meta property="og:title" content="CS Records" />
-    <meta property="og:description" content="Culture Consolidated." />
-    <meta property="og:image" content="<%- location_origin %>/img/cs-logo.png" />
 
     <link rel="stylesheet" type="text/css" href="/css/defaults.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
@@ -26,12 +16,41 @@
     <script src="/js/main.js"></script>
 </head>
 
-<body id="<%= pagename ? pagename+'-page' : '' %>">
-    <header>
-        <div id="logo"></div>
-        <nav>
-            <a href="/home">HOME</a>
-        </nav>
-    </header>
+<body id="<%= typeof pagename != 'undefined' && pagename ? pagename+'-page' : '' %>">
 
+    <header>
+        <div class="inner-header container">
+            <div class="row">
+                <div class="logo-container header-content-container col-sm-9 col-xs-6">
+                    <div id="chc-logo">
+                        <a href="/">COCOHONEY COSMETICS</a>
+                    </div>
+                    <div id="slogan">Community &bull; Beauty Network &bull; Family</div>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <div class="row">
+                        <div class="nav-container header-content-container col-xs-6 col-xs-push-6" style="text-align: right">
+                            <div style="display: inline-block" id="nav-toggle"><a>MENU</a></div>
+                            <nav>
+                                <div class="container" style="position: relative;">
+                                <a class="fas fa-times" id="nav-close-icon"></a>
+                                <a href="/">HOME</a>
+                                <a href="/about">ABOUT US</a>
+                                <a href="/product/3d-mink-eyelashes">3D MINK EYELASHES</a>
+                                <a href="/product/make-up-pallets">MAKE UP PALLETS</a>
+                                <a href="/product/lipsticks">LIPSTICKS / LIPLINERS</a>
+                                <a href="/events">EVENTS</a>
+                                <a href="/lookbook">LOOKBOOK</a>
+                                <a href="/shipping">SHIPPING</a>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="socials-container header-content-container col-xs-6 col-xs-pull-6" style="text-align: right">
+                            <a class="chc-social-link fab fa-instagram" style="font-size: 1.5em; margin-left: 10px" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
     <main>
