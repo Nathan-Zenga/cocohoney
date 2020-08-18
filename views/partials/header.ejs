@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="/img/cs-icon.png">
+    <link rel="icon" href="">
     <title><%= typeof title != "undefined" && title ? title + " | " : "" %>COCOHONEY COSMETICS</title>
     <meta name="keywords" content="cosmetics, london, beauty, fashion">
     <meta name="description" content="Community, Beauty Network, Family">
@@ -17,40 +17,42 @@
 </head>
 
 <body id="<%= typeof pagename != 'undefined' && pagename ? pagename+'-page' : '' %>">
+    <div class="bg-underlay bg-body">
+        <video playsinline autoplay muted loop><source src="/img/honey drip p1.mp4"></video>
+    </div>
 
     <header>
         <div class="inner-header container">
             <div class="row">
-                <div class="logo-section header-content-section col-sm-9 col-xs-6">
+                <div class="logo-section header-content-section col-xs-4">
                     <div id="chc-logo">
                         <a href="/">COCOHONEY COSMETICS</a>
                     </div>
-                    <div id="slogan">Community &bull; Beauty Network &bull; Family</div>
                 </div>
-                <div class="col-sm-3 col-xs-6">
-                    <div class="row">
-                        <div class="nav-section header-content-section col-xs-6 col-xs-push-6" style="text-align: right">
-                            <div style="display: inline-block" id="nav-toggle"><a>MENU</a></div>
-                            <nav>
-                                <div class="container" style="position: relative;">
-                                <a class="fas fa-times" id="nav-close-icon"></a>
-                                <a href="/">HOME</a>
-                                <a href="/about">ABOUT US</a>
-                                <a href="/product/3d-mink-eyelashes">3D MINK EYELASHES</a>
-                                <a href="/product/make-up-pallets">MAKE UP PALLETS</a>
-                                <a href="/product/lipsticks">LIPSTICKS / LIPLINERS</a>
-                                <a href="/events">EVENTS</a>
-                                <a href="/lookbook">LOOKBOOK</a>
-                                <a href="/shipping">SHIPPING</a>
-                                </div>
-                            </nav>
-                        </div>
-                        <div class="socials-section header-content-section col-xs-6 col-xs-pull-6" style="text-align: right">
-                            <a class="chc-social-link fab fa-instagram" style="font-size: 1.5em; margin-left: 10px" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
-                        </div>
+                <div class="nav-section header-content-section col-xs-4" style="text-align: center">
+                    <div style="display: inline-block" id="nav-toggle">
+                        <a class="fal fa-bars" style="font-size: 1.5em"></a>
                     </div>
+                    <nav>
+                        <a class="fal fa-times" id="nav-close-icon"></a>
+                        <a href="/" style="margin-top: 5em">HOME</a>
+                        <a href="/about">ABOUT US</a>
+                        <a href="/product/3d-mink-eyelashes">3D MINK EYELASHES</a>
+                        <a href="/product/make-up-pallets">MAKE UP PALLETS</a>
+                        <a href="/product/lipsticks">LIPSTICKS / LIPLINERS</a>
+                        <a href="/events">EVENTS</a>
+                        <a href="/lookbook">LOOKBOOK</a>
+                        <a href="/shipping">SHIPPING</a>
+                    </nav>
+                </div>
+                <div class="socials-section header-content-section col-xs-4" style="text-align: right">
+                    <a class="chc-social-link fab fa-instagram" style="font-size: 1.5em; margin-left: 10px" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
                 </div>
             </div>
+        </div>
+        <div id="banner-1">
+            <div class="slide" id="shipping-info">FREE delivery for all orders over £40</div>
+            <div class="slide" id="slogan">Community &bull; Beauty Network &bull; Family</div>
         </div>
     </header>
     <main>

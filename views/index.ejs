@@ -1,71 +1,78 @@
-<!DOCTYPE html>
-<html lang="en" class="chc">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="/img/cs-icon.png">
-    <title><%= typeof title != "undefined" && title ? title + " | " : "" %>COCOHONEY COSMETICS</title>
-    <meta name="keywords" content="cosmetics, london, beauty, fashion">
-    <meta name="description" content="Community, Beauty Network, Family">
-    <meta name="robots" content="index, follow">
-
-    <link rel="stylesheet" type="text/css" href="/css/defaults.css">
-    <link rel="stylesheet" type="text/css" href="/css/main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="/js/main.js"></script>
-</head>
-
-<body id="<%= typeof pagename != 'undefined' && pagename ? pagename+'-page' : '' %>">
-    <div class="bg-underlay bg-body">
-        <video playsinline autoplay muted loop><source src="/img/honey drip p2.mp4"></video>
-    </div>
-
-    <header>
-        <div class="inner-header container">
-            <div class="logo-section header-content-section col-xs-4">
-                <div id="chc-logo">
-                    <a href="/">COCOHONEY COSMETICS</a>
+<%_ include partials/header _%>
+        <div id="loadscreen">
+            <div class="content">
+                <div class="spinner-wrapper">
+                    <div class="spinner"></div>
                 </div>
-            </div>
-            <div class="nav-section header-content-section col-xs-4" style="text-align: center">
-                <div style="display: inline-block" id="nav-toggle">
-                    <a class="fas fa-bars" style="font-size: 1.5em"></a>
-                </div>
-                <nav>
-                    <a class="fas fa-times" id="nav-close-icon"></a>
-                    <a href="/" style="margin-top: 5em">HOME</a>
-                    <a href="/about">ABOUT US</a>
-                    <a href="/product/3d-mink-eyelashes">3D MINK EYELASHES</a>
-                    <a href="/product/make-up-pallets">MAKE UP PALLETS</a>
-                    <a href="/product/lipsticks">LIPSTICKS / LIPLINERS</a>
-                    <a href="/events">EVENTS</a>
-                    <a href="/lookbook">LOOKBOOK</a>
-                    <a href="/shipping">SHIPPING</a>
-                </nav>
-            </div>
-            <div class="socials-section header-content-section col-xs-4" style="text-align: right">
-                <a class="chc-social-link fab fa-instagram" style="font-size: 1.5em; margin-left: 10px" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
             </div>
         </div>
-    </header>
-    <main>
-        <section id="overview" class="container">
-            <div class="col-sm-5 col-sm-push-7 media-wrapper">
-                <img class="main-media large" src="/img/magnetic/WhatsApp Image 2020-08-12 at 21.39.34.jpeg" alt="magnetic-pallete">
-                <video class="main-media mini" playsinline autoplay muted loop>
-                    <source src="/img/magnetic/WhatsApp Video 2020-08-12 at 21.39.29.mp4">
-                </video>
+        <section id="overview">
+            <div class="bg-layer bg-reel">
+                <div class="bg-img" style="background-image: url('/img/shoots/IMG_2567.jpg');"></div>
+                <div class="bg-img" style="background-image: url('/img/attachments/55C5A1FE-4FBC-4B02-AB0B-AD75EB953981.jpg');"></div>
+                <div class="bg-img" style="background-image: url('/img/shoots/IMG_8920.jpg');"></div>
+                <div class="bg-img" style="background-image: url('/img/shoots/IMG_2635.jpg');"></div>
+                <div class="bg-img" style="background-image: url('/img/attachments/E5513162-F7B8-42B0-B75C-3015F0816DE6.jpg');"></div>
+                <div class="bg-img" style="background-image: url('/img/attachments/B5743962-1592-4AF1-87B0-F0A71F46A683.jpg');"></div>
             </div>
-            <div class="col-sm-7 col-sm-pull-5">
-                <div class="text">
-                    <h1>Lorem ipsum.</h1>
-                    <p>Quasi aperiam iusto rerum, dolor debitis eaque amet quam eum maxime sint iste, cum recusandae suscipit. Temporibus sit rem minima officiis eveniet.</p>
+        </section>
+        <section id="must-haves">
+            <div class="content-layer container">
+                <div class="row" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <div class="col-sm-5 media-wrapper">
+                        <img class="main-media large" src="/img/magnetic/WhatsApp Image 2020-08-12 at 21.39.34.jpeg" alt="magnetic-palette">
+                        <video class="main-media mini" playsinline autoplay muted loop>
+                            <source src="/img/magnetic/WhatsApp Video 2020-08-12 at 21.39.29.mp4">
+                        </video>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="text">
+                            <h1>MAGNETIC PALETTE</h1>
+                            <p>New Magnetic Palette out now! Click here to view and order.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-    </main>
-    <footer>
-    </footer>
-</body>
-</html>
+        <section id="lash-collections-preview">
+            <div class="container section-label">
+                <div class="label-bg" style="background-image: url('/img/gold-brush-stroke.png');"></div>
+                <div class="label-text"><h2>LATEST</h2></div>
+            </div>
+            <div class="thumb-container thumb-carousel">
+                <div class="container">
+                    <%_ [
+                        { name: "Mist",      img: "/img/lashes/76b0fc4e-8156-48a7-82af-bef7744e2639.jpg" },
+                        { name: "Empress",   img: "/img/lashes/a8ced4ac-839f-4a9c-9801-2bc0ea317ca6.jpg" },
+                        { name: "Blush",     img: "/img/lashes/c0c03a46-b902-442a-bec5-c67b9706884b.jpg" }
+                    ].forEach(collection => { _%>
+                    <div class="thumb">
+                        <a href="/product/3d-mink-eyelashes#<%= collection.name.toLowerCase() %>">
+                            <div class="thumb-img" style="background-image: url('<%- collection.img %>'); box-shadow: 0 10px 30px rgba(0, 0, 0, .4)"></div>
+                        </a>
+                        <div class="thumb-info"><%= collection.name %></b></div>
+                    </div>
+                    <%_ }) _%>
+                </div>
+            </div>
+        </section>
+        <script>
+            $(".bg-reel").each(function() { // bg auto-playing slideshow
+                var bgreel = this;
+                $(bgreel).children("div:gt(0)").fadeTo(0, 0);
+                setInterval(function() {
+                    $(bgreel).children('div:first')
+                        .fadeTo(2000, 0)
+                        .dequeue()
+                        .next()
+                        .fadeTo(0, 1)
+                        .end()
+                        .appendTo(bgreel);
+                }, 5000);
+            });
+
+            $(window).on("load", function() {
+                $("#loadscreen").fadeOut(1000, function() { $(this).remove() })
+            });
+        </script>
+<%_ include partials/footer _%>

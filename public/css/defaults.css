@@ -1,15 +1,19 @@
 @import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
-@import url('https://use.fontawesome.com/releases/v5.2.0/css/all.css');
-@import url('https://fonts.googleapis.com/css2?family=Spartan:wght@500;600;700&display=swap');
+@import url('https://kathirr007.github.io/FA-MD-Icons-Updated/css/pro.css');
+@import url('https://fonts.googleapis.com/css2?family=Spartan:wght@300;500;600;700&display=swap');
 
 html, body {
+    background-color: black;
+    color: white;
+    font-weight: 100;
     font-family: Spartan, Arial, sans-serif;
     font-feature-settings: 'liga' 0;
 }
 
 h1, h2 {
-    font-weight: bold;
+    font-weight: 300;
     margin-top: 0;
+    text-shadow: 0 5px 10px rgba(0, 0, 0, .4);
 }
 
 a, a:link, a:visited, a:hover {
@@ -24,11 +28,12 @@ a:hover {
 }
 
 ::selection {
-    background: rgb(200, 200, 200);
+    background-color: gold;
+    color: black;
 }
 
 ::-webkit-scrollbar {
-    width: 5px;
+    width: 10px;
     height: 5px;
 }
 
@@ -62,14 +67,6 @@ a:hover {
     .dt-view-md {
         display: none!important;
     }
-}
-
-.row {
-    margin: 0;
-}
-
-[class*="col-"] {
-    padding: 0;
 }
 
 .btn {

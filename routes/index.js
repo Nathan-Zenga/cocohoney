@@ -1,11 +1,11 @@
 const router = require('express').Router();
 
 router.get('/', (req, res) => {
-    res.render('index', { title: null })
+    res.render('index', { title: null, pagename: "home" })
 });
 
 router.get('/about', (req, res) => {
-    res.render('about', { title: null })
+    res.render('about', { title: "About", pagename: "about" })
 });
 
 router.get("/checkout", (req, res) => {
