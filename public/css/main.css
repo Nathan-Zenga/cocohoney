@@ -277,6 +277,7 @@ section .media-wrapper .main-media.mini {
     background-position: 0 center;
     background-size: auto 140%;
     background-repeat: no-repeat;
+    background-image: url("/img/gold-brush-stroke.png");
     -webkit-filter: brightness(2) grayscale(0.6);
     filter: brightness(2) grayscale(0.6);
     -webkit-transform: translateX(-150px);
