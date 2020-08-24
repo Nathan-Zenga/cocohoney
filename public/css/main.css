@@ -23,12 +23,20 @@ nav {
     text-align: left;
 }
 
-nav a:link {
+nav a.link {
     display: block;
     margin: 0 auto;
     margin-bottom: 1.5em;
     text-align: center;
     max-width: 50%;
+}
+
+nav .sub-list {
+    display: none;
+    border-top: 1px solid white;
+    border-bottom: 1px solid white;
+    padding-top: 1.5em;
+    margin-bottom: 1.5em;
 }
 
 #nav-close-icon {
@@ -268,13 +276,16 @@ section .media-wrapper .main-media.mini {
 
 .thumb-container {
     position: relative;
-    white-space: nowrap;
     overflow: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
     padding-top: 20px;
     padding-bottom: 20px;
     z-index: 9;
+}
+
+.thumb-container.no-wrap {
+    white-space: nowrap;
 }
 
 .thumb-container::-webkit-scrollbar {

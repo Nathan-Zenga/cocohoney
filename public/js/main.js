@@ -17,6 +17,11 @@ $(function() {
 
     $("#nav-close-icon").click(function() { $("nav").fadeOut() });
 
+    $("nav .sub-list-toggle").click(function() {
+        $("nav .sub-list").stop().slideUp();
+        $(this).next(".sub-list").stop().slideToggle();
+    });
+
     window.onload = function() {
         $(".image-highlight").delay(700).each(function(i) {
             $(this).delay(i * 1000).fadeIn(2000);
