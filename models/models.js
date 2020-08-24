@@ -4,7 +4,8 @@ module.exports.Product = model('Product', Schema({
     name: String,
     price: { type: Number, set: n => parseInt(n) * 100 },
     image: String,
-    collection: String,
+    type: String,
+    group: String,
     stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] }
 }));
 

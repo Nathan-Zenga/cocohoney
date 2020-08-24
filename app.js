@@ -35,6 +35,8 @@ app.use((req, res, next) => { // global variables
 });
 
 app.use('/', require('./routes/index'));
+app.use('/product', require('./routes/product'));
+app.use('/shop', require('./routes/shop'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;

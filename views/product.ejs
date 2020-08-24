@@ -1,0 +1,20 @@
+<%_ include partials/header _%>
+        <section id="lash-collections-preview">
+            <div class="container section-label">
+                <div class="label-bg" style="background-image: url('/img/gold-brush-stroke.png');"></div>
+                <div class="label-text"><h2>LATEST</h2></div>
+            </div>
+            <div class="thumb-container thumb-carousel">
+                <div class="container">
+                    <%_ products.forEach(product => { _%>
+                    <div class="thumb">
+                        <a href="/product/3d-mink-eyelashes#<%= product.name.toLowerCase() %>">
+                            <div class="thumb-img" style="background-image: url('<%- product.img %>'); box-shadow: 0 10px 30px rgba(0, 0, 0, .4)"></div>
+                        </a>
+                        <div class="thumb-info"><%= product.name %></b></div>
+                    </div>
+                    <%_ }) _%>
+                </div>
+            </div>
+        </section>
+<%_ include partials/footer _%>
