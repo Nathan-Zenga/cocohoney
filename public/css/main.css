@@ -155,6 +155,15 @@ footer {
     background-color: rgba(0, 0, 0, .5);
 }
 
+footer .row {
+    margin-bottom: 3em;
+}
+
+footer .footer-links .link {
+    display: block;
+    margin-bottom: 1em;
+}
+
 section .content-layer {
     position: relative;
     z-index: 5;
