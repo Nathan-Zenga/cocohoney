@@ -3,14 +3,15 @@ const app = express();
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const stripe = require('stripe')(process.env.STRIPE_SK);
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const { CHCDB, NODE_ENV } = process.env;
 const production = NODE_ENV === "production";
 
-// mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
-// mongoose.connection.once('open', () => { console.log("Connected to DB") });
+mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
+mongoose.connection.once('open', () => { console.log("Connected to DB") });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -31,7 +32,18 @@ app.use(session({ // express session
 
 app.use((req, res, next) => { // global variables
     res.locals.location_origin = `https://${req.hostname}`;
-    next();
+    res.locals.cart = req.session.cart = req.session.cart || [];
+    if (!req.session.paymentIntentID) return next();
+    stripe.paymentIntents.retrieve(req.session.paymentIntentID, (err, pi) => {
+        if (err) return console.log(err.message || err), next();
+        // id used in payment completion request if true
+        if (!(pi && pi.status === "succeeded")) req.session.paymentIntentID = undefined;
+        if (!pi || pi.status === "succeeded") return next();
+        stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" }, err => {
+            if (err) console.log(err.message || err);
+            next();
+        });
+    });
 });
 
 app.use('/', require('./routes/index'));

@@ -1,0 +1,105 @@
+<%_ include partials/header _%>
+    <section class="container">
+        <%_ [
+            {
+                id: "13hk1kl123",
+                image: "/img/lashes/76b0fc4e-8156-48a7-82af-bef7744e2639.jpg",
+                name: "Mist",
+                price: 500,
+                info: "",
+                qty: 1
+            },
+            {
+                id: "13hk1kl123",
+                image: "/img/lashes/76b0fc4e-8156-48a7-82af-bef7744e2639.jpg",
+                name: "Mist",
+                price: 500,
+                info: "",
+                qty: 3
+            }
+        ].forEach(item => { _%>
+        <div class="cart-item">
+            <div class="item-img col-sm-3" style="background-image:url('<%- item.image %>')"></div>
+            <div class="item-info col-sm-7">
+                <p class="item-name" style="font-weight: 400"><%- item.name %></p>
+                <p class="item-price">£<span><%- (item.price / 100).toFixed(2) %></span></p>
+                <p><%- item.info.replace(/\r?\n/g, "<br>") %></p>
+            </div>
+            <div class="item-qty-control col-sm-2">
+                <div class="row" style="margin: 0;">
+                    <div class="col-sm-12 col-xs-3 col-sm-push-0 col-xs-push-6">
+                        <form class="qty-control-form" action="/shop/cart/increment">
+                            <input type="hidden" name="id" value="<%- item.id %>">
+                            <input type="hidden" name="increment" value="1">
+                            <button type="submit">
+                                <i class="mb-view fas fa-chevron-right"></i>
+                                <i class="dt-view fas fa-chevron-up"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 col-xs-3 qty-count" style="padding: 10px 0"><%- item.qty %></div>
+                    <div class="col-sm-12 col-xs-3 col-sm-pull-0 col-xs-pull-6">
+                        <form class="qty-control-form" action="/shop/cart/increment">
+                            <input type="hidden" name="id" value="<%- item.id %>">
+                            <input type="hidden" name="increment" value="-1">
+                            <button type="submit">
+                                <i class="mb-view fas fa-chevron-left"></i>
+                                <i class="dt-view fas fa-chevron-down"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 col-xs-3">
+                        <form class="item-remove-form" action="/shop/cart/remove">
+                            <input type="hidden" name="id" value="<%- item.id %>">
+                            <button type="submit" class="btn-danger remove-btn">
+                                <i class="fas fa-trash-alt" style="font-weight: normal"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%_ }) _%>
+    </section>
+    <br><br>
+    <div style="text-align: center; font-weight: 400">
+        <p id="price-total">Total: £<span></span></p>
+        <%- cart.length ? '' : '<p id="checkout-link"><a href="/shop/checkout"><button style="padding: 12px">PROCEED TO CHECKOUT</button></a></p>' %>
+    </div>
+    <script>
+        $(".qty-control-form, .item-remove-form").submit(function(e) {
+            e.preventDefault();
+            $.post(this.action, $(this).serializeArray(), function(quantity) {
+                $(e.target).closest(".cart-item").find(".qty-count").text(quantity);
+                if ($(e.target).is(".item-remove-form")) {
+                    $(e.target).closest(".cart-item").addClass("deleted").hide(function() { $(this).remove() });
+                    if ($(".deleted").length === 1) $(e.target).closest("#checkout-link").hide(function() { $(this).remove() });
+                }
+                var prices = $(".cart-item:not(.deleted) .item-price span").map(function(i, item) { return parseFloat(item.innerText) * 100 }).get();
+                var quantities = $(".cart-item:not(.deleted) .qty-count").map(function(i, qty) { return parseInt(qty.innerText) }).get();
+                try {
+                    var total = prices.map(function(price, i) { return price * quantities[i] }).reduce(function(sum, val) { return sum + val });
+                } catch(e) {
+                    var total = 0;
+                }
+                var prev_value = $("#price-total span").text();
+                $("#price-total span").text((total ? total / 100 : 0).toFixed(2));
+                $("#cart-item-count").text($(".cart-item:not(.deleted)").length);
+                if ($("#cart-item-count").text() == 0) $("#cart-icon").removeClass("visible");
+                if (prev_value === $("#price-total span").text()) alert("Max / min item quantity limit reached");
+            }).fail(function(err) {
+                alert(err.responseText);
+            })
+        });
+        $("#price-total span").text(function() {
+            var total = 0, result = 0, length = $(".cart-item").length;
+            if (length) result = $(".cart-item").get().map(function(e) {
+                var price = parseFloat($(e).find(".item-price span").text());
+                var qty = parseInt($(e).find(".qty-count").text());
+                return { price, qty };
+            }).reduce(function(sum, p) { return sum + (p.price * p.qty) }, 0);
+            return result.toFixed(2);
+        })
+    </script>
+    <br><br>
+<%_ include partials/footer _%>

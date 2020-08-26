@@ -6,6 +6,11 @@ router.get("/cart", (req, res) => {
     res.render('cart', { title: "Cart", pagename: "cart", cart: req.session.cart })
 });
 
+router.get("/checkout", (req, res) => {
+    // if (!req.session.cart.length) return res.redirect(req.get("referrer"));
+    res.render('checkout', { title: "Checkout", pagename: "checkout" })
+});
+
 router.post("/fx", (req, res) => {
     exchangeRates.symbols(req.body.currency).fetch().then(rate => {
         const symbol = curr_symbols[req.body.currency];
@@ -60,7 +65,7 @@ router.post("/checkout/payment-intent/create", (req, res) => {
     stripe.paymentIntents.create({ // Create a PaymentIntent with the order details
         receipt_email: email,
         description: cart.map(p => `${p.name} (${currency_symbol}${converted_price(p.price).toFixed(2)} X ${p.qty})`).join(", \r\n"),
-        amount: cart.map(p => p.price * p.qty).reduce((sum, val) => sum + val),
+        amount: cart.map(p => ({ price: p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 500),
         currency: "gbp",
         shipping: {
             name: firstname + " " + lastname,

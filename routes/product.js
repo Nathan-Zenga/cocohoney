@@ -3,39 +3,22 @@ const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/authCheck');
 const { Product } = require('../models/models');
 
-router.get('/:type', (req, res, next) => {
-    const { type } = req.params;
-    if (!type) return next();
-    Product.find({ type }).sort({ _id: -1 }).exec((err, products) => {
-        if (!products.length) return next();
-        res.render('products', { title: null, pagename: "product", products });
-    })
-});
-
-router.get('/:type/collection/:group', (req, res, next) => {
-    const { type, group } = req.params;
-    if (!type && !group) return next();
-    Product.find({ type, group }).sort({ _id: -1 }).exec((err, collection) => {
-        if (!collection.length) return next();
-        res.render('product-collection', { title: "Collections", pagename: "collection", collection });
-    })
-});
-
-router.get('/:type/:product_name', (req, res, next) => {
-    const { type, product_name } = req.params;
-    if (!type && !product_name) return next();
-    Product.findOne({ type, name: product_name }).sort({ _id: -1 }).exec((err, product) => {
-        if (!product) return next();
-        res.render('product', { title: null, pagename: "product", product });
+router.get('/lashes/collection/:product_collection', (req, res, next) => {
+    const { product_collection } = req.params;
+    if (!product_collection) return next();
+    Product.find({ product_type: "lashes", product_collection }).sort({ _id: -1 }).exec((err, collection) => {
+        // if (!collection.length) return next();
+        const title = product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
+        res.render('product-collection', { title, pagename: "lash-collection", collection });
     })
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, group, stock_qty, info, image_file, image_url } = req.body;
-    new Product({ name, price, group, stock_qty, info }).save((err, saved) => {
+    const { name, price, product_type, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    new Product({ name, price, product_type, product_collection, stock_qty, info }).save((err, saved) => {
         if (err) return res.status(400).send(err.message);
         if (!image_url && !image_file) return res.send("Product saved in stock");
-        const public_id = ("shop/stock/" + saved.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = ("shop/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
             if (err) return res.status(500).send(err.message);
             saved.image = result.secure_url;
@@ -49,7 +32,7 @@ router.post('/stock/edit', isAuthed, (req, res) => {
     Product.findById(product_id, (err, product) => {
         if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
 
-        const prefix = ("shop/stock/" + product.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
+        const prefix = ("shop/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
         if (name) product.name = name;
         if (price) product.price = price;
         if (info) product.info = info;

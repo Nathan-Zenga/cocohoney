@@ -1,11 +1,17 @@
+        <div id="cart-icon" class="<%- cart && cart.length ? 'visible' : '' %>">
+            <i id="cart-img" class="fas fa-shopping-basket"></i>
+            <a id="cart-item-count"><%- cart.length %></a>
+            <a id="cart-view-link" href="/shop/cart">VIEW CART</a>
+        </div>
     </main>
     <footer>
         <div class="container" style="max-width: 900px;">
             <div class="row" style="margin-bottom: 3em">
                 <div class="col-sm-6 footer-links">
                     <a class="link" href="/shipping">Shipping</a>
-                    <a class="link">Contact Us</a>
-                    <a class="link">My Account</a>
+                    <a class="link" href="/contact">Contact Us</a>
+                    <a class="link" href="/login">My Account</a>
+                    <a class="link" href="/faq">FAQs</a>
                 </div>
                 <div class="col-sm-6"></div>
             </div>
