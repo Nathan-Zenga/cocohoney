@@ -1,0 +1,17 @@
+<%_ var suffix = Date.now(); _%>
+<form method="post" class="container-fluid" action="/lookbook/gallery/add" style="padding: 30px">
+    <label>IMAGE / VIDEO</label>
+    <div class="input-group file-upload-container row">
+        <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook-media-file-<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.wav"></div>
+        <input type="hidden" name="media_file">
+        <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook-media-file-<%- suffix %>">CLEAR</button></div>
+        <div class="col-sm-12"><input type="url" name="media_url" id="lookbook-media-url" placeholder="Or enter the image / video URL"></div>
+        <div class="col-sm-12"><input type="checkbox" name="tutorial" id="tutorial-check" style="margin-right: 5px;"> IS THIS A TUTORIAL VIDEO?<br></div>
+        <div class="col-sm-12 add-remove-control" style="text-align: right">
+            <button type="button" class="add">ADD</button>
+            <button type="button" class="remove">REMOVE</button>
+        </div>
+    </div>
+
+    <input type="submit" value="SAVE">
+</form>

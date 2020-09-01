@@ -26,7 +26,7 @@ app.use(session({ // express session
     name: 'sesh' + require("crypto").randomBytes(20).toString("hex"),
     saveUninitialized: true,
     resave: true,
-    cookie: { secure: true },
+    cookie: { secure: false },
     store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 * 12 })
 }));
 
@@ -47,6 +47,7 @@ app.use((req, res, next) => { // global variables
 });
 
 app.use('/', require('./routes/index'));
+app.use('/admin', require('./routes/admin'));
 app.use('/product', require('./routes/product'));
 app.use('/shop', require('./routes/shop'));
 

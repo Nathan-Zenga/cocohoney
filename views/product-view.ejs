@@ -1,0 +1,25 @@
+<%_ include partials/header _%>
+    <section>
+        <div class="product-view-container container">
+            <div class="col-sm-7">
+                <%_ if (product.images.length === 1) { _%>
+                    <div class="product-image-single">
+                        <img src="<%- product.images[0].url %>" alt="<%- product.name %>">
+                    </div>
+                <%_ } else { _%>
+                <div class="slider-container">
+                    <div class="slider-content">
+                        <%_ product.images.forEach(image => { _%>
+                        <div class="slider-single">
+                            <div class="slider-single-image" style="background-image: url('<%- image.url %>')"></div>
+                            <h1 class="slider-single-title"></h1>
+                        </div>
+                        <%_ }) _%>
+                    </div>
+                </div>
+                <%_ } _%>
+            </div>
+            <div class="col-sm-5">BANG</div>
+        </div>
+    </section>
+<%_ include partials/footer _%>

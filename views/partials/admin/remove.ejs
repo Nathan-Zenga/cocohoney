@@ -1,0 +1,51 @@
+<div class="col-md-3 sidebar" id="remove-sidebar">
+    <div class="mb-view-md section-dropdown-options" style="font-weight: bold; max-width: 250px; margin: 0 auto">
+        <label>SELECT OPTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+        <select>
+            <option value="#remove-member">MEMBER</option>
+            <option value="#remove-product">SHOP PRODUCT</option>
+        </select>
+    </div>
+    <ul class="nav nav-pills nav-stacked dt-view-md">
+        <li class="active"><a data-toggle="pill" href="#remove-member">MEMBER</a></li>
+        <li><a data-toggle="pill" href="#remove-product">SHOP PRODUCT</a></li>
+    </ul>
+</div>
+<div class="col-md-9">
+    <div class="tab-content" style="padding-top: 10px;">
+
+        <div id="remove-member" class="tab-pane fade in active">
+            <%_ if ([].length) { _%>
+            <form action="/mailing-list/member/delete" method="post">
+                <label>DELETE MEMBER(S) FROM MAILING LIST</label>
+                <%_ [].forEach((member, i) => { _%>
+                <input type="checkbox" name="member<%= i %>" value="<%= member._id %>"> <span><%= member.firstname +" "+ member.lastname %></span><br>
+                <%_ }) _%>
+                <br>
+                <input type="submit" value="DELETE MEMBERS">
+            </form>
+            <%_ } else { _%>
+            <p style="text-align: center; margin-top: 2em"><b>NO MEMBERS TO REMOVE</b></p>
+            <%_ } _%>
+        </div>
+
+        <div id="remove-product" class="tab-pane fade">
+            <%_ if (products.length) { _%>
+            <form action="/product/stock/remove" method="post">
+                <label>DELETE PRODUCT(S) FROM STOCK</label><br>
+                <%_ products.forEach((item, i) => {
+                    var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+                    product_collection = product_collection ? product_collection + " Collection" : "Others"; _%>
+                <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="margin: .5em 0">'+product_collection+'</div>' : '' %>
+                <input type="checkbox" name="product<%= i %>" value="<%= item._id %>"> <span><%= item.name %></span><br>
+                <%_ }) _%>
+                <br>
+                <input type="submit" value="DELETE PRODUCTS">
+            </form>
+            <%_ } else { _%>
+            <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
+            <%_ } _%>
+        </div>
+
+    </div>
+</div>

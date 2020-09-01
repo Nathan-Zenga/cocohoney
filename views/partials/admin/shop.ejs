@@ -1,0 +1,38 @@
+<form method="post" action="/product/stock/add">
+    <label>PRODUCT NAME</label>
+    <input type="text" name="name" id="product-name" required>
+
+    <label>PRICE (£)</label>
+    <input type="number" name="price" id="price" min="0.01" step="0.01" required>
+
+    <label>TOTAL IN STOCK</label>
+    <input type="number" name="stock_qty" id="stock_qty" min="1" value="1" required>
+
+    <label>CATEGORY <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+    <select name="category" id="product-category" required>
+        <option value="">Choose category</option>
+        <option value="lashes">Lashes</option>
+        <option value="palette">Palette</option>
+    </select>
+
+    <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+    <select name="product_collection" id="product-collection">
+        <option value="">Choose collection</option>
+        <option value="original">Original</option>
+        <option value="honey_drip">Honey Drip</option>
+        <option value="emerald">Emerald</option>
+    </select>
+
+    <label>PRODUCT INFO <span>(OPTIONAL)</span></label>
+    <textarea name="info" id="product_info" rows="10"></textarea>
+
+    <label>PRODUCT IMAGE</label>
+    <div class="input-group file-upload-container row">
+        <div class="col-sm-6 col-xs-9"><input type="file" id="product-image-file" accept=".jpg,.jpeg,.png,.bmp"></div>
+        <input type="hidden" name="image_file">
+        <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="product-image-file">CLEAR</button></div>
+        <div class="col-sm-12"><input type="url" name="image_url" id="product-image-url" placeholder="Or enter the image URL"></div>
+    </div>
+
+    <input type="submit" value="SAVE">
+</form>
