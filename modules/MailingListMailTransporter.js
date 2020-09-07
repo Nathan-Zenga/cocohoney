@@ -64,7 +64,7 @@ class MailingListMailTransporter {
         this.#getTransportOpts((err, transportOpts) => {
             if (err) return cb(err.message || err);
             this.#res.render('templates/mail', { message: mailOpts.message, member: this.#member }, (err, html) => {
-                let attachments = [{ path: 'public/img/cs-logo.png', cid: 'logo' }];
+                let attachments = [{ path: 'public/img/chc-logo.png', cid: 'logo' }];
                 this.#res.locals.socials.forEach((s, i) => attachments.push({ path: `public/img/socials/${s.name}.png`, cid: `social_icon_${i}` }));
                 nodemailer.createTransport(transportOpts).sendMail({
                     from: req.session.admin_email,
