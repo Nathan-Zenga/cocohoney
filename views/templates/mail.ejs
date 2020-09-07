@@ -54,8 +54,10 @@
             </div>
             <br>
             <p style="font-size: .8em;">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
+            <%_ if (member.id) { _%>
             <p style="<%- centered_block_style %> font-size: .8em;">You are receiving this email because you have subscribed to us, Cocohoney Cosmetics, to receive updates and promotional material.</p>
             <p style="font-size: .8em;"><a style="color: inherit!important" href="<%- location_origin %>/mailing-list/member/delete?id=<%= member.id %>&src=email_unsub_link<%= member.id %>">Unsubscribe</a></p>
+            <%_ } _%>
         </div>
     </body>
 </html>

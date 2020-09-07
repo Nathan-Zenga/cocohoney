@@ -31,6 +31,7 @@ app.use(session({ // express session
 }));
 
 app.use((req, res, next) => { // global variables
+    req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.location_origin = `https://${req.hostname}`;
     res.locals.cart = req.session.cart = req.session.cart || [];
     if (!req.session.paymentIntentID) return next();
@@ -50,6 +51,9 @@ app.use('/', require('./routes/index'));
 app.use('/admin', require('./routes/admin'));
 app.use('/product', require('./routes/product'));
 app.use('/shop', require('./routes/shop'));
+app.use('/lookbook', require('./routes/lookbook'));
+app.use('/site/content', require('./routes/site-content'));
+app.use('/ambassador', require('./routes/ambassador'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;

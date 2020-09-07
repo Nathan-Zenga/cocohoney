@@ -3,9 +3,9 @@ const crypto = require('crypto');
 const passport = require('passport');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
-const MailingListMailTransporter = require('../modules/mailingListMailTransporter');
+const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Admin } = require('../models/models');
-const email = "cocohoneycosmetics@gmail.com";
+const email = req.session.admin_email;
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -17,7 +17,7 @@ router.get('/', isAuthed, (req, res) => {
 // });
 
 // router.get('/activate/:token', (req, res, next) => {
-//     Admin.findOne({ password: req.params.token, tokenExpiryDate: { $gte: Date.now() } }, (err, found) => {
+//     Admin.findOne({ password: req.params.token, token_expiry_date: { $gte: Date.now() } }, (err, found) => {
 //         if (!found) return next();
 //         res.render('admin-activate', { title: "Admin Register", pagename: "admin", token: found.password })
 //     })
@@ -27,15 +27,15 @@ router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.post('/login', (req, res) => {
     req.body.username = email; Object.freeze(req.body);
-    passport.authenticate("local-login", (err, user, info) => {
+    passport.authenticate("local-login-admin", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
         if (user === "to_activate") {
             Admin.deleteMany({ email: "temp" }, err => {
                 crypto.randomBytes(20, (err, buf) => {
                     let password = buf.toString("hex");
-                    let tokenExpiryDate = new Date(Date.now() + (1000 * 60 * 60 * 2));
-                    new Admin({ email: "temp", password, tokenExpiryDate }).save((err, doc) => {
+                    let token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
+                    new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
                         new MailingListMailTransporter({ req, res }, { email }).sendMail({
                             subject: "Admin Account Activation",
                             message: "You're recieving this email because an admin account needs setting up. " +
@@ -59,7 +59,7 @@ router.post('/login', (req, res) => {
 
 router.post("/activate/:token", async (req, res) => {
     req.body.username = email; Object.freeze(req.body);
-    passport.authenticate("local-register", (err, user, info) => {
+    passport.authenticate("local-register-admin", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
         req.logIn(user, err => {

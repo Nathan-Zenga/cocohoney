@@ -1,23 +1,33 @@
 <%_ include partials/header _%>
     <section style="padding-top: 2em;">
         <ul class="nav nav-pills">
-            <li class="active"><a data-toggle="pill" href="#shop">SHOP</a></li>
+            <li class="active"><a data-toggle="pill" href="#banner">BANNER SLIDES</a></li>
+            <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
+            <li><a data-toggle="pill" href="#discount_code">DISCOUNT CODES</a></li>
+            <li><a data-toggle="pill" href="#lookbook">LOOKBOOK UPLOAD</a></li>
             <li><a data-toggle="pill" href="#mail">MAIL</a></li>
-            <li><a data-toggle="pill" href="#lookbook">LOOKBOOK</a></li>
             <li><a data-toggle="pill" href="#edit">EDIT</a></li>
             <li><a data-toggle="pill" href="#remove">REMOVE</a></li>
         </ul>
         <div class="tab-content container">
-            <div id="shop" class="creation tab-pane fade in active">
+            <div id="banner" class="creation tab-pane fade in active">
+            <%_ include partials/admin/banner _%>
+            </div>
+
+            <div id="product" class="creation tab-pane fade">
             <%_ include partials/admin/shop _%>
             </div>
 
-            <div id="mail" class="creation tab-pane fade">
-            <%_ include partials/admin/mail _%>
+            <div id="discount_code" class="creation tab-pane fade">
+            <%_ include partials/admin/discount_code _%>
             </div>
 
             <div id="lookbook" class="creation tab-pane fade">
             <%_ include partials/admin/lookbook _%>
+            </div>
+
+            <div id="mail" class="creation tab-pane fade">
+            <%_ include partials/admin/mail _%>
             </div>
 
             <div id="edit" class="tab-pane fade">
@@ -151,34 +161,15 @@
                 var result = (docs || []).filter(function(item) { return id == item._id })[0] || {};
                 $form.find(".clear-uploads").click();
 
-                /* $form.find("#headline_edit").val(result.headline);
-                var $thumb_choice = $form.find(".headline-image-thumb-choice");
-                var images = result.headline_images;
-                $thumb_choice.find("input").off("change").end().empty().hide();
-                if (images && images.length) {
-                    $thumb_choice.show().append("<label>CHOOSE ARTICLE THUMBNAIL</label>");
-                    images.forEach(function(image) {
-                        var $input = $("<input>").attr({ type: "radio", name: "headline_image_thumb", value: image });
-                        var $img = $("<img>").attr({ src: image });
-                        $thumb_choice.append($input.add($img));
-                    })
-                }
-                $form.find(".headline-image-data").empty();
-                $form.find("#textbody_edit").val(result.textbody).keyup().end().find(".textbody_media input:text").each(function(i) {
-                    this.value = result.textbody_media[i];
-                }); */
-
-                $form.find("#firstname_edit").val(result.firstname);
-                $form.find("#lastname_edit").val(result.lastname);
-                $form.find("#email_edit").val(result.email);
-                $form.find("#size_top_edit").val(result.size_top);
-                $form.find("#size_bottom_edit").val(result.size_bottom);
-                $form.find("#extra_info_edit").val(result.extra_info);
-
                 $form.find("#product_name_edit").val(result.name);
                 $form.find("#price_edit").val(parseFloat(result.price) / 100);
                 $form.find("#stock_qty_edit").val(result.stock_qty);
                 $form.find("#product_info_edit").val(result.info);
+
+                $form.find("#banner_text_edit").val(result.text);
+
+                $form.find("#discount_code_value_edit").val(result.code);
+                $form.find("#discount_code_expiry_date_edit").val(new Date(result.expiry_date).toISOString().slice(0, 10));
             });
 
             $("#mail form #recipient_email").change(function() {

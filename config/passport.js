@@ -3,7 +3,7 @@ const { Admin } = require('../models/models');
 const bcrypt = require('bcrypt');
 
 module.exports = passport => {
-    passport.use("local-login", new Strategy((email, password, done) => {
+    passport.use("local-login-admin", new Strategy((email, password, done) => {
         Admin.findOne({ email }, (err, user) => {
             if (err) return done(err);
             if (!user) return done(null, "to_activate", { message: "Verification email sent" });
@@ -15,9 +15,9 @@ module.exports = passport => {
         });
     }));
 
-    passport.use("local-register", new Strategy({ passReqToCallback: true }, (req, email, password, done) => {
+    passport.use("local-register-admin", new Strategy({ passReqToCallback: true }, (req, email, password, done) => {
         if (password !== req.body.password_confirm) return done(null, null, { message: "Passwords don't match" });
-        Admin.findOne({ password: req.params.token, tokenExpiryDate: { $gte: Date.now() } }, (err, found) => {
+        Admin.findOne({ password: req.params.token, token_expiry_date: { $gte: Date.now() } }, (err, found) => {
             if (!found) return done(null, null, { message: "Cannot activate account: token expired / not valid" });
             Admin.findOne({ email }, (err, found) => {
                 if (found) return done(null, null, { message: "An admin is already registered" });

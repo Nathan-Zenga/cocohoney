@@ -38,8 +38,8 @@ router.post('/stock/add', isAuthed, (req, res) => {
 });
 
 router.post('/stock/edit', isAuthed, (req, res) => {
-    const { product_id, name, price, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    Product.findById(product_id, (err, product) => {
+    const { id, name, price, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    Product.findById(id, (err, product) => {
         if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
 
         const prefix = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -58,17 +58,18 @@ router.post('/stock/edit', isAuthed, (req, res) => {
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
-            if (!image_url && !image_file) return res.send("Product details updated successfully");
-            const public_id = ("cocohoney/product/stock/" + saved.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
-            cloud.api.delete_resources([prefix], err => {
-                if (err) return res.status(500).send(err.message);
-                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(500).send(err.message);
-                    saved.images = [{ p_id: result.public_id, url: result.secure_url }];
-                    for (const item of req.session.cart) if (item.id === saved.id) item.image = { p_id: result.public_id, url: result.secure_url };
-                    saved.save(() => { res.send("Product details updated successfully") });
-                });
-            })
+            res.send("Product details updated successfully");
+            // if (!image_url && !image_file) return res.send("Product details updated successfully");
+            // const public_id = ("cocohoney/product/stock/" + saved.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
+            // cloud.api.delete_resources([prefix], err => {
+            //     if (err) return res.status(500).send(err.message);
+            //     cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+            //         if (err) return res.status(500).send(err.message);
+            //         saved.images = [{ p_id: result.public_id, url: result.secure_url }];
+            //         for (const item of req.session.cart) if (item.id === saved.id) item.image = { p_id: result.public_id, url: result.secure_url };
+            //         saved.save(() => { res.send("Product details updated successfully") });
+            //     });
+            // })
         });
     })
 });
@@ -80,8 +81,7 @@ router.post('/stock/remove', isAuthed, (req, res) => {
         each(products, (item, cb) => {
             Product.deleteOne({ _id : item.id }, (err, result) => {
                 if (err || !result.deletedCount) return cb(err ? err.message : "Product(s) not found");
-                const prefix = ("cocohoney/product/stock/" + item.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
-                cloud.api.delete_resources([prefix], () => cb());
+                cloud.api.delete_resources([item.p_id], () => cb());
             })
         }, err => {
             if (!err) return res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");

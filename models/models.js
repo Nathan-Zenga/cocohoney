@@ -18,13 +18,13 @@ module.exports.Member = model('Member', Schema({
 }));
 
 module.exports.Admin = model('Admin', (() => {
-    const schema = new Schema({ email: { type: String, index: true }, password: String, tokenExpiryDate: Date });
+    const schema = new Schema({ email: { type: String, index: true }, password: String, token_expiry_date: Date });
     schema.virtual("username").get(() => this.email);
     return schema;
 })());
 
 module.exports.Lookbook_media = model('Lookbook_media', Schema({
-    title: String,
+    p_id: String,
     url: String,
     orientation: String,
     index: Number,
@@ -33,14 +33,42 @@ module.exports.Lookbook_media = model('Lookbook_media', Schema({
 }));
 
 module.exports.Site_content = model('Site_content', Schema({
-    bg_underlay: String,
-    overview_images: [{ url: String, index: Number }],
-    highlight_media_large: String,
-    highlight_media_small: String,
-    highlight_media_text: String,
+    bg_underlay: String
+}));
+
+module.exports.Banner_slide = model('Banner_slide', Schema({
+    text: String
+}));
+
+module.exports.Overview_image = model('Overview_image', Schema({
+    url: String,
+    index: Number
+}));
+
+module.exports.Hightlight_media = model('Hightlight_media', Schema({
+    media_lg_url: String,
+    media_sm_url: String,
+    media_text: String,
 }));
 
 module.exports.Shipping_fee = model('Shipping_fee', Schema({
     name: String,
     fee: { type: Number, set: n => parseFloat(n) * 100 }
+}));
+
+module.exports.Discount_code = model('Discount_code', Schema({
+    code: String,
+    expiry_date: Date
+}));
+
+module.exports.Ambassador = model('Ambassador', Schema({
+    firstname: String,
+    lastname: String,
+    email: String,
+    phone_number: String,
+    instagram: { type: String, set: v => v.trim().replace("@", "") },
+    password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
+    token: String,
+    verified: { type: Boolean, default: false },
+    discount_code: { type: String, default: null }
 }));

@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/authCheck');
-const { each } = require('async');
-const { Lookbook_media } = require('../models/models');
+const { Discount_code, Banner_slide } = require('../models/models');
 
 router.get('/', (req, res) => {
     res.render('index', { title: null, pagename: "home" })
@@ -11,47 +10,31 @@ router.get('/about', (req, res) => {
     res.render('about', { title: "About", pagename: "about" })
 });
 
-router.get('/lookbook/gallery', (req, res) => {
-    Lookbook_media.find({ media_type: "image" }, (err, images) => {
-        res.render('lookbook-gallery', { title: "Lookbook (Gallery)", pagename: "lookbook-gallery" })
+router.get('/discount_code/add', (req, res) => {
+    const { code, expiry_date } = req.body;
+    new Discount_code({ code, expiry_date }).save(err => {
+        if (err) return res.status(500).send(err.message);
+        res.send("Discount code added");
     })
 });
 
-router.get('/lookbook/tutorial', (req, res) => {
-    Lookbook_media.find({ media_type: "video", is_tutorial: true }, (err, video) => {
-        res.render('lookbook-tutorial', { title: "Lookbook (tutorial)", pagename: "lookbook-tutorial" })
-    })
+router.get('/discount_code/edit', (req, res) => {
+    const { id, code, expiry_date } = req.body;
+    Discount_code.findById(id, (err, discount_code) => {
+        if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
+        if (code) discount_code.code = code;
+        if (expiry_date) discount_code.expiry_date = expiry_date;
+    });
 });
 
-router.post('/lookbook/gallery/add', (req, res) => {
-    const { media_file, media_url } = req.body;
-    // const {  }
-    // Lookbook_media.find({ media_type: "image" }, (err, images) => {
-    //     res.render('lookbook-gallery', { title: "Lookbook (Gallery)", pagename: "lookbook-gallery" })
-    // })
-});
-
-/* router.post('/homepage/content', isAuthed, (req, res) => {
-    const { bg_underlay, overview_images, highlight_media_large, highlight_media_small, highlight_media_text } = req.body;
-    Site_content.find((err, contents) => {
-        const content = !contents.length ? new Site_content() : contents[0];
-        // if (bg_underlay)           content.bg_underlay = bg_underlay;
-        // if (overview_images)       content.overview_images = overview_images;
-        // if (highlight_media_large) content.highlight_media_large = highlight_media_large;
-        // if (highlight_media_small) content.highlight_media_small = highlight_media_small;
-        // if (highlight_media_text)  content.highlight_media_text = highlight_media_text;
-        const media = [
-            { name: "bg_underlay", link: [bg_underlay] },
-            { name: "overview_images", link: [overview_images] },
-            { name: "highlight_media_large", link: [highlight_media_large] },
-            { name: "highlight_media_small", link: [highlight_media_small] },
-            { name: "highlight_media_text", link: [highlight_media_text] }
-        ].filter(e => e);
-        each(media, (item, cb) => {
-
-        });
-        content.save(err => res.send("Homepage content " + (!contents.length ? "saved" : "updated")));
+router.get('/discount_code/remove', (req, res) => {
+    var ids = Object.values(req.body);
+    if (!ids.length) return res.status(400).send("Nothing selected");
+    Banner_slide.deleteMany({_id : { $in: ids }}, (err, result) => {
+        if (err) return res.status(500).send(err ? err.message : "Error occurred");
+        if (!result.deletedCount) return res.status(404).send("Banner slide(s) not found");
+        res.send("Banner slide"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
-}); */
+});
 
 module.exports = router;

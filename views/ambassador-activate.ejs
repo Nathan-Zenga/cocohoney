@@ -1,0 +1,26 @@
+<%_ include partials/header _%>
+    <form method="post" action="/ambassador/register/activate">
+        <label>CREATE NEW PASSWORD</label>
+        <input type="password" name="password" id="password" required>
+
+        <label>CONFIRM NEW PASSWORD</label>
+        <input type="password" name="password_confirm" id="password_confirm" required>
+
+        <input type="hidden" name="id" value="<%- id %>" required>
+        <input type="submit" value="SUBMIT">
+    </form>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                alert(result);
+                e.target.reset();
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>
+<%_ include partials/footer _%>

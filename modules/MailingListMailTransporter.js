@@ -29,7 +29,7 @@ class MailingListMailTransporter {
                         service: 'gmail', /* port: 465, secure: true, */
                         auth: {
                             type: "OAuth2",
-                            user: "cocohoneycosmetics@gmail.com",
+                            user: req.session.admin_email,
                             clientId: OAUTH_CLIENT_ID,
                             clientSecret: OAUTH_CLIENT_SECRET,
                             refreshToken: OAUTH_REFRESH_TOKEN,
@@ -67,7 +67,7 @@ class MailingListMailTransporter {
                 let attachments = [{ path: 'public/img/cs-logo.png', cid: 'logo' }];
                 this.#res.locals.socials.forEach((s, i) => attachments.push({ path: `public/img/socials/${s.name}.png`, cid: `social_icon_${i}` }));
                 nodemailer.createTransport(transportOpts).sendMail({
-                    from: "Cocohoney Cosmetics <cocohoneycosmetics@gmail.com>",
+                    from: req.session.admin_email,
                     to: this.#member.email,
                     subject: mailOpts.subject,
                     html,

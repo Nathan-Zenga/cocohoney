@@ -2,70 +2,40 @@
     <div class="mb-view-md section-dropdown-options" style="font-weight: bold; max-width: 250px; margin: 0 auto">
         <label>SELECT OPTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
         <select>
-            <option value="#edit-member">MEMBER</option>
-            <option value="#edit-product">SHOP PRODUCT</option>
+            <option value="#edit-banner">BANNER SLIDE</option>
+            <option value="#edit-product">PRODUCT</option>
+            <option value="#edit-discount-code">DISCOUNT CODE</option>
         </select>
     </div>
     <ul class="nav nav-pills nav-stacked dt-view-md">
-        <li class="active"><a data-toggle="pill" href="#edit-member">MEMBER</a></li>
-        <li><a data-toggle="pill" href="#edit-product">SHOP PRODUCT</a></li>
+        <li class="active"><a data-toggle="pill" href="#edit-banner">BANNER SLIDE</a></li>
+        <li><a data-toggle="pill" href="#edit-product">PRODUCTS</a></li>
+        <li><a data-toggle="pill" href="#edit-discount-code">DISCOUNT CODE</a></li>
     </ul>
 </div>
 <div class="col-md-9">
     <div class="tab-content" style="padding-top: 10px;">
 
-        <div id="edit-member" class="tab-pane fade in active">
-            <form method="POST" action="/mailing-list/update">
-                <label>CHOOSE MEMBER <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                <select name="member_id" id="member_id">
+        <div id="edit-banner" class="tab-pane fade in active">
+            <form method="post" action="/site/content/banner/edit">
+                <label>SELECT BANNER SLIDE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select name="id" id="banner_slide_id">
                     <option value="">-</option>
-                    <%_ [].forEach(member => { _%>
-                    <option value="<%= member._id %>"><%= member.firstname + " " + member.lastname %></option>
+                    <%_ banner_slides.forEach(slide => { _%>
+                    <option value="<%= slide._id %>"><%= slide.text %></option>
                     <%_ }) _%>
                 </select>
-                <div class="input-group" style="display: block">
-                    <div class="col-sm-6">
-                        <label>FIRST NAME</label>
-                        <input type="text" name="firstname" id="firstname_edit" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label>LAST NAME</label>
-                        <input type="text" name="lastname" id="lastname_edit" required>
-                    </div>
-                </div>
-                <label>EMAIL</label>
-                <input type="email" name="email" id="email_edit" required>
-                <div class="input-group" style="display: block">
-                    <%_ var sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"]; _%>
-                    <div class="col-sm-6">
-                        <label>SIZE (TOP)</label>
-                        <select name="size_top" id="size_top_edit" required>
-                            <option value="">Select size</option>
-                            <%_ sizes.forEach(size => { _%>
-                            <option value="<%= size %>"><%= size %></option>
-                            <%_ }) _%>
-                        </select>
-                    </div>
-                    <div class="col-sm-6">
-                        <label>SIZE (BOTTOMS)</label>
-                        <select name="size_bottom" id="size_bottom_edit" required>
-                            <option value="">Select size</option>
-                            <%_ sizes.forEach(size => { _%>
-                            <option value="<%= size %>"><%= size %></option>
-                            <%_ }) _%>
-                        </select>
-                    </div>
-                </div>
-                <label>EXTRA INFO (OPTIONAL)</label>
-                <textarea name="extra_info" id="extra_info_edit"></textarea>
-                <input type="submit" value="UPDATE MAILING LIST">
+                <label>TEXT</label>
+                <input type="text" name="text" id="banner_text_edit" required>
+
+                <input type="submit" value="SAVE">
             </form>
         </div>
 
         <div id="edit-product" class="tab-pane fade">
             <form method="post" action="/product/stock/edit">
-                <label>CHOOSE PRODUCT <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                <select name="product_id" id="product_id">
+                <label>SELECT PRODUCT <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select name="id" id="product_id">
                     <option value="">-</option>
                     <%_ products.forEach(item => { _%>
                     <option value="<%= item._id %>"><%= item.name %></option>
@@ -84,13 +54,33 @@
                 <label>PRODUCT INFO <span>(OPTIONAL)</span></label>
                 <textarea name="info" id="product_info_edit" rows="10"></textarea>
 
-                <label>PRODUCT IMAGE</label>
+                <!-- <label>PRODUCT IMAGE</label>
                 <div class="input-group file-upload-container row">
                     <div class="col-sm-6 col-xs-9"><input type="file" id="product_image_file_edit" accept=".jpg,.jpeg,.png,.bmp"></div>
                     <input type="hidden" name="image_file">
                     <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="product_image_file_edit">CLEAR</button></div>
                     <div class="col-sm-12"><input type="url" name="image_url" id="product_image_url_edit" placeholder="Or enter the image URL"></div>
-                </div>
+                </div> -->
+
+                <input type="submit" value="SAVE">
+            </form>
+        </div>
+
+        <div id="edit-discount-code" class="tab-pane fade">
+            <form method="post" action="/discount_code/edit">
+                <label>SELECT DISCOUNT CODE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select name="id" id="discount_code_id">
+                    <option value="">-</option>
+                    <%_ banner_slides.forEach(slide => { _%>
+                    <option value="<%= slide._id %>"><%= slide.text %></option>
+                    <%_ }) _%>
+                </select>
+
+                <label>DISCOUNT CODE</label>
+                <input type="text" name="code" id="discount_code_value_edit" required>
+
+                <label>EXPIRY DATE</label>
+                <input type="date" name="expiry_date" id="discount_code_expiry_date_edit" placeholder="YYYY/MM/DD" required>
 
                 <input type="submit" value="SAVE">
             </form>

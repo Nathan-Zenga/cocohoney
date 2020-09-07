@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
-const MailingListMailTransporter = require("../modules/mailingListMailTransporter");
+const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Product, Shipping_fee } = require('../models/models');
 const production = process.env.NODE_ENV === "production";
 
@@ -109,7 +109,7 @@ router.post("/checkout/payment-intent/complete", (req, res) => {
                     "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
             }, err => {
                 const { line1, line2, city, postal_code } = pi.address;
-                transporter.setRecipient({ email: "cocohoneycosmetics@gmail.com" }).sendMail({
+                transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                     subject: "Purchase Report: You Got Paid!",
                     message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
                         `- Name: ${pi.shipping.name}\n- Email: ${pi.receipt_email}\n- Purchased items: ${pi.charges.data[0].description}\n` +
