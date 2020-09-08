@@ -39,8 +39,12 @@
             <%- 
                 (function() {
                     var url_pattern = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
+                    var email_pattern = /([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})/gi;
                     return message.replace(/\r?\n/g, "<br>").replace(url_pattern, match => {
                         var href = /^www/.test(match) || !/^(https?|ftp|file|data)/.test(match) ? "http://" + match : match;
+                        return "<a style='color: inherit!important' target='_blank' href='"+ href +"'>" + match + "</a>"
+                    }).replace(email_pattern, match => {
+                        var href = "mailto:" + match;
                         return "<a style='color: inherit!important' target='_blank' href='"+ href +"'>" + match + "</a>"
                     });
                 })()
