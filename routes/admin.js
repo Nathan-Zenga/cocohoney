@@ -5,7 +5,6 @@ const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Admin } = require('../models/models');
-const email = req.session.admin_email;
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -26,6 +25,7 @@ router.get('/', isAuthed, (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.post('/login', (req, res) => {
+    const email = req.session.admin_email;
     req.body.username = email; Object.freeze(req.body);
     passport.authenticate("local-login-admin", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
@@ -58,7 +58,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post("/activate/:token", async (req, res) => {
-    req.body.username = email; Object.freeze(req.body);
+    req.body.username = req.session.admin_email; Object.freeze(req.body);
     passport.authenticate("local-register-admin", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
