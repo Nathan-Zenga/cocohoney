@@ -3,9 +3,20 @@ header .inner-header {
     padding-bottom: 30px;
 }
 
-header .chc-social-link {
+header .link-icon {
     font-size: 1.5em;
+}
+
+header .link-icon:not(:first-child) {
     margin-left: 10px;
+}
+
+.header-content-section:nth-child(2) {
+    text-align: center;
+}
+
+.header-content-section:nth-child(3) {
+    text-align: right;
 }
 
 nav {
