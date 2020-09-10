@@ -66,7 +66,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
     lastname: String,
     email: String,
     phone_number: String,
-    instagram: { type: String, set: v => v.trim().replace("@", "") },
+    instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
     token: String,
     verified: { type: Boolean, default: false },

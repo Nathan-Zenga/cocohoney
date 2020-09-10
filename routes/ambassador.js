@@ -75,6 +75,41 @@ router.post('/register/activate', (req, res) => {
     });
 });
 
+router.get('/account/login', (req, res) => {
+    res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
+});
+
+router.get('/account/logout', (req, res) => {
+    // TO DO
+});
+
+router.get('/account', (req, res) => {
+    // TO DO
+    // Ambassador.findById(req.user.id, (err, user) => {
+    //     res.render('ambassador-account', { title: "Ambassador Account", pagename: "ambassador-account" })
+    // })
+});
+
+router.post('/account/login', (req, res) => {
+    // TO DO
+});
+
+router.post('/account/edit', (req, res) => {
+    const { id, firstname, lastname, email, phone_number, instagram } = req.body;
+    Ambassador.findById(id, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (firstname)    amb.firstname = firstname;
+        if (lastname)     amb.lastname = lastname;
+        if (email)        amb.email = email;
+        if (phone_number) amb.phone_number = phone_number;
+        if (instagram)    amb.instagram = instagram;
+        amb.save(err => {
+            if (err) return res.status(500).send(err.message);
+            res.send("Account details updated");
+        });
+    });
+});
+
 router.post('/discount_code/add', (req, res) => {
     const { id, code } = req.body;
     Ambassador.findById(id, (err, amb) => {
@@ -97,37 +132,6 @@ router.post('/discount_code/edit', (req, res) => {
         amb.save(err => {
             if (err) return res.status(500).send(err.message);
             res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
-        });
-    });
-});
-
-router.get('/account/login', (req, res) => {
-});
-
-router.get('/account/logout', (req, res) => {
-});
-
-router.get('/account', (req, res) => {
-    // Ambassador.findById(req.user.id, (err, user) => {
-    //     res.render('ambassador-account', { title: "Ambassador Account", pagename: "ambassador-account" })
-    // })
-});
-
-router.post('/account/login', (req, res) => {
-});
-
-router.post('/account/edit', (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram } = req.body;
-    Ambassador.findById(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (firstname)    amb.firstname = firstname;
-        if (lastname)     amb.lastname = lastname;
-        if (email)        amb.email = email;
-        if (phone_number) amb.phone_number = phone_number;
-        if (instagram)    amb.instagram = instagram;
-        amb.save(err => {
-            if (err) return res.status(500).send(err.message);
-            res.send("Account details updated");
         });
     });
 });

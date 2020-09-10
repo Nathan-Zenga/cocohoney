@@ -10,6 +10,10 @@ router.get('/about', (req, res) => {
     res.render('about', { title: "About", pagename: "about" })
 });
 
+router.get('/account/login', (req, res) => {
+    res.render('customer-login', { title: "Customer Log In", pagename: "customer-login" })
+});
+
 router.get('/discount_code/add', (req, res) => {
     const { code, expiry_date } = req.body;
     new Discount_code({ code, expiry_date }).save(err => {
