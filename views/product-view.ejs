@@ -1,7 +1,7 @@
 <%_ include partials/header _%>
     <section>
         <div class="product-view-container container">
-            <div class="col-sm-7">
+            <div class="col-sm-7 product-images">
                 <%_ if (product.images.length === 1) { _%>
                     <div class="product-image-single">
                         <img src="<%- product.images[0].url %>" alt="<%- product.name %>">
@@ -19,7 +19,14 @@
                 </div>
                 <%_ } _%>
             </div>
-            <div class="col-sm-5">BANG</div>
+            <div class="col-sm-5 product-info">
+                <div class="details" id="name"><%= product.name %></div>
+                <div class="details" id="price">£<%= (parseFloat(product.price) / 100).toFixed(2) %></div>
+                <div class="details" id="category"><%= product.category.charAt(0).toUpperCase() + product.category.slice(1).replace(/_/g, " ") %></div>
+                <%_ if (product.product_collection) { _%>
+                <div class="details" id="collection"><%= product.product_collection.charAt(0).toUpperCase() + product.product_collection.slice(1).replace(/_/g, " ") %> Collection</div>
+                <%_ } _%>
+            </div>
         </div>
     </section>
 <%_ include partials/footer _%>
