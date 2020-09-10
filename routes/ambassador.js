@@ -16,8 +16,8 @@ router.post('/register', (req, res) => {
         saved.token = crypto.randomBytes(20).toString("hex");
         saved.save();
         new MailingListMailTransporter({ req, res }, { email: req.session.admin_email }).sendMail({
-            subject: "Ambassador Account Verification",
-            message: "The following person wants to sign up as an ambassador.\n\n" +
+            subject: `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`,
+            message: "The following candidate wants to sign up as an ambassador.\n\n" +
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
             "Please click the following link to verify them:\n" +
             `${res.locals.location_origin}/register/verify?token=${saved.token}`
