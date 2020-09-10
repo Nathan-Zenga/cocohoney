@@ -759,6 +759,12 @@ label .dropdown-arrow {
     padding-bottom: 2em;
 }
 
+.section-dropdown-options {
+    font-weight: bold;
+    max-width: 250px;
+    margin: 0 auto
+}
+
 .file-upload-container {
     display: block;
     margin-bottom: 1em;
