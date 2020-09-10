@@ -19,8 +19,10 @@ router.post('/register', (req, res) => {
             subject: `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`,
             message: "The following candidate wants to sign up as an ambassador.\n\n" +
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
-            "Please click the following link to verify them:\n" +
-            `${res.locals.location_origin}/register/verify?token=${saved.token}`
+            "Please click the link below to verify them:\n" +
+            `${res.locals.location_origin}/register/verify?token=${saved.token}\n\n` +
+            "Click below to add a discount code to their account <u>after verifying them</u>:\n\n" +
+            `${res.locals.location_origin}/discount_code/add?src=email&id=${saved.id}\n\n`
         }, err => res.send("Registered. Submitted to administration for verification"));
     });
 });
@@ -110,11 +112,26 @@ router.post('/account/edit', (req, res) => {
     });
 });
 
+router.get('/discount_code/add', (req, res) => {
+    const { id, src } = req.query;
+    if (!id || src !== "email") return res.status(400).send("Invalid entry");
+    Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(404).send("Account not found or isn't verified");
+        if (amb.discount_code) return res.status(400).send("Account already has a discount code");
+        res.render('ambassador-discount-code-add', {
+            title: "Add Ambassador Discount Code",
+            pagename: "ambassador-discount-code-add",
+            id: amb.id
+        })
+    });
+});
+
 router.post('/discount_code/add', (req, res) => {
     const { id, code } = req.body;
-    Ambassador.findById(id, (err, amb) => {
+    Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
-        if (!amb) return res.status(404).send("Account not found");
+        if (!amb) return res.status(404).send("Account not found or isn't verified");
         amb.discount_code = code;
         amb.save(err => {
             if (err) return res.status(500).send(err.message);
