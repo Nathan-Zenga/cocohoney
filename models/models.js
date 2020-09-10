@@ -72,3 +72,8 @@ module.exports.Ambassador = model('Ambassador', Schema({
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: null }
 }));
+
+module.exports.FAQ = model('FAQ', Schema({
+    question: String,
+    answer: String
+}));
