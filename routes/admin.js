@@ -4,7 +4,7 @@ const passport = require('passport');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin } = require('../models/models');
+const { Admin, Discount_code, Banner_slide } = require('../models/models');
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -75,6 +75,33 @@ router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
         const { members, products } = db;
         res.send([...members, ...products]);
+    })
+});
+
+router.post('/discount_code/add', (req, res) => {
+    const { code, expiry_date } = req.body;
+    new Discount_code({ code, expiry_date }).save(err => {
+        if (err) return res.status(500).send(err.message);
+        res.send("Discount code added");
+    })
+});
+
+router.post('/discount_code/edit', (req, res) => {
+    const { id, code, expiry_date } = req.body;
+    Discount_code.findById(id, (err, discount_code) => {
+        if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
+        if (code) discount_code.code = code;
+        if (expiry_date) discount_code.expiry_date = expiry_date;
+    });
+});
+
+router.post('/discount_code/remove', (req, res) => {
+    var ids = Object.values(req.body);
+    if (!ids.length) return res.status(400).send("Nothing selected");
+    Banner_slide.deleteMany({_id : { $in: ids }}, (err, result) => {
+        if (err) return res.status(500).send(err ? err.message : "Error occurred");
+        if (!result.deletedCount) return res.status(404).send("Banner slide(s) not found");
+        res.send("Banner slide"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
 });
 
