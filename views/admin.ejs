@@ -148,7 +148,7 @@
             }
         });
 
-       $(".input-group .input-item :input").on("change keyup", function() {
+       $("fieldset .input-item :input").on("change keyup", function() {
             var $groupInputs = $(this).closest(".input-item").find(":input");
             var notEmpty = $groupInputs.filter(function() { return this.value }).length > 0;
             $groupInputs.attr("required", notEmpty);

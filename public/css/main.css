@@ -1,4 +1,4 @@
-﻿header .inner-header {
+header .inner-header {
     padding-top: 30px;
     padding-bottom: 30px;
 }
@@ -354,6 +354,10 @@ section .media-wrapper .main-media.small {
     border-radius: 10px;
 }
 
+.form-container {
+    padding: 2em 0;
+}
+
 form {
     max-width: 600px;
     margin: 0 auto 2em;
@@ -361,6 +365,13 @@ form {
     border-radius: 10px;
     background-color: rgba(0, 0, 0, .5);
     padding: 30px;
+}
+
+form legend {
+    text-align: center;
+    border: 0;
+    padding: 1em 0;
+    color: inherit;
 }
 
 form.minimal {

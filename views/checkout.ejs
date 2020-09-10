@@ -3,7 +3,7 @@
     <div id="payment-form-container" style="margin-top: 2em">
         <div class="content container">
             <form id="payment-details-form" action="/shop/checkout/payment-intent/create">
-                <div class="input-group row" style="display: block">
+                <fieldset>
                     <div class="col-sm-6">
                         <label for="firstname">FIRST NAME</label>
                         <input type="text" name="firstname" id="firstname" required>
@@ -12,31 +12,33 @@
                         <label for="lastname">LAST NAME</label>
                         <input type="text" name="lastname" id="lastname" required>
                     </div>
-                </div>
+                </fieldset>
                 <label for="email">EMAIL</label>
                 <input type="email" name="email" id="email" required>
                 <label for="address_l1">ADDRESS</label>
                 <input type="text" name="address_l1" id="address_l1" placeholder="LINE 1" required>
                 <input type="text" name="address_l2" id="address_l2" placeholder="LINE 2 (OPTIONAL)">
-                <div class="input-group row" style="display: block">
-                    <div class="col-sm-4">
-                        <label for="city">CITY</label>
-                        <input type="text" name="city" id="city" required>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="city">CITY</label>
+                            <input type="text" name="city" id="city" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                            <select name="country" id="country" required>
+                                <option value="">-</option>
+                                <%_ for (var k in countries) { _%>
+                                <option value="<%- k %>"><%- countries[k] %></option>
+                                <%_ } _%>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="postcode">POST / ZIP CODE</label>
+                            <input type="text" name="postcode" id="postcode" required>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                        <select name="country" id="country" required>
-                            <option value="">-</option>
-                            <%_ for (var k in countries) { _%>
-                            <option value="<%- k %>"><%- countries[k] %></option>
-                            <%_ } _%>
-                        </select>
-                    </div>
-                    <div class="col-sm-4">
-                        <label for="postcode">POST / ZIP CODE</label>
-                        <input type="text" name="postcode" id="postcode" required>
-                    </div>
-                </div>
+                </fieldset>
                 <br>
                 <input type="radio" name="shipping_fee" id="standard" value="Standard">Standard (£2.99, 2-5 Days)<br>
                 <input type="radio" name="shipping_fee" id="firstclass1" value="First Class">First Class (£3.55, 1-2 Days - UK & Ireland only)<br>

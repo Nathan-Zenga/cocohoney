@@ -1,29 +1,35 @@
 <%_ include partials/header _%>
-    <form method="post" action="/ambassador/register">
-        <div class="input-group" style="display: block">
-            <div class="row">
-                <div class="col-sm-6">
-                    <label>FIRST NAME</label>
-                    <input type="text" name="firstname" id="firstname" required>
-                </div>
-                <div class="col-sm-6">
-                    <label>LAST NAME</label>
-                    <input type="text" name="lastname" id="lastname" required>
-                </div>
-            </div>
-        </div>
-    
-        <label>EMAIL</label>
-        <input type="email" name="email" id="email" required>
+    <div class="form-container">
+        <form method="post" action="/ambassador/register">
+            <fieldset>
+                <legend>AMBASSADOR REGISTER</legend>
 
-        <label>PHONE NUMBER</label>
-        <input type="text" name="phone_number" id="phone_number" required>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label>FIRST NAME</label>
+                            <input type="text" name="firstname" id="firstname" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label>LAST NAME</label>
+                            <input type="text" name="lastname" id="lastname" required>
+                        </div>
+                    </div>
+                </fieldset>
+            
+                <label>EMAIL</label>
+                <input type="email" name="email" id="email" required>
 
-        <label>INSTAGRAM HANDLE</label>
-        <input type="text" name="instagram" id="instagram" required>
+                <label>PHONE NUMBER</label>
+                <input type="text" name="phone_number" id="phone_number" required>
 
-        <input type="submit" value="SUBMIT">
-    </form>
+                <label>INSTAGRAM HANDLE</label>
+                <input type="text" name="instagram" id="instagram" required>
+
+                <input type="submit" value="SUBMIT">
+            </fieldset>
+        </form>
+    </div>
     <script>
         $("form").submit(function(e) {
             e.preventDefault();
