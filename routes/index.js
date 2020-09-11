@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/authCheck');
+const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 
 router.get('/', (req, res) => {
     res.render('index', { title: null, pagename: "home" })
@@ -23,6 +24,13 @@ router.get('/account/login', (req, res) => {
 
 router.get('/faq', (req, res) => {
     res.render('faq', { title: "FAQs", pagename: "faq" })
+});
+
+router.post('/contact/mail/send', (req, res) => {
+    const { firstname, lastname, email, message } = req.body;
+    const transporter = new MailingListMailTransporter({ req, res }, { email: req.session.admin_email });
+    const mail = { subject: "New message / enquiry", message: `New message from ${firstname} ${lastname} (${email}):\n\n${message}` };
+    transporter.sendMail(mail, err => res.status(err ? 500 : 200).send(err ? err.message : "Email sent"));
 });
 
 module.exports = router;
