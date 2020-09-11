@@ -209,7 +209,8 @@ section .bg-layer:before {
     top: 0;
     bottom: 0;
     width: 100%;
-    background-image: linear-gradient(0deg, rgba(124, 76, 76, .8) 20%, rgba(124, 76, 76, .3));
+    height: 100%;
+    background-image: linear-gradient(0deg, rgb(124, 76, 76) 30px, rgba(124, 76, 76, .8) 20%, rgba(124, 76, 76, .3));
     z-index: 1;
 }
 
@@ -222,17 +223,18 @@ section .bg-layer .bg-img {
 }
 
 @media (min-width: 768px) {
-    section .bg-layer .bg-img {
-        background-attachment: fixed;
-    }
-    
     section .bg-layer:before {
         background-image: linear-gradient(135deg, rgba(124, 76, 76, .9) 20%, rgba(124, 76, 76, .3));
     }
 }
 
+@media (min-width: 992px) {
+    section .bg-layer .bg-img {
+        background-attachment: fixed;
+    }
+}
+
 section .text {
-    margin-top: 30px;
     padding: 0 10px 20px;
 }
 
@@ -242,12 +244,8 @@ section .text h1 {
 
 section .media-wrapper {
     /* height: 500px; */
-    padding: 0 10px;
-}
-
-section .media-wrapper .main-media {
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+    padding: 0;
+    margin: 0 -15px;
 }
 
 section .media-wrapper .main-media.large {
@@ -262,26 +260,45 @@ section .media-wrapper .main-media.small {
     height: 250px;
     -webkit-transform: translate(-100%, -20%);
     transform: translate(-100%, -20%);
+    border-radius: 10px;
 }
 
 @media (min-width: 768px) {
+    section .media-wrapper .main-media {
+        border-radius: 10px;
+    }
+    
     section .text {
         position: relative;
         top: 200px;
-        margin-top: auto;
         padding: 50px 60px 50px 120px;
         -webkit-transform: translateY(-50%);
         transform: translateY(-50%);
     }
 
     section .media-wrapper {
-        padding: 0;
+        margin: 0;
     }
 
+    section .media-wrapper .main-media {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
+    }
+    
     section .media-wrapper .main-media.small {
         -webkit-transform: translate(-70%, -50%);
         transform: translate(-50%, -50%);
         height: 320px;
+    }
+}
+
+@media (max-width: 767px) {
+    section .text-wrapper {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 0;
+        background-image: linear-gradient(to bottom, rgb(124, 76, 76) 20px, rgba(124, 76, 76, .75));
+        box-shadow: 0 25px 30px 20px rgba(124, 76, 76, .75)
     }
 }
 
@@ -321,9 +338,7 @@ section .media-wrapper .main-media.small {
 
 #overview {
     margin-top: 0;
-    padding-top: 30px;
-    padding-bottom: 30px;
-    height: 85vh;
+    min-height: 80vh;
 }
 
 #ambassador-register-advert {
