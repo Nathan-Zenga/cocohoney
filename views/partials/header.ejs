@@ -69,8 +69,21 @@
             </div>
         </div>
         <div id="banner-1">
-            <div class="slide" id="shipping-info">FREE delivery for all orders over £40</div>
-            <div class="slide" id="slogan">Community &bull; Beauty Network &bull; Family</div>
+            <%_
+                var banner_slides = [
+                    { text: "FREE delivery for all orders over £40" },
+                    { text: "Community &bull; Beauty Network &bull; Family" }
+                ];
+            _%>
+            <div id="banner-1-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="false">
+                <div class="carousel-inner">
+                    <%_ banner_slides.forEach((slide, i) => { _%>
+                    <div class="item <%- i === 0 ? 'active' : '' %>">
+                        <%- slide.text %>
+                    </div>
+                    <%_ }) _%>
+                </div>
+            </div>
         </div>
     </header>
     <main>

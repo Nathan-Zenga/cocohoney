@@ -60,18 +60,11 @@ nav .sub-list {
     position: relative;
     text-align: center;
     background-color: rgba(0, 0, 0, .15);
-    overflow-x: hidden;
-    white-space: nowrap;
-    height: 3em;
     text-transform: uppercase;
 }
 
-#banner-1 .slide {
-    position: absolute;
-    width: 100%;
-    top: 50%;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+#banner-1 .item {
+    padding: 10px 0;
 }
 
 main {
@@ -112,7 +105,7 @@ section {
 .bg-underlay.bg-body:before {
     position: absolute;
     display: table;
-    content: " ";    
+    content: " ";
     width: 100%;
     height: 100%;
     background-color: rgba(124, 76, 76, 0.8);
@@ -205,7 +198,7 @@ section .bg-layer {
 section .bg-layer:before {
     position: absolute;
     display: table;
-    content: " ";    
+    content: " ";
     top: 0;
     bottom: 0;
     width: 100%;
@@ -267,7 +260,7 @@ section .media-wrapper .main-media.small {
     section .media-wrapper .main-media {
         border-radius: 10px;
     }
-    
+
     section .text {
         position: relative;
         top: 200px;
@@ -283,7 +276,7 @@ section .media-wrapper .main-media.small {
     section .media-wrapper .main-media {
         box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
     }
-    
+
     section .media-wrapper .main-media.small {
         -webkit-transform: translate(-70%, -50%);
         transform: translate(-50%, -50%);

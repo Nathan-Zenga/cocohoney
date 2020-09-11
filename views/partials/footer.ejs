@@ -20,18 +20,5 @@
             </div>
         </div>
     </footer>
-    <script>
-        $("#banner-1").children("div:gt(0)").css({ left: "100%" });
-        (function banner_autoplay() {
-            setTimeout(function() {
-                $("#banner-1 .slide").eq(0).animate({ left: "-100%" }, 800, function() {
-                    $(this).next(".slide").animate({ left: "0" }, 800, function() {
-                        $(this).prev().css({ left: "100%" }).appendTo("#banner-1");
-                        banner_autoplay();
-                    });
-                });
-            }, 5000)
-        })();
-    </script>
 </body>
 </html>
