@@ -17,21 +17,56 @@
         </section>
         <style> @media (max-width: 767px) { #storefront { margin-top: -30px; } } </style>
         <section id="storefront" class="section-overlapped">
-            <div class="content-layer container">
-                <div class="row" style="max-width: 900px; margin-left: auto; margin-right: auto;">
-                    <div class="col-sm-5 media-wrapper">
-                        <img class="main-media large" src="https://res.cloudinary.com/natzen/image/upload/v1598992659/cocohoney/site-content/pages/index/highlights-media/main-media-large.jpg" alt="magnetic-palette">
-                        <video class="main-media small dt-view" playsinline autoplay muted loop>
-                            <source src="https://res.cloudinary.com/natzen/video/upload/v1598992754/cocohoney/site-content/pages/index/highlights-media/main-media-small.mp4">
-                        </video>
-                    </div>
-                    <div class="col-sm-7 text-wrapper">
-                        <div class="text">
-                            <h1>MAGNETIC PALETTE</h1>
-                            <p>New Magnetic Palette out now! Click here to view and order.</p>
+            <%_
+                var storefront_slides = [
+                    {
+                        media_large_url: "https://res.cloudinary.com/natzen/image/upload/v1598992659/cocohoney/site-content/pages/index/highlights-media/main-media-large.jpg",
+                        media_small_url: "https://res.cloudinary.com/natzen/video/upload/v1598992754/cocohoney/site-content/pages/index/highlights-media/main-media-small.mp4",
+                        media_small_type: "video",
+                        text_title: "MAGNETIC PALETTE",
+                        text_body: "New Magnetic Palette out now! Click here to view and order."
+                    }
+                ];
+            _%>
+            <div id="storefront-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="false">
+                <div class="carousel-inner" style="overflow: initial;">
+                    <%_ storefront_slides.forEach((slide, i) => { _%>
+                    <div class="item<%- i === 0 ? ' active' : '' %>">
+                        <div class="content-layer container">
+                            <div class="row" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                                <div class="col-sm-5 media-wrapper">
+                                    <img class="main-media large" src="<%- slide.media_large_url %>" alt="<%- slide.media_large_url.slice(slide.media_large_url.lastIndexOf('/') + 1) %>">
+                                    <%_ if (slide.media_small_url) { _%>
+                                    <%_ if (slide.media_small_type === "video") { _%>
+                                    <video class="main-media small dt-view" playsinline autoplay muted loop>
+                                        <source src="<%- slide.media_small_url %>">
+                                    </video>
+                                    <%_ } else { _%>
+                                    <img class="main-media small dt-view" src="<%- slide.media_small_url %>" alt="<%- slide.media_small_url.slice(slide.media_small_url.lastIndexOf('/') + 1) %>">
+                                    <%_ }} _%>
+                                </div>
+                                <div class="col-sm-7 text-wrapper">
+                                    <div class="text">
+                                        <h1><%- slide.text_title %></h1>
+                                        <p><%- slide.text_body %></p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <%_ }) _%>
                 </div>
+
+                <%_ if (storefront_slides.length > 1) { _%>
+                <a class="left carousel-control" href="#storefront-carousel" data-slide="prev">
+                    <span class="arrow fal fa-chevron-left"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#storefront-carousel" data-slide="next">
+                    <span class="arrow fal fa-chevron-right"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+                <%_ } _%>
             </div>
         </section>
         <section id="ambassador-register-advert">

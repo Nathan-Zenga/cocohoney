@@ -1,4 +1,8 @@
-﻿header .inner-header {
+﻿body {
+    overflow-x: hidden;
+}
+
+header .inner-header {
     padding-top: 30px;
     padding-bottom: 30px;
 }
@@ -52,6 +56,7 @@ nav .sub-list {
     position: absolute;
     left: 50%;
     font-size: 1.5em;
+    -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
     padding: 0 30px 30px 30px;
 }
@@ -321,6 +326,7 @@ section .media-wrapper .main-media.small {
 
 .section-overlapped {
     margin-top: -50px;
+    z-index: 5;
 }
 
 @media (min-width: 768px) {
@@ -862,4 +868,30 @@ label .dropdown-arrow {
 #product-view-page #price {
     font-size: 2em;
     color: rgb(240, 230, 140);
+}
+
+.chc .carousel-control {
+    background-image: none;
+}
+
+.chc .carousel-control > .arrow {
+    top: 50%;
+    position: relative;
+    font-size: 1.5em;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.chc .carousel-indicators li {
+    border: none;
+    background-color: rgba(255, 255, 255);
+    opacity: .5;
+}
+
+.chc .carousel-indicators li:not(:last-child) {
+    margin-right: 5px;
+}
+
+.chc .carousel-indicators .active {
+    opacity: 1;
 }
