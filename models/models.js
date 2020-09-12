@@ -61,8 +61,8 @@ module.exports.Shipping_fee = model('Shipping_fee', Schema({
 }));
 
 module.exports.Discount_code = model('Discount_code', Schema({
-    code: String,
-    expiry_date: Date
+    code: { type: String, required: true },
+    expiry_date: { type: Date, required: true }
 }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
