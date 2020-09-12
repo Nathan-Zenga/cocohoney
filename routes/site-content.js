@@ -31,7 +31,7 @@ router.post('/background-media', isAuthed, (req, res) => {
         const content = !contents.length ? new Site_content() : contents[0];
         cloud.uploader.upload(media_url || media_file, { public_id: "cocohoney/site-content/site-bg" }, (err, result) => {
             if (err) return res.status(500).send(err.message);
-            content.bg_underlay = result.secure_url;
+            content.background_image = result.secure_url;
             content.save(err => res.send("Site background updated"));
         });
     })
