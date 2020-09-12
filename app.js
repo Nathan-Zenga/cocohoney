@@ -8,6 +8,7 @@ const stripe = require('stripe')(process.env.STRIPE_SK);
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const { CHCDB, NODE_ENV } = process.env;
+const { Site_content } = require("./models/models");
 const production = NODE_ENV === "production";
 
 mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
@@ -30,9 +31,10 @@ app.use(session({ // express session
     store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 * 12 })
 }));
 
-app.use((req, res, next) => { // global variables
+app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.location_origin = `https://${req.hostname}`;
+    res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
     res.locals.cart = req.session.cart = req.session.cart || [];
     if (!req.session.paymentIntentID) return next();
     stripe.paymentIntents.retrieve(req.session.paymentIntentID, (err, pi) => {

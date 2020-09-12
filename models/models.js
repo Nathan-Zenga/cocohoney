@@ -33,7 +33,11 @@ module.exports.Lookbook_media = model('Lookbook_media', Schema({
 }));
 
 module.exports.Site_content = model('Site_content', Schema({
-    bg_underlay: String
+    bg_underlay: String,
+    socials: [{
+        name: String,
+        url: { type: String, set: v => !/^https?:\/\//i.test(v) ? "https://" + v : v }
+    }]
 }));
 
 module.exports.Banner_slide = model('Banner_slide', Schema({
