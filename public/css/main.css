@@ -1,4 +1,4 @@
-﻿body {
+body {
     overflow-x: hidden;
 }
 
@@ -391,6 +391,7 @@ section .media-wrapper .main-media.small {
     overflow: hidden;
     background-position: center;
     background-size: cover;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
 }
 
 .thumb .thumb-info {
