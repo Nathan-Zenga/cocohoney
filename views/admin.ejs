@@ -1,6 +1,18 @@
 <%_ include partials/header _%>
     <section style="padding-top: 2em;">
-        <ul class="nav nav-pills">
+        <div class="mb-view-md section-dropdown-options">
+            <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select>
+                <option value="#banner">BANNER SLIDES</option>
+                <option value="#product">PRODUCTS</option>
+                <option value="#discount-code">DISCOUNT CODES</option>
+                <option value="#lookbook">LOOKBOOK UPLOAD</option>
+                <option value="#mail">MAIL</option>
+                <option value="#edit">EDIT</option>
+                <option value="#remove">REMOVE</option>
+            </select>
+        </div>
+        <ul class="dt-view-md nav nav-pills">
             <li class="active"><a data-toggle="pill" href="#banner">BANNER SLIDES</a></li>
             <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
             <li><a data-toggle="pill" href="#discount_code">DISCOUNT CODES</a></li>
@@ -205,7 +217,7 @@
         });
 
         $(".section-dropdown-options select").change(function() {
-            $(this).closest(".sidebar").find(".nav-pills a[href='"+ this.value +"']").click()
+            $(".nav-pills a[href='"+ this.value +"']").click()
         });
 
         $("#homepage_image_file").change(function() {
