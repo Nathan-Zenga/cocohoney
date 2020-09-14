@@ -2,48 +2,71 @@
     <div class="mb-view-md section-dropdown-options" style="font-weight: bold; max-width: 250px; margin: 0 auto">
         <label>SELECT OPTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
         <select>
-            <option value="#remove-member">MEMBER</option>
-            <option value="#remove-product">SHOP PRODUCT</option>
+            <option value="#remove-banner">BANNER SLIDE</option>
+            <option value="#remove-product">PRODUCT</option>
+            <option value="#remove-discount-code">DISCOUNT CODE</option>
         </select>
     </div>
     <ul class="nav nav-pills nav-stacked dt-view-md">
-        <li class="active"><a data-toggle="pill" href="#remove-member">MEMBER</a></li>
-        <li><a data-toggle="pill" href="#remove-product">SHOP PRODUCT</a></li>
+        <li class="active"><a data-toggle="pill" href="#remove-banner">BANNER SLIDE</a></li>
+        <li><a data-toggle="pill" href="#remove-product">PRODUCT</a></li>
+        <li><a data-toggle="pill" href="#remove-discount-code">DISCOUNT CODE</a></li>
     </ul>
 </div>
 <div class="col-md-9">
     <div class="tab-content" style="padding-top: 10px;">
 
-        <div id="remove-member" class="tab-pane fade in active">
-            <%_ if ([].length) { _%>
-            <form action="/mailing-list/member/delete" method="post">
-                <label>DELETE MEMBER(S) FROM MAILING LIST</label>
-                <%_ [].forEach((member, i) => { _%>
-                <input type="checkbox" name="member<%= i %>" value="<%= member._id %>"> <span><%= member.firstname +" "+ member.lastname %></span><br>
+        <div id="remove-banner" class="tab-pane fade in active">
+            <%_ if (banner_slides.length) { _%>
+            <form action="/admin/banner/remove" method="post">
+                <label>DELETE SLIDE(S) FROM BANNER</label><br><br>
+                <%_ banner_slides.forEach((slide, i) => { _%>
+                <div class="input-checkbox">
+                    <input type="checkbox" name="slide<%= i %>" value="<%= slide._id %>"><span><%= slide.text %></span>
+                </div>
                 <%_ }) _%>
                 <br>
-                <input type="submit" value="DELETE MEMBERS">
+                <input type="submit" value="DELETE BANNER SLIDES">
             </form>
             <%_ } else { _%>
-            <p style="text-align: center; margin-top: 2em"><b>NO MEMBERS TO REMOVE</b></p>
+            <p style="text-align: center; margin-top: 2em"><b>NO BANNER SLIDES TO REMOVE</b></p>
             <%_ } _%>
         </div>
 
         <div id="remove-product" class="tab-pane fade">
             <%_ if (products.length) { _%>
             <form action="/product/stock/remove" method="post">
-                <label>DELETE PRODUCT(S) FROM STOCK</label><br>
+                <label>DELETE PRODUCT(S) FROM STOCK</label><br><br>
                 <%_ products.forEach((item, i) => {
                     var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
                     product_collection = product_collection ? product_collection + " Collection" : "Others"; _%>
                 <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="margin: .5em 0">'+product_collection+'</div>' : '' %>
-                <input type="checkbox" name="product<%= i %>" value="<%= item._id %>"> <span><%= item.name %></span><br>
+                <div class="input-checkbox">
+                    <input type="checkbox" name="product<%= i %>" value="<%= item._id %>"> <span><%= item.name %></span>
+                </div>
                 <%_ }) _%>
                 <br>
                 <input type="submit" value="DELETE PRODUCTS">
             </form>
             <%_ } else { _%>
             <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
+            <%_ } _%>
+        </div>
+
+        <div id="remove-discount-code" class="tab-pane fade">
+            <%_ if (discount_codes.length) { _%>
+            <form action="/admin/banner/remove" method="post">
+                <label>DELETE DISCOUNT CODE(S)</label><br><br>
+                <%_ discount_codes.forEach((dc, i) => { _%>
+                <div class="input-checkbox">
+                    <input type="checkbox" name="dc<%= i %>" value="<%= dc._id %>"><span><%= dc.code %></span><br>
+                </div>
+                <%_ }) _%>
+                <br>
+                <input type="submit" value="DELETE DISCOUNT CODES">
+            </form>
+            <%_ } else { _%>
+            <p style="text-align: center; margin-top: 2em"><b>NO DISCOUNT CODES TO REMOVE</b></p>
             <%_ } _%>
         </div>
 

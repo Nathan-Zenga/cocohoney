@@ -542,6 +542,10 @@ label .dropdown-arrow {
     margin-left: 5px;
 }
 
+.input-checkbox {
+    margin-bottom: .5em;
+}
+
 #cart-icon {
     position: fixed;
     right: 0;

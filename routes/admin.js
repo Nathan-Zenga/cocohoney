@@ -73,8 +73,8 @@ router.post("/activate/:token", async (req, res) => {
 
 router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
-        const { members, products } = db;
-        res.send([...members, ...products]);
+        const { members, banner_slides, discount_codes, products } = db;
+        res.send([...members, ...banner_slides, ...discount_codes, ...products]);
     })
 });
 

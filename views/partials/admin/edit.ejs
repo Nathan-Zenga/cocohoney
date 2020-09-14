@@ -91,7 +91,7 @@
                 <label>SELECT DISCOUNT CODE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                 <select name="id" id="discount_code_id">
                     <option value="">-</option>
-                    <%_ banner_slides.forEach(slide => { _%>
+                    <%_ discount_codes.forEach(slide => { _%>
                     <option value="<%= slide._id %>"><%= slide.text %></option>
                     <%_ }) _%>
                 </select>
