@@ -28,7 +28,7 @@ a:hover {
 }
 
 ::selection {
-    background-color: khaki;
+    background-color: rgb(240, 230, 140);
     color: black;
 }
 
