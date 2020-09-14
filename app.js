@@ -8,7 +8,7 @@ const stripe = require('stripe')(process.env.STRIPE_SK);
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const { CHCDB, NODE_ENV } = process.env;
-const { Site_content } = require("./models/models");
+const { Site_content, Banner_slide } = require("./models/models");
 const production = NODE_ENV === "production";
 
 mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
@@ -35,6 +35,7 @@ app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.user = req.user || null;
     res.locals.location_origin = `https://${req.hostname}`;
+    res.locals.banner_slides = await Banner_slide.find();
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
     res.locals.sale = ((await Site_content.find())[0] || {}).active || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
