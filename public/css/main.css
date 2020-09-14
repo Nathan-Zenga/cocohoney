@@ -181,9 +181,22 @@ footer .row:not(:last-child) {
     margin-bottom: 3em;
 }
 
-footer .footer-links .link {
+footer #footer-links .link {
     display: block;
     margin-bottom: 1em;
+}
+
+footer #accepted-cards .card-icon {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+footer #accepted-cards .card-icon:not(:last-child) {
+    margin-right: 10px;
+}
+
+footer #copyright {
+    text-align: center;
 }
 
 section .content-layer {
