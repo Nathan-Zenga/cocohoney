@@ -13,8 +13,13 @@
                                 <div class="thumb-img product-image" style="background-image: url('<%- product.images[0].url %>');"></div>
                             </a>
                             <div class="thumb-info">
-                                <p class="product-name"><%= product.name %></p>
-                                <p>£<%- (product.price / 100).toFixed(2) %></p>
+                                <div class="product-name"><p><%= product.name %></p></div>
+                                <div class="product-price">
+                                    <%_ const ambassador = (user || {}).discount_code;
+                                        const price = ambassador ? product.price_amb : sale ? product.price_sale : product.price;
+                                        const price_original = ambassador || sale ? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+                                    <p>£<%- (price / 100).toFixed(2) + price_original %></p>
+                                </div>
                                 <div class="cart-options">
                                     <form class="add-to-cart minimal" action="/shop/cart/add">
                                         <input type="hidden" name="id" value="<%- product.id %>">

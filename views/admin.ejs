@@ -163,7 +163,11 @@
 
                 $form.find("#product_name_edit").val(result.name);
                 $form.find("#price_edit").val(parseFloat(result.price) / 100);
+                $form.find("#price_sale_edit").val(parseFloat(result.price) / 100);
+                $form.find("#price_amb_edit").val(parseFloat(result.price) / 100);
                 $form.find("#stock_qty_edit").val(result.stock_qty);
+                $form.find("#product_category_edit").val(result.category);
+                $form.find("#product_collection_edit").val(result.product_collection);
                 $form.find("#product_info_edit").val(result.info);
 
                 $form.find("#banner_text_edit").val(result.text);

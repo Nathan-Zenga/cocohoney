@@ -1,4 +1,4 @@
-body {
+﻿body {
     overflow-x: hidden;
 }
 
@@ -402,6 +402,11 @@ section .media-wrapper .main-media.small {
     text-align: center;
 }
 
+.thumb .thumb-info .product-price del {
+    font-size: .8em;
+    opacity: .5;
+}
+
 .add-to-cart-btn {
     width: 50%;
 }
@@ -605,6 +610,11 @@ label .dropdown-arrow {
 
 .cart-item .item-qty-control button {
     padding: 10px 20px
+}
+
+.cart-item .item-qty-control button:not(.remove-btn) {
+    background-color: transparent;
+    color: white;
 }
 
 @media (min-width: 768px) {

@@ -33,8 +33,10 @@ app.use(session({ // express session
 
 app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
+    res.locals.user = req.user || null;
     res.locals.location_origin = `https://${req.hostname}`;
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
+    res.locals.sale = ((await Site_content.find())[0] || {}).active || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
     if (!req.session.paymentIntentID) return next();
     stripe.paymentIntents.retrieve(req.session.paymentIntentID, (err, pi) => {

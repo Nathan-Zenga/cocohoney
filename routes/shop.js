@@ -2,7 +2,7 @@ const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Product, Shipping_fee } = require('../models/models');
+const { Product, Shipping_fee, Discount_code, Ambassador } = require('../models/models');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/cart", (req, res) => {
@@ -28,7 +28,7 @@ router.post("/cart/add", (req, res) => {
     Product.findById(req.body.id, (err, product) => {
         if (err) return res.status(500).send(err.message);
         if (!product || product.stock_qty < 1) return res.status(!product ? 404 : 400).send("Item currently not in stock");
-        const { id, name, price, images, info, stock_qty } = product;
+        const { id, name, price, price_sale, price_amb, images, info, stock_qty } = product;
         const cartItemIndex = req.session.cart.findIndex(item => item.id === id);
 
         if (cartItemIndex >= 0) {
@@ -36,7 +36,7 @@ router.post("/cart/add", (req, res) => {
             currentItem.qty += 1;
             if (currentItem.qty > stock_qty) currentItem.qty = stock_qty;
         } else {
-            req.session.cart.unshift({ id, name, price, image: images[0], info, stock_qty, qty: 1 });
+            req.session.cart.unshift({ id, name, price, price_sale, price_amb, image: images[0], info, stock_qty, qty: 1 });
         }
 
         res.send(`${req.session.cart.length}`);
@@ -62,25 +62,33 @@ router.post("/cart/increment", (req, res) => {
     res.send(`${currentItem.qty}`);
 });
 
-router.post("/checkout/payment-intent/create", (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, postcode, shipping_fee_id, cart } = Object.assign(req.body, req.session);
-    Shipping_fee.findById(shipping_fee_id, (err, fee) => {
-        if (err || !fee) return res.send(err ? err.message : "Invalid shipping fee chosen");
-        stripe.paymentIntents.create({ // Create a PaymentIntent with the order details
+router.post("/checkout/payment-intent/create", async (req, res) => {
+    const { firstname, lastname, email, address_l1, address_l2, city, postcode, discount_code, shipping_fee_id } = req.body;
+    const { cart, sale } = Object.assign(req.session, res.locals);
+
+    try {
+        var code = await Discount_code.find({ code: discount_code });
+        var amb_code = req.user ? await Ambassador.findOne(req.user.discount_code) : {};
+        var shipping_fee = await Shipping_fee.findById(shipping_fee_id);
+        if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
+
+        const pi = await stripe.paymentIntents.create({ // Create a PaymentIntent with the order details
             receipt_email: email,
             description: cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n") + `\r\n${fee.name}: ${fee.fee}`,
-            amount: cart.map(p => ({ price: p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + fee.fee,
+            amount: cart.map(p => ({ price: amb_code ? p.price_amb : code || sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + fee.fee,
             currency: "gbp",
             shipping: {
                 name: firstname + " " + lastname,
                 address: { line1: address_l1, line2: address_l2, city, postal_code: postcode }
             }
-        }, (err, pi) => {
-            if (err) return res.status(400).send(err.message);
-            req.session.paymentIntentID = pi.id;
-            res.send({ clientSecret: pi.client_secret, pk: process.env.STRIPE_PK });
         });
-    })
+
+        req.session.paymentIntentID = pi.id;
+        res.send({ clientSecret: pi.client_secret, pk: process.env.STRIPE_PK });
+    } catch(err) {
+        if (res.statusCode === 200) res.status(500);
+        res.send(err.message);
+    };
 });
 
 router.post("/checkout/payment-intent/complete", (req, res) => {

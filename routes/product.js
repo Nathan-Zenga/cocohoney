@@ -6,10 +6,8 @@ const { Product } = require('../models/models');
 router.get('/collection/:category/:product_collection', (req, res, next) => {
     const { category, product_collection } = req.params;
     if (!category || !product_collection) return next();
-    Product.find({
-        category,
-        product_collection: { $regex: RegExp(`^${product_collection}$`, "i") }
-    }).sort({ _id: -1 }).exec((err, collection) => {
+    const coll = { $regex: RegExp(`^${product_collection}$`, "i") };
+    Product.find({ category, product_collection: coll }).sort({ _id: -1 }).exec((err, collection) => {
         if (!collection.length) return next();
         const title = collection[0].product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
         res.render('product-collection', { title, pagename: "lash-collection", collection });
@@ -24,8 +22,8 @@ router.get('/:id', (req, res, next) => {
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    new Product({ name, price, category, product_collection, stock_qty, info }).save((err, saved) => {
+    const { name, price, price_sale, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    new Product({ name, price, price_sale, price_amb, category, product_collection, stock_qty, info }).save((err, saved) => {
         if (err) return res.status(400).send(err.message);
         if (!image_url && !image_file) return res.send("Product saved in stock");
         const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");

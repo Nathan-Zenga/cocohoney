@@ -1,23 +1,36 @@
 <form method="post" action="/product/stock/add">
     <label>PRODUCT NAME</label>
-    <input type="text" name="name" id="product-name" required>
+    <input type="text" name="name" id="product_name" required>
 
     <label>PRICE (£)</label>
     <input type="number" name="price" id="price" min="0.01" step="0.01" required>
 
+    <fieldset>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>PRICE ON SALE (£)</label>
+                <input type="number" name="price_sale" id="price_sale" min="0.01" step="0.01" required>
+            </div>
+            <div class="col-sm-6">
+                <label>PRICE FOR AMBASSADORS (£)</label>
+                <input type="number" name="price_amb" id="price_amb" min="0.01" step="0.01" required>
+            </div>
+        </div>
+    </fieldset>
+
     <label>TOTAL IN STOCK</label>
     <input type="number" name="stock_qty" id="stock_qty" min="1" value="1" required>
 
-    <label>CATEGORY <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
-    <select name="category" id="product-category" required>
-        <option value="">Choose category</option>
+    <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+    <select name="category" id="product_category" required>
+        <option value="">Select category</option>
         <option value="lashes">Lashes</option>
         <option value="palette">Palette</option>
     </select>
 
     <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
-    <select name="product_collection" id="product-collection">
-        <option value="">Choose collection</option>
+    <select name="product_collection" id="product_collection">
+        <option value="">Select collection</option>
         <option value="original">Original</option>
         <option value="honey_drip">Honey Drip</option>
         <option value="emerald">Emerald</option>
@@ -29,10 +42,10 @@
     <label>PRODUCT IMAGE</label>
     <fieldset class="file-upload-container">
         <div class="row">
-            <div class="col-sm-6 col-xs-9"><input type="file" id="product-image-file" accept=".jpg,.jpeg,.png,.bmp"></div>
+            <div class="col-sm-6 col-xs-9"><input type="file" id="product_image_file" accept=".jpg,.jpeg,.png,.bmp"></div>
             <input type="hidden" name="image_file">
             <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="product-image-file">CLEAR</button></div>
-            <div class="col-sm-12"><input type="url" name="image_url" id="product-image-url" placeholder="Or enter the image URL"></div>
+            <div class="col-sm-12"><input type="url" name="image_url" id="product_image_url" placeholder="Or enter the image URL"></div>
         </div>
     </fieldset>
 

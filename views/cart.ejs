@@ -2,11 +2,17 @@
     <section class="container">
         <%_ cart.forEach(item => { _%>
         <div class="cart-item">
-            <div class="item-img col-sm-3" style="background-image:url('<%- item.image.url %>')"></div>
-            <div class="item-info col-sm-7">
-                <p class="item-name" style="font-weight: 400"><%- item.name %></p>
-                <p class="item-price">£<span><%- (item.price / 100).toFixed(2) %></span></p>
-                <p><%- (item.info || "").replace(/\r?\n/g, "<br>") %></p>
+            <div class="col-sm-10">
+                <div class="row">
+                    <div class="item-img col-sm-4 col-xs-7" style="background-image:url('<%- item.image.url %>')"></div>
+                    <div class="item-info col-sm-8 col-xs-5">
+                        <p class="item-name" style="font-weight: 400"><%- item.name %></p>
+                        <%_ const ambassador = (user || {}).discount_code;
+                            const price = ambassador ? item.price_amb : sale ? item.price_sale : item.price _%>
+                        <p class="item-price">£<span><%- (price / 100).toFixed(2) %></span></p>
+                        <p><%- (item.info || "").replace(/\r?\n/g, "<br>") %></p>
+                    </div>
+                </div>
             </div>
             <div class="item-qty-control col-sm-2">
                 <div class="row" style="margin: 0;">
@@ -15,8 +21,8 @@
                             <input type="hidden" name="id" value="<%- item.id %>">
                             <input type="hidden" name="increment" value="1">
                             <button type="submit">
-                                <i class="mb-view fas fa-chevron-right"></i>
-                                <i class="dt-view fas fa-chevron-up"></i>
+                                <i class="mb-view fal fa-chevron-right"></i>
+                                <i class="dt-view fal fa-chevron-up"></i>
                             </button>
                         </form>
                     </div>
@@ -26,8 +32,8 @@
                             <input type="hidden" name="id" value="<%- item.id %>">
                             <input type="hidden" name="increment" value="-1">
                             <button type="submit">
-                                <i class="mb-view fas fa-chevron-left"></i>
-                                <i class="dt-view fas fa-chevron-down"></i>
+                                <i class="mb-view fal fa-chevron-left"></i>
+                                <i class="dt-view fal fa-chevron-down"></i>
                             </button>
                         </form>
                     </div>
@@ -35,7 +41,7 @@
                         <form class="minimal item-remove-form" action="/shop/cart/remove">
                             <input type="hidden" name="id" value="<%- item.id %>">
                             <button type="submit" class="btn-danger remove-btn">
-                                <i class="fas fa-trash-alt" style="font-weight: normal"></i>
+                                <i class="fal fa-trash-alt" style="font-weight: normal"></i>
                             </button>
                         </form>
                     </div>
