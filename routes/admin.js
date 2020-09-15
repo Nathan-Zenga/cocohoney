@@ -92,16 +92,20 @@ router.post('/discount_code/edit', (req, res) => {
         if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
         if (code) discount_code.code = code;
         if (expiry_date) discount_code.expiry_date = expiry_date;
+        discount_code.save(err => {
+            if (err) return res.status(500).send(err.message);
+            res.send("Discount code details saved");
+        })
     });
 });
 
 router.post('/discount_code/remove', (req, res) => {
     var ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Banner_slide.deleteMany({_id : { $in: ids }}, (err, result) => {
+    Discount_code.deleteMany({_id : { $in: ids }}, (err, result) => {
         if (err) return res.status(500).send(err ? err.message : "Error occurred");
-        if (!result.deletedCount) return res.status(404).send("Banner slide(s) not found");
-        res.send("Banner slide"+ (ids.length > 1 ? "s" : "") +" removed successfully")
+        if (!result.deletedCount) return res.status(404).send("Discount code(s) not found");
+        res.send("Discount code"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
 });
 

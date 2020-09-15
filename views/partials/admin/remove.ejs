@@ -55,7 +55,7 @@
 
         <div id="remove-discount-code" class="tab-pane fade">
             <%_ if (discount_codes.length) { _%>
-            <form action="/admin/banner/remove" method="post">
+            <form action="/admin/discount_code/remove" method="post">
                 <label>DELETE DISCOUNT CODE(S)</label><br><br>
                 <%_ discount_codes.forEach((dc, i) => { _%>
                 <div class="input-checkbox">
