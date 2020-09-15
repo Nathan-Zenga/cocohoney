@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const paypal = require('paypal-rest-sdk');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Shipping_fee, Discount_code, Ambassador } = require('../models/models');
+const { Product, Shipping_fee, Discount_code, Ambassador } = require('../models/models');
 const { NODE_ENV, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = process.env;
 const production = NODE_ENV === "production";
 
@@ -56,13 +56,14 @@ router.post("/create-payment", async (req, res) => {
         }]
     }, (err, payment) => {
         req.session.amount_temp = amount;
+        req.session.current_discount_code = code;
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${err.response.details.map(d => d.issue).join(",\n")}`);
         res.send(payment.links.filter(link => link.rel === "approval_url")[0].href);
     });
 });
 
 router.get("/complete", async (req, res) => {
-    const { paymentId, PayerID, amount_temp } = Object.assign(req.query, req.session);
+    const { paymentId, PayerID, amount_temp, cart, current_discount_code } = Object.assign(req.query, req.session);
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
@@ -74,8 +75,24 @@ router.get("/complete", async (req, res) => {
             error: `${err.message}\n${err.response.details.map(d => d.issue).join(",\n")}`
         });
 
+        const products = await Product.find();
+        if (production) cart.forEach(item => {
+            const product = products.filter(p => p.id === item.id)[0];
+            if (product) {
+                product.stock_qty -= item.qty;
+                if (product.stock_qty < 0) product.stock_qty = 0;
+                product.save();
+            }
+        });
+
         req.session.cart = [];
         req.session.amount_temp = undefined;
+        if (current_discount_code) {
+            const code = await Discount_code.findById(current_discount_code.id);
+            if (code) { code.used = true; code.save() }
+            req.session.current_discount_code = undefined;
+        }
+
         if (!production) return res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" });
         const transporter = new MailingListMailTransporter({ req, res });
         transporter.setRecipient(pi.receipt_email).sendMail({
