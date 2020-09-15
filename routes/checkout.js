@@ -28,7 +28,7 @@ router.post("/payment-intent/create", async (req, res) => {
 
     stripe.paymentIntents.create({
         receipt_email: email,
-        description: cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n") + `\r\n${shipping_fee.name}: ${shipping_fee.fee}`,
+        description: cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n") + `\r\n${shipping_fee.name}: ${(shipping_fee.fee / 100).toFixed(2)}`,
         amount: cart.map(p => ({ price: amb ? p.price_amb : code || sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + shipping_fee.fee,
         currency: "gbp",
         shipping: {
