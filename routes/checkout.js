@@ -43,6 +43,7 @@ router.post("/payment-intent/create", async (req, res) => {
 });
 
 router.post("/payment-intent/complete", (req, res) => {
+    const success_message = "<h1>Payment Successful</h1><p>A reciept has been forwarded to your email address.</p><p>Thank you for your purchase!</p>";
     stripe.paymentIntents.retrieve(req.session.paymentIntentID, (err, pi) => {
         if (err || !pi) return res.status(err ? 500 : 400).send("Error occurred");
         if (pi.status !== "succeeded") return res.status(500).send(pi.status.replace(/_/g, " "));
@@ -57,7 +58,7 @@ router.post("/payment-intent/complete", (req, res) => {
             });
             req.session.cart = [];
             req.session.paymentIntentID = undefined;
-            if (!production) return res.end();
+            if (!production) return res.send(success_message);
 
             const transporter = new MailingListMailTransporter({ req, res });
             transporter.setRecipient(pi.receipt_email).sendMail({
@@ -78,7 +79,7 @@ router.post("/payment-intent/complete", (req, res) => {
                 }, err2 => {
                     const error = err || err2;
                     if (error) return res.status(500).send(error.message || (err || "")+" / "+(err2 || ""));
-                    res.end();
+                    res.send(success_message);
                 });
             });
         })

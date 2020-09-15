@@ -109,17 +109,17 @@
                             if (res.error) return btnControl.finish(), showError(res.error.message);
                             window.onbeforeunload = null;
                             $("#cart-item-count").text(0);
-                            $.post("/shop/checkout/payment-intent/complete").fail(function(err, status, codeMessage) {
-                                console.log(codeMessage + (err ? ": " + err.responseText : ""));
-                            }).always(function() {
-                                btnControl.finish();
+                            $.post("/shop/checkout/payment-intent/complete", function(msg) {
                                 $("html, body").animate({ scrollTop: 0 }, function() {
                                     $("#payment-form-container form").fadeOut(function() {
                                         var css = { display: "none", marginTop: "5em", textAlign: "center", fontWeight: 400 };
-                                        var msg = "Payment succeeded!<br><br>A reciept has been forwarded to your email address.<br><br>Thank you for your purchase!";
-                                        $(".content").html($("<p>").css(css).html(msg).get(0).outerHTML).children().fadeIn();
+                                        $(".content").html($("<div>").css(css).html(msg).get(0).outerHTML).children().fadeIn();
                                     });
                                 });
+                            }).fail(function(err, status, codeMessage) {
+                                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                            }).always(function() {
+                                btnControl.finish();
                             });
                         });
                     });
