@@ -2,70 +2,106 @@
     <%_ include partials/stripe-checkout-css _%>
     <div id="payment-form-container" style="margin-top: 2em">
         <div class="content container">
-            <form id="payment-details-form" action="/shop/checkout/payment-intent/create">
-                <fieldset>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <label for="firstname">FIRST NAME</label>
-                            <input type="text" name="firstname" id="firstname" required>
-                        </div>
-                        <div class="col-sm-6">
-                            <label for="lastname">LAST NAME</label>
-                            <input type="text" name="lastname" id="lastname" required>
-                        </div>
-                    </div>
-                </fieldset>
-                <label for="email">EMAIL</label>
-                <input type="email" name="email" id="email" required>
-                <label for="address_l1">ADDRESS</label>
-                <input type="text" name="address_l1" id="address_l1" placeholder="LINE 1" required>
-                <input type="text" name="address_l2" id="address_l2" placeholder="LINE 2 (OPTIONAL)">
-                <fieldset>
-                    <div class="row">
-                        <div class="col-sm-4">
-                            <label for="city">CITY</label>
-                            <input type="text" name="city" id="city" required>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                            <select name="country" id="country" required>
-                                <option value="">-</option>
-                                <%_ for (var k in countries) { _%>
-                                <option value="<%- k %>"><%- countries[k] %></option>
-                                <%_ } _%>
-                            </select>
-                        </div>
-                        <div class="col-sm-4">
-                            <label for="postcode">POST / ZIP CODE</label>
-                            <input type="text" name="postcode" id="postcode" required>
-                        </div>
-                    </div>
-                </fieldset>
-                <br>
-                <%_ shipping_fees.forEach(fee => { _%>
-                <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
-                    <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
-                <br>
-                <%_ }) _%>
-                <br>
-                <input type="submit" value="CONTINUE TO PAYMENT">
-            </form>
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#card-payment">
+                    <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CARD</span></span>
+                </a></li>
+                <li><a data-toggle="pill" href="#paypal-payment">
+                    <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>PAYPAL</span></span>
+                </a></li>
+            </ul>
 
-            <form class="minimal" id="payment-form" style="display: none; margin-top: 2em">
-                <label for="card-element">ENTER PAYMENT DETAILS</label>
-                <div id="card-element"></div>
-                <input type="submit" id="submit-payment-btn" value="PAY">
+            <div class="tab-content">
+                <div id="card-payment" class="tab-pane fade in active">
+                    <form id="payment-details-form" action="/shop/checkout/payment-intent/create">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label for="firstname">FIRST NAME</label>
+                                    <input type="text" name="firstname" id="firstname" required>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="lastname">LAST NAME</label>
+                                    <input type="text" name="lastname" id="lastname" required>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <label for="email">EMAIL</label>
+                        <input type="email" name="email" id="email" required>
+                        <label for="address_l1">ADDRESS</label>
+                        <input type="text" name="address_l1" id="address_l1" placeholder="LINE 1" required>
+                        <input type="text" name="address_l2" id="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label for="city">CITY</label>
+                                    <input type="text" name="city" id="city" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                    <select name="country" id="country" required>
+                                        <option value="">-</option>
+                                        <%_ for (var k in countries) { _%>
+                                        <option value="<%- k %>"><%- countries[k] %></option>
+                                        <%_ } _%>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label for="postcode">POST / ZIP CODE</label>
+                                    <input type="text" name="postcode" id="postcode" required>
+                                </div>
+                            </div>
+                        </fieldset>
+                        <br>
+                        <label>CHOOSE DELIVERY METHOD</label><br><br>
+                        <%_ shipping_fees.forEach(fee => { _%>
+                        <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
+                            <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
+                        <br>
+                        <%_ }) _%>
+                        <br><br>
+                        <button class="checkout-btn" type="submit">
+                            <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CONTINUE TO PAYMENT</span></span>
+                        </button>
+                    </form>
 
-                <p id="card-error" role="alert"></p>
-            </form>
+                    <form class="minimal" id="card-payment-form" style="display: none; margin-top: 2em">
+                        <label for="card-element">ENTER PAYMENT DETAILS</label>
+                        <div id="card-element"></div>
+                        <input type="submit" id="submit-payment-btn" value="PAY">
+
+                        <p id="card-error" role="alert"></p>
+                    </form>
+                </div>
+
+                <div id="paypal-payment" class="tab-pane fade">
+                    <form id="paypal-payment-form" action="/shop/checkout/paypal/create-payment">
+                        <label>CHOOSE DELIVERY METHOD</label><br><br>
+                        <%_ shipping_fees.forEach(fee => { _%>
+                        <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
+                            <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
+                        <br>
+                        <%_ }) _%>
+                        <br><br>
+                        <button class="checkout-btn" type="submit">
+                            <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>CONTINUE TO PAYMENT</span></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         window.onbeforeunload = function() { return true };
-        $("#country").change(function() {
-            
+        $("#paypal-payment-form").submit(function(e) {
+            e.preventDefault();
+            $.post(this.action, $(this).serializeArray(), function(href) {
+                location.href = href;
+            }).fail(function(err, status, codeMessage) {
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            });
         });
 
         $("#payment-details-form").submit(function(e) {
@@ -73,9 +109,9 @@
             var btnControl = new submitBtnController(this);
             $.post(this.action, $(this).serializeArray(), function(data) {
                 var stripe = Stripe(data.pk);
-                $("input", e.target).attr("disabled", true).filter(":submit").remove();
+                $(":input, button", e.target).attr("disabled", true).filter(":submit").remove();
                 $("#submit-payment-btn").attr("disabled", true);
-                $("#payment-form").show(0, function() {
+                $("#card-payment-form").show(0, function() {
                     $("html, body").animate({ scrollTop: $(this).offset().top - 100 });
                     var card = stripe.elements().create("card", { style: {
                         base: { // input fields
@@ -99,7 +135,7 @@
                     });
                     btnControl.finish();
 
-                    $("#payment-form").submit(function(e) {
+                    $("#card-payment-form").submit(function(e) {
                         e.preventDefault();
                         // Complete payment when the submit button is clicked
                         var btnControl = new submitBtnController(this);
@@ -111,7 +147,7 @@
                             $("#cart-item-count").text(0);
                             $.post("/shop/checkout/payment-intent/complete", function(msg) {
                                 $("html, body").animate({ scrollTop: 0 }, function() {
-                                    $("#payment-form-container form").fadeOut(function() {
+                                    $(".content > *").fadeOut(function() {
                                         var css = { display: "none", marginTop: "5em", textAlign: "center", fontWeight: 400 };
                                         $(".content").html($("<div>").css(css).html(msg).get(0).outerHTML).children().fadeIn();
                                     });

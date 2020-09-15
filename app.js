@@ -57,6 +57,7 @@ app.use('/admin', require('./routes/admin'));
 app.use('/product', require('./routes/product'));
 app.use('/shop', require('./routes/shop'));
 app.use('/shop/checkout', require('./routes/checkout'));
+app.use('/shop/checkout/paypal', require('./routes/checkout-paypal'));
 app.use('/lookbook', require('./routes/lookbook'));
 app.use('/site/content', require('./routes/site-content'));
 app.use('/ambassador', require('./routes/ambassador'));
