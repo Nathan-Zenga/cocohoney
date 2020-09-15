@@ -1,14 +1,8 @@
 const router = require('express').Router();
-const countries = require("../modules/country-list");
 const { Product } = require('../models/models');
 
 router.get("/cart", (req, res) => {
     res.render('cart', { title: "Cart", pagename: "cart" })
-});
-
-router.get("/checkout", (req, res) => {
-    if (!req.session.cart.length) return res.redirect(req.get("referrer"));
-    res.render('checkout', { title: "Checkout", pagename: "checkout", countries })
 });
 
 router.post("/fx", (req, res) => {

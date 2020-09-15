@@ -4,13 +4,15 @@
         <div class="content container">
             <form id="payment-details-form" action="/shop/checkout/payment-intent/create">
                 <fieldset>
-                    <div class="col-sm-6">
-                        <label for="firstname">FIRST NAME</label>
-                        <input type="text" name="firstname" id="firstname" required>
-                    </div>
-                    <div class="col-sm-6">
-                        <label for="lastname">LAST NAME</label>
-                        <input type="text" name="lastname" id="lastname" required>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="firstname">FIRST NAME</label>
+                            <input type="text" name="firstname" id="firstname" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="lastname">LAST NAME</label>
+                            <input type="text" name="lastname" id="lastname" required>
+                        </div>
                     </div>
                 </fieldset>
                 <label for="email">EMAIL</label>
@@ -40,10 +42,12 @@
                     </div>
                 </fieldset>
                 <br>
-                <input type="radio" name="shipping_fee" id="standard" value="Standard">Standard (£2.99, 2-5 Days)<br>
-                <input type="radio" name="shipping_fee" id="firstclass1" value="First Class">First Class (£3.55, 1-2 Days - UK & Ireland only)<br>
-                <input type="radio" name="shipping_fee" id="firstclass2" value="First Class Next Day">First Class Next Day (£4.99, UK & Ireland only [order before 11am])<br>
-                <input type="radio" name="shipping_fee" id="worldwide" value="Worldwide">Worldwide (£8.99)<br><br><br>
+                <%_ shipping_fees.forEach(fee => { _%>
+                <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
+                    <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
+                <br>
+                <%_ }) _%>
+                <br>
                 <input type="submit" value="CONTINUE TO PAYMENT">
             </form>
 

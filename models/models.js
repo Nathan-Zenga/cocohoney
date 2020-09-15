@@ -63,6 +63,7 @@ module.exports.Hightlight_media = model('Hightlight_media', Schema({
 
 module.exports.Shipping_fee = model('Shipping_fee', Schema({
     name: String,
+    info: String,
     fee: { type: Number, set: n => parseFloat(n) * 100 }
 }));
 
