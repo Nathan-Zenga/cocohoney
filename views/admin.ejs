@@ -17,7 +17,7 @@
             <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
             <li><a data-toggle="pill" href="#discount_code">DISCOUNT CODES</a></li>
             <li><a data-toggle="pill" href="#lookbook">LOOKBOOK UPLOAD</a></li>
-            <li><a data-toggle="pill" href="#mail">MAIL</a></li>
+            <li><a data-toggle="none" href="/admin/mail/form">MAIL</a></li>
             <li><a data-toggle="pill" href="#edit">EDIT</a></li>
             <li><a data-toggle="pill" href="#remove">REMOVE</a></li>
         </ul>
@@ -36,10 +36,6 @@
 
             <div id="lookbook" class="creation tab-pane fade">
             <%_ include partials/admin/lookbook _%>
-            </div>
-
-            <div id="mail" class="creation tab-pane fade">
-            <%_ include partials/admin/mail _%>
             </div>
 
             <div id="edit" class="tab-pane fade">
@@ -186,19 +182,6 @@
 
                 $form.find("#discount_code_value_edit").val(result.code);
                 $form.find("#discount_code_expiry_date_edit").val(result.expiry_date ? new Date(result.expiry_date).toISOString().slice(0, 10) : "");
-            });
-
-            $("#mail form #recipient_email").change(function() {
-                var $form = $(this).closest("form");
-                var email = this.value;
-                var result = docs.filter(function(m) { return email == m.email })[0] || {};
-                var exists = !!Object.values(result).length;
-
-                $form.find("#recipient_details").css("display", exists ? "block" : "none").html(
-                    "<b>Name</b>: " + result.firstname + " " + result.lastname + "<br> " +
-                    "<b>Sizes</b>: " + result.size_top + " (Top), " + result.size_bottom + " (Bottoms)<br> " +
-                    (result.extra_info ? "<b>Extra info</b>: " + result.extra_info.trim().replace(/\r?\n/g, "<br>") + "<br>" : "")
-                );
             });
         });
 

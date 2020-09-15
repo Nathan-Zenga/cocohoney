@@ -1,0 +1,39 @@
+<%_ include partials/header _%>
+    <div class="form-container">
+        <ul class="nav nav-pills">
+            <li><a data-toggle="none" href="/admin">
+                <i class="fal fa-chevron-left" style="font-size: 1.2em; margin-right: 10px"></i> BACK
+            </a></li>
+        </ul>
+        <br>
+        <form method="post" action="/admin/mail/send">
+            <fieldset>
+                <legend>NEW EMAIL</legend>
+                <label>EMAIL</label>
+                <input type="email" name="email" id="email" required>
+
+                <label>SUBJECT</label>
+                <input type="text" name="subject" id="subject" required>
+
+                <label>MESSAGE</label>
+                <textarea name="message" id="message" rows="10" required></textarea>
+
+                <input type="submit" value="SEND">
+            </fieldset>
+        </form>
+    </div>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                alert(result);
+                e.target.reset();
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>
+<%_ include partials/footer _%>

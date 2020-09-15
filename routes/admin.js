@@ -4,7 +4,7 @@ const passport = require('passport');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, Banner_slide } = require('../models/models');
+const { Admin, Discount_code } = require('../models/models');
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -23,6 +23,10 @@ router.get('/', isAuthed, (req, res) => {
 // });
 
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
+
+router.get('/mail/form', isAuthed, (req, res) => {
+    res.render('admin-mail-form', { title: "Admin - Compose Mail", pagename: "admin-mail-form" })
+});
 
 router.post('/login', (req, res) => {
     const email = req.session.admin_email;
@@ -78,7 +82,7 @@ router.post("/search", isAuthed, (req, res) => {
     })
 });
 
-router.post('/discount_code/add', (req, res) => {
+router.post('/discount_code/add', isAuthed, (req, res) => {
     const { code, expiry_date } = req.body;
     new Discount_code({ code, expiry_date }).save(err => {
         if (err) return res.status(500).send(err.message);
@@ -86,7 +90,7 @@ router.post('/discount_code/add', (req, res) => {
     })
 });
 
-router.post('/discount_code/edit', (req, res) => {
+router.post('/discount_code/edit', isAuthed, (req, res) => {
     const { id, code, expiry_date } = req.body;
     Discount_code.findById(id, (err, discount_code) => {
         if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
@@ -99,7 +103,7 @@ router.post('/discount_code/edit', (req, res) => {
     });
 });
 
-router.post('/discount_code/remove', (req, res) => {
+router.post('/discount_code/remove', isAuthed, (req, res) => {
     var ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     Discount_code.deleteMany({_id : { $in: ids }}, (err, result) => {
@@ -107,6 +111,13 @@ router.post('/discount_code/remove', (req, res) => {
         if (!result.deletedCount) return res.status(404).send("Discount code(s) not found");
         res.send("Discount code"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
+});
+
+router.post('/mail/send', isAuthed, (req, res) => {
+    const { email, subject, message } = req.body;
+    new MailingListMailTransporter({ req, res }, { email }).sendMail({
+        subject, message
+    }, err => res.status(err ? 500 : 200).send(err ? err.message : "Email sent"));
 });
 
 module.exports = router;
