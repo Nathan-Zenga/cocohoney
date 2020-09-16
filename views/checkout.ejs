@@ -101,9 +101,11 @@
         window.onbeforeunload = function() { return true };
         $("#paypal-payment-form").submit(function(e) {
             e.preventDefault();
+            window.onbeforeunload = null;
             $.post(this.action, $(this).serializeArray(), function(href) {
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
+                window.onbeforeunload = function() { return true };
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
         });

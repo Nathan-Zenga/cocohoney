@@ -83,9 +83,10 @@ router.post("/payment-intent/complete", async (req, res) => {
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
                     `- Name: ${pi.shipping.name}\n- Email: ${pi.receipt_email}\n- Purchased items: ${pi.charges.data[0].description}\n` +
-                    `- Address:\n\t${line1},${line2 ? "\n\t"+line2+"," : ""}\n\t${city},\n\t${postal_code}\n\n` +
-                    `- Date of purchase: ${Date(pi.created * 1000)}\n- Total amount: £${pi.amount / 100}-\n\n`
-                    `- And finally, a copy of their receipt:\n${pi.charges.data[0].receipt_url}`
+                    `- Address:\n\t${ (line1 + "\n\t" + line2).trim() }\n\t${city},\n\t${postal_code}\n` +
+                    `- Date of purchase: ${Date(pi.created * 1000)}\n` +
+                    `- Total amount: £${pi.amount / 100}-\n\n` +
+                    `A copy of their receipt:\n${pi.charges.data[0].receipt_url}`
             }, err2 => {
                 const error = err || err2;
                 if (error) return res.status(500).send(error.message || (err || "")+" / "+(err2 || ""));
