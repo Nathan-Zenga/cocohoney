@@ -63,7 +63,8 @@ router.post("/create-payment", async (req, res) => {
 });
 
 router.get("/complete", async (req, res) => {
-    const { paymentId, PayerID, amount_temp, cart, current_discount_code } = Object.assign(req.query, req.session);
+    const products = await Product.find();
+    const code = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
@@ -75,7 +76,6 @@ router.get("/complete", async (req, res) => {
             error: `${err.message}\n${err.response.details.map(d => d.issue).join(",\n")}`
         });
 
-        const products = await Product.find();
         if (production) cart.forEach(item => {
             const product = products.filter(p => p.id === item.id)[0];
             if (product) {
@@ -86,10 +86,9 @@ router.get("/complete", async (req, res) => {
         });
 
         req.session.cart = [];
-        req.session.amount_temp = undefined;
-        if (current_discount_code) {
-            const code = await Discount_code.findById(current_discount_code.id);
-            if (code) { code.used = true; code.save() }
+        if (code) {
+            code.used = true;
+            code.save();
             req.session.current_discount_code = undefined;
         }
 

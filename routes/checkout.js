@@ -47,10 +47,11 @@ router.post("/payment-intent/create", async (req, res) => {
 router.post("/payment-intent/complete", async (req, res) => {
     const { paymentIntentID, cart, current_discount_code, admin_email } = req.session;
     const success_message = "<h1>Payment Successful</h1><p>A reciept has been forwarded to your email address.</p><p>Thank you for your purchase!</p>";
+    const products = await Product.find();
+    const code = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
     stripe.paymentIntents.retrieve(paymentIntentID, (err, pi) => {
         if (err || !pi) return res.status(err ? 500 : 400).send("Error occurred");
         if (pi.status !== "succeeded") return res.status(500).send(pi.status.replace(/_/g, " "));
-        const products = await Product.find();
         if (production) cart.forEach(item => {
             const product = products.filter(p => p.id === item.id)[0];
             if (product) {
@@ -62,9 +63,9 @@ router.post("/payment-intent/complete", async (req, res) => {
 
         req.session.cart = [];
         req.session.paymentIntentID = undefined;
-        if (current_discount_code) {
-            const code = await Discount_code.findById(current_discount_code.id);
-            if (code) { code.used = true; code.save() }
+        if (code) {
+            code.used = true;
+            code.save();
             req.session.current_discount_code = undefined;
         }
 
