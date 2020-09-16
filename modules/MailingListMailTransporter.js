@@ -29,7 +29,7 @@ class MailingListMailTransporter {
                         service: 'gmail', /* port: 465, secure: true, */
                         auth: {
                             type: "OAuth2",
-                            user: req.session.admin_email,
+                            user: this.#req.session.admin_email,
                             clientId: OAUTH_CLIENT_ID,
                             clientSecret: OAUTH_CLIENT_SECRET,
                             refreshToken: OAUTH_REFRESH_TOKEN,
