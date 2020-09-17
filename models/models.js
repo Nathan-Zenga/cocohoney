@@ -6,7 +6,7 @@ module.exports.Sale = model('Sale', Schema({
 }));
 
 module.exports.Product = model('Product', Schema({
-    name: String,
+    name: { type: String, index: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },

@@ -14,8 +14,9 @@ router.get('/collection/:category/:product_collection', (req, res, next) => {
     })
 });
 
-router.get('/:id', (req, res, next) => {
-    Product.findById(req.params.id, (err, product) => {
+router.get('/:name', (req, res, next) => {
+    const $regex = RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i");
+    Product.findOne({ name: { $regex } }, (err, product) => {
         if (err || !product) return next();
         res.render('product-view', { title: product.name, pagename: "product-view", product });
     })
