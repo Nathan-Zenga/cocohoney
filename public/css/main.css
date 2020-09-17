@@ -565,33 +565,24 @@ label .dropdown-arrow {
 
 #cart-icon {
     position: fixed;
+    display: block;
     right: 0;
     bottom: 20px;
-    background-color: rgb(240, 230, 140);
     text-align: center;
-    color: rgb(124, 76, 76);
-    padding: 10px 10px;
+    padding: 10px 15px;
     border-radius: 7px 0 0 7px;
-    font-weight: 400;
+    font-size: 2em;
     -webkit-transform: translateX(100%);
     -webkit-transition: .5s transform;
     transform: translateX(100%);
     transition: .5s transform;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .5);
     z-index: 500;
 }
 
 #cart-icon.visible {
     -webkit-transform: translateX(0);
     transform: translateX(0);
-}
-
-#cart-icon #cart-img,
-#cart-icon #cart-item-count {
-    font-size: 1.2em;
-}
-
-#cart-icon #cart-view-link {
-    display: block;
 }
 
 .cart-item {
