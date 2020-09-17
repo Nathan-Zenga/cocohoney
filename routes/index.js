@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const { FAQ } = require('../models/models');
 
 router.get('/', (req, res) => {
     res.render('index', { title: null, pagename: "home" })
@@ -23,7 +24,7 @@ router.get('/account/login', (req, res) => {
 });
 
 router.get('/faq', (req, res) => {
-    res.render('faq', { title: "FAQs", pagename: "faq" })
+    FAQ.find((err, faqs) => res.render('faq', { title: "FAQs", pagename: "faq", faqs }))
 });
 
 router.post('/contact/mail/send', (req, res) => {

@@ -4,7 +4,7 @@ const passport = require('passport');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code } = require('../models/models');
+const { Admin, Discount_code, FAQ } = require('../models/models');
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -77,8 +77,8 @@ router.post("/activate/:token", async (req, res) => {
 
 router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
-        const { members, banner_slides, discount_codes, products } = db;
-        res.send([...members, ...banner_slides, ...discount_codes, ...products]);
+        const { members, banner_slides, discount_codes, products, faqs } = db;
+        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs]);
     })
 });
 
@@ -118,6 +118,31 @@ router.post('/mail/send', isAuthed, (req, res) => {
     new MailingListMailTransporter({ req, res }, { email }).sendMail({
         subject, message
     }, err => res.status(err ? 500 : 200).send(err ? err.message : "Email sent"));
+});
+
+router.post('/faqs/add', isAuthed, (req, res) => {
+    const { question, answer } = req.body;
+    new FAQ({ question, answer }).save(err => res.send("FAQ saved"));
+});
+
+router.post('/faqs/edit', isAuthed, (req, res) => {
+    const { id, question, answer } = req.body;
+    FAQ.findById(id, (err, faq) => {
+        if (err) return res.status(500).send(err.message);
+        if (question) faq.question = question;
+        if (answer) faq.answer = answer;
+        faq.save(err => res.send("FAQ updated"));
+    });
+});
+
+router.post('/faqs/remove', isAuthed, (req, res) => {
+    var ids = Object.values(req.body);
+    if (!ids.length) return res.status(400).send("Nothing selected");
+    FAQ.deleteMany({_id : { $in: ids }}, (err, result) => {
+        if (err) return res.status(500).send(err ? err.message : "Error occurred");
+        if (!result.deletedCount) return res.status(404).send("FAQ(s) not found");
+        res.send("FAQ"+ (ids.length > 1 ? "s" : "") +" removed successfully")
+    })
 });
 
 module.exports = router;

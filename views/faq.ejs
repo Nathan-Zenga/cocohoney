@@ -1,8 +1,15 @@
 <%_ include partials/header _%>
     <section class="section-padding">
         <div class="textbody">
-            <h1>FAQs</h1>
-            <p></p>
+            <h1 style="margin-bottom: 2em;">FAQs</h1>
+            <%_ faqs.forEach(faq => { _%>
+            <h2 class="question"><%- faq.question %></h2>
+            <div class="answer">
+                <%- (() => {
+                    return "<p>" + faq.answer.replace(/\r?\n/g, "</p><p>") + "</p>"
+                })() %>
+            </div>
+            <%_ }) _%>
         </div>
     </section>
 <%_ include partials/footer _%>

@@ -5,12 +5,14 @@
             <option value="#edit-banner">BANNER SLIDE</option>
             <option value="#edit-product">PRODUCT</option>
             <option value="#edit-discount-code">DISCOUNT CODE</option>
+            <option value="#edit-faq">FAQ</option>
         </select>
     </div>
     <ul class="nav nav-pills nav-stacked dt-view-md">
         <li class="active"><a data-toggle="pill" href="#edit-banner">BANNER SLIDE</a></li>
         <li><a data-toggle="pill" href="#edit-product">PRODUCTS</a></li>
         <li><a data-toggle="pill" href="#edit-discount-code">DISCOUNT CODE</a></li>
+        <li><a data-toggle="pill" href="#edit-faq">FAQ</a></li>
     </ul>
 </div>
 <div class="col-md-9">
@@ -101,6 +103,26 @@
 
                 <label>EXPIRY DATE</label>
                 <input type="date" name="expiry_date" id="discount_code_expiry_date_edit" placeholder="YYYY/MM/DD" required>
+
+                <input type="submit" value="SAVE">
+            </form>
+        </div>
+
+        <div id="edit-faq" class="tab-pane fade">
+            <form method="post" action="/admin/faqs/edit">
+                <label>SELECT FAQ <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select name="id" id="faq_id">
+                    <option value="">-</option>
+                    <%_ faqs.forEach(faq => { _%>
+                    <option value="<%= faq._id %>"><%= faq.question %></option>
+                    <%_ }) _%>
+                </select>
+
+                <label>QUESTION</label>
+                <input type="text" name="question" id="question_edit" required>
+
+                <label>ANSWER</label>
+                <input type="text" name="answer" id="answer_edit" required>
 
                 <input type="submit" value="SAVE">
             </form>

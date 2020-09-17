@@ -7,6 +7,7 @@
                 <option value="#product">PRODUCTS</option>
                 <option value="#discount_code">DISCOUNT CODES</option>
                 <option value="#lookbook">LOOKBOOK UPLOAD</option>
+                <option value="#faqs">FAQs</option>
                 <option value="#mail">MAIL</option>
                 <option value="#edit">EDIT</option>
                 <option value="#remove">REMOVE</option>
@@ -17,6 +18,7 @@
             <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
             <li><a data-toggle="pill" href="#discount_code">DISCOUNT CODES</a></li>
             <li><a data-toggle="pill" href="#lookbook">LOOKBOOK UPLOAD</a></li>
+            <li><a data-toggle="pill" href="#faqs">FAQs</a></li>
             <li><a data-toggle="none" href="/admin/mail/form">MAIL</a></li>
             <li><a data-toggle="pill" href="#edit">EDIT</a></li>
             <li><a data-toggle="pill" href="#remove">REMOVE</a></li>
@@ -36,6 +38,10 @@
 
             <div id="lookbook" class="creation tab-pane fade">
             <%_ include partials/admin/lookbook _%>
+            </div>
+
+            <div id="faqs" class="creation tab-pane fade">
+            <%_ include partials/admin/faqs _%>
             </div>
 
             <div id="edit" class="tab-pane fade">
@@ -182,6 +188,9 @@
 
                 $form.find("#discount_code_value_edit").val(result.code);
                 $form.find("#discount_code_expiry_date_edit").val(result.expiry_date ? new Date(result.expiry_date).toISOString().slice(0, 10) : "");
+
+                $form.find("#question_edit").val(result.question);
+                $form.find("#answer_edit").val(result.answer);
             });
         });
 
