@@ -1,4 +1,4 @@
-body {
+﻿body {
     overflow-x: hidden;
 }
 
@@ -901,6 +901,12 @@ label .dropdown-arrow {
 #product-view-page #price {
     font-size: 2em;
     color: rgb(240, 230, 140);
+}
+
+@media (max-width: 767px) {
+    #product-view-page .product-info {
+        text-align: center;
+    }
 }
 
 .chc .carousel-control {
