@@ -935,8 +935,15 @@ label .dropdown-arrow {
 
 #faq-page .question {
     text-align: center;
+    margin-bottom: -.5em;
 }
 
-/* #faq-page .answer {
-    
-} */
+#faq-page .answer {
+    padding: 50px;
+    background-color: rgba(0, 0, 0, .15);
+    border-radius: 10px;
+}
+
+#faq-page .answer:not(:last-child) {
+    margin-bottom: 5em;
+}
