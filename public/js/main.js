@@ -23,6 +23,23 @@ $(function() {
         $(this).next(".sub-list").stop().slideToggle(300);
     });
 
+    $(".add-to-cart").submit(function(e) {
+        e.preventDefault();
+        var $submitBtn = $(e.target).find("input[type=submit]");
+        var initialVal = $submitBtn.data("value");
+        var btnControl = new submitBtnController(this);
+        $.post(this.action, $(this).serializeArray(), function(item_count) {
+            $("#cart-icon").toggleClass("visible", item_count > 0);
+            $("#cart-item-count").text(item_count);
+        }).fail(function(err) {
+            alert(err.responseText);
+        }).always(function() {
+            btnControl.finish();
+            $submitBtn.val("ADDED!");
+            setTimeout(function() { $submitBtn.val(initialVal) }, 2000);
+        })
+    });
+
     $(window).on("load", function() {
         $(".image-highlight").delay(700).each(function(i) {
             $(this).delay(i * 1000).fadeIn(2000);
