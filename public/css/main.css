@@ -881,11 +881,6 @@ label .dropdown-arrow {
     box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
 }
 
-#product-view-page section {
-    margin: 0 0 -2em;
-    background-image: linear-gradient(60deg, transparent, rgba(240, 230, 140, .5) 50%, transparent 70%, transparent);
-}
-
 #product-view-page .details {
     margin-bottom: .5em;
 }
