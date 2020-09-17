@@ -3,7 +3,7 @@ const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/authCheck');
 const { Product } = require('../models/models');
 
-router.get('/collection/:category/:product_collection', (req, res, next) => {
+router.get('/:category/collection/:product_collection', (req, res, next) => {
     const { category, product_collection } = req.params;
     if (!category || !product_collection) return next();
     const coll = { $regex: RegExp(`^${product_collection}$`, "i") };
@@ -14,9 +14,10 @@ router.get('/collection/:category/:product_collection', (req, res, next) => {
     })
 });
 
-router.get('/:name', (req, res, next) => {
-    const $regex = RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i");
-    Product.findOne({ name: { $regex } }, (err, product) => {
+router.get('/:category/:name', (req, res, next) => {
+    const category = { $regex: RegExp(`^${req.params.category.replace(/[_+]/g, " ")}$`, "i") };
+    const name = { $regex: RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i") };
+    Product.findOne({ category, name }, (err, product) => {
         if (err || !product) return next();
         res.render('product-view', { title: product.name, pagename: "product-view", product });
     })
@@ -58,17 +59,6 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
             res.send("Product details updated successfully");
-            // if (!image_url && !image_file) return res.send("Product details updated successfully");
-            // const public_id = ("cocohoney/product/stock/" + saved.name.replace(/ /g, "-")).replace(/[ ?&#\\%<>]/g, "_");
-            // cloud.api.delete_resources([prefix], err => {
-            //     if (err) return res.status(500).send(err.message);
-            //     cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-            //         if (err) return res.status(500).send(err.message);
-            //         saved.images = [{ p_id: result.public_id, url: result.secure_url }];
-            //         for (const item of req.session.cart) if (item.id === saved.id) item.image = { p_id: result.public_id, url: result.secure_url };
-            //         saved.save(() => { res.send("Product details updated successfully") });
-            //     });
-            // })
         });
     })
 });
