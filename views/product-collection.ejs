@@ -15,9 +15,8 @@
                             <div class="thumb-info">
                                 <div class="product-name"><p><%= product.name %></p></div>
                                 <div class="product-price">
-                                    <%_ const ambassador = (user || {}).discount_code;
-                                        const price = ambassador ? product.price_amb : sale ? product.price_sale : product.price;
-                                        const price_original = ambassador || sale ? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+                                    <%_ const price = sale ? product.price_sale : product.price;
+                                        const price_original = sale ? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
                                     <p>£<%- (price / 100).toFixed(2) + price_original %></p>
                                 </div>
                                 <div class="cart-options">

@@ -7,8 +7,7 @@
                     <div class="item-img col-sm-4 col-xs-7" style="background-image:url('<%- item.image.url %>')"></div>
                     <div class="item-info col-sm-8 col-xs-5">
                         <p class="item-name" style="font-weight: 400"><%- item.name %></p>
-                        <%_ const ambassador = (user || {}).discount_code;
-                            const price = ambassador ? item.price_amb : sale ? item.price_sale : item.price _%>
+                        <%_ const price = sale ? item.price_sale : item.price _%>
                         <p class="item-price">£<span><%- (price / 100).toFixed(2) %></span></p>
                         <p><%- (item.info || "").replace(/\r?\n/g, "<br>") %></p>
                     </div>

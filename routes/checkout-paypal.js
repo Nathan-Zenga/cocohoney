@@ -17,7 +17,6 @@ router.post("/create-payment", async (req, res) => {
 
     try {
         var code = await Discount_code.findOne({ code: discount_code });
-        var amb = req.user ? await Ambassador.findById(req.user.id) : null;
         var shipping_fee = await Shipping_fee.findById(shipping_fee_id);
         if (!code && discount_code) { res.status(404); throw Error("Invalid discount code") };
         if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
@@ -27,7 +26,7 @@ router.post("/create-payment", async (req, res) => {
     };
 
     const price_total = cart.map(p => ({
-        price: amb ? p.price_amb : code || sale ? p.price_sale : p.price, quantity: p.qty
+        price: code || sale ? p.price_sale : p.price, quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
     paypal.payment.create({

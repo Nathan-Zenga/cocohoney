@@ -19,7 +19,7 @@ router.post("/cart/add", (req, res) => {
     Product.findById(req.body.id, (err, product) => {
         if (err) return res.status(500).send(err.message);
         if (!product || product.stock_qty < 1) return res.status(!product ? 404 : 400).send("Item currently not in stock");
-        const { id, name, price, price_sale, price_amb, images, info, stock_qty } = product;
+        const { id, name, price, price_sale, images, info, stock_qty } = product;
         const cartItemIndex = req.session.cart.findIndex(item => item.id === id);
 
         if (cartItemIndex >= 0) {
@@ -27,7 +27,7 @@ router.post("/cart/add", (req, res) => {
             currentItem.qty += 1;
             if (currentItem.qty > stock_qty) currentItem.qty = stock_qty;
         } else {
-            req.session.cart.unshift({ id, name, price, price_sale, price_amb, image: images[0], info, stock_qty, qty: 1 });
+            req.session.cart.unshift({ id, name, price, price_sale, image: images[0], info, stock_qty, qty: 1 });
         }
 
         res.send(`${req.session.cart.length}`);

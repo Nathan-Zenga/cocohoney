@@ -23,8 +23,8 @@ router.get('/:name', (req, res, next) => {
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, price_sale, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    new Product({ name, price, price_sale, price_amb, category, product_collection, stock_qty, info }).save((err, saved) => {
+    const { name, price, price_sale, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    new Product({ name, price, price_sale, category, product_collection, stock_qty, info }).save((err, saved) => {
         if (err) return res.status(400).send(err.message);
         if (!image_url && !image_file) return res.send("Product saved in stock");
         const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");

@@ -18,7 +18,6 @@ router.post("/payment-intent/create", async (req, res) => {
 
     try {
         var code = await Discount_code.findOne({ code: discount_code });
-        var amb = req.user ? await Ambassador.findById(req.user.id) : null;
         var shipping_fee = await Shipping_fee.findById(shipping_fee_id);
         if (!code && discount_code) { res.status(404); throw Error("Invalid discount code") };
         if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
@@ -30,7 +29,7 @@ router.post("/payment-intent/create", async (req, res) => {
     stripe.paymentIntents.create({
         receipt_email: email,
         description: cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n") + `\r\n${shipping_fee.name}: ${(shipping_fee.fee / 100).toFixed(2)}`,
-        amount: cart.map(p => ({ price: amb ? p.price_amb : code || sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + shipping_fee.fee,
+        amount: cart.map(p => ({ price: code || sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + shipping_fee.fee,
         currency: "gbp",
         shipping: {
             name: firstname + " " + lastname,
