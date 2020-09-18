@@ -68,6 +68,7 @@ module.exports.Shipping_fee = model('Shipping_fee', Schema({
 
 module.exports.Discount_code = model('Discount_code', Schema({
     code: { type: String, required: true },
+    percentage: { type: Number, min: 1, max: 100 },
     used: { type: Boolean, default: false },
     expiry_date: { type: Date, required: true }
 }));

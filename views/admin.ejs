@@ -186,6 +186,7 @@
                 $form.find("#banner_text_edit").val(result.text);
 
                 $form.find("#discount_code_value_edit").val(result.code);
+                $form.find("#discount_percentage_edit").val(result.percentage);
                 $form.find("#discount_code_expiry_date_edit").val(result.expiry_date ? new Date(result.expiry_date).toISOString().slice(0, 10) : "");
 
                 $form.find("#question_edit").val(result.question);
