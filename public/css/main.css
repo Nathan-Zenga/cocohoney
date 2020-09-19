@@ -892,6 +892,10 @@ label .dropdown-arrow {
     color: rgb(240, 230, 140);
 }
 
+#product-view-page #extra-info {
+    margin-top: 2em;
+}
+
 @media (max-width: 767px) {
     #product-view-page .product-info {
         text-align: center;
