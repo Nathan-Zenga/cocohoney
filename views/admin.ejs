@@ -1,14 +1,14 @@
 <%_ include partials/header _%>
     <section style="padding-top: 2em;">
         <div class="mb-view-md section-dropdown-options">
-            <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
                 <option value="#banner">BANNER SLIDES</option>
                 <option value="#product">PRODUCTS</option>
                 <option value="#discount_code">DISCOUNT CODES</option>
                 <option value="#lookbook">LOOKBOOK UPLOAD</option>
                 <option value="#faqs">FAQs</option>
-                <option value="#mail">MAIL</option>
+                <option value="/admin/mail/form">MAIL</option>
             </select>
         </div>
         <ul class="dt-view-md nav nav-pills">
@@ -197,7 +197,7 @@
         });
 
         $(".section-dropdown-options select").change(function() {
-            $(".nav-pills a[href='"+ this.value +"']").click()
+            $(".nav-pills a[href='"+ this.value +"']").get(0).click()
         });
 
         $("#homepage_image_file").change(function() {
