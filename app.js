@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
-const stripe = require('stripe')(process.env.STRIPE_SK);
+const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const { CHCDB, NODE_ENV } = process.env;
@@ -34,22 +34,20 @@ app.use(session({ // express session
 app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.user = req.user || null;
-    res.locals.location_origin = `https://${req.hostname}`;
+    res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
     res.locals.banner_slides = await Banner_slide.find();
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
     res.locals.sale = ((await Site_content.find())[0] || {}).active || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
     if (!req.session.paymentIntentID) return next();
-    stripe.paymentIntents.retrieve(req.session.paymentIntentID, (err, pi) => {
-        if (err) return console.log(err.message || err), next();
+    Stripe.paymentIntents.retrieve(req.session.paymentIntentID).then(pi => {
         // id used in payment completion request if true
         if (!(pi && pi.status === "succeeded")) req.session.paymentIntentID = undefined;
         if (!pi || pi.status === "succeeded") return next();
-        stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" }, err => {
-            if (err) console.log(err.message || err);
-            next();
-        });
-    });
+        Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" })
+                             .catch(err => console.log(err.message || err))
+                             .finally(() => next());
+    }).catch(err => console.log(err.message || err), next());
 });
 
 app.use('/', require('./routes/index'));

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const stripe = require('stripe')(process.env.STRIPE_SK);
+const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Product, Shipping_fee, Discount_code } = require('../models/models');
@@ -35,6 +35,7 @@ router.post("/payment-intent/create", async (req, res) => {
     description += `\r\nShipping (${shipping_fee.name}): £${(shipping_fee.fee / 100).toFixed(2)}`
     description += discount_rate > 0 ? `\r\nDiscount: -£${(discount_rate / 100).toFixed(2)}` : "";
 
+    Stripe.paymentIntents.create({
         receipt_email: email,
         description,
         amount: (price_total - discount_rate) + shipping_fee.fee,
@@ -43,12 +44,11 @@ router.post("/payment-intent/create", async (req, res) => {
             name: firstname + " " + lastname,
             address: { line1: address_l1, line2: address_l2, city, postal_code: postcode }
         }
-    }, (err, pi) => {
-        if (err) return res.status(400).send(err.message);
+    }).then(pi => {
         req.session.paymentIntentID = pi.id;
         req.session.current_discount_code = code;
         res.send({ clientSecret: pi.client_secret, pk: process.env.STRIPE_PK });
-    });
+    }).catch(err => res.status(400).send(err.message));
 });
 
 router.post("/payment-intent/complete", async (req, res) => {
@@ -56,8 +56,9 @@ router.post("/payment-intent/complete", async (req, res) => {
     const success_message = "<h1>Payment Successful</h1><p>A reciept has been forwarded to your email address.</p><p>Thank you for your purchase!</p>";
     const products = await Product.find();
     const code = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
-    stripe.paymentIntents.retrieve(paymentIntentID, (err, pi) => {
-        if (err || !pi) return res.status(err ? 500 : 400).send("Error occurred");
+
+    Stripe.paymentIntents.retrieve(paymentIntentID).then(pi => {
+        if (!pi) return res.status(400).send("Error occurred");
         if (pi.status !== "succeeded") return res.status(500).send(pi.status.replace(/_/g, " "));
         if (production) cart.forEach(item => {
             const product = products.filter(p => p.id === item.id)[0];
@@ -99,7 +100,7 @@ router.post("/payment-intent/complete", async (req, res) => {
                 res.send(success_message);
             });
         });
-    })
+    }).catch(err => res.status(500).send("Error occurred"))
 });
 
 module.exports = router;
