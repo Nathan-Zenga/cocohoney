@@ -2,7 +2,7 @@ const router = require('express').Router();
 const stripe = require('stripe')(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Product, Shipping_fee, Discount_code, Ambassador } = require('../models/models');
+const { Product, Shipping_fee, Discount_code } = require('../models/models');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", (req, res) => {
@@ -15,21 +15,29 @@ router.get("/", (req, res) => {
 router.post("/payment-intent/create", async (req, res) => {
     const { firstname, lastname, email, address_l1, address_l2, city, postcode, discount_code, shipping_fee_id } = req.body;
     const { cart, sale } = Object.assign(req.session, res.locals);
+    const price_total = cart.map(p => ({
+        price: sale ? p.price_sale : p.price,
+        quantity: p.qty
+    })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
+    var description = cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n");
 
     try {
-        var code = await Discount_code.findOne({ code: discount_code });
-        var shipping_fee = await Shipping_fee.findById(shipping_fee_id);
-        if (!code && discount_code) { res.status(404); throw Error("Invalid discount code") };
+        var code = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
+        var shipping_fee = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_fee.findById(shipping_fee_id);
+        if (!code && discount_code) { res.status(404); throw Error("Discount code invalid or expired") };
         if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
     } catch (err) {
         if (res.statusCode !== 404) res.status(500);
         return res.send(err.message);
     };
 
-    stripe.paymentIntents.create({
+    const discount_rate = code ? (code.percentage / 100) * price_total : 0;
+    description += `\r\nShipping (${shipping_fee.name}): £${(shipping_fee.fee / 100).toFixed(2)}`
+    description += discount_rate > 0 ? `\r\nDiscount: -£${(discount_rate / 100).toFixed(2)}` : "";
+
         receipt_email: email,
-        description: cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n") + `\r\n${shipping_fee.name}: ${(shipping_fee.fee / 100).toFixed(2)}`,
-        amount: cart.map(p => ({ price: code || sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0) + shipping_fee.fee,
+        description,
+        amount: (price_total - discount_rate) + shipping_fee.fee,
         currency: "gbp",
         shipping: {
             name: firstname + " " + lastname,
@@ -63,8 +71,7 @@ router.post("/payment-intent/complete", async (req, res) => {
         req.session.cart = [];
         req.session.paymentIntentID = undefined;
         if (code) {
-            code.used = true;
-            code.save();
+            if (production) { code.used = true; code.save() }
             req.session.current_discount_code = undefined;
         }
 

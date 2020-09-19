@@ -55,12 +55,17 @@
                         <br>
                         <label for="discount_code">DISCOUNT CODE</label>
                         <input type="text" name="discount_code" id="discount_code">
-                        <label>CHOOSE DELIVERY METHOD</label><br><br>
-                        <%_ shipping_fees.forEach(fee => { _%>
+                        <%_ const price_total = cart.map(p => ({ price: sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0);
+                            const free_delivery = price_total > 4000; _%>
+                        <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
+                        <%_ if (!free_delivery) {
+                            shipping_fees.forEach(fee => { _%>
                         <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
                             <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
                         <br>
-                        <%_ }) _%>
+                        <%_ })} else { _%>
+                        <input type="text" value="FREE DELIVERY" disabled>
+                        <%_ } _%>
                         <br><br>
                         <button class="checkout-btn" type="submit">
                             <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CONTINUE TO PAYMENT</span></span>
@@ -80,12 +85,15 @@
                     <form id="paypal-payment-form" action="/shop/checkout/paypal/create-payment">
                         <label for="discount_code">DISCOUNT CODE</label>
                         <input type="text" name="discount_code" id="discount_code">
-                        <label>CHOOSE DELIVERY METHOD</label><br><br>
-                        <%_ shipping_fees.forEach(fee => { _%>
+                        <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
+                        <%_ if (!free_delivery) {
+                            shipping_fees.forEach(fee => { _%>
                         <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
                             <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
                         <br>
-                        <%_ }) _%>
+                        <%_ })} else { _%>
+                        <input type="text" value="FREE DELIVERY" disabled>
+                        <%_ } _%>
                         <br><br>
                         <button class="checkout-btn" type="submit">
                             <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>CONTINUE TO PAYMENT</span></span>
@@ -101,12 +109,15 @@
         window.onbeforeunload = function() { return true };
         $("#paypal-payment-form").submit(function(e) {
             e.preventDefault();
+            var btnControl = new submitBtnController(this, "REDIRECTING");
             window.onbeforeunload = null;
             $.post(this.action, $(this).serializeArray(), function(href) {
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
                 window.onbeforeunload = function() { return true };
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
+            }).always(function() {
+                btnControl.finish();
             });
         });
 
