@@ -610,6 +610,11 @@ label .dropdown-arrow {
     height: 200px;
 }
 
+.cart-item .item-info > * {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
 @media (max-width: 767px) {
     .cart-item > * {
         margin-bottom: 1.5em;
