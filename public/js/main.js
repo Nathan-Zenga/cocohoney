@@ -27,10 +27,11 @@ $(function() {
         e.preventDefault();
         var $submitBtn = $(e.target).find("input[type=submit]");
         var initialVal = $submitBtn.data("value");
-        var btnControl = new submitBtnController(this);
+        var btnControl = new submitBtnController(this, ".");
         $.post(this.action, $(this).serializeArray(), function(item_count) {
-            $("#cart-icon").toggleClass("visible", item_count > 0);
+            var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
             $("#cart-item-count").text(item_count);
+            $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });
         }).fail(function(err) {
             alert(err.responseText);
         }).always(function() {
