@@ -61,7 +61,7 @@ module.exports.Hightlight_media = model('Hightlight_media', Schema({
     media_text: String,
 }));
 
-module.exports.Shipping_fee = model('Shipping_fee', Schema({
+module.exports.Shipping_method = model('Shipping_method', Schema({
     name: String,
     info: String,
     fee: { type: Number, set: n => parseFloat(n) * 100 }

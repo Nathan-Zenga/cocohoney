@@ -2,18 +2,18 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Product, Shipping_fee, Discount_code } = require('../models/models');
+const { Product, Shipping_method, Discount_code } = require('../models/models');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", (req, res) => {
     if (!req.session.cart.length) return res.redirect(req.get("referrer"));
-    Shipping_fee.find().sort({ fee: 1 }).exec((err, shipping_fees) => {
-        res.render('checkout', { title: "Checkout", pagename: "checkout", countries, shipping_fees })
+    Shipping_method.find().sort({ fee: 1 }).exec((err, shipping_methods) => {
+        res.render('checkout', { title: "Checkout", pagename: "checkout", countries, shipping_methods })
     })
 });
 
 router.post("/payment-intent/create", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, postcode, discount_code, shipping_fee_id } = req.body;
+    const { firstname, lastname, email, address_l1, address_l2, city, postcode, discount_code, shipping_method_id } = req.body;
     const { cart, sale } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: sale ? p.price_sale : p.price,
@@ -23,22 +23,22 @@ router.post("/payment-intent/create", async (req, res) => {
 
     try {
         var code = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
-        var shipping_fee = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_fee.findById(shipping_fee_id);
+        var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
         if (!code && discount_code) { res.status(404); throw Error("Discount code invalid or expired") };
-        if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
+        if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") };
     } catch (err) {
         if (res.statusCode !== 404) res.status(500);
         return res.send(err.message);
     };
 
     const discount_rate = code ? (code.percentage / 100) * price_total : 0;
-    description += `\r\nShipping (${shipping_fee.name}): £${(shipping_fee.fee / 100).toFixed(2)}`
+    description += `\r\nShipping (${shipping_method.name}): £${(shipping_method.fee / 100).toFixed(2)}`
     description += discount_rate > 0 ? `\r\nDiscount: -£${(discount_rate / 100).toFixed(2)}` : "";
 
     Stripe.paymentIntents.create({
         receipt_email: email,
         description,
-        amount: (price_total - discount_rate) + shipping_fee.fee,
+        amount: (price_total - discount_rate) + shipping_method.fee,
         currency: "gbp",
         shipping: {
             name: firstname + " " + lastname,

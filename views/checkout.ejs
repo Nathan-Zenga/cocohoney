@@ -59,9 +59,9 @@
                             const free_delivery = price_total > 4000; _%>
                         <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
                         <%_ if (!free_delivery) {
-                            shipping_fees.forEach(fee => { _%>
-                        <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
-                            <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
+                            shipping_methods.forEach(method => { _%>
+                        <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
+                            <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
                         <br>
                         <%_ })} else { _%>
                         <input type="text" value="FREE DELIVERY" disabled>
@@ -87,9 +87,9 @@
                         <input type="text" name="discount_code" id="discount_code">
                         <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
                         <%_ if (!free_delivery) {
-                            shipping_fees.forEach(fee => { _%>
-                        <input type="radio" name="shipping_fee_id" value="<%= fee.id %>" required>
-                            <%= fee.name %> (£<%= (fee.fee / 100).toFixed(2) %>)<%- fee.info ? ' <small>' + fee.info + '</small>' : '' %>
+                            shipping_methods.forEach(method => { _%>
+                        <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
+                            <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
                         <br>
                         <%_ })} else { _%>
                         <input type="text" value="FREE DELIVERY" disabled>

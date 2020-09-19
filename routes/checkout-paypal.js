@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const paypal = require('paypal-rest-sdk');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Product, Shipping_fee, Discount_code } = require('../models/models');
+const { Product, Shipping_method, Discount_code } = require('../models/models');
 const { NODE_ENV, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = process.env;
 const production = NODE_ENV === "production";
 
@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { discount_code, shipping_fee_id } = req.body;
+    const { discount_code, shipping_method_id } = req.body;
     const { cart, sale, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: sale ? p.price_sale : p.price,
@@ -21,9 +21,9 @@ router.post("/create-payment", async (req, res) => {
 
     try {
         var code = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
-        var shipping_fee = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_fee.findById(shipping_fee_id);
+        var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
         if (!code && discount_code) { res.status(404); throw Error("Discount code invalid or expired") };
-        if (!shipping_fee) { res.status(404); throw Error("Invalid shipping fee chosen") };
+        if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") };
     } catch (err) {
         if (res.statusCode !== 404) res.status(500);
         return res.send(err.message);
@@ -49,10 +49,10 @@ router.post("/create-payment", async (req, res) => {
             },
             amount: {
                 currency: "GBP",
-                total: (((price_total - discount_rate) + shipping_fee.fee) / 100).toFixed(2),
+                total: (((price_total - discount_rate) + shipping_method.fee) / 100).toFixed(2),
                 details: {
                     subtotal: (price_total / 100).toFixed(2),
-                    shipping: (shipping_fee.fee / 100).toFixed(2),
+                    shipping: (shipping_method.fee / 100).toFixed(2),
                     shipping_discount: `-${(discount_rate / 100).toFixed(2)}`
                 }
             },
