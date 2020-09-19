@@ -1,12 +1,62 @@
-<form method="post" action="/admin/discount_code/add">
-    <label>ADD DISCOUNT CODE</label>
-    <input type="text" name="code" id="discount_code_value" required>
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-discount-code">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-discount-code">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-discount-code">REMOVE</a></li>
+</ul>
 
-    <label>DISCOUNT PERCENTAGE (%)</label>
-    <input type="number" name="percentage" id="discount_percentage" min="1" max="100" value="10" required>
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-discount-code" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/admin/discount_code/add">
+            <label>ADD DISCOUNT CODE</label>
+            <input type="text" name="code" id="discount_code_value" required>
 
-    <label>SET EXPIRY DATE</label>
-    <input type="date" name="expiry_date" id="discount_code_expiry_date" placeholder="YYYY/MM/DD" required>
+            <label>DISCOUNT PERCENTAGE (%)</label>
+            <input type="number" name="percentage" id="discount_percentage" min="1" max="100" value="10" required>
 
-    <input type="submit" value="SAVE">
-</form>
+            <label>SET EXPIRY DATE</label>
+            <input type="date" name="expiry_date" id="discount_code_expiry_date" placeholder="YYYY/MM/DD" required>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-discount-code" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/admin/discount_code/edit">
+            <label>SELECT DISCOUNT CODE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="discount_code_id">
+                <option value="">-</option>
+                <%_ discount_codes.forEach(slide => { _%>
+                <option value="<%= slide._id %>"><%= slide.text %></option>
+                <%_ }) _%>
+            </select>
+
+            <label>DISCOUNT CODE</label>
+            <input type="text" name="code" id="discount_code_value_edit" required>
+
+            <label>DISCOUNT PERCENTAGE (%)</label>
+            <input type="number" name="percentage" id="discount_percentage_edit" min="1" max="100" value="10" required>
+
+            <label>EXPIRY DATE</label>
+            <input type="date" name="expiry_date" id="discount_code_expiry_date_edit" placeholder="YYYY/MM/DD" required>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="remove-discount-code" class="remove-form-tab tab-pane fade">
+        <%_ if (discount_codes.length) { _%>
+        <form action="/admin/discount_code/remove" method="post">
+            <label>DELETE DISCOUNT CODE(S)</label><br><br>
+            <%_ discount_codes.forEach((dc, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="dc<%= i %>" value="<%= dc._id %>"><span><%= dc.code %></span><br>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE DISCOUNT CODES">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO DISCOUNT CODES TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>

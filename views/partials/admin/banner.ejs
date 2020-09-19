@@ -1,6 +1,49 @@
-<form method="post" action="/site/content/banner/add">
-    <label>ADD BANNER TEXT</label>
-    <input type="text" name="text" id="banner_text" required>
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-banner">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-banner">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-banner">REMOVE</a></li>
+</ul>
 
-    <input type="submit" value="POST">
-</form>
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-banner" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/site/content/banner/add">
+            <label>ADD BANNER TEXT</label>
+            <input type="text" name="text" id="banner_text" required>
+
+            <input type="submit" value="POST">
+        </form>
+    </div>
+
+    <div id="edit-banner" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/site/content/banner/edit">
+            <label>SELECT BANNER SLIDE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="banner_slide_id">
+                <option value="">-</option>
+                <%_ banner_slides.forEach(slide => { _%>
+                <option value="<%= slide._id %>"><%= slide.text %></option>
+                <%_ }) _%>
+            </select>
+            <label>TEXT</label>
+            <input type="text" name="text" id="banner_text_edit" required>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="remove-banner" class="remove-form-tab tab-pane fade">
+        <%_ if (banner_slides.length) { _%>
+        <form action="/admin/banner/remove" method="post">
+            <label>DELETE SLIDE(S) FROM BANNER</label><br><br>
+            <%_ banner_slides.forEach((slide, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="slide<%= i %>" value="<%= slide._id %>"><span><%= slide.text %></span>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE BANNER SLIDES">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO BANNER SLIDES TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>

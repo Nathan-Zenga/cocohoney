@@ -1,19 +1,37 @@
-<%_ var suffix = Date.now(); _%>
-<form method="post" class="container-fluid" action="/lookbook/gallery/add" style="padding: 30px">
-    <label>IMAGE / VIDEO</label>
-    <fieldset class="file-upload-container">
-        <div class="row">
-            <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook-media-file-<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.wav"></div>
-            <input type="hidden" name="media_file">
-            <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook-media-file-<%- suffix %>">CLEAR</button></div>
-            <div class="col-sm-12"><input type="url" name="media_url" id="lookbook-media-url" placeholder="Or enter the image / video URL"></div>
-            <div class="col-sm-12"><input type="checkbox" name="tutorial" id="tutorial-check" style="margin-right: 5px;"> IS THIS A TUTORIAL VIDEO?<br></div>
-            <div class="col-sm-12 add-remove-control" style="text-align: right">
-                <button type="button" class="add">ADD</button>
-                <button type="button" class="remove">REMOVE</button>
-            </div>
-        </div>
-    </fieldset>
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-lookbook-media">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-lookbook-media">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-lookbook-media">REMOVE</a></li>
+</ul>
 
-    <input type="submit" value="SAVE">
-</form>
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-lookbook-media" class="new-form-tab tab-pane fade in active">
+        <%_ var suffix = Date.now(); _%>
+        <form method="post" class="container-fluid" action="/lookbook/gallery/add" style="padding: 30px">
+            <label>IMAGE / VIDEO</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook-media-file-<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.wav"></div>
+                    <input type="hidden" name="media_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook-media-file-<%- suffix %>">CLEAR</button></div>
+                    <div class="col-sm-12"><input type="url" name="media_url" id="lookbook-media-url" placeholder="Or enter the image / video URL"></div>
+                    <div class="col-sm-12"><input type="checkbox" name="tutorial" id="tutorial-check" style="margin-right: 5px;"> IS THIS A TUTORIAL VIDEO?<br></div>
+                    <div class="col-sm-12 add-remove-control" style="text-align: right">
+                        <button type="button" class="add">ADD</button>
+                        <button type="button" class="remove">REMOVE</button>
+                    </div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-lookbook-media" class="edit-form-tab tab-pane fade">
+        <p style="text-align: center;">IN CONSTRUCTION</p>
+    </div>
+
+    <div id="remove-lookbook-media" class="remove-form-tab tab-pane fade">
+        <p style="text-align: center;">IN CONSTRUCTION</p>
+    </div>
+</div>

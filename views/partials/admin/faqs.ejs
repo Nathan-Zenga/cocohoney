@@ -1,9 +1,56 @@
-<form method="post" action="/admin/faqs/add">
-    <label>QUESTION</label>
-    <input type="text" name="question" id="question" required>
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-faq">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-faq">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-faq">REMOVE</a></li>
+</ul>
 
-    <label>ANSWER</label>
-    <textarea name="answer" id="answer" rows="10" required></textarea>
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-faq" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/admin/faqs/add">
+            <label>QUESTION</label>
+            <input type="text" name="question" id="question" required>
 
-    <input type="submit" value="SAVE">
-</form>
+            <label>ANSWER</label>
+            <textarea name="answer" id="answer" rows="10" required></textarea>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-faq" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/admin/faqs/edit">
+            <label>SELECT FAQ <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="faq_id">
+                <option value="">-</option>
+                <%_ faqs.forEach(faq => { _%>
+                <option value="<%= faq._id %>"><%= faq.question %></option>
+                <%_ }) _%>
+            </select>
+
+            <label>QUESTION</label>
+            <input type="text" name="question" id="question_edit" required>
+
+            <label>ANSWER</label>
+            <textarea name="answer" id="answer_edit" rows="10" required></textarea>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="remove-faq" class="remove-form-tab tab-pane fade">
+        <%_ if (faqs.length) { _%>
+        <form action="/admin/faqs/remove" method="post">
+            <label>DELETE FAQs</label><br><br>
+            <%_ faqs.forEach((faq, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="faq<%= i %>" value="<%= faq._id %>"><span><%= faq.question %></span><br>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE FAQs">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO FAQs TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>
