@@ -2,6 +2,7 @@
     <li class="active"><a data-toggle="pill" href="#new-discount-code">NEW</a></li>
     <li><a data-toggle="pill" href="#edit-discount-code">EDIT</a></li>
     <li><a data-toggle="pill" href="#remove-discount-code">REMOVE</a></li>
+    <li><a data-toggle="pill" href="#list-discount-code">LIST</a></li>
 </ul>
 
 <div class="tab-content" style="padding-top: 10px;">
@@ -57,6 +58,35 @@
         </form>
         <%_ } else { _%>
         <p style="text-align: center; margin-top: 2em"><b>NO DISCOUNT CODES TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+
+    <div id="list-discount-code" class="list-tab tab-pane fade">
+        <%_ if (!discount_codes.length) { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO DISCOUNT CODES TO LIST</b></p>
+        <%_ } else { _%>
+        <div class='table-responsive'>
+            <table id="discount-codes-table" class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>CODE</th>
+                        <th>PERCENTAGE</th>
+                        <th>USED COUNT</th>
+                        <th>EXPIRY DATE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%_ discount_codes.forEach((dc, i) => { _%>
+                    <tr>
+                        <th scope="row"><%= dc.code %></th>
+                        <td id="percentage-<%= i %>"><%= dc.percentage %>%</td>
+                        <td id="used-code-<%= i %>"><%= dc.used_count %></td>
+                        <td id="expiry-date-<%= i %>"><%= dc.expiry_date.toLocaleDateString() %></td>
+                    </tr>
+                    <%_ }) _%>
+                </tbody>
+            </table>
+        </div>
         <%_ } _%>
     </div>
 </div>
