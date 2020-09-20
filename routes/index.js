@@ -11,10 +11,6 @@ router.get('/about', (req, res) => {
     res.render('about', { title: "About", pagename: "about" })
 });
 
-router.get('/shipping', (req, res) => {
-    res.render('shipping', { title: "Shipping Information", pagename: "shipping-info" })
-});
-
 router.get('/contact', (req, res) => {
     res.render('contact', { title: "Contact Us", pagename: "contact" })
 });

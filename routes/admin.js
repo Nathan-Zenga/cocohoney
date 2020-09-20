@@ -77,8 +77,8 @@ router.post("/activate/:token", async (req, res) => {
 
 router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
-        const { members, banner_slides, discount_codes, products, faqs } = db;
-        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs]);
+        const { members, banner_slides, discount_codes, products, faqs, shipping_methods } = db;
+        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs, ...shipping_methods]);
     })
 });
 
@@ -137,7 +137,7 @@ router.post('/faqs/edit', isAuthed, (req, res) => {
 });
 
 router.post('/faqs/remove', isAuthed, (req, res) => {
-    var ids = Object.values(req.body);
+    const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     FAQ.deleteMany({_id : { $in: ids }}, (err, result) => {
         if (err) return res.status(500).send(err ? err.message : "Error occurred");

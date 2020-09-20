@@ -1,0 +1,56 @@
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-shipping-method">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-shipping-method">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-shipping-method">REMOVE</a></li>
+</ul>
+
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-shipping-method" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/shipping/add">
+            <label>METHOD NAME</label>
+            <input type="text" name="name" id="method_name" required>
+
+            <label>FEE (£)</label>
+            <input type="number" name="fee" id="method_fee" min="0.01" step="0.01" required>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-shipping-method" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/shipping/edit">
+            <label>SELECT SHIPPING METHOD <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="shipping_method_id">
+                <option value="">-</option>
+                <%_ shipping_methods.forEach(method => { _%>
+                <option value="<%= method._id %>"><%= method.name %></option>
+                <%_ }) _%>
+            </select>
+
+            <label>METHOD NAME</label>
+            <input type="text" name="name" id="method_name_edit" required>
+
+            <label>FEE (£)</label>
+            <input type="number" name="fee" id="method_fee_edit" min="0.01" step="0.01" required>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="remove-shipping-method" class="remove-form-tab tab-pane fade">
+        <%_ if (shipping_methods.length) { _%>
+        <form action="/shipping/remove" method="post">
+            <label>DELETE SHIPPING METHOD(S)</label><br><br>
+            <%_ shipping_methods.forEach((method, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="method<%= i %>" value="<%= method._id %>"><span><%= method.name %></span>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE SHIPPING METHODS">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO SHIPPING METHODS TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>
