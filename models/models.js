@@ -21,7 +21,7 @@ module.exports.Member = model('Member', Schema({
     lastname: String,
     email: String,
     phone_number: String
-}));
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', (() => {
     const schema = new Schema({ email: { type: String, index: true }, password: String, token_expiry_date: Date });
@@ -78,7 +78,7 @@ module.exports.Discount_code = model('Discount_code', Schema({
 module.exports.Order = model('Order', Schema({
     basket: Array,
     discount_code: String
-}));
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
     firstname: String,
@@ -90,7 +90,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
     token: String,
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: null }
-}));
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.FAQ = model('FAQ', Schema({
     question: String,
