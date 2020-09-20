@@ -71,7 +71,13 @@ module.exports.Discount_code = model('Discount_code', Schema({
     code: { type: String, required: true },
     percentage: { type: Number, min: 1, max: 100 },
     used: { type: Boolean, default: false },
+    used_count: { type: Number, default: 0 },
     expiry_date: { type: Date, required: true }
+}));
+
+module.exports.Order = model('Order', Schema({
+    basket: Array,
+    discount_code: String
 }));
 
 module.exports.Ambassador = model('Ambassador', Schema({

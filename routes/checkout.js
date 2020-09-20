@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Product, Shipping_method, Discount_code } = require('../models/models');
+const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", (req, res) => {
@@ -69,10 +69,12 @@ router.post("/payment-intent/complete", async (req, res) => {
             }
         });
 
+        new Order({ basket: cart, discount_code: current_discount_code || undefined }).save();
+
         req.session.cart = [];
         req.session.paymentIntentID = undefined;
         if (code) {
-            if (production) { code.used = true; code.save() }
+            if (production) { code.used = true; code.used_count += 1; code.save() }
             req.session.current_discount_code = undefined;
         }
 
