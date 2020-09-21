@@ -8,7 +8,7 @@ module.exports.Sale = model('Sale', Schema({
 module.exports.Product = model('Product', Schema({
     name: { type: String, index: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
-    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
+    price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     images: [{ p_id: String, url: String, main: { type: Boolean, default: false } }],
     category: { type: String, enum: ["lashes", "palettes"] },
     info: { type: String, default: "" },

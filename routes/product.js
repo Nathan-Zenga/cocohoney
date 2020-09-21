@@ -24,8 +24,8 @@ router.get('/:category/:name', (req, res, next) => {
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, price_sale, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    new Product({ name, price, price_sale, category, product_collection, stock_qty, info }).save((err, saved) => {
+    const { name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    new Product({ name, price, price_amb, category, product_collection, stock_qty, info }).save((err, saved) => {
         if (err) return res.status(400).send(err.message);
         if (!image_url && !image_file) return res.send("Product saved in stock");
         const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -38,15 +38,16 @@ router.post('/stock/add', isAuthed, (req, res) => {
 });
 
 router.post('/stock/edit', isAuthed, (req, res) => {
-    const { id, name, price, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    const { id, name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
     Product.findById(id, (err, product) => {
         if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
 
         const prefix = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
         if (name)               product.name = name;
         if (price)              product.price = price;
+        if (price_amb)          product.price_amb = price_amb;
         if (info)               product.info = info;
-        if (category)       product.category = category;
+        if (category)           product.category = category;
         if (product_collection) product.product_collection = product_collection;
         if (stock_qty) {
             product.stock_qty = stock_qty;
