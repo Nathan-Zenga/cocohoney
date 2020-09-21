@@ -8,7 +8,7 @@
                 <div class="container">
                     <div class="row">
                         <%_ collection.forEach(product => { _%>
-                        <div class="thumb col-md-3 col-sm-4" style="height: 350px;">
+                        <div class="thumb col-md-3 col-sm-4">
                             <a href="/product/<%= product.category + '/' + product.name %>">
                                 <div class="thumb-img product-image" style="background-image: url('<%- product.images[0].url %>');"></div>
                             </a>

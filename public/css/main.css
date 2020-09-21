@@ -385,11 +385,6 @@ section .media-wrapper .main-media.small {
     display: none;
 }
 
-.thumb {
-    height: 300px;
-    margin-bottom: 2.5em;
-}
-
 .thumb-container.no-wrap .thumb {
     display: inline-block;
     width: 250px;
@@ -398,7 +393,7 @@ section .media-wrapper .main-media.small {
 }
 
 .thumb .thumb-img {
-    height: 70%;
+    height: 240px;
     border-radius: 10px;
     overflow: hidden;
     background-position: center;
@@ -407,7 +402,6 @@ section .media-wrapper .main-media.small {
 }
 
 .thumb .thumb-info {
-    height: 30%;
     white-space: normal;
     padding: 10px 0;
     font-weight: 500;
@@ -427,6 +421,10 @@ section .media-wrapper .main-media.small {
 }
 
 @media (min-width: 768px) {
+    .thumb {
+        margin-bottom: 2.5em;
+    }
+
     .add-to-cart-btn {
         font-size: 1.5em;
     }
