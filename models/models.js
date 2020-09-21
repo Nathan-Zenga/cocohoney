@@ -77,7 +77,8 @@ module.exports.Discount_code = model('Discount_code', Schema({
 
 module.exports.Order = model('Order', Schema({
     basket: Array,
-    discount_code: String
+    discount_code: String,
+    customer: { name: String, email: String }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({

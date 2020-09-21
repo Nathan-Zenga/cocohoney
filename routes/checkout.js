@@ -69,7 +69,11 @@ router.post("/payment-intent/complete", async (req, res) => {
             }
         });
 
-        new Order({ basket: cart, discount_code: current_discount_code || undefined }).save();
+        new Order({
+            basket: cart,
+            discount_code: current_discount_code || undefined,
+            customer: { name: pi.shipping.name, email: pi.receipt_email }
+        }).save();
 
         req.session.cart = [];
         req.session.paymentIntentID = undefined;

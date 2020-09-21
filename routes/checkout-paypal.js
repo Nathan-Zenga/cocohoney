@@ -82,6 +82,10 @@ router.get("/complete", async (req, res) => {
             error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
         });
 
+        const { recipient_name, line1, line2, city, postal_code } = payment.transactions[0].item_list.shipping_address;
+        const { email } = payment.payer.payer_info;
+        const purchase_summary = payment.transactions[0].item_list.items.map(item => `${item.name} X ${item.quantity} - ${item.price}`).join("\n");
+
         if (production) cart.forEach(item => {
             const product = products.filter(p => p.id === item.id)[0];
             if (product) {
@@ -91,7 +95,11 @@ router.get("/complete", async (req, res) => {
             }
         });
 
-        new Order({ basket: cart, discount_code: current_discount_code || undefined }).save();
+        new Order({
+            basket: cart,
+            discount_code: current_discount_code || undefined,
+            customer: { name: recipient_name, email }
+        }).save();
 
         req.session.cart = [];
         req.session.transaction = undefined;
@@ -101,10 +109,6 @@ router.get("/complete", async (req, res) => {
         }
 
         if (!production) return res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" });
-
-        const { recipient_name, line1, line2, city, postal_code } = payment.transactions[0].item_list.shipping_address;
-        const { email } = payment.payer.payer_info;
-        const purchase_summary = payment.transactions[0].item_list.items.map(item => `${item.name} X ${item.quantity} - ${item.price}`).join("\n");
 
         const transporter = new MailingListMailTransporter({ req, res });
         transporter.setRecipient({ email }).sendMail({
