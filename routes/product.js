@@ -6,7 +6,7 @@ const { Product } = require('../models/models');
 router.get('/:category/collection/:product_collection', (req, res, next) => {
     const { category, product_collection } = req.params;
     if (!category || !product_collection) return next();
-    const coll = { $regex: RegExp(`^${product_collection}$`, "i") };
+    const coll = { $regex: RegExp(`^${product_collection.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     Product.find({ category, product_collection: coll }).sort({ _id: -1 }).exec((err, collection) => {
         if (!collection.length) return next();
         const title = collection[0].product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
@@ -15,7 +15,7 @@ router.get('/:category/collection/:product_collection', (req, res, next) => {
 });
 
 router.get('/:category/:name', (req, res, next) => {
-    const category = { $regex: RegExp(`^${req.params.category.replace(/[_+]/g, " ")}$`, "i") };
+    const category = { $regex: RegExp(`^${req.params.category.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     const name = { $regex: RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i") };
     Product.findOne({ category, name }, (err, product) => {
         if (err || !product) return next();
