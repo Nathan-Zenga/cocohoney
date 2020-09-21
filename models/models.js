@@ -96,3 +96,10 @@ module.exports.FAQ = model('FAQ', Schema({
     question: String,
     answer: String
 }));
+
+module.exports.Box = model('Box', Schema({
+    name: String,
+    price: { type: Number, set: n => parseFloat(n) * 100 },
+    info: String,
+    max_items: Number
+}));

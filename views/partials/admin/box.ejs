@@ -1,0 +1,68 @@
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-box">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-box">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-box">REMOVE</a></li>
+</ul>
+
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-box" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/product/deals/box/add">
+            <label>NAME</label>
+            <input type="text" name="name" id="box_name" required>
+
+            <label>PRICE (£)</label>
+            <input type="number" name="price" id="box_price" min="0.01" step="0.01" required>
+
+            <label>MAX NUMBER OF ITEMS</label>
+            <input type="number" name="max_items" id="box_max_items" min="1" required>
+
+            <label>INFO <span>(OPTIONAL)</span></label>
+            <textarea name="info" id="box_info" rows="10"></textarea>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-box" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/product/deals/box/edit">
+            <label>SELECT BOX <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="banner_slide_id">
+                <option value="">-</option>
+                <%_ boxes.forEach(box => { _%>
+                <option value="<%= box._id %>"><%= box.name %></option>
+                <%_ }) _%>
+            </select>
+
+            <label>NAME</label>
+            <input type="text" name="name" id="box_name_edit" required>
+
+            <label>PRICE (£)</label>
+            <input type="number" name="price" id="box_price_edit" min="0.01" step="0.01" required>
+
+            <label>MAX NUMBER OF ITEMS</label>
+            <input type="number" name="max_items" id="box_max_items_edit" min="1" required>
+
+            <label>INFO <span>(OPTIONAL)</span></label>
+            <textarea name="info" id="box_info_edit" rows="10"></textarea>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="remove-box" class="remove-form-tab tab-pane fade">
+        <%_ if (boxes.length) { _%>
+        <form action="/product/deals/box/remove" method="post">
+            <label>DELETE BOX(S)</label><br><br>
+            <%_ boxes.forEach((box, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="box<%= i %>" value="<%= box._id %>"><span><%= box.name %></span>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE BOXES">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO BOXES TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method } = require('../models/models');
+const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box } = require('../models/models');
 
 /**
  * Getting all documents from all collections
@@ -13,5 +13,6 @@ module.exports = async cb => {
     docs.discount_codes = await Discount_code.find();
     docs.faqs = await FAQ.find();
     docs.shipping_methods = await Shipping_method.find();
+    docs.boxes = await Box.find();
     cb(docs);
 };
