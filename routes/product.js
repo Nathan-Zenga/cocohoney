@@ -49,13 +49,19 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         if (info)               product.info = info;
         if (category)           product.category = category;
         if (product_collection) product.product_collection = product_collection;
-        if (stock_qty) {
-            product.stock_qty = stock_qty;
-            req.session.cart = req.session.cart.map(item => {
-                if (item.id === product.id) item.stock_qty = stock_qty;
-                return item;
-            });
-        };
+        if (stock_qty)          product.stock_qty = stock_qty;
+
+        req.session.cart = req.session.cart.map(item => {
+            if (item.id === product.id) {
+                if (name)      item.name = name;
+                if (price)     item.price = price;
+                if (price_amb) item.price_amb = price_amb;
+                if (info)      item.info = info;
+                if (stock_qty) item.stock_qty = stock_qty;
+                item.qty = item.qty > item.stock_qty ? item.stock_qty : item.qty;
+            }
+            return item;
+        });
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
