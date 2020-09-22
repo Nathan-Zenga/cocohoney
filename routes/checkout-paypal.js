@@ -36,7 +36,7 @@ router.post("/create-payment", async (req, res) => {
         payer: { payment_method: "paypal" },
         redirect_urls: {
             return_url: location_origin + "/shop/checkout/paypal/complete",
-            cancel_url: location_origin + "/shop/checkout/paypal/cancel"
+            cancel_url: location_origin + "/shop/checkout/cancel"
         },
         transactions: [{
             item_list: {
@@ -133,11 +133,6 @@ router.get("/complete", async (req, res) => {
             });
         });
     });
-});
-
-router.get("/cancel", (req, res, next) => {
-    if (!req.query.token) return next();
-    res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
 module.exports = router;

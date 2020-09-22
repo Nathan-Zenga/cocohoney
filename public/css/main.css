@@ -569,6 +569,11 @@ label {
     font-weight: 300;
 }
 
+label span {
+    font-size: .8em;
+    opacity: .5;
+}
+
 label .dropdown-arrow {
     margin-left: 5px;
 }

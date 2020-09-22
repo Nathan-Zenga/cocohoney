@@ -4,7 +4,6 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
 const mongoose = require('mongoose');
-const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const { CHCDB, NODE_ENV } = process.env;
@@ -39,15 +38,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
     res.locals.sale = ((await Site_content.find())[0] || {}).active || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
-    if (!req.session.paymentIntentID) return next();
-    Stripe.paymentIntents.retrieve(req.session.paymentIntentID).then(pi => {
-        // id used in payment completion request if true
-        if (!(pi && pi.status === "succeeded")) req.session.paymentIntentID = undefined;
-        if (!pi || pi.status === "succeeded") return next();
-        Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" })
-                             .catch(err => console.log(err.message || err))
-                             .finally(() => next());
-    }).catch(err => console.log(err.message || err), next());
+    next();
 });
 
 app.use('/', require('./routes/index'));

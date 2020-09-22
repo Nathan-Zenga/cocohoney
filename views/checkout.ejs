@@ -13,7 +13,7 @@
 
             <div class="tab-content">
                 <div id="card-payment" class="tab-pane fade in active">
-                    <form id="payment-details-form" action="/shop/checkout/payment-intent/create">
+                    <form id="stripe-payment-form" action="/shop/checkout/session/create">
                         <fieldset>
                             <div class="row">
                                 <div class="col-sm-6">
@@ -53,46 +53,36 @@
                             </div>
                         </fieldset>
                         <br>
-                        <label for="discount_code">DISCOUNT CODE</label>
+                        <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
                         <input type="text" name="discount_code" id="discount_code">
-                        <%_ const price_total = cart.map(p => ({ price: sale ? p.price_sale : p.price, qty: p.qty })).reduce((sum, p) => sum + (p.price * p.qty), 0);
-                            const free_delivery = price_total > 4000; _%>
-                        <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
-                        <%_ if (!free_delivery) {
-                            shipping_methods.forEach(method => { _%>
+                        <%_ if (shipping_methods.length) { _%>
+                        <label>CHOOSE DELIVERY METHOD</label><br><br>
+                        <%_ shipping_methods.forEach(method => { _%>
                         <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
                             <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
                         <br>
                         <%_ })} else { _%>
-                        <input type="text" value="FREE DELIVERY" disabled>
+                        <label style="display: block; text-align: center">FREE DELIVERY</label>
                         <%_ } _%>
                         <br><br>
                         <button class="checkout-btn" type="submit">
                             <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CONTINUE TO PAYMENT</span></span>
                         </button>
                     </form>
-
-                    <form class="minimal" id="card-payment-form" style="display: none; margin-top: 2em">
-                        <label for="card-element">ENTER PAYMENT DETAILS</label>
-                        <div id="card-element"></div>
-                        <input type="submit" id="submit-payment-btn" value="PAY">
-
-                        <p id="card-error" role="alert"></p>
-                    </form>
                 </div>
 
                 <div id="paypal-payment" class="tab-pane fade">
                     <form id="paypal-payment-form" action="/shop/checkout/paypal/create-payment">
-                        <label for="discount_code">DISCOUNT CODE</label>
+                        <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
                         <input type="text" name="discount_code" id="discount_code">
-                        <label><%= !free_delivery ? "CHOOSE " : "" %>DELIVERY METHOD</label><br><br>
-                        <%_ if (!free_delivery) {
-                            shipping_methods.forEach(method => { _%>
+                        <%_ if (shipping_methods.length) { _%>
+                        <label>CHOOSE DELIVERY METHOD</label><br><br>
+                        <%_ shipping_methods.forEach(method => { _%>
                         <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
                             <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
                         <br>
                         <%_ })} else { _%>
-                        <input type="text" value="FREE DELIVERY" disabled>
+                        <label style="display: block; text-align: center">FREE DELIVERY</label>
                         <%_ } _%>
                         <br><br>
                         <button class="checkout-btn" type="submit">
@@ -121,73 +111,21 @@
             });
         });
 
-        $("#payment-details-form").submit(function(e) {
+        $("#stripe-payment-form").submit(function(e) {
             e.preventDefault();
             var btnControl = new submitBtnController(this);
+            window.onbeforeunload = null;
             $.post(this.action, $(this).serializeArray(), function(data) {
                 var stripe = Stripe(data.pk);
-                $(":input, button", e.target).attr("disabled", true).filter(":submit").remove();
-                $("#submit-payment-btn").attr("disabled", true);
-                $("#card-payment-form").show(0, function() {
-                    $("html, body").animate({ scrollTop: $(this).offset().top - 100 });
-                    var card = stripe.elements().create("card", { style: {
-                        base: { // input fields
-                            color: "#32325d",
-                            fontFamily: 'Arial, sans-serif',
-                            fontSmoothing: "antialiased",
-                            fontSize: "16px",
-                            "::placeholder": { color: "#32325d" }
-                        },
-                        invalid: { // input fields (invalid)
-                            fontFamily: 'Arial, sans-serif',
-                            color: "#fa755a",
-                            iconColor: "#fa755a"
-                        }
-                    }});
-                    card.mount("#card-element"); // Stripe injects an iframe into the DOM
-                    card.on("change", function(e) {
-                        // Disable the Pay button if there are no card details in the Element
-                        $("#submit-payment-btn").attr("disabled", e.empty);
-                        $("#card-error").prop("textContent", e.error ? e.error.message : "");
-                    });
-                    btnControl.finish();
-
-                    $("#card-payment-form").submit(function(e) {
-                        e.preventDefault();
-                        // Complete payment when the submit button is clicked
-                        var btnControl = new submitBtnController(this);
-                        $("#submit-payment-btn").attr("disabled", true);
-                        stripe.confirmCardPayment(data.clientSecret, { payment_method: { card } }).then(function(res) {
-                            $("#submit-payment-btn").attr("disabled", false);
-                            if (res.error) return btnControl.finish(), showError(res.error.message);
-                            window.onbeforeunload = null;
-                            $("#cart-item-count").text(0);
-                            $.post("/shop/checkout/payment-intent/complete", function(msg) {
-                                $("html, body").animate({ scrollTop: 0 }, function() {
-                                    $(".content > *").fadeOut(function() {
-                                        var css = { display: "none", marginTop: "5em", textAlign: "center", fontWeight: 400 };
-                                        $(".content").html($("<div>").css(css).html(msg).get(0).outerHTML).children().fadeIn();
-                                    });
-                                });
-                            }).fail(function(err, status, codeMessage) {
-                                alert(codeMessage + (err ? ": " + err.responseText : ""));
-                            }).always(function() {
-                                btnControl.finish();
-                            });
-                        });
-                    });
-                });
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            }).then(function(result) {
+                if (result.error) { alert(result.error.message); window.onbeforeunload = function() { return true } }
             }).fail(function(err, status, codeMessage) {
-                btnControl.finish();
+                window.onbeforeunload = function() { return true };
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
+            }).always(function() {
+                btnControl.finish();
             });
-
-            var showError = function(errorMsgText) {
-                // Show the customer the error from Stripe if their card fails to charge
-                var errorMsg = $("#card-error").get(0);
-                errorMsg.textContent = errorMsgText;
-                setTimeout(function() { errorMsg.textContent = "" }, 4000);
-            };
-        })
+        });
     </script>
 <%_ include partials/footer _%>
