@@ -96,15 +96,12 @@
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        window.onbeforeunload = function() { return true };
         $("#paypal-payment-form").submit(function(e) {
             e.preventDefault();
             var btnControl = new submitBtnController(this, "REDIRECTING");
-            window.onbeforeunload = null;
             $.post(this.action, $(this).serializeArray(), function(href) {
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
-                window.onbeforeunload = function() { return true };
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnControl.finish();
@@ -114,14 +111,12 @@
         $("#stripe-payment-form").submit(function(e) {
             e.preventDefault();
             var btnControl = new submitBtnController(this);
-            window.onbeforeunload = null;
             $.post(this.action, $(this).serializeArray(), function(data) {
                 var stripe = Stripe(data.pk);
                 return stripe.redirectToCheckout({ sessionId: data.id });
             }).then(function(result) {
-                if (result.error) { alert(result.error.message); window.onbeforeunload = function() { return true } }
+                if (result.error) alert(result.error.message);
             }).fail(function(err, status, codeMessage) {
-                window.onbeforeunload = function() { return true };
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnControl.finish();
