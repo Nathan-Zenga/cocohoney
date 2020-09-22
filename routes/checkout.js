@@ -19,7 +19,11 @@ router.post("/payment-intent/create", async (req, res) => {
         price: sale ? p.price_sale : p.price,
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
-    var description = cart.map(p => `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`).join(", \r\n");
+    var description = cart.map(p => {
+        let item = `${p.name} (£${parseFloat(p.price / 100).toFixed(2)} X ${p.qty})`;
+        item += p.deal ? " ("+p.items.map(e => `${e.name} (£${parseFloat(e.price / 100).toFixed(2)} X ${e.qty})`).join(", ")+")" : "";
+        return item;
+    }).join(", \r\n");
 
     try {
         var code = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });

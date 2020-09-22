@@ -4,12 +4,22 @@
         <div class="cart-item">
             <div class="col-sm-10">
                 <div class="row">
-                    <div class="item-img col-sm-4 col-xs-7" style="background-image:url('<%- item.image.url %>')"></div>
+                    <div class="item-img <%- item.deal ? 'item-img-label ' : '' %>col-sm-4 col-xs-7"<%- item.deal ? '' : ' style="background-image:url(' + item.image.url + ')"' %>>
+                        <%_ if (item.deal) { _%>
+                        <span>DEAL</span>
+                        <%_ } _%>
+                    </div>
                     <div class="item-info col-sm-8 col-xs-5">
                         <p class="item-name" style="font-weight: 400"><%- item.name %></p>
-                        <%_ const price = sale ? item.price_sale : item.price _%>
-                        <p class="item-price">£<span><%- (price / 100).toFixed(2) %></span></p>
-                        <p><%- (item.info || "").replace(/\r?\n/g, "<br>") %></p>
+                        <p class="item-price">£<span><%- (item.price / 100).toFixed(2) %></span></p>
+                        <div class="item-info">
+                            <%_ if (item.deal) {
+                                item.items.forEach(p => { _%>
+                            <p><%- p.qty %> x <%- p.name %></p>
+                            <%_ })} else { _%>
+                            <%- (item.info || "").replace(/\r?\n/g, "<br>") %>
+                            <%_ } _%>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -19,7 +29,7 @@
                         <form class="minimal qty-control-form" action="/shop/cart/increment">
                             <input type="hidden" name="id" value="<%- item.id %>">
                             <input type="hidden" name="increment" value="1">
-                            <button type="submit">
+                            <button type="submit"<%- item.deal ? ' disabled' : '' %>>
                                 <i class="mb-view fal fa-chevron-right"></i>
                                 <i class="dt-view fal fa-chevron-up"></i>
                             </button>
@@ -30,7 +40,7 @@
                         <form class="minimal qty-control-form" action="/shop/cart/increment">
                             <input type="hidden" name="id" value="<%- item.id %>">
                             <input type="hidden" name="increment" value="-1">
-                            <button type="submit">
+                            <button type="submit"<%- item.deal ? ' disabled' : '' %>>
                                 <i class="mb-view fal fa-chevron-left"></i>
                                 <i class="dt-view fal fa-chevron-down"></i>
                             </button>

@@ -1,0 +1,84 @@
+<%_ include partials/header _%>
+    <section>
+        <div class="container section-label">
+            <div class="label-text">
+                <h2><%= box.name %> Box - £<%= (box.price / 100).toFixed(2) %></h2>
+                <%- box.info ? "<p>"+box.info.replace(/\r?\n/g, "</p><p>")+"</p>" : "" %>
+            </div>
+        </div>
+        <br><br>
+
+        <div class="container">
+            <form class="panel-group minimal" action="/deal/cart/add">
+                <%_ products.forEach((product, i, arr) => {
+                    if (product.product_collection && (i === 0 || product.product_collection !== arr[i-1].product_collection)) { _%>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title collapsed" data-toggle="collapse" data-target="#collapse<%= i %>">
+                            <i class="fal fa-chevron-down dropdown-arrow" style="margin-right: 5px;"></i> <%= product.product_collection %>
+                        </h2>
+                    </div>
+                    <div id="collapse<%= i %>" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="thumb-container">
+                                <div class="container">
+                                    <div class="row">
+                                        <%_ products.filter(p => p.product_collection === product.product_collection).forEach(p => { _%>
+                                        <div class="thumb col-md-3 col-sm-4" style="margin-bottom: 0">
+                                            <div class="thumb-img product-image" style="background-image: url('<%- p.images[0].url %>');">
+                                                <input type="checkbox" name="product_id" value="<%= p.id %>">
+                                            </div>
+                                            <div class="thumb-info">
+                                                <div class="product-name"><p><%= p.name %></p></div>
+                                                <div class="quantity-wrapper">
+                                                    <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                                                    <input class="product-quantity" type="number" name="quantity" min="1" max="<%= p.stock_qty %>" value="1" disabled>
+                                                    <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <%_ }) _%>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <%_ }}) _%>
+                <br>
+                <input type="hidden" name="box_id" value="<%= box.id %>" required>
+                <input type="submit" value="ADD BOX DEAL">
+            </form>
+        </div>
+    </section>
+
+    <script>
+        $("input[type=checkbox]").change(function() {
+            $(this).closest(".thumb-img").toggleClass("checked", this.checked);
+            $(this).closest(".thumb").find(".product-quantity").attr({ disabled: !this.checked, required: this.checked });
+        });
+
+        $(".quantity-control-btn").click(function() {
+            $(this).parent(".quantity-wrapper").find("input[type=number]").get(0).stepUp($(this).data("step"));
+        });
+
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var form = this;
+            var btnController = new submitBtnController(form);
+
+            $.post(form.action, $(form).serializeArray(), function(item_count) {
+                var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
+                $("#cart-item-count").text(item_count);
+                $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });
+                $(".thumb-img").removeClass("checked");
+                $(".product-quantity").attr({ disabled: true, required: false });
+                e.target.reset();
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>
+<%_ include partials/footer _%>

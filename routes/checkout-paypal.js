@@ -41,7 +41,7 @@ router.post("/create-payment", async (req, res) => {
         transactions: [{
             item_list: {
                 items: cart.map(item => ({
-                    name: item.name,
+                    name: item.name + ( item.deal ? " (" + item.items.map(e => `${e.qty} x ${e.name}`).join(",") + ")": "" ),
                     price: (item.price / 100).toFixed(2),
                     quantity: item.qty,
                     currency: "GBP"
