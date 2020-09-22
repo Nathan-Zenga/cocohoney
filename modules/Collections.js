@@ -12,7 +12,7 @@ module.exports = async cb => {
     docs.banner_slides = await Banner_slide.find();
     docs.discount_codes = await Discount_code.find();
     docs.faqs = await FAQ.find();
-    docs.shipping_methods = await Shipping_method.find();
+    docs.shipping_methods = await Shipping_method.find().sort({ fee: 1 }).exec();
     docs.boxes = await Box.find();
     cb(docs);
 };
