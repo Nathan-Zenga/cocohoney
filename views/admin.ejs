@@ -233,6 +233,7 @@
 
             $.post(form.action, $(form).serializeArray(), function(result) {
                 showMessage(result);
+                $(form).find(".clear-uploads").click();
                 form.reset();
             }).fail(function(err, status, codeMessage) {
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
