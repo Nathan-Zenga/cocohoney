@@ -122,15 +122,16 @@ router.get("/session/complete", async (req, res) => {
 });
 
 router.get("/cancel", async (req, res) => {
-    const { checkout_session, promotion_code_obj } = req.session;
+    const { customer, checkout_session, promotion_code_obj } = req.session;
     if (promotion_code_obj) {
         await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
         req.session.promotion_code_obj = undefined;
-    };
-    if (checkout_session) {
+    }
+    if (customer && checkout_session) {
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
-        if (session.payment_status != "paid") await Stripe.customers.del(session.customer.id);
-        if (session.payment_intent.status != "succeeded") await Stripe.paymentIntents.cancel(session.payment_intent.id);
+        const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
+        if (session.payment_status != "paid") await Stripe.customers.del(customer.id);
+        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id);
     }
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
