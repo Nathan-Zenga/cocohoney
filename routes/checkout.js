@@ -41,7 +41,7 @@ router.post("/session/create", async (req, res) => {
         });
 
         const coupon = !code_doc ? null : await Stripe.coupons.create({
-            name: `${code_doc.percentage}% (${code_doc.code})`,
+            name: `${code_doc.percentage}% off (${code_doc.code})`,
             percent_off: code_doc.percentage,
             duration: "once"
         });
