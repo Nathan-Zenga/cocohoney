@@ -47,12 +47,19 @@
                 <%_ }}) _%>
                 <br>
                 <input type="hidden" name="box_id" value="<%= box.id %>" required>
-                <input type="submit" value="ADD BOX DEAL">
+                <input type="submit" id="submit-btn" value="ADD TO CART">
             </form>
         </div>
     </section>
 
     <script>
+        $(window).on("load scroll resize", function() {
+            var windowOffsetBottom = window.pageYOffset + window.innerHeight;
+            var footerOffsetTop = $("footer").offset().top - parseFloat($("footer").css("margin-top"));
+            var bottom = windowOffsetBottom >= footerOffsetTop + parseFloat($("footer").css("margin-top")) ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
+            $("#submit-btn").css("bottom", bottom);
+        });
+
         $("input[type=checkbox]").change(function() {
             $(this).closest(".thumb-img").toggleClass("checked", this.checked);
             $(this).closest(".thumb").find(".product-quantity").attr({ disabled: !this.checked, required: this.checked });

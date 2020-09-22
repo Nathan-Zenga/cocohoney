@@ -1058,3 +1058,10 @@ label .dropdown-arrow {
     background-color: transparent;
     color: white;
 }
+
+#box-deal-page #submit-btn {
+    position: fixed;
+    z-index: 100;
+    bottom: 2em;
+    margin-bottom: 0;
+}
