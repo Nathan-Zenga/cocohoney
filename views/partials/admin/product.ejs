@@ -2,6 +2,7 @@
     <li class="active"><a data-toggle="pill" href="#new-product">NEW</a></li>
     <li><a data-toggle="pill" href="#edit-product">EDIT</a></li>
     <li><a data-toggle="pill" href="#remove-product">REMOVE</a></li>
+    <li><a data-toggle="pill" href="#product-list">LIST</a></li>
 </ul>
 
 <div class="tab-content" style="padding-top: 10px;">
@@ -126,6 +127,39 @@
         </form>
         <%_ } else { _%>
         <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+
+    <div id="product-list" class="list-tab tab-pane fade">
+        <%_ if (!products.length) { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO LIST</b></p>
+        <%_ } else { _%>
+        <div class='table-responsive'>
+            <table id="products-table" class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>NAME</th>
+                        <th>CATEGORY</th>
+                        <th>COLLECTION</th>
+                        <th>PRICE</th>
+                        <th>AMBASSADOR PRICE</th>
+                        <th>STOCK TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%_ products.forEach((p, i) => { _%>
+                    <tr>
+                        <th scope="row"><%= p.name %></th>
+                        <td id="category-<%= i %>"><%= p.category %></td>
+                        <td id="collection-<%= i %>"><%= p.product_collection %></td>
+                        <td id="price-<%= i %>">£<%= (p.price / 100).toFixed(2) %></td>
+                        <td id="price-amb-<%= i %>">£<%= (p.price_amb / 100).toFixed(2) %></td>
+                        <td id="stock-qty-<%= i %>"><%= p.stock_qty %></td>
+                    </tr>
+                    <%_ }) _%>
+                </tbody>
+            </table>
+        </div>
         <%_ } _%>
     </div>
 </div>

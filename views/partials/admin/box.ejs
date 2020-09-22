@@ -26,7 +26,7 @@
     <div id="edit-box" class="edit-form-tab tab-pane fade">
         <form method="post" action="/product/deals/box/edit">
             <label>SELECT BOX <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-            <select name="id" id="banner_slide_id">
+            <select name="id" id="box_id">
                 <option value="">-</option>
                 <%_ boxes.forEach(box => { _%>
                 <option value="<%= box._id %>"><%= box.name %></option>

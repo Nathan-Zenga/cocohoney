@@ -39,10 +39,10 @@ router.post("/cart/add", (req, res) => {
 
             const item_qty_excess = {};
             for (let i = 0; i < products.length; i++) {
-                const { id, name, category, images, info, stock_qty } = products[i];
+                const { id, name, category, image, info, stock_qty } = products[i];
                 if (quantities[i] < 1) { item_qty_excess.min = true; item_qty_excess.name = name; break }
                 if (quantities[i] > stock_qty) { item_qty_excess.max = true; item_qty_excess.name = name; break }
-                deal_item.items.unshift({ id, name, category, image: images[0], info, stock_qty, qty: quantities[i] });
+                deal_item.items.unshift({ id, name, category, image, info, stock_qty, qty: quantities[i] });
             };
             if (item_qty_excess.min) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is below the minimum limit`);
             if (item_qty_excess.max) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is over the maximum limit`);

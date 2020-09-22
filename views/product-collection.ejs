@@ -10,7 +10,7 @@
                         <%_ collection.forEach(product => { _%>
                         <div class="thumb col-md-3 col-sm-4">
                             <a href="/product/<%= product.category + '/' + product.name %>">
-                                <div class="thumb-img product-image" style="background-image: url('<%- product.images[0].url %>');"></div>
+                                <div class="thumb-img product-image" style="background-image: url('<%- product.image.url %>');"></div>
                             </a>
                             <div class="thumb-info">
                                 <div class="product-name"><p><%= product.name %></p></div>

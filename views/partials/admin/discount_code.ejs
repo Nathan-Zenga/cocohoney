@@ -2,7 +2,7 @@
     <li class="active"><a data-toggle="pill" href="#new-discount-code">NEW</a></li>
     <li><a data-toggle="pill" href="#edit-discount-code">EDIT</a></li>
     <li><a data-toggle="pill" href="#remove-discount-code">REMOVE</a></li>
-    <li><a data-toggle="pill" href="#list-discount-code">LIST</a></li>
+    <li><a data-toggle="pill" href="#discount-code-list">LIST</a></li>
 </ul>
 
 <div class="tab-content" style="padding-top: 10px;">
@@ -61,10 +61,14 @@
         <%_ } _%>
     </div>
 
-    <div id="list-discount-code" class="list-tab tab-pane fade">
+    <div id="discount-code-list" class="list-tab tab-pane fade">
         <%_ if (!discount_codes.length) { _%>
         <p style="text-align: center; margin-top: 2em"><b>NO DISCOUNT CODES TO LIST</b></p>
         <%_ } else { _%>
+        <div style="margin: 1em 0 2em;">
+            <i class="fal fa-info-circle"></i>
+            <span>Click a discount code to view the orders they were used for</span>
+        </div>
         <div class='table-responsive'>
             <table id="discount-codes-table" class="table table-borderless table-hover">
                 <thead>
@@ -78,7 +82,7 @@
                 <tbody>
                     <%_ discount_codes.forEach((dc, i) => { _%>
                     <tr>
-                        <th scope="row"><%= dc.code %></th>
+                        <th scope="row"><a href="/shop/orders?discount_code=<%= dc.code %>"><%= dc.code %></a></th>
                         <td id="percentage-<%= i %>"><%= dc.percentage %>%</td>
                         <td id="used-code-<%= i %>"><%= dc.used_count %></td>
                         <td id="expiry-date-<%= i %>"><%= dc.expiry_date.toLocaleDateString() %></td>

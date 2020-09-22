@@ -26,15 +26,14 @@ router.get('/:category/:name', (req, res, next) => {
 
 router.post('/stock/add', isAuthed, (req, res) => {
     const { name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    new Product({ name, price, price_amb, category, product_collection, stock_qty, info }).save((err, saved) => {
-        if (err) return res.status(400).send(err.message);
-        if (!image_url && !image_file) return res.send("Product saved in stock");
-        const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
-        cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-            if (err) return res.status(500).send(err.message);
-            saved.images = [{ p_id: result.public_id, url: result.secure_url }];
-            saved.save(() => { res.send("Product saved in stock") });
-        });
+    const product = new Product({ name, price, price_amb, category, product_collection, stock_qty, info });
+    if (!image_url && !image_file) return product.save(() => res.send("Product saved in stock"));
+
+    const public_id = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
+    cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+        if (err) return res.status(500).send(err.message);
+        product.image = { p_id: result.public_id, url: result.secure_url };
+        product.save(() => res.send("Product saved in stock"));
     });
 });
 
@@ -60,7 +59,13 @@ router.post('/stock/edit', isAuthed, (req, res) => {
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
-            res.send("Product details updated successfully");
+            if (!image_url && !image_file) return res.send("Product details updated successfully");
+            const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
+            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                if (err) return res.status(500).send(err.message);
+                saved.image = { p_id: result.public_id, url: result.secure_url };
+                saved.save(() => { res.send("Product details updated successfully") });
+            });
         });
     })
 });

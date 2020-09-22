@@ -25,7 +25,7 @@
                                     <div class="row">
                                         <%_ products.filter(p => p.product_collection === product.product_collection).forEach(p => { _%>
                                         <div class="thumb col-md-3 col-sm-4" style="margin-bottom: 0">
-                                            <div class="thumb-img product-image" style="background-image: url('<%- p.images[0].url %>');">
+                                            <div class="thumb-img product-image" style="background-image: url('<%- p.image.url %>');">
                                                 <input type="checkbox" name="product_id" value="<%= p.id %>">
                                             </div>
                                             <div class="thumb-info">
