@@ -90,7 +90,8 @@ module.exports.Ambassador = model('Ambassador', Schema({
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
     token: String,
     verified: { type: Boolean, default: false },
-    discount_code: { type: String, default: null }
+    discount_code: { type: String, default: null },
+    ambassador: { type: Boolean, default: true },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.FAQ = model('FAQ', Schema({

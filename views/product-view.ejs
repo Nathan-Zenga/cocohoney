@@ -7,8 +7,8 @@
         </div>
         <div class="col-sm-5 product-info">
             <div class="details" id="name"><%= product.name %></div>
-            <%_ const price = sale ? product.price_sale : product.price;
-                const price_original = sale ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+            <%_ const price = is_ambassador ? product.price_amb : product.price;
+                const price_original = is_ambassador ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
             <div class="details" id="price">£<%- (price / 100).toFixed(2) + price_original %></div>
             <div class="details" id="category"><%= product.category.charAt(0).toUpperCase() + product.category.slice(1).replace(/_/g, " ") %></div>
             <%_ if (product.product_collection) { _%>

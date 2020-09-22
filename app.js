@@ -33,6 +33,7 @@ app.use(session({ // express session
 app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.user = req.user || null;
+    res.locals.is_ambassador = (req.user || {}).ambassador;
     res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
     res.locals.banner_slides = await Banner_slide.find();
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];

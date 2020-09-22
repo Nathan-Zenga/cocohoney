@@ -13,9 +13,9 @@ paypal.configure({
 
 router.post("/create-payment", async (req, res) => {
     const { discount_code, shipping_method_id } = req.body;
-    const { cart, sale, location_origin } = Object.assign(req.session, res.locals);
+    const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
-        price: sale ? p.price_sale : p.price,
+        price: (req.user || {}).is_ambassador ? p.price_amb : p.price,
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
