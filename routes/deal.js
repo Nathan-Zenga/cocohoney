@@ -7,7 +7,7 @@ router.get('/:name', (req, res, next) => {
     const name = { $regex: RegExp(`^${req.params.name.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     Box.findOne({ name }, (err, box) => {
         if (!box) return next();
-        Product.find().sort({ product_collection: -1 }).exec((err, products) => {
+        Product.find({ stock_qty: { $gt: 0 } }).sort({ product_collection: -1 }).exec((err, products) => {
             res.render('box-deal', { title: `${box.name} Box`, pagename: "box-deal", box, products })
         })
     })

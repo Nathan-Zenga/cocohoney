@@ -7,7 +7,8 @@ router.get('/:category/collection/:product_collection', (req, res, next) => {
     const { category, product_collection } = req.params;
     if (!category || !product_collection) return next();
     const coll = { $regex: RegExp(`^${product_collection.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
-    Product.find({ category, product_collection: coll }).sort({ _id: -1 }).exec((err, collection) => {
+    const stock_qty = { $gt: 0 };
+    Product.find({ stock_qty, category, product_collection: coll }).sort({ _id: -1 }).exec((err, collection) => {
         if (!collection.length) return next();
         const title = collection[0].product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
         res.render('product-collection', { title, pagename: "lash-collection", collection });
@@ -17,7 +18,7 @@ router.get('/:category/collection/:product_collection', (req, res, next) => {
 router.get('/:category/:name', (req, res, next) => {
     const category = { $regex: RegExp(`^${req.params.category.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     const name = { $regex: RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i") };
-    Product.findOne({ category, name }, (err, product) => {
+    Product.findOne({ category, name, stock_qty: { $gt: 0 } }, (err, product) => {
         if (err || !product) return next();
         res.render('product-view', { title: product.name, pagename: "product-view", product });
     })
