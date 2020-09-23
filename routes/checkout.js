@@ -63,9 +63,17 @@ router.post("/session/create", async (req, res) => {
                     unit_amount: item.price,
                     currency: "gbp"
                 },
-                description: item.info || undefined,
+                description: item.deal ? item.items.map(p => `${p.qty}x ${p.name}`).join(", ") : item.info || undefined,
                 quantity: item.qty
-            })),
+            })).concat([{
+                price_data: {
+                    product_data: { name: shipping_method.name },
+                    unit_amount: shipping_method.fee,
+                    currency: "gbp"
+                },
+                description: shipping_method.info || undefined,
+                quantity: 1
+            }]),
             mode: "payment",
             allow_promotion_codes: !!promotion_code,
             success_url: location_origin + "/shop/checkout/session/complete",
@@ -131,7 +139,7 @@ router.get("/cancel", async (req, res) => {
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
         const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
         if (session.payment_status != "paid") await Stripe.customers.del(customer.id);
-        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id);
+        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
     }
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
