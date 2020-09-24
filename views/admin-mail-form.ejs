@@ -9,8 +9,17 @@
         <form method="post" action="/admin/mail/send">
             <fieldset>
                 <legend>NEW EMAIL</legend>
-                <label>EMAIL</label>
-                <input type="email" name="email" id="email" required>
+
+                <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select name="email" id="email" required>
+                    <option value="">-</option>
+                    <%_ members.forEach((member, i) => {
+                        if (i === 0) { _%>
+                    <option value="all">EVERYONE</option>
+                    <%_ } _%>
+                    <option value="<%= member.email %>"><%= member.firstname+" "+member.lastname %></option>
+                    <%_ }) _%>
+                </select>
 
                 <label>SUBJECT</label>
                 <input type="text" name="subject" id="subject" required>

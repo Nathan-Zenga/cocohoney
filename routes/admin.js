@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const passport = require('passport');
+const { each } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, FAQ } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member } = require('../models/models');
 require('../config/passport')(passport);
 
 router.get('/', isAuthed, (req, res) => {
@@ -25,7 +26,9 @@ router.get('/', isAuthed, (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.get('/mail/form', isAuthed, (req, res) => {
-    res.render('admin-mail-form', { title: "Admin - Compose Mail", pagename: "admin-mail-form" })
+    Member.find((err, members) => {
+        res.render('admin-mail-form', { title: "Admin - Compose Mail", pagename: "admin-mail-form", members })
+    })
 });
 
 router.post('/login', (req, res) => {
@@ -116,9 +119,17 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
 
 router.post('/mail/send', isAuthed, (req, res) => {
     const { email, subject, message } = req.body;
-    new MailingListMailTransporter({ req, res }, { email }).sendMail({
-        subject, message
-    }, err => res.status(err ? 500 : 200).send(err ? err.message : "Email sent"));
+    Member.find(email === "all" ? {} : { email }, (err, members) => {
+        each(members, (member, cb) => {
+            const transporter = new MailingListMailTransporter({ req, res });
+            transporter.setRecipient(member).sendMail({ subject, message }, err => {
+                if (err) return cb(err.message); cb();
+            });
+        }, err => {
+            if (err) return res.status(500).send(err.message);
+            res.send(`Email${members.length > 1 ? "s" : ""} sent`);
+        })
+    })
 });
 
 router.post('/faqs/add', isAuthed, (req, res) => {
