@@ -19,6 +19,11 @@
             <br><br>
             <div class="cart-options">
                 <form class="add-to-cart minimal" action="/shop/cart/add">
+                    <div class="quantity-wrapper">
+                        <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                        <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
+                        <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                    </div>
                     <input type="hidden" name="id" value="<%- product.id %>">
                     <button class="add-to-cart-btn">
                         <i class="icon fal fa-cart-arrow-down" style=""></i>

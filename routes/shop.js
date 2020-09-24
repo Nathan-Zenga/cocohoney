@@ -21,14 +21,16 @@ router.post("/cart/add", (req, res) => {
         if (!product || product.stock_qty < 1) return res.status(!product ? 404 : 400).send("Item currently not in stock");
         const { id, name, price, price_amb, image, info, stock_qty } = product;
         const cartItemIndex = req.session.cart.findIndex(item => item.id === id);
+        const qty = parseInt(req.body.quantity);
 
+        if (qty === NaN) return res.status(400).send("Quantity value not a number");
         if (cartItemIndex >= 0) {
             const currentItem = req.session.cart[cartItemIndex];
-            currentItem.qty += 1;
+            currentItem.qty += qty;
             if (currentItem.qty > stock_qty) currentItem.qty = stock_qty;
         } else {
             const { is_ambassador } = req.user || {};
-            req.session.cart.unshift({ id, name, price: is_ambassador ? price_amb : price, image, info, stock_qty, qty: 1 });
+            req.session.cart.unshift({ id, name, price: is_ambassador ? price_amb : price, image, info, stock_qty, qty });
         }
 
         res.send(`${req.session.cart.length}`);

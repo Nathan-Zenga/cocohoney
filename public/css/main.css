@@ -936,10 +936,43 @@ label .dropdown-arrow {
     margin-top: 2em;
 }
 
+#product-view-page .add-to-cart-btn {
+    width: 100%;
+    text-align: left;
+}
+
 @media (max-width: 767px) {
     #product-view-page .product-info {
         text-align: center;
     }
+
+    #product-view-page .add-to-cart-btn {
+        width: auto;
+        text-align: center;
+    }
+}
+
+input.product-quantity {
+    display: inline-block;
+    max-width: 70px;
+    border: none;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+input.product-quantity::-webkit-inner-spin-button,
+input.product-quantity::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input.product-quantity:disabled {
+    background-color: transparent;
+}
+
+.quantity-control-btn {
+    background-color: transparent;
+    color: white;
 }
 
 .chc .carousel-control {
@@ -1041,22 +1074,6 @@ label .dropdown-arrow {
 
 #box-deal-page .thumb .thumb-img.checked {
     box-shadow: 0 10px 20px rgb(240, 230, 140);
-}
-
-#box-deal-page .product-quantity {
-    display: inline-block;
-    max-width: 70px;
-    border: none;
-    text-align: center;
-}
-
-#box-deal-page .product-quantity:disabled {
-    background-color: transparent;
-}
-
-#box-deal-page .quantity-control-btn {
-    background-color: transparent;
-    color: white;
 }
 
 #box-deal-page #submit-btn {

@@ -23,10 +23,12 @@ $(function() {
         $(this).next(".sub-list").stop().slideToggle(300);
     });
 
+    $(".quantity-control-btn").click(function() {
+        $(this).parent(".quantity-wrapper").find("input[type=number]").get(0).stepUp($(this).data("step"));
+    });
+
     $(".add-to-cart").submit(function(e) {
         e.preventDefault();
-        var $submitBtn = $(e.target).find("input[type=submit]");
-        var initialVal = $submitBtn.data("value");
         var btnControl = new submitBtnController(this, ".");
         $.post(this.action, $(this).serializeArray(), function(item_count) {
             var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
@@ -36,8 +38,6 @@ $(function() {
             alert(err.responseText);
         }).always(function() {
             btnControl.finish();
-            $submitBtn.val("ADDED!");
-            setTimeout(function() { $submitBtn.val(initialVal) }, 2000);
         })
     });
 

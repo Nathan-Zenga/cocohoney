@@ -65,10 +65,6 @@
             $(this).closest(".thumb").find(".product-quantity").attr({ disabled: !this.checked, required: this.checked });
         });
 
-        $(".quantity-control-btn").click(function() {
-            $(this).parent(".quantity-wrapper").find("input[type=number]").get(0).stepUp($(this).data("step"));
-        });
-
         $("form").submit(function(e) {
             e.preventDefault();
             var form = this;
