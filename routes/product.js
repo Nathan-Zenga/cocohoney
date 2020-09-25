@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
+const { each } = require('async');
 const isAuthed = require('../modules/authCheck');
 const { Product } = require('../models/models');
 
@@ -78,12 +79,14 @@ router.post('/stock/edit', isAuthed, (req, res) => {
 
 router.post('/stock/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
-    if (!ids.length) return res.send("Nothing selected");
+    if (!ids.length) return res.status(400).send("Nothing selected");
     Product.find({_id : { $in: ids }}, (err, products) => {
+        if (err) return res.status(500).send(err.message);
+        if (!products.length) return res.status(404).send("No products found");
         each(products, (item, cb) => {
             Product.deleteOne({ _id : item.id }, (err, result) => {
                 if (err || !result.deletedCount) return cb(err ? err.message : "Product(s) not found");
-                cloud.api.delete_resources([item.p_id], () => cb());
+                cloud.api.delete_resources([item.image.p_id], () => cb());
             })
         }, err => {
             if (!err) return res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");

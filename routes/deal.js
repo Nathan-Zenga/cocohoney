@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const cloud = require('cloudinary').v2;
+const { each } = require('async');
 const isAuthed = require('../modules/authCheck');
 const { Box, Product } = require('../models/models');
 
@@ -54,30 +56,57 @@ router.post("/cart/add", (req, res) => {
 });
 
 router.post('/box/add', isAuthed, (req, res) => {
-    const { name, price, info, max_items } = req.body;
-    new Box({ name, price, info, max_items }).save(err => res.send("Box saved"));
+    const { name, price, info, max_items, image_file, image_url } = req.body;
+    const box = new Box({ name, price, info, max_items });
+    if (!image_file && !image_url) return box.save(err => res.send("Box deal saved"));
+
+    const public_id = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
+    cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+        if (err) return res.status(500).send(err.message);
+        box.image = { p_id: result.public_id, url: result.secure_url };
+        box.save(() => res.send("Box deal saved"));
+    });
 });
 
 router.post('/box/edit', isAuthed, (req, res) => {
-    const { id, name, price, info, max_items } = req.body;
-    Box.findById(id, (err, faq) => {
+    const { id, name, price, info, max_items, image_file, image_url } = req.body;
+    Box.findById(id, (err, box) => {
         if (err) return res.status(500).send(err.message);
-        if (name) faq.name = name;
-        if (price) faq.price = price;
-        if (info) faq.info = info;
-        if (max_items) faq.max_items = max_items;
-        faq.save(err => res.send("Box updated"));
+        if (name) box.name = name;
+        if (price) box.price = price;
+        if (info) box.info = info;
+        if (max_items) box.max_items = max_items;
+
+        box.save((err, saved) => {
+            if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
+            if (!image_url && !image_file) return res.send("Box details updated successfully");
+            const public_id = ("cocohoney/product/box_deals/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
+            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                if (err) return res.status(500).send(err.message);
+                saved.image = { p_id: result.public_id, url: result.secure_url };
+                saved.save(() => { res.send("Box details updated successfully") });
+            });
+        });
     });
 });
 
 router.post('/box/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Box.deleteMany({_id : { $in: ids }}, (err, result) => {
-        if (err) return res.status(500).send(err ? err.message : "Error occurred");
-        if (!result.deletedCount) return res.status(404).send("Box(s) not found");
-        res.send("Box"+ (ids.length > 1 ? "s" : "") +" removed successfully")
-    })
+    Box.find({_id : { $in: ids }}, (err, boxes) => {
+        if (err) return res.status(500).send(err.message);
+        if (!boxes.length) return res.status(400).send("No boxes found");
+        each(boxes, (item, cb) => {
+            Box.deleteOne({ _id : item.id }, (err, result) => {
+                if (err || !result.deletedCount) return cb(err ? err.message : "Box(s) not found");
+                cloud.api.delete_resources([item.image.p_id], () => cb());
+            })
+        }, err => {
+            if (!err) return res.send("Box"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
+            let is404 = err.message === "Box(s) not found";
+            res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Box(s) not found");
+        })
+    });
 });
 
 module.exports = router;

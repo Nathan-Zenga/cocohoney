@@ -1,14 +1,23 @@
 <%_ include partials/header _%>
     <section>
-        <div class="container section-label">
-            <div class="label-text">
-                <h2><%= box.name %> Box - £<%= (box.price / 100).toFixed(2) %></h2>
-                <%- box.info ? "<p>"+box.info.replace(/\r?\n/g, "</p><p>")+"</p>" : "" %>
+        <div class="row header">
+            <div class="container">
+                <div class="col-sm-6 col-sm-push-6 column img-container">
+                    <div class="text-content"></div>
+                    <img src="<%= box.image.url %>" style="" alt="">
+                </div>
+                <div class="col-sm-6 col-sm-pull-6 column text-container">
+                    <div class="text-content">
+                        <h1><%= box.name %> Box</h1>
+                        <p>Click the images below to choose</p>
+                        <p><i class="dropdown-arrow fal fa-chevron-down"></i></p>
+                    </div>
+                </div>
             </div>
         </div>
         <br><br>
 
-        <div class="container">
+        <div class="container" style="padding-left: 0; padding-right: 0;">
             <form class="panel-group minimal" action="/deal/cart/add">
                 <%_ products.forEach((product, i, arr) => {
                     if (product.product_collection && (i === 0 || product.product_collection !== arr[i-1].product_collection)) { _%>
