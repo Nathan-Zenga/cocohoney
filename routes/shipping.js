@@ -7,16 +7,17 @@ router.get('/', (req, res) => {
 });
 
 router.post('/new', (req, res) => {
-    const { name, fee } = req.body;
-    new Shipping_method({ name, fee }).save(err => res.send("Shipping method saved"));
+    const { name, fee, info } = req.body;
+    new Shipping_method({ name, fee, info }).save(err => res.send("Shipping method saved"));
 });
 
 router.post('/edit', (req, res) => {
-    const { id, name, fee } = req.body;
+    const { id, name, fee, info } = req.body;
     Shipping_method.findById(id, (err, method) => {
         if (err) return res.status(500).send(err.message);
         if (name) method.name = name;
         if (fee) method.fee = fee;
+        if (info) method.info = info;
         method.save(err => res.send("Shipping method updated"));
     });
 });
