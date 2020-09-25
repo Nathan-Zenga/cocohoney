@@ -72,6 +72,7 @@ router.post('/box/edit', isAuthed, (req, res) => {
     const { id, name, price, info, max_items, image_file, image_url } = req.body;
     Box.findById(id, (err, box) => {
         if (err) return res.status(500).send(err.message);
+        const p_id_prev = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
         if (name) box.name = name;
         if (price) box.price = price;
         if (info) box.info = info;
@@ -81,10 +82,13 @@ router.post('/box/edit', isAuthed, (req, res) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
             if (!image_url && !image_file) return res.send("Box details updated successfully");
             const public_id = ("cocohoney/product/box_deals/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
-            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+            cloud.api.delete_resources([p_id_prev], err => {
                 if (err) return res.status(500).send(err.message);
-                saved.image = { p_id: result.public_id, url: result.secure_url };
-                saved.save(() => { res.send("Box details updated successfully") });
+                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                    if (err) return res.status(500).send(err.message);
+                    saved.image = { p_id: result.public_id, url: result.secure_url };
+                    saved.save(() => { res.send("Box details updated successfully") });
+                });
             });
         });
     });

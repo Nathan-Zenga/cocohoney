@@ -6,7 +6,7 @@
 
 <div class="tab-content" style="padding-top: 10px;">
     <div id="new-box" class="new-form-tab tab-pane fade in active">
-        <form method="post" action="/product/deals/box/add">
+        <form method="post" action="/deal/box/add">
             <label>NAME</label>
             <input type="text" name="name" id="box_name" required>
 
@@ -34,7 +34,7 @@
     </div>
 
     <div id="edit-box" class="edit-form-tab tab-pane fade">
-        <form method="post" action="/product/deals/box/edit">
+        <form method="post" action="/deal/box/edit">
             <label>SELECT BOX <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select name="id" id="box_id">
                 <option value="">-</option>
@@ -71,7 +71,7 @@
 
     <div id="remove-box" class="remove-form-tab tab-pane fade">
         <%_ if (boxes.length) { _%>
-        <form action="/product/deals/box/remove" method="post">
+        <form action="/deal/box/remove" method="post">
             <label>DELETE BOX(S)</label><br><br>
             <%_ boxes.forEach((box, i) => { _%>
             <div class="input-checkbox">
