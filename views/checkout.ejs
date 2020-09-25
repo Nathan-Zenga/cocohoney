@@ -18,28 +18,28 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label for="firstname">FIRST NAME</label>
-                                    <input type="text" name="firstname" id="firstname" required>
+                                    <input type="text" name="firstname" required>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="lastname">LAST NAME</label>
-                                    <input type="text" name="lastname" id="lastname" required>
+                                    <input type="text" name="lastname" required>
                                 </div>
                             </div>
                         </fieldset>
                         <label for="email">EMAIL</label>
-                        <input type="email" name="email" id="email" required>
+                        <input type="email" name="email" required>
                         <label for="address_l1">ADDRESS</label>
-                        <input type="text" name="address_l1" id="address_l1" placeholder="LINE 1" required>
-                        <input type="text" name="address_l2" id="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                        <input type="text" name="address_l1" placeholder="LINE 1" required>
+                        <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
                         <fieldset>
                             <div class="row">
                                 <div class="col-sm-4">
                                     <label for="city">CITY</label>
-                                    <input type="text" name="city" id="city" required>
+                                    <input type="text" name="city" required>
                                 </div>
                                 <div class="col-sm-4">
                                     <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                                    <select name="country" id="country" required>
+                                    <select name="country" required>
                                         <option value="">-</option>
                                         <%_ for (var k in countries) { _%>
                                         <option value="<%- k %>"><%- countries[k] %></option>
@@ -48,13 +48,13 @@
                                 </div>
                                 <div class="col-sm-4">
                                     <label for="postcode">POST / ZIP CODE</label>
-                                    <input type="text" name="postcode" id="postcode" required>
+                                    <input type="text" name="postcode" required>
                                 </div>
                             </div>
                         </fieldset>
                         <br>
                         <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
-                        <input type="text" name="discount_code" id="discount_code">
+                        <input type="text" name="discount_code">
                         <%_ if (shipping_methods.length) { _%>
                         <label>CHOOSE DELIVERY METHOD</label><br><br>
                         <%_ shipping_methods.forEach(method => { _%>
@@ -74,7 +74,14 @@
                 <div id="paypal-payment" class="tab-pane fade">
                     <form id="paypal-payment-form" action="/shop/checkout/paypal/create-payment">
                         <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
-                        <input type="text" name="discount_code" id="discount_code">
+                        <input type="text" name="discount_code">
+                        <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                        <select name="country" required>
+                            <option value="">-</option>
+                            <%_ for (var k in countries) { _%>
+                            <option value="<%- k %>"><%- countries[k] %></option>
+                            <%_ } _%>
+                        </select>
                         <%_ if (shipping_methods.length) { _%>
                         <label>CHOOSE DELIVERY METHOD</label><br><br>
                         <%_ shipping_methods.forEach(method => { _%>

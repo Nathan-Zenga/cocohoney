@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { discount_code, shipping_method_id } = req.body;
+    const { country, discount_code, shipping_method_id } = req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: (req.user || {}).is_ambassador ? p.price_amb : p.price,
@@ -24,8 +24,10 @@ router.post("/create-payment", async (req, res) => {
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
         if (!code && discount_code) { res.status(404); throw Error("Discount code invalid or expired") };
         if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") };
+        let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name);
+        if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") };
     } catch (err) {
-        if (res.statusCode !== 404) res.status(500);
+        if (res.statusCode === 200) res.status(500);
         return res.send(err.message);
     };
 
