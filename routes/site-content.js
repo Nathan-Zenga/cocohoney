@@ -25,11 +25,11 @@ router.post('/banner/remove', isAuthed, (req, res) => {
 });
 
 router.post('/background-media', isAuthed, (req, res) => {
-    const { media_url, media_file } = req.body;
-    if (!media_url && !media_file) return res.status(400).send("No file found / specified");
+    const { image_url, image_file } = req.body;
+    if (!image_url && !image_file) return res.status(400).send("No file found / specified");
     Site_content.find((err, contents) => {
         const content = !contents.length ? new Site_content() : contents[0];
-        cloud.uploader.upload(media_url || media_file, { public_id: "cocohoney/site-content/site-bg" }, (err, result) => {
+        cloud.uploader.upload(image_url || image_file, { public_id: "cocohoney/site-content/site-bg" }, (err, result) => {
             if (err) return res.status(500).send(err.message);
             content.background_image = result.secure_url;
             content.save(err => res.send("Site background updated"));

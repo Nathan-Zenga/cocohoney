@@ -17,11 +17,11 @@ router.get('/tutorial', (req, res) => {
 });
 
 router.post('/gllery/add', (req, res) => {
-    const { media_file, media_url } = req.body;
-    if (!media_file && !media_url) return res.send("No image / video uploaded");
-    const media_files = (media_file_name instanceof Array ? media_file_name : [media_file_name]).filter(e => e);
-    const media_urls = (media_url_name instanceof Array ? media_url_name : [media_url_name]).filter(e => e);
-    each([...media_files, ...media_urls], (file, cb) => {
+    const { image_file, image_url } = req.body;
+    if (!image_file && !image_url) return res.send("No image / video uploaded");
+    const image_files = (image_file_name instanceof Array ? image_file_name : [image_file_name]).filter(e => e);
+    const image_urls = (image_url_name instanceof Array ? image_url_name : [image_url_name]).filter(e => e);
+    each([...image_files, ...image_urls], (file, cb) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-gallery/media_" + new_media.id;
         cloud.uploader.upload(file, { public_id }, (err, result) => {
