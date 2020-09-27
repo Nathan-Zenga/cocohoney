@@ -1,4 +1,4 @@
-<%_ include partials/header _%>
+<%- include ('partials/header') -%>
     <section style="padding-top: 2em;">
         <div class="mb-view-md section-dropdown-options">
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
@@ -25,31 +25,31 @@
         </ul>
         <div class="tab-content container">
             <div id="banner" class="tab-pane fade in active">
-            <%_ include partials/admin/banner _%>
+            <%- include ('partials/admin/banner') -%>
             </div>
 
             <div id="product" class="tab-pane fade">
-            <%_ include partials/admin/product _%>
+            <%- include ('partials/admin/product') -%>
             </div>
 
             <div id="discount_code" class="tab-pane fade">
-            <%_ include partials/admin/discount_code _%>
+            <%- include ('partials/admin/discount_code') -%>
             </div>
 
             <div id="lookbook" class="tab-pane fade">
-            <%_ include partials/admin/lookbook _%>
+            <%- include ('partials/admin/lookbook') -%>
             </div>
 
             <div id="faqs" class="tab-pane fade">
-            <%_ include partials/admin/faqs _%>
+            <%- include ('partials/admin/faqs') -%>
             </div>
 
             <div id="shipping" class="tab-pane fade">
-            <%_ include partials/admin/shipping_method _%>
+            <%- include ('partials/admin/shipping_method') -%>
             </div>
 
             <div id="box" class="tab-pane fade">
-            <%_ include partials/admin/box _%>
+            <%- include ('partials/admin/box') -%>
             </div>
         </div>
     </section>
@@ -177,4 +177,4 @@
             });
         });
     </script>
-<%_ include partials/footer _%>
+<%- include ('partials/footer') -%>

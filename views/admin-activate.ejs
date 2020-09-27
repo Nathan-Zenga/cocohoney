@@ -1,4 +1,4 @@
-<%_ include partials/header _%>
+<%- include ('partials/header') -%>
     <div class="form-container">
         <form method="post" action="/admin/activate/<%- token %>">
             <label>NEW PASSWORD</label>
@@ -22,4 +22,4 @@
             });
         });
     </script>
-<%_ include partials/footer _%>
+<%- include ('partials/footer') -%>
