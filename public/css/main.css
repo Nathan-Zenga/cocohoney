@@ -472,6 +472,16 @@ form legend {
     color: inherit;
 }
 
+form legend + .note {
+    display: block;
+    text-align: center;
+    margin-bottom: 3em;
+}
+
+form legend + .note a {
+    text-decoration: underline;
+}
+
 form.minimal {
     border-radius: 0;
     background-color: transparent;
