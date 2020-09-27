@@ -106,3 +106,12 @@ module.exports.Box = model('Box', Schema({
     max_items: Number,
     image: { p_id: String, url: String }
 }));
+
+module.exports.Review = model('Review', Schema({
+    headline: String,
+    commentry: String,
+    author_name: String,
+    author_verified: { type: Boolean, default: false },
+    rating: { type: Number, min: 0, max: 5, default: 0 },
+    images: [{ p_id: String, url: String }]
+}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));

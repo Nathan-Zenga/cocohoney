@@ -1,0 +1,78 @@
+<%_ include partials/header _%>
+    <section class="section-padding">
+        <div class="textbody">
+            <h1 style="margin-bottom: 1em">CUSTOMER REVIEWS</h1>
+
+            <div id="stats">
+                <div class="row">
+                    <div class="col-sm-<%= reviews.length ? '4' : '12' %>">
+                        <button id="review-submission-link-btn" type="button">
+                            <a href="/reviews/new">WRITE A REVIEW</a>
+                        </button>
+                        <p style="text-align: center; margin-bottom: 2em">
+                            <%= reviews.length %> REVIEW<%= reviews.length !== 1 ? "S" : "" %>
+                        </p>
+                    </div>
+                    <%_ if (reviews.length) { _%>
+                    <div class="col-sm-8">
+                        <%_ for (i = 5; i >= 1; i--) {
+                            const count = reviews.filter(r => r.rating == i).length;
+                            const avg = count / reviews.length * 100; _%>
+                        <div class="row">
+                            <div class="col-sm-4 col-xs-5" style="text-align: right">
+                                <%_ for(j = 1; j <= i; j++) { _%>
+                                <span>★</span>
+                                <%_ } _%>
+                            </div>
+                            <div class="col-xs-2" style="text-align: center; padding: 0">(<%= count %>)</div>
+                            <div class="col-sm-6 col-xs-5">
+                                <div class="rating-meter">
+                                    <span><%= avg % 1 == 0 ? avg : avg.toFixed(1) %>%</span>
+                                    <div class="bar" style="width: <%= avg %>%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <%_ } _%>
+                    </div>
+                    <%_ } _%>
+                </div>
+            </div>
+            
+
+            <div id="reviews">
+                <%_ reviews.forEach(review => { _%>
+                <div class="review">
+                    <div class="author-icon">
+                        <span><%= review.author_name.split(/[ -]/g).map(name => name.charAt(0)).join("").toUpperCase() %></span>
+                    </div>
+                    <div class="header">
+                        <div class="row">
+                            <div class="col-sm-8 headline">
+                                <h2 class="title"><%= review.headline %></h2>
+                            </div>
+                            <div class="col-sm-4 rating">
+                                <%_ for(i = 1; i <= review.rating; i++) { _%>
+                                <span>★</span>
+                                <%_ } _%>
+                                <span style="font-size: .8em; opacity: .5">(<%= review.rating %>)</span>
+                            </div>
+                        </div>
+                        <div class="row author-details">
+                            <div class="col-sm-6 author-name">
+                                <%= review.author_name %>
+                                <%_ if (review.verified) { _%>
+                                <i class="verified-badge fal fa-badge-check"></i>
+                                <%_ } _%>
+                            </div>
+                            <div class="col-sm-6 post-date">
+                                <%= `${ review.created_at.getDate() }/${ review.created_at.getMonth() }/${ review.created_at.getFullYear() }` %>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="comment"><p><%- review.commentry.replace(/\r?\n/g, "</p><p>") %></p></div>
+                </div>
+                <%_ }) _%>
+            </div>
+        </div>
+    </section>
+<%_ include partials/footer _%>

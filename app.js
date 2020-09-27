@@ -53,6 +53,7 @@ app.use('/site/content', require('./routes/site-content'));
 app.use('/ambassador', require('./routes/ambassador'));
 app.use('/shipping', require('./routes/shipping'));
 app.use('/deal', require('./routes/deal'));
+app.use('/reviews', require('./routes/customer-review'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;
