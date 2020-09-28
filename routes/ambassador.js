@@ -20,9 +20,9 @@ router.post('/register', (req, res) => {
             message: "The following candidate wants to sign up as an ambassador.\n\n" +
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
             "Please click the link below to verify them:\n" +
-            `${res.locals.location_origin}/register/verify?token=${saved.token}\n\n` +
+            `${res.locals.location_origin}/ambassador/register/verify?token=${saved.token}\n\n` +
             "Click below to add a discount code to their account <u>after verifying them</u>:\n\n" +
-            `${res.locals.location_origin}/discount_code/add?src=email&id=${saved.id}\n\n`
+            `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved.id}\n\n`
         }, err => res.send("Registered. Submitted to administration for verification"));
     });
 });
@@ -37,7 +37,7 @@ router.get('/register/verify', (req, res) => {
             message: "Hello,\n\n Your account has been verified and confirmed by" +
             "the administrator of Cocohoney Cosmetics.\n\n" +
             "Please click the following link below to activate your account" +
-            `${res.locals.location_origin}/register/activate?token=${amb.token}\n\n`
+            `${res.locals.location_origin}/ambassdor/register/activate?token=${amb.token}\n\n`
         }, err => {
             if (err) return res.status(500).send(err.message);
             amb.verified = true;
