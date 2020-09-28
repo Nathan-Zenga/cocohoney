@@ -17,9 +17,9 @@ module.exports.Product = model('Product', Schema({
 }));
 
 module.exports.Member = model('Member', Schema({
-    firstname: String,
-    lastname: String,
-    email: String,
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    email: { type: String, required: true },
     phone_number: { type: String, minlength: 11, maxlength: 11 },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
@@ -88,6 +88,9 @@ module.exports.Order = model('Order', Schema({
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
+    firstname: { type: String, required: true },
+    lastname: { type: String, required: true },
+    email: { type: String, required: true },
     phone_number: { type: String, minlength: 11, maxlength: 11 },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
@@ -111,9 +114,9 @@ module.exports.Box = model('Box', Schema({
 }));
 
 module.exports.Review = model('Review', Schema({
-    headline: String,
-    commentry: String,
-    author_name: String,
+    headline: { type: String, required: true },
+    commentry: { type: String, required: true },
+    author_name: { type: String, required: true },
     author_verified: { type: Boolean, default: false },
     rating: { type: Number, min: 0, max: 5, default: 0 },
     images: [{ p_id: String, url: String }]
