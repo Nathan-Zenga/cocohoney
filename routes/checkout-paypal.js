@@ -20,18 +20,19 @@ router.post("/create-payment", async (req, res) => {
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
     try {
-        var code = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
+        var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
-        if (!code && discount_code) { res.status(404); throw Error("Discount code invalid or expired") };
-        if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") };
+        if (!dc_doc && discount_code) { res.status(404); throw Error("Discount code invalid or expired") }
+        if (dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
+        if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") }
         let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name);
-        if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") };
+        if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") }
     } catch (err) {
         if (res.statusCode === 200) res.status(500);
         return res.send(err.message);
     };
 
-    const discount_rate = code ? (code.percentage / 100) * price_total : 0;
+    const discount_rate = dc_doc ? (dc_doc.percentage / 100) * price_total : 0;
 
     paypal.payment.create({
         intent: "sale",
@@ -63,7 +64,7 @@ router.post("/create-payment", async (req, res) => {
         }]
     }, (err, payment) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
-        req.session.current_discount_code = code;
+        req.session.current_discount_code = dc_doc;
         req.session.transaction = payment.transactions[0];
         res.send(payment.links.find(link => link.rel === "approval_url").href);
     });
@@ -73,7 +74,7 @@ router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
     const { cart, current_discount_code, transaction } = req.session;
     const products = await Product.find();
-    const code = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
+    const dc_doc = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
@@ -89,6 +90,12 @@ router.get("/complete", async (req, res) => {
         const { email } = payment.payer.payer_info;
         const purchase_summary = payment.transactions[0].item_list.items.map(item => `${item.name} X ${item.quantity} - ${item.price}`).join("\n");
 
+        const order = new Order({
+            customer_name: recipient_name,
+            customer_email: email,
+            cart
+        });
+
         if (production) cart.forEach(item => {
             const product = products.filter(p => p.id === item.id)[0];
             if (product) {
@@ -98,19 +105,15 @@ router.get("/complete", async (req, res) => {
             }
         });
 
-        new Order({
-            basket: cart,
-            discount_code: current_discount_code || undefined,
-            customer: { name: recipient_name, email }
-        }).save();
-
         req.session.cart = [];
         req.session.transaction = undefined;
-        if (code) {
-            if (production) { code.used = true; code.used_count += 1; code.save() }
-            req.session.current_discount_code = undefined;
+        if (dc_doc) {
+            order.discounted = true;
+            dc_doc.orders_applied.push(order.id);
+            req.session.current_dc_object = undefined;
         }
 
+        order.save();
         if (!production) return res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" });
 
         const transporter = new MailingListMailTransporter({ req, res });

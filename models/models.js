@@ -67,18 +67,24 @@ module.exports.Shipping_method = model('Shipping_method', Schema({
     fee: { type: Number, set: n => parseFloat(n) * 100 }
 }));
 
-module.exports.Discount_code = model('Discount_code', Schema({
-    code: { type: String, required: true },
-    percentage: { type: Number, min: 1, max: 100 },
-    used: { type: Boolean, default: false },
-    used_count: { type: Number, default: 0 },
-    expiry_date: { type: Date, required: true }
-}));
+module.exports.Discount_code = model('Discount_code', (() => {
+    const schema = new Schema({
+        code: { type: String, required: true },
+        percentage: { type: Number, min: 1, max: 100 },
+        max_use_limit: { type: Number, min: 1, default: 1 },
+        orders_applied: [String],
+        expiry_date: { type: Date, required: true }
+    });
+
+    schema.virtual("max_reached").get((val, vt, doc) => doc.orders_applied.length === doc.max_use_limit);
+    return schema;
+})());
 
 module.exports.Order = model('Order', Schema({
-    basket: Array,
-    discount_code: String,
-    customer: { name: String, email: String }
+    cart: Array,
+    discounted: { type: Boolean, default: false },
+    customer_name: String,
+    customer_email: String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
