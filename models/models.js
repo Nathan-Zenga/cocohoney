@@ -20,7 +20,7 @@ module.exports.Member = model('Member', Schema({
     firstname: String,
     lastname: String,
     email: String,
-    phone_number: String
+    phone_number: { type: String, minlength: 11, maxlength: 11 },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', (() => {
@@ -88,10 +88,7 @@ module.exports.Order = model('Order', Schema({
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
-    firstname: String,
-    lastname: String,
-    email: String,
-    phone_number: String,
+    phone_number: { type: String, minlength: 11, maxlength: 11 },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
     token: String,
