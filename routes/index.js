@@ -1,10 +1,13 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { FAQ } = require('../models/models');
+const { FAQ, Review } = require('../models/models');
+const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
 
 router.get('/', (req, res) => {
-    res.render('index', { title: null, pagename: "home" })
+    Review.find({ rating: { $gt: 3 } }).sort({ created_at: -1 }).exec((err, reviews) => {
+        res.render('index', { title: null, pagename: "home", reviews: chunk(reviews, 2).slice(0, 2) })
+    })
 });
 
 router.get('/about', (req, res) => {

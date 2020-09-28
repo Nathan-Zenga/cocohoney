@@ -69,9 +69,28 @@
                 <%_ } _%>
             </div>
         </section>
-        <section id="ambassador-register-advert">
+        <section id="adverts-section">
             <div class="container">
-                <a href="/ambassador/register">WANT TO TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
+                <div id="adverts-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
+                    <div class="carousel-inner">
+                        <div class="item active lg-text">
+                            <a href="/ambassador/register">WANT TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
+                        </div>
+                        <%_ reviews.forEach(group => { _%>
+                        <div class="item">
+                            <div class="row" style="text-align: center;">
+                                <%_ group.forEach(review => { _%>
+                                <div class="col-xs-<%= 12 / group.length %>">
+                                    <div><%_ for(i = 0; i < review.rating; i++) { _%>★<%_ } _%></div>
+                                    <div><%= review.author_name %></div>
+                                    <div><small><%= review.commentry.length > 40 ? review.commentry.slice(0, 40)+"..." : review.commentry %></small></div>
+                                </div>
+                                <%_ }) _%>
+                            </div>
+                        </div>
+                        <%_ }) _%>
+                    </div>
+                </div>
             </div>
         </section>
         <script>
