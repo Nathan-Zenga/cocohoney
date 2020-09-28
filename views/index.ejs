@@ -82,8 +82,9 @@
                                 <%_ group.forEach(review => { _%>
                                 <div class="col-xs-<%= 12 / group.length %>">
                                     <div><%_ for(i = 0; i < review.rating; i++) { _%>★<%_ } _%></div>
-                                    <div><%= review.author_name %></div>
-                                    <div><small><%= review.commentry.length > 40 ? review.commentry.slice(0, 40)+"..." : review.commentry %></small></div>
+                                    <%_ const commentry = (review.headline || review.commentry).split(/\r?\n/)[0]; _%>
+                                    <div><%= commentry.length > 40 ? commentry.slice(0, 40)+"..." : commentry %></div>
+                                    <div><small><%= review.author_name %></small></div>
                                 </div>
                                 <%_ }) _%>
                             </div>

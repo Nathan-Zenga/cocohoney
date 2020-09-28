@@ -114,7 +114,7 @@ module.exports.Box = model('Box', Schema({
 }));
 
 module.exports.Review = model('Review', Schema({
-    headline: { type: String, required: true },
+    headline: String,
     commentry: { type: String, required: true },
     author_name: { type: String, required: true },
     author_verified: { type: Boolean, default: false },

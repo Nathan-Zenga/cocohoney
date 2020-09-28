@@ -19,10 +19,10 @@ router.post('/submit', (req, res) => {
     const review = new Review({ author_name: name, headline, rating, commentry, author_verified: !!req.user });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
-    if (!image_url.length && !image_file.length) return review.save(() => res.send("Review submitted"));
+    if (!image_urls.length && !image_files.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
 
     forEachOf([...image_files, ...image_urls ], (image, i, cb) => {
-        const public_id = (`cocohoney/reviews/images/${review.id}-${i}`).replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image, { public_id }, (err, result) => {
             if (err) return cb(err.message);
             review.image = { p_id: result.public_id, url: result.secure_url };
