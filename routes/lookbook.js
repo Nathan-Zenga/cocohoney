@@ -5,37 +5,85 @@ const { each } = require('async');
 const { Lookbook_media } = require('../models/models');
 
 router.get('/gallery', (req, res) => {
-    Lookbook_media.find({ media_type: "image" }, (err, images) => {
-        res.render('lookbook-gallery', { title: "Lookbook (Gallery)", pagename: "lookbook-gallery" })
+    Lookbook_media.find({ media_type: "image" }).sort({ position: 1 }).exec((err, images) => {
+        res.render('lookbook-gallery', { title: "Lookbook (Gallery)", pagename: "lookbook-gallery", images })
     })
 });
 
 router.get('/tutorial', (req, res) => {
-    Lookbook_media.find({ media_type: "video", is_tutorial: true }, (err, video) => {
-        res.render('lookbook-tutorial', { title: "Lookbook (tutorial)", pagename: "lookbook-tutorial" })
+    Lookbook_media.find({ media_type: "video", tutorial: true }, (err, videos) => {
+        res.render('lookbook-tutorial', { title: "Lookbook (Tutorial)", pagename: "lookbook-tutorial", videos })
     })
 });
 
-router.post('/gllery/add', (req, res) => {
+router.post('/gallery/add', isAuthed, (req, res) => {
     const { image_file, image_url } = req.body;
-    if (!image_file && !image_url) return res.send("No image / video uploaded");
-    const image_files = (image_file_name instanceof Array ? image_file_name : [image_file_name]).filter(e => e);
-    const image_urls = (image_url_name instanceof Array ? image_url_name : [image_url_name]).filter(e => e);
+    const image_files = (image_file instanceof Array ? image_file : [image_file]).filter(e => e);
+    const image_urls = (image_url instanceof Array ? image_url : [image_url]).filter(e => e);
+    if (!image_files.length && !image_urls.length) return res.send("No images / videos uploaded");
     each([...image_files, ...image_urls], (file, cb) => {
         const new_media = new Lookbook_media();
-        const public_id = "cocohoney/lookbook-gallery/media_" + new_media.id;
-        cloud.uploader.upload(file, { public_id }, (err, result) => {
+        const public_id = "cocohoney/lookbook-gallery/IMG_" + new_media.id;
+        cloud.uploader.upload(file, { public_id, resource_type: "image" }, (err, result) => {
             if (err) return cb(err.message);
             const { secure_url, resource_type, width, height } = result;
-            const orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
-            new Lookbook_media({ p_id: public_id, url: secure_url, media_type: resource_type, orientation }).save(err => {
-                if (err) return cb(err.message); cb();
-            });
+            new_media.p_id = public_id;
+            new_media.url = secure_url;
+            new_media.media_type = resource_type;
+            new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
+            new_media.save(err => { if (err) return cb(err.message); cb() });
         });
     }, err => {
         if (err) return res.status(500).send(err.message);
-        saved.save(() => { res.send("Product saved in stock") });
+        saved.save(() => { res.send("Lookbook images(s) saved") });
     })
+});
+
+router.post('/tutorial/add', isAuthed, (req, res) => {
+    const { video_file, video_url } = req.body;
+    const video_files = (video_file instanceof Array ? video_file : [video_file]).filter(e => e);
+    const video_urls = (video_url instanceof Array ? video_url : [video_url]).filter(e => e);
+    if (!video_files.length && !video_urls.length) return res.send("No images / videos uploaded");
+    each([...video_files, ...video_urls], (file, cb) => {
+        const new_media = new Lookbook_media();
+        const public_id = "cocohoney/lookbook-tutorial/VID_" + new_media.id;
+        cloud.uploader.upload(file, { public_id, resource_type: "video" }, (err, result) => {
+            if (err) return cb(err.message);
+            const { secure_url, resource_type, width, height } = result;
+            new_media.p_id = public_id;
+            new_media.url = secure_url;
+            new_media.media_type = resource_type;
+            new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
+            new_media.tutorial = true;
+            new_media.save(err => { if (err) return cb(err.message); cb() });
+        });
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        saved.save(() => { res.send("Lookbook tutorial video(s) saved") });
+    })
+});
+
+router.post('/remove', isAuthed, (req, res) => {
+    const ids = Object.values(req.body);
+    const plural = ids.length > 1 ? "s" : "";
+    if (!ids.length) return res.status(400).send("Nothing selected");
+    Lookbook_media.find({_id : { $in: ids }}, (err, media) => {
+        if (err) return res.status(500).send(err.message);
+        if (!media.length) return res.status(404).send("No media found");
+        each(media, (img, cb) => {
+            Lookbook_media.deleteOne({ _id : img.id }, (err, result) => {
+                if (err || !result.deletedCount) {
+                    res.status(404);
+                    return cb(err ? err.message : `Images${plural}/video${plural} not found`)
+                };
+                cloud.api.delete_resources([img.p_id], () => cb());
+            })
+        }, err => {
+            if (!err) return res.send(`Image${plural}/video${plural} deleted successfully`);
+            if (res.statusCode === 200) res.status(500);
+            res.status(res.statusCode).send(err.message);
+        })
+    });
 });
 
 module.exports = router;

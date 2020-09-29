@@ -1,37 +1,81 @@
 <ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-lookbook-media">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-lookbook-media">EDIT</a></li>
+    <li class="active"><a data-toggle="pill" href="#new-lookbook-img">NEW IMAGE</a></li>
+    <li><a data-toggle="pill" href="#new-tutorial-video">NEW TUTORIAL VIDEO</a></li>
     <li><a data-toggle="pill" href="#remove-lookbook-media">REMOVE</a></li>
 </ul>
 
+<style>
+    #new-lookbook-media .file-upload-container {
+        border: 1.5px solid rgba(255, 255, 255, .5);
+        padding: 20px 15px;
+        border-radius: 10px;
+    }
+</style>
+
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="new-lookbook-media" class="new-form-tab tab-pane fade in active">
-        <%_ var suffix = Date.now(); _%>
+    <div id="new-lookbook-img" class="new-form-tab tab-pane fade in active">
         <form method="post" class="container-fluid" action="/lookbook/gallery/add" style="padding: 30px">
-            <label>IMAGE / VIDEO</label>
+            <%_ var suffix = Date.now(); _%>
+            <label>UPLOAD LOOKBOOK IMAGE</label><br><br>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook-media-file-<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.wav"></div>
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp" multiple></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook-media-file-<%- suffix %>">CLEAR</button></div>
-                    <div class="col-sm-12"><input type="url" name="image_url" id="lookbook-media-url" placeholder="Or enter the image / video URL"></div>
-                    <div class="col-sm-12"><input type="checkbox" name="tutorial" id="tutorial-check" style="margin-right: 5px;"> IS THIS A TUTORIAL VIDEO?<br></div>
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
+                    <div class="col-sm-12"><input type="url" name="image_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the image URL"></div>
                     <div class="col-sm-12 add-remove-control" style="text-align: right">
-                        <button type="button" class="add">ADD</button>
+                        <button type="button" class="add" data-prefix="lookbook_media_file_">ADD</button>
                         <button type="button" class="remove">REMOVE</button>
                     </div>
                 </div>
             </fieldset>
 
-            <input type="submit" value="SAVE">
+            <input type="submit" value="UPLOAD">
         </form>
     </div>
 
-    <div id="edit-lookbook-media" class="edit-form-tab tab-pane fade">
-        <p style="text-align: center;">IN CONSTRUCTION</p>
+    <div id="new-tutorial-video" class="new-form-tab tab-pane fade">
+        <form method="post" class="container-fluid" action="/lookbook/tutorial/add" style="padding: 30px">
+            <%_ var suffix = Date.now()+1; _%>
+            <label>UPLOAD TUTORIAL VIDEO</label><br><br>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".mp4,.mov,.wav" multiple></div>
+                    <input type="hidden" name="video_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
+                    <div class="col-sm-12"><input type="url" name="video_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the video URL"></div>
+                    <div class="col-sm-12 add-remove-control" style="text-align: right">
+                        <button type="button" class="add" data-prefix="lookbook_media_file_">ADD</button>
+                        <button type="button" class="remove">REMOVE</button>
+                    </div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="UPLOAD">
+        </form>
     </div>
 
     <div id="remove-lookbook-media" class="remove-form-tab tab-pane fade">
-        <p style="text-align: center;">IN CONSTRUCTION</p>
+        <%_ if (lookbook_media.length) { _%>
+        <form action="/product/stock/remove" method="post">
+            <label>DELETE IMAGE(S)/VIDEO(S) FROM LOOKBOOK</label><br><br>
+            <%_ lookbook_media.forEach((item, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="media<%= i %>" value="<%= item._id %>">
+                <%_ if (item.media_type === "image") { _%>
+                <img src="<%= item.url %>" alt="<%= item.url %>">
+                <%_ } else { _%>
+                <div class="bg-underlay bg-body">
+                    <video playsinline autoplay muted loop><source src="<%= image.url %>"></video>
+                </div>
+                <%_ } _%>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE PRODUCTS">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
+        <%_ } _%>
     </div>
 </div>

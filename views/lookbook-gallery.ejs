@@ -2,22 +2,9 @@
     <section>
         <div class="slider-container">
             <div class="slider-content">
-                <%_
-                    [
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2496_ce51d0",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2711_rhllvk",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2708_d0oio2",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_8920_mjywhb",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2710_xctaey",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2709_kjanzj",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2683_utzv2z",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2684_clct63",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2690_nnvlks",
-                        "https://res.cloudinary.com/natzen/image/upload/v1598573734/cocohoney/lookbook-gallery/IMG_2693_w5mjg8"
-                    ].forEach(image => {
-                _%>
+                <%_ images.forEach(image => { _%>
                 <div class="slider-single">
-                    <div class="slider-single-image" style="background-image: url('<%- image %>')"></div>
+                    <div class="slider-single-image" style="background-image: url('<%- image.url %>')"></div>
                     <h1 class="slider-single-title"></h1>
                 </div>
                 <%_ }) _%>

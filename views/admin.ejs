@@ -68,12 +68,13 @@
         $(".file-upload-container .add-remove-control button").click(function(e) {
             var $container = $(this).closest(".file-upload-container");
             var $form = $($container).closest("form");
+            var prefix = $(this).data("prefix");
             var suffix = Date.now();
             switch (this.className) {
                 case "add":
                     $container.clone(true)
-                    .find(":file").attr("id", "lookbook-media-file-"+ suffix +"").end()
-                    .find(".clear-uploads").attr("data-id", "lookbook-media-file-"+ suffix +"").end()
+                    .find(":file").attr("id", prefix + suffix +"").end()
+                    .find(".clear-uploads").attr("data-id", prefix + suffix +"").end()
                     .find(":input").attr("disabled", false).not("button").val("").end().end()
                     .insertAfter($container);
                     break;

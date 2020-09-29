@@ -37,7 +37,7 @@ module.exports.Lookbook_media = model('Lookbook_media', Schema({
     p_id: String,
     url: String,
     orientation: String,
-    index: Number,
+    position: Number,
     media_type: { type: String, default: "image" },
     tutorial: { type: Boolean, default: false }
 }));

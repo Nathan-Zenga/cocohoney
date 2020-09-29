@@ -593,6 +593,11 @@ label .dropdown-arrow {
     margin-bottom: .5em;
 }
 
+.input-checkbox img,
+.input-checkbox video {
+    height: 70px
+}
+
 #cart-icon {
     position: fixed;
     display: block;

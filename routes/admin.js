@@ -80,8 +80,8 @@ router.post("/activate/:token", async (req, res) => {
 
 router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
-        const { members, banner_slides, discount_codes, products, faqs, shipping_methods, boxes, overview_images } = db;
-        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs, ...shipping_methods, ...boxes, ...overview_images]);
+        const { members, banner_slides, discount_codes, products, faqs, shipping_methods, boxes, overview_images, lookbook_media } = db;
+        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs, ...shipping_methods, ...boxes, ...overview_images, ...lookbook_media]);
     })
 });
 
