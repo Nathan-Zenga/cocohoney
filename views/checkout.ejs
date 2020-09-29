@@ -2,111 +2,88 @@
     <%- include ('partials/stripe-checkout-css') -%>
     <div id="payment-form-container" style="margin-top: 2em">
         <div class="content container">
-            <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#card-payment">
-                    <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CARD</span></span>
-                </a></li>
-                <li><a data-toggle="pill" href="#paypal-payment">
-                    <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>PAYPAL</span></span>
-                </a></li>
-            </ul>
+            <form id="payment-form">
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="firstname">FIRST NAME</label>
+                            <input type="text" name="firstname" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="lastname">LAST NAME</label>
+                            <input type="text" name="lastname" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <label for="email">EMAIL</label>
+                <input type="email" name="email" required>
+                <label for="address_l1">ADDRESS</label>
+                <input type="text" name="address_l1" placeholder="LINE 1" required>
+                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="city">CITY</label>
+                            <input type="text" name="city" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                            <select name="country" required>
+                                <option value="">-</option>
+                                <%_ for (var k in countries) { _%>
+                                <option value="<%- k %>"><%- countries[k] %></option>
+                                <%_ } _%>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="postcode">POST / ZIP CODE</label>
+                            <input type="text" name="postcode" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <br>
+                <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
+                <input type="text" name="discount_code">
+                <%_ if (shipping_methods.length) { _%>
+                <label>CHOOSE DELIVERY METHOD</label><br><br>
+                <%_ shipping_methods.forEach(method => { _%>
+                <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
+                    <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
+                <br>
+                <%_ })} else { _%>
+                <label style="display: block; text-align: center">FREE DELIVERY</label>
+                <%_ } _%>
+                <br><br>
+            </form>
 
-            <div class="tab-content">
-                <div id="card-payment" class="tab-pane fade in active">
-                    <form id="stripe-payment-form" action="/shop/checkout/session/create">
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label for="firstname">FIRST NAME</label>
-                                    <input type="text" name="firstname" required>
-                                </div>
-                                <div class="col-sm-6">
-                                    <label for="lastname">LAST NAME</label>
-                                    <input type="text" name="lastname" required>
-                                </div>
-                            </div>
-                        </fieldset>
-                        <label for="email">EMAIL</label>
-                        <input type="email" name="email" required>
-                        <label for="address_l1">ADDRESS</label>
-                        <input type="text" name="address_l1" placeholder="LINE 1" required>
-                        <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <label for="city">CITY</label>
-                                    <input type="text" name="city" required>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                                    <select name="country" required>
-                                        <option value="">-</option>
-                                        <%_ for (var k in countries) { _%>
-                                        <option value="<%- k %>"><%- countries[k] %></option>
-                                        <%_ } _%>
-                                    </select>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label for="postcode">POST / ZIP CODE</label>
-                                    <input type="text" name="postcode" required>
-                                </div>
-                            </div>
-                        </fieldset>
-                        <br>
-                        <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
-                        <input type="text" name="discount_code">
-                        <%_ if (shipping_methods.length) { _%>
-                        <label>CHOOSE DELIVERY METHOD</label><br><br>
-                        <%_ shipping_methods.forEach(method => { _%>
-                        <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
-                            <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
-                        <br>
-                        <%_ })} else { _%>
-                        <label style="display: block; text-align: center">FREE DELIVERY</label>
-                        <%_ } _%>
-                        <br><br>
-                        <button class="checkout-btn" type="submit">
-                            <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>CONTINUE TO PAYMENT</span></span>
-                        </button>
-                    </form>
-                </div>
-
-                <div id="paypal-payment" class="tab-pane fade">
-                    <form id="paypal-payment-form" action="/shop/checkout/paypal/create-payment">
-                        <label for="discount_code">DISCOUNT CODE <span>(OPTIONAL)</span></label>
-                        <input type="text" name="discount_code">
-                        <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                        <select name="country" required>
-                            <option value="">-</option>
-                            <%_ for (var k in countries) { _%>
-                            <option value="<%- k %>"><%- countries[k] %></option>
-                            <%_ } _%>
-                        </select>
-                        <%_ if (shipping_methods.length) { _%>
-                        <label>CHOOSE DELIVERY METHOD</label><br><br>
-                        <%_ shipping_methods.forEach(method => { _%>
-                        <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
-                            <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
-                        <br>
-                        <%_ })} else { _%>
-                        <label style="display: block; text-align: center">FREE DELIVERY</label>
-                        <%_ } _%>
-                        <br><br>
-                        <button class="checkout-btn" type="submit">
-                            <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>CONTINUE TO PAYMENT</span></span>
-                        </button>
-                    </form>
+            <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <form id="stripe-payment-opt" class="minimal" action="/shop/checkout/session/create">
+                            <button class="checkout-btn" type="submit">
+                                <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>PAY BY CARD</span></span>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-sm-6">
+                        <form id="paypal-payment-opt" class="minimal" action="/shop/checkout/paypal/create-payment">
+                            <button class="checkout-btn" type="submit">
+                                <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>PAY VIA PAYPAL</span></span>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
+
         </div>
     </div>
 
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        $("#paypal-payment-form").submit(function(e) {
+        $("#paypal-payment-opt").submit(function(e) {
             e.preventDefault();
             var btnControl = new submitBtnController(this, "REDIRECTING");
-            $.post(this.action, $(this).serializeArray(), function(href) {
+            $.post(this.action, $("#payment-form").serializeArray(), function(href) {
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
@@ -115,10 +92,10 @@
             });
         });
 
-        $("#stripe-payment-form").submit(function(e) {
+        $("#stripe-payment-opt").submit(function(e) {
             e.preventDefault();
             var btnControl = new submitBtnController(this);
-            $.post(this.action, $(this).serializeArray(), function(data) {
+            $.post(this.action, $("#payment-form").serializeArray(), function(data) {
                 var stripe = Stripe(data.pk);
                 return stripe.redirectToCheckout({ sessionId: data.id });
             }).then(function(result) {

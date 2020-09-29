@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
+const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", (req, res) => {
@@ -16,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/session/create", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
+    const { email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({ price: p.price, quantity: p.qty })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
@@ -24,7 +25,7 @@ router.post("/session/create", async (req, res) => {
         var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
         if (!dc_doc && discount_code) { res.status(404); throw Error("Discount code invalid or expired") }
-        if (dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
+        if (dc_doc && dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
         if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") }
         let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name);
         if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") }
@@ -34,11 +35,12 @@ router.post("/session/create", async (req, res) => {
     };
 
     try {
+        const fullname = (req.user || req.body).firstname+" "+(req.user || req.body).lastname;
         const customer = await Stripe.customers.create({
-            name: firstname + " " + lastname,
+            name: fullname,
             email,
             shipping: {
-                name: firstname + " " + lastname,
+                name: fullname,
                 address: { line1: address_l1, line2: address_l2, city, country, postal_code: postcode }
             }
         });
@@ -95,6 +97,10 @@ router.get("/session/complete", async (req, res) => {
     const { checkout_session, customer, cart, current_dc_object, promotion_code_obj } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_object ? await Discount_code.findById(current_dc_object.id) : null;
+    const purchase_summary = cart.map(item => {
+        const description = item.deal ? `(${item.items.map(i => `${i.qty}x ${i.name}`).join(", ")}) ` : "";
+        return `${item.qty} X ${item.name} ${description}- £${(item.price / 100).toFixed(2)}`
+    }).join("\n");
 
     try {
         if (promotion_code_obj) await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
@@ -104,7 +110,7 @@ router.get("/session/complete", async (req, res) => {
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",
-            error: "Checkout session is invalid"
+            error: "The checkout session is invalid, expired or already completed"
         });
 
         const order = new Order({
@@ -130,14 +136,38 @@ router.get("/session/complete", async (req, res) => {
             req.session.current_dc_object = undefined;
         }
 
-        order.save(err => res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" }))
+        order.save();
+
+        const transporter = new MailingListMailTransporter({ req, res });
+        transporter.setRecipient({ email: customer_found.email }).sendMail({
+            subject: "Payment Successful - Cocohoney Cosmetics",
+            message: `Hi ${customer_found.name},\n\n` +
+            `Your payment was successful. Below is a summary of your purchase:\n\n${purchase_summary}\n\n` +
+            "If you have not yet received your PayPal receipt via email, do not hesistate to contact us.\n\n" +
+            "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            const { line1, line2, city, postal_code } = customer_found.shipping.address;
+            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+                subject: "Purchase Report: You Got Paid!",
+                message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
+                `- Name: ${customer_found.name}\n- Email: ${customer_found.email}\n` +
+                `- Purchased items:\n\n${purchase_summary}\n\n` +
+                `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
+                `- Date of purchase: ${Date(order.created_at)}\n` +
+                `- Total amount: £${(session.amount_total / 100).toFixed(2)}\n\n` +
+                "Full details of this transaction can be found on your Paypal account"
+            }, err2 => {
+                if (err) console.error(err || err2), res.status(500);
+                res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
+            });
+        });
     } catch(err) {
         res.status(500).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",
             error: err.message
         })
-    };
+    }
 });
 
 router.get("/cancel", async (req, res) => {

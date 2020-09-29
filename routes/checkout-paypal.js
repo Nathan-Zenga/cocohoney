@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { country, discount_code, shipping_method_id } = req.body;
+    const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: (req.user || {}).is_ambassador ? p.price_amb : p.price,
@@ -23,7 +23,7 @@ router.post("/create-payment", async (req, res) => {
         var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
         if (!dc_doc && discount_code) { res.status(404); throw Error("Discount code invalid or expired") }
-        if (dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
+        if (dc_doc && dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
         if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") }
         let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name);
         if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") }
@@ -49,7 +49,15 @@ router.post("/create-payment", async (req, res) => {
                     quantity: item.qty,
                     currency: "GBP",
                     description: item.deal ? item.items.map(p => `${p.qty}x ${p.name}`).join(", ") : item.info || undefined
-                }))
+                })),
+                shipping_address: {
+                    recipient_name: (req.user || req.body).firstname+" "+(req.user || req.body).lastname,
+                    line1: address_l1,
+                    line2: address_l2,
+                    city,
+                    country_code: country,
+                    postal_code: postcode
+                }
             },
             amount: {
                 currency: "GBP",
@@ -88,11 +96,14 @@ router.get("/complete", async (req, res) => {
 
         const { recipient_name, line1, line2, city, postal_code } = payment.transactions[0].item_list.shipping_address;
         const { email } = payment.payer.payer_info;
-        const purchase_summary = payment.transactions[0].item_list.items.map(item => `${item.name} X ${item.quantity} - ${item.price}`).join("\n");
+        const purchase_summary = payment.transactions[0].item_list.items.map(item => {
+            const description = item.description ? `(${item.description}) ` : "";
+            return `${item.quantity} X ${item.name} ${description}- £${item.price}`
+        }).join("\n");
 
         const order = new Order({
-            customer_name: recipient_name,
-            customer_email: email,
+            customer_name: req.user ? req.user.firstname+" "+req.user.lastname : recipient_name,
+            customer_email: req.user ? req.user.email : email,
             cart
         });
 
@@ -114,7 +125,6 @@ router.get("/complete", async (req, res) => {
         }
 
         order.save();
-        if (!production) return res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" });
 
         const transporter = new MailingListMailTransporter({ req, res });
         transporter.setRecipient({ email }).sendMail({
@@ -128,11 +138,11 @@ router.get("/complete", async (req, res) => {
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
                     `- Name: ${recipient_name}\n- Email: ${email}\n` +
-                    `- Purchased items: ${purchase_summary}\n` +
-                    `- Address:\n\t${ (line1 + "\n\t" + line2).trim() }\n\t${city},\n\t${postal_code}\n` +
+                    `- Purchased items:\n\n${purchase_summary}\n\n` +
+                    `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
                     `- Date of purchase: ${Date(payment.create_time)}\n` +
                     `- Total amount: £${payment.transactions[0].amount.total}\n\n` +
-                    `Full details of this transaction can be found on your Paypal account`
+                    "Full details of this transaction can be found on your Paypal account"
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
