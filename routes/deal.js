@@ -24,11 +24,11 @@ router.post("/cart/add", (req, res) => {
     Box.findById(box_id, (err, box) => {
         if (err) return res.status(500).send(err.message);
         if (!box) return res.status(404).send("Box deal does not exist");
-        if (quantities.reduce((sum, i) => sum + parseInt(i), 0) !== box.max_items) return res.status(400).send(`Please choose ${box.max_items} items`);
+        if (quantities.reduce((sum, i) => sum + parseInt(i), 0) !== box.max_items) return res.status(400).send(`Please choose ${box.max_items} items\nClick the image(s) to choose or re-adjust the quantities`);
 
         Product.find({ _id: { $in: product_ids }, stock_qty: { $gt: 0 } }, (err, products) => {
             if (err) return res.status(500).send(err.message);
-            if (!products.length) return res.status(404).send("Chosen items currently not in stock");
+            if (!products.length) return res.status(404).send("Chosen item(s) currently not in stock");
             if (product_ids.length !== products.length) return res.status(404).send("One or more of the chosen items aren't in stock");
 
             const deal_item = {};
