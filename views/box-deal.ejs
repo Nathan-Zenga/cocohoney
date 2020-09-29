@@ -3,7 +3,6 @@
         <div class="row header">
             <div class="container">
                 <div class="col-sm-6 col-sm-push-6 column img-container">
-                    <div class="text-content"></div>
                     <img src="<%= box.image.url %>" style="" alt="">
                 </div>
                 <div class="col-sm-6 col-sm-pull-6 column text-container">
@@ -33,16 +32,18 @@
                                 <div class="container">
                                     <div class="row">
                                         <%_ products.filter(p => p.product_collection === product.product_collection).forEach(p => { _%>
-                                        <div class="thumb col-md-3 col-sm-4" style="margin-bottom: 0">
-                                            <div class="thumb-img product-image" style="background-image: url('<%- p.image.url %>');">
-                                                <input type="checkbox" name="product_id" value="<%= p.id %>">
-                                            </div>
-                                            <div class="thumb-info">
-                                                <div class="product-name"><p><%= p.name %></p></div>
-                                                <div class="quantity-wrapper">
-                                                    <button type="button" class="quantity-control-btn" data-step="-1">-</button>
-                                                    <input class="product-quantity" type="number" name="quantity" min="1" max="<%= p.stock_qty %>" value="1" disabled>
-                                                    <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                                        <div class="thumb col-md-3 col-sm-4">
+                                            <div class="thumb-inner">
+                                                <div class="thumb-img product-image" style="background-image: url('<%- p.image.url %>');">
+                                                    <input type="checkbox" name="product_id" value="<%= p.id %>">
+                                                </div>
+                                                <div class="thumb-info">
+                                                    <div class="product-name"><p><%= p.name %></p></div>
+                                                    <div class="quantity-wrapper">
+                                                        <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                                                        <input class="product-quantity" type="number" name="quantity" min="1" max="<%= p.stock_qty %>" value="1" disabled>
+                                                        <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
