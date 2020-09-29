@@ -41,4 +41,20 @@ router.post('/edit', isAuthed, (req, res) => {
     });
 });
 
+router.post('/delete', isAuthed, (req, res) => {
+    const { id } = Object.keys(req.body).length ? req.body : req.query;
+    Member.findByIdAndDelete(id, (err, member) => {
+        if (err) return res.status(500).send(err.message);
+        if (!member) return res.status(404).send("Account does not exist or already deleted");
+        new MailingListMailTransporter({ req, res }, { email: member.email }).sendMail({
+            subject: `Your account is now deleted`,
+            message: `Hi ${member.firstname},\n\n` +
+            "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            if (err) return res.status(500).send(err.message);
+            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+        });
+    });
+});
+
 module.exports = router;

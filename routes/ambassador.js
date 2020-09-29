@@ -112,6 +112,23 @@ router.post('/account/edit', (req, res) => {
     });
 });
 
+router.post('/delete', isAuthed, (req, res) => {
+    const { id } = Object.keys(req.body).length ? req.body : req.query;
+    Ambassador.findByIdAndDelete(id, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(404).send("Account does not exist or already deleted");
+        new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
+            subject: "Your account is now deleted",
+            message: `Hi ${amb.firstname},\n\n` +
+            "Your account is now successfully deleted.\n" +
+            "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            if (err) return res.status(500).send(err.message);
+            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+        });
+    });
+});
+
 router.get('/discount_code/add', (req, res) => {
     const { id, src } = req.query;
     if (!id || src !== "email") return res.status(400).send("Invalid entry");

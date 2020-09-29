@@ -6,20 +6,18 @@
                 font-size: 13px;
                 margin: 0;
             }
-            #logo {
-                text-align: center;
-            }
-            #logo img {
-                height: 70px;
-                max-height: 70px;
-            }
             .section {
                 padding-top: 30px;
                 padding-bottom: 30px;
             }
+            .header.section {
+                padding: 10px 0;
+                letter-spacing: 5px;
+            }
             .header, .footer {
                 background-color: rgb(124, 76, 76);
                 color: rgb(250, 128, 114);
+                text-align: center;
             }
             .footer a + a {
                 margin-left: 10px;
@@ -31,8 +29,8 @@
         </style>
     </head>
     <body id="mail-body">
-        <div class="header section" style="padding: 10px 0">
-            <div id="logo"><a href="<%- location_origin %>"><img src="cid:logo" alt="Cocohoney Cosmetics logo"></a></div>
+        <div class="header section">
+            <div id="logo"><a href="<%- location_origin %>">COCOHONEY COSMETICS</a></div>
         </div>
         <%_ var centered_block_style = "margin-left: auto; margin-right: auto; max-width: 500px; padding-left: 15px; padding-right: 15px;" _%>
         <div class="main section" id="message" style="<%- centered_block_style %>">
@@ -50,7 +48,7 @@
                 })()
             %>
         </div>
-        <div class="footer section" style="text-align: center">
+        <div class="footer section">
             <div class="row">
                 <%_ socials.forEach((link, i) => { _%>
                 <a style="color: inherit!important" target="_blank" href="<%= link.url %>"><img class="social-icon" style="height: 1.5em; max-height: 1.5em" src="cid:social_icon_<%= i %>" alt="<%= link.name %> link"></a>
@@ -60,7 +58,7 @@
             <p style="font-size: .8em;">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
             <%_ if (member.id) { _%>
             <p style="<%- centered_block_style %> font-size: .8em;">You are receiving this email because you have subscribed to us, Cocohoney Cosmetics, to receive updates and promotional material.</p>
-            <p style="font-size: .8em;"><a style="color: inherit!important" href="<%- location_origin %>/mailing-list/member/delete?id=<%= member.id %>&src=email_unsub_link<%= member.id %>">Unsubscribe</a></p>
+            <p style="font-size: .8em;"><a style="color: inherit!important" href="<%- location_origin %>/<%= member.ambassador ? 'ambassador/' : '' %>account/delete?id=<%= member.id %>&src=email_unsub_link<%= member.id %>">Unsubscribe</a></p>
             <%_ } _%>
         </div>
     </body>
