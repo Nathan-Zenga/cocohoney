@@ -20,11 +20,15 @@ module.exports.Member = model('Member', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true },
-    phone_number: { type: String, minlength: 11, maxlength: 11 },
+    phone_number: { type: String, minlength: 11, maxlength: 11 }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', (() => {
-    const schema = new Schema({ email: { type: String, index: true }, password: String, token_expiry_date: Date });
+    const schema = new Schema({
+        email: { type: String, index: true, required: true },
+        password: { type: String, required: true },
+        token_expiry_date: Date
+    });
     schema.virtual("username").get(() => this.email);
     return schema;
 })());
