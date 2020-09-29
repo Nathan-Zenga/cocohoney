@@ -8,11 +8,9 @@
         </div>
         <section id="overview">
             <div class="bg-layer bg-reel">
-                <div class="bg-img" style="background-image: url('https://res.cloudinary.com/natzen/image/upload/v1598991658/cocohoney/site-content/pages/index/overview/IMG_2567.jpg');"></div>
-                <div class="bg-img" style="background-image: url('https://res.cloudinary.com/natzen/image/upload/v1598991676/cocohoney/site-content/pages/index/overview/IMG_8920.jpg');"></div>
-                <div class="bg-img" style="background-image: url('https://res.cloudinary.com/natzen/image/upload/v1598991711/cocohoney/site-content/pages/index/overview/IMG_2635.jpg');"></div>
-                <div class="bg-img" style="background-image: url('https://res.cloudinary.com/natzen/image/upload/v1598991752/cocohoney/site-content/pages/index/overview/E5513162-F7B8-42B0-B75C-3015F0816DE6.jpg');"></div>
-                <div class="bg-img" style="background-image: url('https://res.cloudinary.com/natzen/image/upload/v1598991814/cocohoney/site-content/pages/index/overview/B5743962-1592-4AF1-87B0-F0A71F46A683.jpg');"></div>
+                <%_ overview_images.forEach(img => { _%>
+                <div class="bg-img" style="background-image: url('<%- img.url %>');"></div>
+                <%_ }) _%>
             </div>
         </section>
         <style> @media (max-width: 767px) { #storefront { margin-top: -30px; } } </style>

@@ -55,8 +55,9 @@ module.exports.Banner_slide = model('Banner_slide', Schema({
 }));
 
 module.exports.Overview_image = model('Overview_image', Schema({
+    p_id: String,
     url: String,
-    index: Number
+    position: Number
 }));
 
 module.exports.Hightlight_media = model('Hightlight_media', Schema({
