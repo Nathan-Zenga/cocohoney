@@ -61,5 +61,9 @@ app.get("*", (req, res) => {
     res.status(404).render('error', { title: "Error 404", pagename: "error", html });
 });
 
+app.post("*", (req, res) => {
+    res.status(400).send("Sorry, your request currently cannot be processed");
+});
+
 const port = process.env.PORT || 2020;
 app.listen(port, () => { console.log(`Server started${production ? "" : " on port " + port}`) });
