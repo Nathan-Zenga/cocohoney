@@ -27,6 +27,7 @@ module.exports.Admin = model('Admin', (() => {
     const schema = new Schema({
         email: { type: String, index: true, required: true },
         password: { type: String, required: true },
+        admin: { type: Boolean, default: true },
         token_expiry_date: Date
     });
     schema.virtual("username").get(() => this.email);
@@ -89,7 +90,10 @@ module.exports.Order = model('Order', Schema({
     cart: Array,
     discounted: { type: Boolean, default: false },
     customer_name: String,
-    customer_email: String
+    customer_email: String,
+    shipping_method: String,
+    destination: { type: Object, default: {} },
+    tracking_ref: { type: String, default: null }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({

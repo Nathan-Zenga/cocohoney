@@ -80,13 +80,14 @@ router.post("/create-payment", async (req, res) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
         req.session.current_discount_code = dc_doc;
         req.session.transaction = payment.transactions[0];
+        req.session.shipping_method = shipping_method;
         res.send(payment.links.find(link => link.rel === "approval_url").href);
     });
 });
 
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
-    const { cart, current_discount_code, transaction } = req.session;
+    const { cart, current_discount_code, transaction, shipping_method } = req.session;
     const products = await Product.find();
     const dc_doc = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
 
@@ -100,7 +101,7 @@ router.get("/complete", async (req, res) => {
             error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
         });
 
-        const { recipient_name, line1, line2, city, postal_code } = payment.transactions[0].item_list.shipping_address;
+        const { recipient_name, line1, line2, city, country_code, postal_code } = payment.transactions[0].item_list.shipping_address;
         const { email } = payment.payer.payer_info;
         const purchase_summary = payment.transactions[0].item_list.items.map(item => {
             const description = item.description ? `(${item.description}) ` : "";
@@ -110,6 +111,8 @@ router.get("/complete", async (req, res) => {
         const order = new Order({
             customer_name: req.user ? req.user.firstname+" "+req.user.lastname : recipient_name,
             customer_email: req.user ? req.user.email : email,
+            shipping_method: shipping_method.name,
+            destination: { line1, line2, city, country_code, postal_code },
             cart
         });
 
@@ -143,12 +146,14 @@ router.get("/complete", async (req, res) => {
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
-                    `- Name: ${recipient_name}\n- Email: ${email}\n` +
-                    `- Purchased items:\n\n${purchase_summary}\n\n` +
-                    `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
-                    `- Date of purchase: ${Date(payment.create_time)}\n` +
-                    `- Total amount: £${payment.transactions[0].amount.total}\n\n` +
-                    "Full details of this transaction can be found on your Paypal account"
+                `- Name: ${recipient_name}\n- Email: ${email}\n` +
+                `- Purchased items:\n\n${purchase_summary}\n\n` +
+                `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
+                `- Date of purchase: ${Date(payment.create_time)}\n` +
+                `- Total amount: £${payment.transactions[0].amount.total}\n\n` +
+                "<b>LINK TO SUBMIT A TRACKING NUMBER:</b>\n" +
+                `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
+                "Full details of this transaction can be found on your Paypal account"
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })

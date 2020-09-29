@@ -1,0 +1,49 @@
+<%- include ('partials/header') -%>
+    <%_ if (error()) { _%>
+    <section>
+        <div class="container" style="text-align: center;">
+            <h1><%= error() %></h1>
+        </div>
+    </section>
+    <%_ } else { _%>
+    <div class="form-container">
+        <form method="post" action="/shipping/tracking/ref/send">
+            <label>TRACKING REF / NUMBER</label>
+            <input type="text" name="tracking_ref" required>
+
+            <fieldset>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <input type="text" value="<%= order.customer_name %>" disabled>
+                    </div>
+                    <div class="col-sm-6">
+                        <input type="text" value="<%= order.customer_email %>" disabled>
+                    </div>
+                    <div class="col-sm-12">
+                        <textarea rows="10" disabled><%= Object.values(order.destination).join(",\n") %></textarea>
+                    </div>
+                </div>
+            </fieldset>
+
+            <input type="hidden" name="id" value="<%= order.id %>" required>
+            <input type="submit" value="SEND">
+        </form>
+    </div>
+    <script>
+        $("form").submit(function(e) {
+            if (confirm("Are you sure this is the right tracking number?")) {
+                e.preventDefault();
+                var btnController = new submitBtnController(this);
+                $.post(this.action, $(this).serializeArray(), function(result) {
+                    alert(result);
+                    e.target.reset();
+                }).fail(function(err) {
+                    alert(err.responseText);
+                }).always(function() {
+                    btnController.finish();
+                });
+            }
+        });
+    </script>
+    <%_ } _%>
+<%- include ('partials/footer') -%>

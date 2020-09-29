@@ -95,12 +95,13 @@ router.post("/session/create", async (req, res) => {
         req.session.current_dc_object = dc_doc;
         req.session.promotion_code_obj = promotion_code;
         req.session.customer = customer;
+        req.session.shipping_method = shipping_method;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { res.status(400).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, customer, cart, current_dc_object, promotion_code_obj } = req.session;
+    const { checkout_session, customer, cart, current_dc_object, promotion_code_obj, shipping_method } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_object ? await Discount_code.findById(current_dc_object.id) : null;
     const purchase_summary = cart.map(item => {
@@ -122,6 +123,8 @@ router.get("/session/complete", async (req, res) => {
         const order = new Order({
             customer_name: customer_found.name,
             customer_email: customer_found.email,
+            shipping_method: shipping_method.name,
+            destination: customer_found.shipping.address,
             cart
         });
 
@@ -161,6 +164,8 @@ router.get("/session/complete", async (req, res) => {
                 `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
                 `- Date of purchase: ${Date(order.created_at)}\n` +
                 `- Total amount: £${(session.amount_total / 100).toFixed(2)}\n\n` +
+                "<b>LINK TO SUBMIT A TRACKING NUMBER:</b>\n" +
+                `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
                 "Full details of this transaction can be found on your Paypal account"
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);
