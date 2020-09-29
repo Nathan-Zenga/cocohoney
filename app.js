@@ -54,6 +54,7 @@ app.use('/ambassador', require('./routes/ambassador'));
 app.use('/shipping', require('./routes/shipping'));
 app.use('/deal', require('./routes/deal'));
 app.use('/reviews', require('./routes/customer-review'));
+app.use('/account', require('./routes/account'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;

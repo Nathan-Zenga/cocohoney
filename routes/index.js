@@ -18,10 +18,6 @@ router.get('/contact', (req, res) => {
     res.render('contact', { title: "Contact Us", pagename: "contact" })
 });
 
-router.get('/account/login', (req, res) => {
-    res.render('customer-login', { title: "Customer Log In", pagename: "customer-login" })
-});
-
 router.get('/faq', (req, res) => {
     FAQ.find((err, faqs) => res.render('faq', { title: "FAQs", pagename: "faq", faqs }))
 });
