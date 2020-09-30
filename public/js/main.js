@@ -47,6 +47,14 @@ $(function() {
         })
     });
 
+    $(window).on("load hashchange", function() {
+        $(".section-dropdown-options select").prop("value", location.hash).trigger("change");
+    });
+
+    $(".section-dropdown-options select").change(function() {
+        $(".nav-pills a[href='"+ this.value +"']").get(0).click()
+    });
+
     window.readDataURLs = function(files, cb) {
         $.each(files, function(i, file) {
             var reader = new FileReader();

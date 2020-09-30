@@ -65,10 +65,6 @@
             if (reload) location.reload();
         };
 
-        $(window).on("load hashchange", function() {
-            $(".section-dropdown-options select").prop("value", location.hash).trigger("change");
-        });
-
         $(".file-upload-container .add-remove-control button").click(function(e) {
             var $container = $(this).closest(".file-upload-container");
             var $form = $($container).closest("form");
@@ -144,10 +140,6 @@
             var em = this.firstChild.tagName.toLowerCase();
             if (selection.length) $textarea.val( before + "<"+em+">" + selection +"</"+em+">" + after );
             $textarea.get(0).focus();
-        });
-
-        $(".section-dropdown-options select").change(function() {
-            $(".nav-pills a[href='"+ this.value +"']").get(0).click()
         });
 
         $("#homepage_image_file").change(function() {
