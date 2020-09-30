@@ -21,7 +21,7 @@ router.post('/register', (req, res) => {
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
             "Please click the link below to verify them:\n" +
             `${res.locals.location_origin}/ambassador/register/verify?token=${saved.token}\n\n` +
-            "Click below to add a discount code to their account <u>after verifying them</u>:\n\n" +
+            "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
             `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved.id}\n\n`
         }, err => res.send("Registered. Submitted to administration for verification"));
     });
@@ -34,10 +34,10 @@ router.get('/register/verify', (req, res) => {
         if (!amb) return res.status(404).send("Invalid entry");
         new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
             subject: "Your account is now verified.",
-            message: "Hello,\n\n Your account has been verified and confirmed by" +
+            message: "Hello,\n\n Your account has been verified and confirmed by " +
             "the administrator of Cocohoney Cosmetics.\n\n" +
-            "Please click the following link below to activate your account" +
-            `${res.locals.location_origin}/ambassdor/register/activate?token=${amb.token}\n\n`
+            "Please click the following link below to activate your account:\n" +
+            `${res.locals.location_origin}/ambassdor/register/activate?token=${amb.token}`
         }, err => {
             if (err) return res.status(500).send(err.message);
             amb.verified = true;
