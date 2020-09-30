@@ -1,11 +1,11 @@
 <%- include ('partials/header') -%>
     <div class="product-view-container container">
-        <div class="col-sm-7 product-images">
+        <div class="col-sm-6 product-images">
             <div class="product-image-single">
                 <img src="<%- product.image.url %>" alt="<%- product.name %>">
             </div>
         </div>
-        <div class="col-sm-5 product-info">
+        <div class="col-sm-6 product-info">
             <div class="details" id="name"><%= product.name %></div>
             <%_ const price = is_ambassador ? product.price_amb : product.price;
                 const price_original = is_ambassador ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>

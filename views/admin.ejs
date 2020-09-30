@@ -98,8 +98,8 @@
                 $form.find(".clear-uploads").click();
 
                 $form.find("#product_name_edit").val(result.name);
-                $form.find("#price_edit").val(parseFloat(result.price) / 100);
-                $form.find("#price_amb_edit").val(parseFloat(result.price_amb) / 100);
+                $form.find("#price_edit").val(result.price ? parseFloat(result.price) / 100 : "");
+                $form.find("#price_amb_edit").val(result.price_amb ? parseFloat(result.price_amb) / 100 : "");
                 $form.find("#stock_qty_edit").val(result.stock_qty);
                 $form.find("#product_category_edit").val(result.category);
                 $form.find("#product_collection_edit").val(result.product_collection);
@@ -116,11 +116,11 @@
                 $form.find("#answer_edit").val(result.answer);
 
                 $form.find("#method_name_edit").val(result.name);
-                $form.find("#method_fee_edit").val(parseFloat(result.fee) / 100);
+                $form.find("#method_fee_edit").val(result.fee ? parseFloat(result.fee) / 100 : "");
                 $form.find("#method_info_edit").val(result.info);
 
                 $form.find("#box_name_edit").val(result.name);
-                $form.find("#box_price_edit").val(parseFloat(result.price) / 100);
+                $form.find("#box_price_edit").val(result.price ? parseFloat(result.price) / 100 : "");
                 $form.find("#box_max_items_edit").val(result.max_items);
                 $form.find("#box_info_edit").val(result.info);
 
