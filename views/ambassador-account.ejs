@@ -1,0 +1,66 @@
+<%- include ('partials/header') -%>
+    <style>
+        .profile-info {
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 40px 30px;
+            margin-bottom: 2em;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, .4);
+            text-align: center;
+        }
+
+        .profile-info h1 {
+            font-size: 1.5em;
+            font-weight: 400;
+        }
+
+        .profile-info .links {
+            margin-bottom: 1em;
+        }
+
+        .profile-info .icon {
+            font-size: 1.5em;
+        }
+    </style>
+    <br>
+    <section>
+        <div class="container">
+            <div class="profile-info">
+                <div class="row">
+                    <div class="info col-sm-7">
+                        <h1>Nathan Zengamambu</h1>
+                        <p><small>Ambassador <i class="fal fa-badge-check"></i></small></p>
+                        <p>nathanzenga@gmail.com</p>
+                    </div>
+                    <div class="options col-sm-5">
+                        <button>EDIT PROFILE</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-view-md section-dropdown-options">
+                <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                <select>
+                    <option value="#sales">SALES</option>
+                    <option value="#products">PRODUCTS</option>
+                </select>
+            </div>
+            <ul class="dt-view-md nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
+                <li><a data-toggle="pill" href="#products">PRODUCTS</a></li>
+            </ul>
+
+            <div class="tab-content container">
+                <div id="sales" class="tab-pane fade in active">
+                fojnfljel
+                </div>
+
+                <div id="products" class="tab-pane fade">
+                ABCDEFG
+                </div>
+            </div>
+
+        </div>
+    </section>
+<%- include ('partials/footer') -%>

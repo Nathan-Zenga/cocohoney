@@ -48,7 +48,9 @@ $(function() {
     });
 
     $(window).on("load hashchange", function() {
-        $(".section-dropdown-options select").prop("value", location.hash).trigger("change");
+        if (location.hash) {
+            $(".section-dropdown-options select").prop("value", location.hash).trigger("change");
+        }
     });
 
     $(".section-dropdown-options select").change(function() {

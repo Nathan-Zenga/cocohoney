@@ -81,20 +81,14 @@ router.get('/account/login', (req, res) => {
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
-router.get('/account/logout', (req, res) => {
-    // TO DO
+router.get('/account/logout', (req, res) => { req.logout(); res.redirect("/") });
+
+router.get('/account/profile', isAuthed, (req, res) => {
+    res.render('ambassador-account', { title: "Ambassador Account", pagename: "ambassador-account" })
 });
 
-router.get('/account', (req, res) => {
-    // TO DO
-    // Ambassador.findById(req.user.id, (err, user) => {
-    //     res.render('ambassador-account', { title: "Ambassador Account", pagename: "ambassador-account" })
-    // })
-});
-
-router.post('/account/login', (req, res) => {
-    // TO DO
-});
+// TO DO
+router.post('/account/login', (req, res, next) => next());
 
 router.post('/account/edit', (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram } = req.body;
@@ -169,5 +163,104 @@ router.post('/discount_code/edit', (req, res) => {
         });
     });
 });
+
+// router.get('/test', (req, res) => {
+//     [{
+//         firstname: "Ciara",
+//         password: "Cocohoneyyellow",
+//         discount_code: "MODICH01",
+//         verified: true
+//     },{
+//         firstname: "Akira",
+//         password: "Cocohoneyblue",
+//         discount_code: "AKIRCH02",
+//         verified: true
+//     },{
+//         firstname: "Denise",
+//         password: "Cocohoneypurple",
+//         discount_code: "DENISECH03",
+//         verified: true
+//     },{
+//         firstname: "Maita",
+//         password: "Cocohoneyred",
+//         discount_code: "MAITACH04",
+//         verified: true
+//     },{
+//         firstname: "Raissa ",
+//         password: "Cocohoneypink",
+//         discount_code: "RICECH05",
+//         verified: true
+//     },{
+//         firstname: "Claire",
+//         password: "Cocohoneybrown",
+//         discount_code: "CLAIRECH06",
+//         verified: true
+//     },{
+//         firstname: "Stephany",
+//         password: "Cocohoneyorange",
+//         discount_code: "STEPHCH07",
+//         verified: true
+//     },{
+//         firstname: "Helen ",
+//         password: "Cocohoneygreen",
+//         discount_code: "HELENCH08",
+//         verified: true
+//     },{
+//         firstname: "Kyra ",
+//         password: "Cocohoneyblack",
+//         discount_code: "KYRACH09",
+//         verified: true
+//     },{
+//         firstname: "Mayo ",
+//         password: "Cocohoneywhite",
+//         discount_code: "MAYOCH10",
+//         verified: true
+//     },{
+//         firstname: "Nessa",
+//         password: "Cocohoneygrey",
+//         discount_code: "NESSACH11",
+//         verified: true
+//     },{
+//         firstname: "Nyasha",
+//         password: "Cocohoneyindigo",
+//         discount_code: "NYASHACH12",
+//         verified: true
+//     },{
+//         firstname: "Thema",
+//         password: "Cocohoneyviolet",
+//         discount_code: "THEMACH13",
+//         verified: true
+//     },{
+//         firstname: "Benedicta ",
+//         password: "Cocohoneygold",
+//         discount_code: "BENEDICH14",
+//         verified: true
+//     },{
+//         firstname: "Sandra ",
+//         password: "Cocohoneylime",
+//         discount_code: "SANDRACH15",
+//         verified: true
+//     },{
+//         firstname: "Racheal ",
+//         password: "Cocohoneypeach",
+//         discount_code: "RACHCH16",
+//         verified: true
+//     },{
+//         firstname: "Josphin",
+//         password: "Cocohoneysilver",
+//         discount_code: "JOSPHCH17",
+//         verified: true
+//     },{
+//         firstname: "Deanna",
+//         password: "Cocohoneycream",
+//         discount_code: "DEANNACH18",
+//         verified: true
+//     }].forEach((amb, i, arr) => {
+//         const { firstname, password, discount_code } = amb;
+//         new Ambassador({ firstname, password, amb_ref: password, discount_code, verified: true }).save({ validateBeforeSave: false }, err => {
+//             if (i === arr.length-1) res.send("DONE!!!");
+//         })
+//     })    
+// });
 
 module.exports = router;

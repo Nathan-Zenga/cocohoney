@@ -20,7 +20,13 @@ module.exports.Member = model('Member', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true },
-    phone_number: { type: String, minlength: 11, maxlength: 11 }
+    phone_number: {
+        type: String,
+        validate: {
+            validator: v => /\d{11}/.test(v),
+            message: props => `${props.value} is not a valid phone number!`
+        }
+    },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', (() => {
@@ -100,7 +106,13 @@ module.exports.Ambassador = model('Ambassador', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true },
-    phone_number: { type: String, minlength: 11, maxlength: 11 },
+    phone_number: {
+        type: String,
+        validate: {
+            validator: v => /\d{11}/.test(v),
+            message: props => `${props.value} is not a valid phone number!`
+        }
+    },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
     amb_ref: String,
