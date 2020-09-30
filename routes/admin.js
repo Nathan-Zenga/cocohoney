@@ -6,7 +6,7 @@ const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Admin, Discount_code, FAQ, Member } = require('../models/models');
-require('../config/passport')(passport);
+require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
     if (!req.isAuthenticated()) return res.redirect("/admin/login");

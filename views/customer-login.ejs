@@ -43,13 +43,13 @@
                         <input type="tel" name="phone_number" id="phone_number" pattern="[0-9]{11}">
 
                         <label>EMAIL</label>
-                        <input type="email" name="email" id="new_email" required>
+                        <input type="email" name="email" id="email" required>
 
                         <label>NEW PASSWORD</label>
-                        <input type="password" name="password" id="new_password" required>
+                        <input type="password" name="password" id="password_new" required>
 
                         <label>CONFIRM NEW PASSWORD</label>
-                        <input type="password" name="password" id="confirm_password" required>
+                        <input type="password" name="password_confirm" id="password_confirm" required>
 
                         <input type="submit" value="SIGN UP">
                     </fieldset>
@@ -64,6 +64,7 @@
             $.post(this.action, $(this).serializeArray(), function(result) {
                 alert(result);
                 e.target.reset();
+                if (e.target.action.includes("/account/login")) location.href = result;
             }).fail(function(err) {
                 alert(err.responseText);
             }).always(function() {
