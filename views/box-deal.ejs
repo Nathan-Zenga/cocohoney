@@ -8,6 +8,7 @@
                 <div class="col-sm-6 col-sm-pull-6 column text-container">
                     <div class="text-content">
                         <h1><%= box.name %> Box</h1><br>
+                        <%- box.info ? "<p>" + box.info.replace(/\r?\n/g, "<br>") + "</p><br>" : "" %>
                         <p>Click the images below to choose</p><br>
                         <p><i class="dropdown-arrow fal fa-chevron-down" style="font-size: 3em"></i></p>
                     </div>
