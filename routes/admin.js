@@ -8,20 +8,14 @@ const MailingListMailTransporter = require('../modules/MailingListMailTransporte
 const { Admin, Discount_code, FAQ, Member } = require('../models/models');
 require('../config/passport')(passport);
 
-router.get('/', isAuthed, (req, res) => {
+router.get('/', (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect("/admin/login");
     Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db }))
 });
 
-// router.get('/login', (req, res) => {
-//     res.render('admin-login', { title: "Admin Login", pagename: "admin" })
-// });
-
-// router.get('/activate/:token', (req, res, next) => {
-//     Admin.findOne({ password: req.params.token, token_expiry_date: { $gte: Date.now() } }, (err, found) => {
-//         if (!found) return next();
-//         res.render('admin-activate', { title: "Admin Register", pagename: "admin", token: found.password })
-//     })
-// });
+router.get('/login', (req, res) => {
+    res.render('admin-login', { title: "Admin Login", pagename: "admin" })
+});
 
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 

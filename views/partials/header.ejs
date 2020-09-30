@@ -52,19 +52,25 @@
                             <a class="link" href="/deal/muse">MUSE</a>
                             <a class="link" href="/deal/lash-guru">LASH GURU</a>
                         </div>
-                        <!-- <a class="link" href="/product/lipsticks">LIPSTICKS / LIPLINERS</a> -->
-                        <!-- <a class="link" href="/events">EVENTS</a> -->
                         <a class="link sub-list-toggle">LOOKBOOK</a>
                         <div class="sub-list">
                             <a class="link" href="/lookbook/gallery">GALLERY</a>
-                            <!-- <a class="link" href="/lookbook/tutorial">GALLERY</a> -->
                         </div>
+                        <%_ if (!user) { _%>
                         <a class="link" href="/ambassador/account/login">AMBASSADOR LOG IN</a>
+                        <%_ } _%>
                     </nav>
                 </div>
                 <div class="links-section header-content-section col-xs-4">
+                    <%_ if (user) {
+                        if (!user.admin) { _%>
+                    <a href="/<%= is_ambassador ? 'ambassador/' : '' %>account">PROFILE</a> <span class="dt-view">&bullet;</span>
+                    <%_ } _%>
+                    <a href="/account/logout">LOGOUT</a>
+                    <%_ } else { _%>
                     <a class="link-icon fal fa-user-circle" href="/account/login"></a>
                     <a class="link-icon fab fa-instagram" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
+                    <%_ } _%>
                 </div>
             </div>
         </div>

@@ -8,7 +8,9 @@
                 <div class="col-xs-5" id="footer-links">
                     <a class="link" href="/shipping">Shipping & Delivery</a>
                     <a class="link" href="/contact">Contact Us</a>
+                    <%_ if (!user) { _%>
                     <a class="link" href="/account/login">My Account</a>
+                    <%_ } _%>
                     <a class="link" href="/faq">FAQs</a>
                     <a class="link" href="/reviews">Reviews</a>
                 </div>

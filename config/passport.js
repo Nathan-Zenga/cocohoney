@@ -3,8 +3,8 @@ const { Admin } = require('../models/models');
 const bcrypt = require('bcrypt');
 
 module.exports = passport => {
-    passport.use("local-login-admin", new Strategy((email, password, done) => {
-        Admin.findOne({ email }, (err, user) => {
+    passport.use("local-login-admin", new Strategy({ passReqToCallback: true }, (req, email, password, done) => {
+        Admin.findOne({ email: req.session.admin_email }, (err, user) => {
             if (err) return done(err);
             if (!user) return done(null, "to_activate", { message: "Verification email sent" });
             bcrypt.compare(password, user.password, (err, match) => {

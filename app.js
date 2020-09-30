@@ -6,6 +6,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
+const passport = require('passport');
 const { CHCDB, NODE_ENV } = process.env;
 const { Site_content, Banner_slide } = require("./models/models");
 const production = NODE_ENV === "production";
@@ -29,6 +30,9 @@ app.use(session({ // express session
     cookie: { secure: false },
     store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 * 12 })
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
