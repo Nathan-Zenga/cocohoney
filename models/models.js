@@ -103,10 +103,11 @@ module.exports.Ambassador = model('Ambassador', Schema({
     phone_number: { type: String, minlength: 11, maxlength: 11 },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
+    amb_ref: String,
     token: String,
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: null },
-    ambassador: { type: Boolean, default: true },
+    ambassador: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.FAQ = model('FAQ', Schema({
