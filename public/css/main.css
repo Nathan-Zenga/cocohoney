@@ -909,6 +909,13 @@ label .dropdown-arrow {
     color: rgb(124, 76, 76);
 }
 
+#admin-page .nav-pills-container,
+#account-page .nav-pills-container {
+    padding-top: 10px;
+    padding-bottom: 15px;
+    background-color: rgba(0, 0, 0, .15);
+}
+
 .tab-content {
     padding-top: 2em;
     padding-bottom: 2em;
@@ -1299,4 +1306,27 @@ input.product-quantity:disabled {
     #customer-reviews-page .review .post-date {
         text-align: right;
     }
+}
+
+#account-page .profile-info {
+    margin: 0 auto;
+    max-width: 600px;
+    padding: 40px 30px;
+    margin-bottom: 2em;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, .4);
+    text-align: center;
+}
+
+#account-page .profile-info h1 {
+    font-size: 1.5em;
+    font-weight: 400;
+}
+
+#account-page .profile-info .links {
+    margin-bottom: 1em;
+}
+
+#account-page .profile-info .icon {
+    font-size: 1.5em;
 }
