@@ -3,7 +3,7 @@ const { Member } = require('../models/models');
 const bcrypt = require('bcrypt');
 
 module.exports = passport => {
-    passport.use("local-login-customer", new Strategy((email, password, done) => {
+    passport.use("local-login-customer", new Strategy({ usernameField: "email" }, (email, password, done) => {
         Member.findOne({ email }, (err, user) => {
             if (err) return done(err);
             if (!user) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
