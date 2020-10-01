@@ -8,7 +8,7 @@ router.post("/submit", async (req, res) => {
     const ambassadors = await Ambassador.find();
     each(ambassadors, (amb, cb) => {
         Discount_code.findOne({ code: amb.discount_code }, (err, dc_doc) => {
-            const ambassador = amb.firstname+" "+amb.lastname;
+            const ambassador = amb.firstname;
             const total_sales = dc_doc ? dc_doc.orders_applied.length : 0;
             const code = dc_doc ? dc_doc.code : { code: "No code" };
             items.push({ ambassador, code, total_sales });
@@ -18,7 +18,7 @@ router.post("/submit", async (req, res) => {
         if (err) return res.status(500).send(err.message);
         const current_date = new Date().toDateString();
         const mail_transporter = new MailingListMailTransporter({ req, res });
-        const summary = items.map(item => `<b>${item.mbassador}</b> (${item.code}): ${item.total_sales} orders sold`);
+        const summary = items.map(item => `<b>${item.ambassador}</b> (${item.code}): ${item.total_sales} orders sold`);
         mail_transporter.setRecipient({ email: req.session.admin_email }).sendMail({
             subject: `Ambassador Sales Report - ${ current_date }`,
             message: "Below is a summary of ambassadors' total sales so far, " +
