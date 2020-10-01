@@ -81,14 +81,28 @@ router.get('/account/login', (req, res) => {
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
-router.get('/account/logout', (req, res) => { req.logout(); res.redirect("/") });
-
-router.get('/account/profile', isAuthed, (req, res) => {
-    res.render('ambassador-account', { title: "Ambassador Account", pagename: "ambassador-account" })
+router.get('/account', isAuthed, (req, res) => {
+    res.render('account', { title: "My Account | Ambassador", pagename: "account" })
 });
 
-// TO DO
-router.post('/account/login', (req, res, next) => next());
+router.post('/account/login', (req, res, next) => {
+    const { email, password } = req.body;
+    Ambassador.findOne({ email }, (err, ambassador) => {
+        if (err) return res.status(500).send(err);
+        if (!ambassador) return res.status(400).send("Credentials are invalid, or this account is not registered");
+        bcrypt.compare(password, ambassador.password, (err, match) => {
+            if (err) return res.status(500).send(err);
+            if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
+            req.session.user = ambassador;
+            res.send("/account");
+        });
+    });
+});
+
+router.get('/account/logout', (req, res) => { 
+    req.session.user = null;
+    res.redirect("/");
+});
 
 router.post('/account/edit', (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram } = req.body;

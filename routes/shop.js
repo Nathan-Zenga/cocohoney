@@ -29,7 +29,7 @@ router.post("/cart/add", (req, res) => {
             currentItem.qty += qty;
             if (currentItem.qty > stock_qty) currentItem.qty = stock_qty;
         } else {
-            const { is_ambassador } = req.user || {};
+            const { is_ambassador } = req.session.user || {};
             req.session.cart.unshift({ id, name, price: is_ambassador ? price_amb : price, image, info, stock_qty, qty });
         }
 

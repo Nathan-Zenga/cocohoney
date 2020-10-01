@@ -41,7 +41,7 @@ router.post("/session/create", async (req, res) => {
     };
 
     try {
-        const fullname = (req.user || req.body).firstname+" "+(req.user || req.body).lastname;
+        const fullname = (req.session.user || req.body).firstname+" "+(req.session.user || req.body).lastname;
         const customer = await Stripe.customers.create({
             name: fullname,
             email,

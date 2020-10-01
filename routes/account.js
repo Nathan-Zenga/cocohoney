@@ -13,18 +13,21 @@ router.get('/login', (req, res) => {
 router.get('/signup', (req, res) => res.redirect("/account/login"));
 
 router.post('/login', (req, res) => {
-    req.body.username = req.body.email; Object.freeze(req.body);
-    passport.authenticate("local-login-customer", (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
-        if (!user) return res.status(400).send(info.message);
-        req.logIn(user, err => {
-            res.status(err ? 500 : 200).send(err ? err.message || err : "/")
+    const { email, password } = req.body;
+    Member.findOne({ email }, (err, member) => {
+        if (err) return res.status(500).send(err);
+        if (!member) return res.status(400).send("Credentials are invalid, or this account is not registered");
+        bcrypt.compare(password, member.password, (err, match) => {
+            if (err) return res.status(500).send(err);
+            if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
+            req.session.user = member;
+            res.send("/account");
         });
-    })(req, res);
+    });
 });
 
 router.get('/logout', (req, res) => {
-    req.logout();
+    req.session.user = null;
     res.redirect("/");
 });
 

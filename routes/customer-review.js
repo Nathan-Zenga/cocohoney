@@ -15,8 +15,8 @@ router.get('/new', (req, res) => {
 
 router.post('/submit', (req, res) => {
     const { author_name, headline, rating, commentry, image_file, image_url } = req.body;
-    const name = req.user ? `${req.user.firstname} ${req.user.lastname}` : author_name;
-    const review = new Review({ author_name: name, headline, rating, commentry, author_verified: !!req.user });
+    const name = req.session.user ? `${req.session.user.firstname} ${req.session.user.lastname}` : author_name;
+    const review = new Review({ author_name: name, headline, rating, commentry, author_verified: !!req.session.user });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
     if (!image_urls.length && !image_files.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
@@ -35,7 +35,7 @@ router.post('/submit', (req, res) => {
 });
 
 router.post('/update', (req, res) => {
-    if (!req.user) return res.sendStatus(401);
+    if (!req.session.user) return res.sendStatus(401);
     const { id, author_name, headline, rating, commentry } = req.body;
     Review.findById(id, (err, review) => {
         if (author_name) review.author_name = author_name;
@@ -50,7 +50,7 @@ router.post('/update', (req, res) => {
 });
 
 router.post('/delete', (req, res) => {
-    if (!req.user) return res.sendStatus(401);
+    if (!req.session.user) return res.sendStatus(401);
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     Review.find({_id : { $in: ids }}, (err, reviews) => {

@@ -15,7 +15,7 @@ router.post("/create-payment", async (req, res) => {
     const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
-        price: (req.user || {}).is_ambassador ? p.price_amb : p.price,
+        price: (req.session.user || {}).is_ambassador ? p.price_amb : p.price,
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
@@ -57,7 +57,7 @@ router.post("/create-payment", async (req, res) => {
                     description: item.deal ? item.items.map(p => `${p.qty}x ${p.name}`).join(", ") : item.info || undefined
                 })),
                 shipping_address: {
-                    recipient_name: (req.user || req.body).firstname+" "+(req.user || req.body).lastname,
+                    recipient_name: (req.session.user || req.body).firstname+" "+(req.session.user || req.body).lastname,
                     line1: address_l1,
                     line2: address_l2,
                     city,
@@ -109,8 +109,8 @@ router.get("/complete", async (req, res) => {
         }).join("\n");
 
         const order = new Order({
-            customer_name: req.user ? req.user.firstname+" "+req.user.lastname : recipient_name,
-            customer_email: req.user ? req.user.email : email,
+            customer_name: req.session.user ? req.session.user.firstname+" "+req.session.user.lastname : recipient_name,
+            customer_email: req.session.user ? req.session.user.email : email,
             shipping_method: shipping_method.name,
             destination: { line1, line2, city, country_code, postal_code },
             cart
