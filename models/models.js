@@ -85,7 +85,7 @@ module.exports.Discount_code = model('Discount_code', (() => {
         code: { type: String, required: true },
         percentage: { type: Number, min: 1, max: 100 },
         max_use_limit: { type: Number, min: 1, default: 1 },
-        orders_applied: [String],
+        orders_applied: [String], // array of order IDs
         expiry_date: { type: Date, required: true }
     });
 
@@ -119,7 +119,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
     amb_ref: String,
     token: String,
     verified: { type: Boolean, default: false },
-    discount_code: { type: String, default: null },
+    discount_code: { type: String, default: "null" },
     ambassador: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
