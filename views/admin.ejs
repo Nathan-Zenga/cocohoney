@@ -3,6 +3,7 @@
         <div class="mb-view-md section-dropdown-options">
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
+                <option value="#reports">REPORTS</option>
                 <option value="#product">PRODUCTS</option>
                 <option value="#overview-image">OVERVIEW IMAGES</option>
                 <option value="#banner">BANNER SLIDES</option>
@@ -15,7 +16,8 @@
             </select>
         </div>
         <ul class="dt-view-md nav nav-pills">
-            <li class="active"><a data-toggle="pill" href="#product">PRODUCTS</a></li>
+            <li class="active"><a data-toggle="pill" href="#reports">REPORTS</a></li>
+            <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
             <li><a data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a></li>
             <li><a data-toggle="pill" href="#banner">BANNER SLIDES</a></li>
             <li><a data-toggle="pill" href="#discount_code">DISCOUNT CODES</a></li>
@@ -26,7 +28,19 @@
             <li><a data-toggle="none" href="/admin/mail/form">MAIL</a></li>
         </ul>
         <div class="tab-content container">
-            <div id="product" class="tab-pane fade in active">
+            <div id="reports" class="tab-pane fade in active" style="text-align: center">
+                <p>
+                    <i class="fal fa-info-circle" style="margin-right: 5px; font-size: 1.2em"></i>
+                    <b>Click the following button below to recieve a mail report</b>
+                </p>
+                <br><br>
+
+                <form action="/report/submit" class="minimal">
+                    <button type="submit">SEND AMBASSADOR SALES REPORT</button>
+                </form>
+            </div>
+
+            <div id="product" class="tab-pane fade">
             <%- include ('partials/admin/product') -%>
             </div>
 
