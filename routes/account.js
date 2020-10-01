@@ -32,16 +32,16 @@ router.get('/logout', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-    const { firstname, lastname, email, phone_number, password_new, password_confirm } = req.body;
+    const { firstname, lastname, email_new, phone_number, password_new, password_confirm } = req.body;
     Member.findOne({ email }, (err, existing) => {
         if (existing) return res.status(400).send("This email is already registered");
         if (password_new !== password_confirm) return res.status(400).send("Confirmed password does not match");
 
-        const member = new Member({ firstname, lastname, email, phone_number });
-        bcrypt.hash(password, 10, (err, hash) => {
+        const member = new Member({ firstname, lastname, email: email_new, phone_number });
+        bcrypt.hash(password_new, 10, (err, hash) => {
             if (err) return res.status(500).send(err.message);
             member.password = hash;
-            member.save(err => {
+            member.save((err, saved) => {
                 if (err) return res.status(500).send(err.message);
                 new MailingListMailTransporter({ req, res }, saved).sendMail({
                     subject: `You have successfully signed up with Cocohoney Cosmetics!`,

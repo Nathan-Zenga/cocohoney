@@ -21,6 +21,7 @@
                     </fieldset>
                 </form>
             </div>
+
             <div id="signup" class="tab-pane fade">
                 <form method="post" action="/account/signup">
                     <fieldset>
@@ -43,10 +44,10 @@
                         <input type="tel" name="phone_number" id="phone_number" pattern="[0-9]{11}">
 
                         <label>EMAIL</label>
-                        <input type="email" name="email" id="email" required>
+                        <input type="email" name="email_new" id="email_new" required>
 
                         <label>NEW PASSWORD</label>
-                        <input type="password" name="password" id="password_new" required>
+                        <input type="password" name="password_new" id="password_new" required>
 
                         <label>CONFIRM NEW PASSWORD</label>
                         <input type="password" name="password_confirm" id="password_confirm" required>
@@ -62,9 +63,9 @@
             e.preventDefault();
             var btnController = new submitBtnController(this);
             $.post(this.action, $(this).serializeArray(), function(result) {
-                alert(result);
                 e.target.reset();
-                if (e.target.action.includes("/account/login")) location.href = result;
+                if (e.target.action.includes("/account/login")) location.href = result
+                else alert(result);
             }).fail(function(err) {
                 alert(err.responseText);
             }).always(function() {
