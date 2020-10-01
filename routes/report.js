@@ -6,13 +6,14 @@ const { Discount_code, Ambassador } = require('../models/models');
 router.post("/submit", async (req, res) => {
     const items = [];
     const ambassadors = await Ambassador.find();
-    each(ambassadors, async (amb, cb) => {
-        const dc_doc = await Discount_code.findOne({ code: amb.discount_code });
-        const ambassador = amb.firstname+" "+amb.lastname;
-        const total_sales = dc_doc ? dc_doc.orders_applied.length : 0;
-        const code = dc_doc ? dc_doc.code : { code: "No code" };
-        items.push({ ambassador, code, total_sales });
-        cb();
+    each(ambassadors, (amb, cb) => {
+        Discount_code.findOne({ code: amb.discount_code }, (err, dc_doc) => {
+            const ambassador = amb.firstname+" "+amb.lastname;
+            const total_sales = dc_doc ? dc_doc.orders_applied.length : 0;
+            const code = dc_doc ? dc_doc.code : { code: "No code" };
+            items.push({ ambassador, code, total_sales });
+            cb();
+        });
     }, err => {
         if (err) return res.status(500).send(err.message);
         const current_date = new Date().toDateString();
