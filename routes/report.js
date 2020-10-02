@@ -8,6 +8,7 @@ router.post("/submit", async (req, res) => {
     const ambassadors = await Ambassador.find();
     each(ambassadors, (amb, cb) => {
         Discount_code.findOne({ code: amb.discount_code }, (err, dc_doc) => {
+            if (err || !amb) return err ? cb(err) : cb();
             const ambassador = amb.firstname;
             const total_sales = dc_doc ? dc_doc.orders_applied.length : 0;
             const code = dc_doc ? dc_doc.code : { code: "No code" };
