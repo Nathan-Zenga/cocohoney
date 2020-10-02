@@ -7,6 +7,7 @@ const { Member } = require('../models/models');
 require('../config/passport-customer')(passport);
 
 router.get('/login', (req, res) => {
+    if (req.isAuthenticated() || req.locals.user) return res.redirect(req.get("referrer"));
     res.render('customer-login', { title: "Sign Up / Log In", pagename: "customer-login" })
 });
 

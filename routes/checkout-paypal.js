@@ -13,10 +13,10 @@ paypal.configure({
 
 router.post("/create-payment", async (req, res) => {
     const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
-    const { firstname, lastname, email } = req.session.user || req.body;
+    const { firstname, lastname, email } = res.locals.user || req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
-        price: (req.session.user || {}).is_ambassador ? p.price_amb : p.price,
+        price: (res.locals.user || {}).ambassador ? p.price_amb : p.price,
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
@@ -89,6 +89,7 @@ router.post("/create-payment", async (req, res) => {
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
     const { cart, current_discount_code, transaction, shipping_method } = req.session;
+    const { user } = res.locals;
     const products = await Product.find();
     const dc_doc = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
 
@@ -110,8 +111,8 @@ router.get("/complete", async (req, res) => {
         }).join("\n");
 
         const order = new Order({
-            customer_name: req.session.user ? req.session.user.firstname+" "+req.session.user.lastname : recipient_name,
-            customer_email: req.session.user ? req.session.user.email : email,
+            customer_name: user ? `${user.firstname} ${user.lastname}` : recipient_name,
+            customer_email: user ? user.email : email,
             shipping_method: shipping_method.name,
             destination: { line1, line2, city, country_code, postal_code },
             cart
