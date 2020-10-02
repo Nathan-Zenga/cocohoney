@@ -17,12 +17,13 @@ router.get("/", (req, res) => {
 });
 
 router.post("/session/create", async (req, res) => {
-    const { email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
+    const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
+    const { firstname, lastname, email } = req.session.user || req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({ price: p.price, quantity: p.qty })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
     try {
-        const field_check = { email, address_l1, address_l2, city, country, postcode, shipping_method_id };
+        const field_check = { email, address_l1, city, country, postcode, shipping_method_id };
         const missing_values = Object.keys(field_check).filter(k => !field_check[k].trim());
         const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
         if (missing_values.length) { res.status(400); throw Error(`Missing fields: ${missing_values.join(", ")}`) }
@@ -41,12 +42,11 @@ router.post("/session/create", async (req, res) => {
     };
 
     try {
-        const fullname = (req.session.user || req.body).firstname+" "+(req.session.user || req.body).lastname;
         const customer = await Stripe.customers.create({
-            name: fullname,
+            name: `${firstname} ${lastname}`,
             email,
             shipping: {
-                name: fullname,
+                name: `${firstname} ${lastname}`,
                 address: { line1: address_l1, line2: address_l2, city, country, postal_code: postcode }
             }
         });
