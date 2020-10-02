@@ -65,7 +65,10 @@
                                 <%_ } _%>
                             </div>
                             <div class="col-sm-6 post-date">
-                                <%= `${ review.created_at.getDate() }/${ review.created_at.getMonth() }/${ review.created_at.getFullYear() }` %>
+                                <%_ const day = review.created_at.getDate(); _%>
+                                <%_ const month = review.created_at.getMonth() + 1; _%>
+                                <%_ const year = review.created_at.getFullYear(); _%>
+                                <%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %>
                             </div>
                         </div>
                     </div>
