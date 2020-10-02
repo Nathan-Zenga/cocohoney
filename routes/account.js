@@ -1,13 +1,17 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const passport = require('passport');
 const isAuthed = require('../modules/authCheck');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Member } = require('../models/models');
-require('../config/passport-customer')(passport);
+const { Member, Order } = require('../models/models');
+
+router.get('/', isAuthed, async (req, res) => {
+    const { user } = res.locals;
+    const orders = await Order.find({ customer_email: user.email }).sort({ created_at: -1 }).exec();
+    res.render('customer-account', { title: "My Account", pagename: "account", orders });
+});
 
 router.get('/login', (req, res) => {
-    if (req.isAuthenticated() || req.locals.user) return res.redirect(req.get("referrer"));
+    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("referrer"));
     res.render('customer-login', { title: "Sign Up / Log In", pagename: "customer-login" })
 });
 
@@ -29,6 +33,7 @@ router.post('/login', (req, res) => {
 
 router.get('/logout', (req, res) => {
     req.session.user = null;
+    req.session.cart = [];
     res.redirect("/");
 });
 
