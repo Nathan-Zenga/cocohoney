@@ -103,7 +103,7 @@ router.post("/session/create", async (req, res) => {
 router.get("/session/complete", async (req, res) => {
     const { checkout_session, customer, cart, current_dc_object, promotion_code_obj, shipping_method } = req.session;
     const products = await Product.find();
-    const dc_doc = current_dc_object ? await Discount_code.findById(current_dc_object.id) : null;
+    const dc_doc = current_dc_object ? await Discount_code.findById(current_dc_object._id) : null;
     const purchase_summary = cart.map(item => {
         const description = item.deal ? `(${item.items.map(i => `${i.qty}x ${i.name}`).join(", ")}) ` : "";
         return `${item.qty} X ${item.name} ${description}- £${(item.price / 100).toFixed(2)}`
@@ -160,12 +160,12 @@ router.get("/session/complete", async (req, res) => {
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
-                `- Name: ${customer_found.name}\n- Email: ${customer_found.email}\n` +
-                `- Purchased items:\n\n${purchase_summary}\n\n` +
-                `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
-                `- Date of purchase: ${Date(order.created_at)}\n` +
-                `- Total amount: £${(session.amount_total / 100).toFixed(2)}\n\n` +
-                "<b>LINK TO SUBMIT A TRACKING NUMBER:</b>\n" +
+                `<b>Name</b>: ${customer_found.name}\n<b>Email</b>: ${customer_found.email}\n\n` +
+                `<b>Purchased items</b>\n${purchase_summary}\n\n` +
+                `<b>Address</b>\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
+                `<b>Date of purchase</b>\n${Date(order.created_at)}\n\n` +
+                `<b>Total amount</b>\n£${(session.amount_total / 100).toFixed(2)}\n\n` +
+                "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n`
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);

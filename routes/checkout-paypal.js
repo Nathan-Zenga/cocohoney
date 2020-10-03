@@ -149,12 +149,12 @@ router.get("/complete", async (req, res) => {
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
-                `- Name: ${recipient_name}\n- Email: ${email}\n` +
-                `- Purchased items:\n\n${purchase_summary}\n\n` +
-                `- Address:\n\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
-                `- Date of purchase: ${Date(payment.create_time)}\n` +
-                `- Total amount: £${payment.transactions[0].amount.total}\n\n` +
-                "<b>LINK TO SUBMIT A TRACKING NUMBER:</b>\n" +
+                `<b>Name</b>: ${recipient_name}\n</b>Email: ${email}\n\n` +
+                `<b>Purchased items</b>\n${purchase_summary}\n\n` +
+                `<b>Address</b>\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
+                `<b>Date of purchase</b>\n${Date(payment.create_time)}\n\n` +
+                `<b>Total amount</b>\n£${payment.transactions[0].amount.total}\n\n` +
+                "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
                 "Full details of this transaction can be found on your Paypal account"
             }, err2 => {
