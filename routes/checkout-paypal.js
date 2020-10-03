@@ -132,6 +132,7 @@ router.get("/complete", async (req, res) => {
         if (dc_doc) {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
+            dc_doc.save();
             req.session.current_dc_object = undefined;
         }
 
