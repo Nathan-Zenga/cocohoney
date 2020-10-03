@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const passport = require('passport');
 const { each } = require('async');
 const Collections = require('../modules/Collections');
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Admin, Discount_code, FAQ, Member } = require('../models/models');
 require('../config/passport-admin')(passport);
