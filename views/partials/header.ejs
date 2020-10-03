@@ -66,7 +66,7 @@
                         if (!user.admin) { _%>
                     <a href="/<%= is_ambassador ? 'ambassador/' : '' %>account">PROFILE</a> <span class="dt-view">&bullet;</span>
                     <%_ } _%>
-                    <a href="/account/logout">LOGOUT</a>
+                    <a href="/<%= is_admin ? 'admin' : 'account' %>/logout">LOGOUT</a>
                     <%_ } else { _%>
                     <a class="link-icon fal fa-user-circle" href="/account/login"></a>
                     <a class="link-icon fab fa-instagram" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
