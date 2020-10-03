@@ -60,7 +60,7 @@ router.get('/register/activate', (req, res, next) => {
 });
 
 router.post('/register/activate', (req, res) => {
-    const { id, password, password_confirm } = req.body;
+    const { id, password, password_confirm, sort_code, account_number } = req.body;
     if (password !== password_confirm) return res.status(400).send("Password confirm does not match");
     Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
@@ -68,6 +68,8 @@ router.post('/register/activate', (req, res) => {
         bcrypt.hash(password, 10, (err, hash) => {
             if (err) return res.status(500).send(err.message);
             amb.password = hash;
+            amb.sort_code = sort_code;
+            amb.account_number = account_number;
             amb.token = undefined;
             amb.save(err => {
                 if (err) return res.status(500).send(err.message);
@@ -114,14 +116,16 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
-        if (firstname)    amb.firstname = firstname;
-        if (lastname)     amb.lastname = lastname;
-        if (email)        amb.email = email;
-        if (phone_number) amb.phone_number = phone_number;
-        if (instagram)    amb.instagram = instagram;
+        if (firstname)      amb.firstname = firstname;
+        if (lastname)       amb.lastname = lastname;
+        if (email)          amb.email = email;
+        if (phone_number)   amb.phone_number = phone_number;
+        if (instagram)      amb.instagram = instagram;
+        if (sort_code)      amb.sort_code = sort_code;
+        if (account_number) amb.account_number = account_number;
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             if (res.locals.is_ambassador) req.session.user = saved;

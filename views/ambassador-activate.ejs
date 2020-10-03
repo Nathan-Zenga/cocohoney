@@ -10,6 +10,12 @@
                 <label>CONFIRM NEW PASSWORD</label>
                 <input type="password" name="password_confirm" id="password_confirm" required>
 
+                <label>SORT CODE</label>
+                <input type="text" name="sort_code" id="sort_code" pattern="^\d{2}-\d{2}-\d{2}$" required>
+
+                <label>ACCOUNT NUMBER</label>
+                <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$" required>
+
                 <input type="hidden" name="id" value="<%- id %>" required>
                 <input type="submit" value="ACTIVATE ACCOUNT">
             </fieldset>

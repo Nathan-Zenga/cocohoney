@@ -105,6 +105,12 @@
                         <label>INSTAGRAM</label>
                         <input type="text" name="instagram">
 
+                        <label>SORT CODE</label>
+                        <input type="text" name="sort_code" id="sort_code" pattern="^\d{2}-\d{2}-\d{2}$">
+
+                        <label>ACCOUNT NUMBER</label>
+                        <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$">
+
                         <input type="hidden" name="id" value="<%- user._id %>">
                         <input type="submit" value="UPDATE">
                     </form>

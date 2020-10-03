@@ -112,7 +112,21 @@ module.exports.Ambassador = model('Ambassador', Schema({
     },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
-    amb_ref: String,
+    sort_code: {
+        type: String,
+        validate: {
+            validator: v => /^\d{2}-\d{2}-\d{2}$/.test(v),
+            message: props => `Sort code is not valid or in the right format (e.g. 22-03-15)`
+        }
+    },
+    account_number: {
+        type: String,
+        validate: {
+            validator: v => /^[0-9]*$/.test(v),
+            message: props => `No letters, special characters or spaces allowed for the account number`
+        }
+    },
+    image: { p_id: String, url: String },
     token: String,
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: "null" },
