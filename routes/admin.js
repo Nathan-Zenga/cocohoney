@@ -5,7 +5,7 @@ const { each } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, FAQ, Member } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member, Ambassador } = require('../models/models');
 require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
@@ -42,7 +42,7 @@ router.post('/login', (req, res) => {
                             message: "You're recieving this email because an admin account needs setting up. " +
                                 "Please click the link below to activate the account, as this will only be " +
                                 "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
-                                `${res.locals.location_origin}/admin/activate/${doc.password}\n\n`
+                                `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`
                         }, err => {
                             if (err) return res.status(500).send(err.message || err);
                             res.status(400).send(info.message);
@@ -56,6 +56,19 @@ router.post('/login', (req, res) => {
             });
         }
     })(req, res);
+});
+
+router.get("/activate", async (req, res) => {
+    const { token } = req.query;
+    Ambassador.findOne({ password: token, token_expiry_date: { $gte: Date.now() } }, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return next();
+        res.render('ambassador-activate', {
+            title: "Ambassador Account Activation",
+            pagename: "ambassador-activate",
+            id: amb.id
+        })
+    });
 });
 
 router.post("/activate/:token", async (req, res) => {
@@ -115,8 +128,8 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
 router.post('/mail/send', isAuthed, (req, res) => {
     const { email, subject, message } = req.body;
     Member.find(email === "all" ? {} : { email }, (err, members) => {
+        const transporter = new MailingListMailTransporter({ req, res });
         each(members, (member, cb) => {
-            const transporter = new MailingListMailTransporter({ req, res });
             transporter.setRecipient(member).sendMail({ subject, message }, err => {
                 if (err) return cb(err.message); cb();
             });

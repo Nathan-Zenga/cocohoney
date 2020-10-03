@@ -2,7 +2,7 @@ const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const isAuthed = require('../modules/authCheck');
-const { Ambassador } = require('../models/models');
+const { Ambassador, Discount_code, Product, Order } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 
 router.get('/register', (req, res) => {
@@ -37,7 +37,7 @@ router.get('/register/verify', (req, res) => {
             message: "Hello,\n\n Your account has been verified and confirmed by " +
             "the administrator of Cocohoney Cosmetics.\n\n" +
             "Please click the following link below to activate your account:\n" +
-            `${res.locals.location_origin}/ambassdor/register/activate?token=${amb.token}`
+            `${res.locals.location_origin}/ambassador/register/activate?token=${amb.token}`
         }, err => {
             if (err) return res.status(500).send(err.message);
             amb.verified = true;
@@ -81,30 +81,39 @@ router.get('/account/login', (req, res) => {
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
-router.get('/account', isAuthed, (req, res) => {
-    res.render('account', { title: "My Account | Ambassador", pagename: "account" })
+router.get('/account', isAuthed, async (req, res) => {
+    const { user } = res.locals;
+    const discount_code = await Discount_code.findOne({ code: user.discount_code });
+    const { orders_applied } = discount_code || {};
+    const orders = await Order.find({ _id: { $in: orders_applied || [] } });
+    const products = await Product.find();
+    const docs = { discount_code, orders, products };
+    const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
+    res.render('ambassador-account', opts);
 });
 
 router.post('/account/login', (req, res, next) => {
+    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("referrer"));
     const { email, password } = req.body;
-    Ambassador.findOne({ email }, (err, ambassador) => {
-        if (err) return res.status(500).send(err);
-        if (!ambassador) return res.status(400).send("Credentials are invalid, or this account is not registered");
-        bcrypt.compare(password, ambassador.password, (err, match) => {
-            if (err) return res.status(500).send(err);
+    Ambassador.findOne({ email }, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(400).send("Credentials are invalid, or this account is not registered");
+        bcrypt.compare(password, amb.password, (err, match) => {
+            if (err) return res.status(500).send(err.message);
             if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
-            req.session.user = ambassador;
-            res.send("/account");
+            req.session.user = amb;
+            res.send("/ambassador/account");
         });
     });
 });
 
 router.get('/account/logout', (req, res) => { 
     req.session.user = null;
+    req.session.cart = [];
     res.redirect("/");
 });
 
-router.post('/account/edit', (req, res) => {
+router.post('/account/edit', isAuthed, (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
@@ -113,8 +122,9 @@ router.post('/account/edit', (req, res) => {
         if (email)        amb.email = email;
         if (phone_number) amb.phone_number = phone_number;
         if (instagram)    amb.instagram = instagram;
-        amb.save(err => {
+        amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
+            if (res.locals.is_ambassador) req.session.user = saved;
             res.send("Account details updated");
         });
     });
@@ -143,7 +153,7 @@ router.get('/discount_code/add', (req, res) => {
     Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account not found or isn't verified");
-        if (amb.discount_code) return res.status(400).send("Account already has a discount code");
+        if (amb.discount_code === "null") return res.status(400).send("Account already has a discount code");
         res.render('ambassador-discount-code-add', {
             title: "Add Ambassador Discount Code",
             pagename: "ambassador-discount-code-add",

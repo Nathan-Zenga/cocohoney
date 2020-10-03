@@ -394,9 +394,14 @@ section .media-wrapper .main-media.small {
 
 .thumb-container.no-wrap .thumb {
     display: inline-block;
-    width: 250px;
+    width: 230px;
+    max-width: 500px;
     margin-bottom: 0;
     margin-right: 50px;
+}
+
+.thumb-container.no-wrap .thumb:last-child {
+    margin-right: 150px;
 }
 
 .thumb {
@@ -909,8 +914,7 @@ label .dropdown-arrow {
     color: rgb(124, 76, 76);
 }
 
-#admin-page .nav-pills-container,
-#account-page .nav-pills-container {
+#admin-page .nav-pills-container {
     padding-top: 10px;
     padding-bottom: 15px;
     background-color: rgba(0, 0, 0, .15);
@@ -1329,6 +1333,23 @@ input.product-quantity:disabled {
 
 #account-page .profile-info .icon {
     font-size: 1.5em;
+}
+
+#account-page .thumb .thumb-info {
+    text-align: left;
+    padding: 10px;
+    height: 180px;
+}
+
+#account-page .order-date {
+    text-align: right;
+    font-size: .75em;
+    color: rgba(255, 255, 255, .75);
+}
+
+#account-page .order-summary ul {
+    padding-left: 15px;
+    font-weight: 300;
 }
 
 .modal-backdrop {

@@ -72,8 +72,9 @@ router.post('/edit', isAuthed, (req, res) => {
         if (lastname)     member.lastname = lastname;
         if (email)        member.email = email;
         if (phone_number) member.phone_number = phone_number;
-        member.save(err => {
+        member.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
+            req.session.user = saved;
             res.send("Account details updated");
         });
     });

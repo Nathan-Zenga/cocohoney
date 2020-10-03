@@ -34,23 +34,23 @@
                     <div class="container">
                         <div class="row">
                             <%_ orders.forEach((order, i, arr) => { _%>
-                            <div class="thumb" style="max-width: 500px; margin-right: 15px">
+                            <div class="thumb">
                                 <div class="thumb-inner">
-                                    <div class="thumb-info" style="text-align: left; padding: 10px; height: 180px">
+                                    <div class="thumb-info">
                                         <div class="order-header">
                                             <div class="row">
                                                 <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
                                                 <%_ const day = order.created_at.getDate(); _%>
-                                                <%_ const month = order.created_at.getMonth(); _%>
+                                                <%_ const month = order.created_at.getMonth() + 1; _%>
                                                 <%_ const year = order.created_at.getFullYear(); _%>
-                                                <div class="col-sm-6 order-date" style="text-align: right">
-                                                    <p><%= `${day}/${month}/${year}` %></p>
+                                                <div class="col-sm-6 order-date">
+                                                    <p><%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %></p>
                                                 </div>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="order-summary">
-                                            <ul style="padding-left: 15px">
+                                            <ul>
                                                 <%_ const list_filtered = order.cart.slice(0, 3); _%>
                                                 <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
                                                 <%_ list_filtered.forEach((item, i, arr) => { _%>
@@ -78,21 +78,22 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <label>FIRST NAME</label>
-                                    <input type="text" name="firstname" required>
+                                    <input type="text" name="firstname">
                                 </div>
                                 <div class="col-sm-6">
                                     <label>LAST NAME</label>
-                                    <input type="text" name="lastname" required>
+                                    <input type="text" name="lastname">
                                 </div>
                             </div>
                         </fieldset>
 
-                        <label>PHONE NUMBER <span>(OPTIONAL)</span></label>
+                        <label>PHONE NUMBER</label>
                         <input type="tel" name="phone_number" pattern="[0-9]{11}">
 
                         <label>EMAIL</label>
-                        <input type="email" name="email" required>
+                        <input type="email" name="email">
 
+                        <input type="hidden" name="id" value="<%- user._id %>">
                         <input type="submit" value="UPDATE">
                     </form>
                 </div>
@@ -100,4 +101,19 @@
 
         </div>
     </section>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                e.target.reset();
+                alert(result);
+                location.reload();
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>    
 <%- include ('partials/footer') -%>

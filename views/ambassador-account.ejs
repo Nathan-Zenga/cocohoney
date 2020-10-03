@@ -1,66 +1,131 @@
 <%- include ('partials/header') -%>
-    <style>
-        .profile-info {
-            margin: 0 auto;
-            max-width: 600px;
-            padding: 40px 30px;
-            margin-bottom: 2em;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, .4);
-            text-align: center;
-        }
-
-        .profile-info h1 {
-            font-size: 1.5em;
-            font-weight: 400;
-        }
-
-        .profile-info .links {
-            margin-bottom: 1em;
-        }
-
-        .profile-info .icon {
-            font-size: 1.5em;
-        }
-    </style>
     <br>
     <section>
         <div class="container">
             <div class="profile-info">
                 <div class="row">
                     <div class="info col-sm-7">
-                        <h1>Nathan Zengamambu</h1>
+                        <h1><%= user.firstname +" "+ user.lastname %></h1>
+                        <%_ if (is_ambassador || is_admin) { _%>
                         <p><small>Ambassador <i class="fal fa-badge-check"></i></small></p>
-                        <p>nathanzenga@gmail.com</p>
+                        <%_ } _%>
+                        <p><%= user.email %></p>
                     </div>
                     <div class="options col-sm-5">
-                        <button>EDIT PROFILE</button>
+                        <button type="button" data-toggle="modal" data-target="#settings-modal">
+                            EDIT PROFILE
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <div class="mb-view-md section-dropdown-options">
-                <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                <select>
-                    <option value="#sales">SALES</option>
-                    <option value="#products">PRODUCTS</option>
-                </select>
-            </div>
-            <ul class="dt-view-md nav nav-pills">
+        </div>
+        <div class="mb-view-md section-dropdown-options">
+            <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select>
+                <option value="#sales">SALES</option>
+                <option value="#products">PRODUCTS</option>
+            </select>
+        </div>
+        <div class="nav-pills-container dt-view-md">
+            <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
                 <li><a data-toggle="pill" href="#products">PRODUCTS</a></li>
             </ul>
+        </div>
+        <div class="tab-content">
 
-            <div class="tab-content container">
-                <div id="sales" class="tab-pane fade in active">
-                fojnfljel
+            <div id="sales" class="tab-pane fade in active">
+                <div class="thumb-container no-wrap">
+                    <div class="container">
+                        <div class="row">
+                            <%_ orders.forEach((order, i, arr) => { _%>
+                            <div class="thumb">
+                                <div class="thumb-inner">
+                                    <div class="thumb-info">
+                                        <div class="order-header">
+                                            <div class="row">
+                                                <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
+                                                <%_ const day = order.created_at.getDate(); _%>
+                                                <%_ const month = order.created_at.getMonth() + 1; _%>
+                                                <%_ const year = order.created_at.getFullYear(); _%>
+                                                <div class="col-sm-6 order-date">
+                                                    <p><%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="order-summary">
+                                            <ul>
+                                                <%_ const list_filtered = order.cart.slice(0, 3); _%>
+                                                <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
+                                                <%_ list_filtered.forEach((item, i, arr) => { _%>
+                                                <li><%- item.qty %> x <%- item.name %></li>
+                                                <%_ }) _%>
+                                                <%- diff_length ? "..." : "" %>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <%_ }) _%>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div id="products" class="tab-pane fade">
-                ABCDEFG
+            <div id="products" class="tab-pane fade">
+                
+            </div>
+
+            <div id="settings-modal" class="modal fade in" role="dialog">
+                <div class="modal-icons">
+                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="/account/edit">
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>FIRST NAME</label>
+                                    <input type="text" name="firstname">
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>LAST NAME</label>
+                                    <input type="text" name="lastname">
+                                </div>
+                            </div>
+                        </fieldset>
+
+                        <label>PHONE NUMBER</label>
+                        <input type="tel" name="phone_number" pattern="[0-9]{11}">
+
+                        <label>EMAIL</label>
+                        <input type="email" name="email">
+
+                        <label>INSTAGRAM</label>
+                        <input type="text" name="instagram">
+
+                        <input type="hidden" name="id" value="<%- user._id %>">
+                        <input type="submit" value="UPDATE">
+                    </form>
                 </div>
             </div>
 
         </div>
     </section>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                e.target.reset();
+                alert(result);
+                location.reload();
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>    
 <%- include ('partials/footer') -%>
