@@ -110,7 +110,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
     phone_number: {
         type: String,
         validate: {
-            validator: v => /\d{11}/.test(v),
+            validator: v => /^\d{11}$/.test(v),
             message: props => `${props.value} is not a valid phone number!`
         }
     },
