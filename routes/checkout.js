@@ -166,8 +166,7 @@ router.get("/session/complete", async (req, res) => {
                 `- Date of purchase: ${Date(order.created_at)}\n` +
                 `- Total amount: £${(session.amount_total / 100).toFixed(2)}\n\n` +
                 "<b>LINK TO SUBMIT A TRACKING NUMBER:</b>\n" +
-                `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
-                "Full details of this transaction can be found on your Paypal account"
+                `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n`
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
