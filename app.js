@@ -36,6 +36,7 @@ app.use(passport.session());
 
 app.use(async (req, res, next) => { // global variables
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
+    res.locals.production = production;
     res.locals.user = req.user || req.session.user || null;
     res.locals.is_admin = (res.locals.user || {}).admin;
     res.locals.is_ambassador = (res.locals.user || {}).ambassador;
