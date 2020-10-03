@@ -30,16 +30,12 @@ module.exports.Member = model('Member', Schema({
     },
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.Admin = model('Admin', (() => {
-    const schema = new Schema({
-        email: { type: String, index: true, required: true },
-        password: { type: String, required: true },
-        admin: { type: Boolean, default: true },
-        token_expiry_date: Date
-    });
-    schema.virtual("username").get(() => this.email);
-    return schema;
-})());
+module.exports.Admin = model('Admin', Schema({
+    email: { type: String, index: true, required: true },
+    password: { type: String, required: true },
+    admin: { type: Boolean, default: true },
+    token_expiry_date: Date
+}));
 
 module.exports.Lookbook_media = model('Lookbook_media', Schema({
     p_id: String,

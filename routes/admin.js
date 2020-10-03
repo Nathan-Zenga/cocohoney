@@ -27,7 +27,7 @@ router.get('/mail/form', isAuthed, (req, res) => {
 
 router.post('/login', (req, res) => {
     const email = req.session.admin_email;
-    req.body.username = email; Object.freeze(req.body);
+    req.body.email = email; Object.freeze(req.body);
     passport.authenticate("local-login-admin", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
