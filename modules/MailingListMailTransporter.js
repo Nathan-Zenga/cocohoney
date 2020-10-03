@@ -68,7 +68,7 @@ class MailingListMailTransporter {
                 let attachments = [{ path: 'public/img/chc-logo.jpg', cid: 'logo' }];
                 (this.#res.locals.socials || []).forEach((s, i) => attachments.push({ path: `public/img/socials/${s.name}.png`, cid: `social_icon_${i}` }));
                 nodemailer.createTransport(options).sendMail({
-                    from: this.#req.session.admin_email,
+                    from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
                     to: this.#member.email,
                     subject,
                     html,
