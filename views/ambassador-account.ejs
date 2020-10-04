@@ -94,48 +94,49 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label>FIRST NAME</label>
-                        <input type="text" name="firstname">
+                        <input type="text" name="firstname" value="<%- amb.firstname %>">
                     </div>
                     <div class="col-sm-6">
                         <label>LAST NAME</label>
-                        <input type="text" name="lastname">
+                        <input type="text" name="<%- amb.lastname %>" value="<%- user.lastname %>">
                     </div>
                 </div>
             </fieldset>
 
             <label>PHONE NUMBER</label>
-            <input type="tel" name="phone_number" pattern="[0-9]{11}">
+            <input type="tel" name="phone_number" pattern="[0-9]{11}" value="<%- user.phone_number %>">
 
             <label>EMAIL</label>
-            <input type="email" name="email">
+            <input type="email" name="email" value="<%- amb.email %>">
 
             <label>INSTAGRAM</label>
-            <input type="text" name="instagram">
+            <input type="text" name="instagram" value="<%- amb.instagram %>">
 
             <label>SORT CODE</label>
-            <input type="text" name="sort_code" id="sort_code" placeholder="Format - e.g.: 11-11-11" pattern="^\d{2}-\d{2}-\d{2}$">
+            <input type="text" name="sort_code" id="sort_code" placeholder="Format - e.g.: 11-11-11" pattern="^\d{2}-\d{2}-\d{2}$" value="<%- amb.sort_code %>">
 
             <label>ACCOUNT NUMBER</label>
-            <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$">
+            <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$" value="<%- amb.account_number %>">
 
             <fieldset>
                 <div class="row">
                     <div class="col-sm-4">
                         <label for="city">CITY</label>
-                        <input type="text" name="city">
+                        <input type="text" name="city" value="<%- amb.city %>">
                     </div>
                     <div class="col-sm-4">
                         <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                         <select name="country">
                             <option value="">-</option>
                             <%_ for (var k in countries) { _%>
-                            <option value="<%- k %>"><%- countries[k] %></option>
+                            <%_ let selected = countries[k] === amb.country ? "selected" : "" _%>
+                            <option value="<%- k %>" <%= selected %>><%- countries[k] %></option>
                             <%_ } _%>
                         </select>
                     </div>
                     <div class="col-sm-4">
                         <label for="postcode">POST CODE</label>
-                        <input type="text" name="postcode">
+                        <input type="text" name="postcode" value="<%- amb.postcode %>">
                     </div>
                 </div>
             </fieldset>
@@ -152,7 +153,6 @@
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {
-            e.target.reset();
             alert(result);
             location.reload();
         }).fail(function(err) {

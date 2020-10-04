@@ -86,20 +86,20 @@
                 <div class="row">
                     <div class="col-sm-6">
                         <label>FIRST NAME</label>
-                        <input type="text" name="firstname">
+                        <input type="text" name="firstname" value="<%- user.firstname %>">
                     </div>
                     <div class="col-sm-6">
                         <label>LAST NAME</label>
-                        <input type="text" name="lastname">
+                        <input type="text" name="lastname" value="<%- user.lastname %>">
                     </div>
                 </div>
             </fieldset>
 
             <label>PHONE NUMBER</label>
-            <input type="tel" name="phone_number" pattern="[0-9]{11}">
+            <input type="tel" name="phone_number" pattern="[0-9]{11}" value="<%- user.phone_number %>">
 
             <label>EMAIL</label>
-            <input type="email" name="email">
+            <input type="email" name="email" value="<%- user.email %>">
 
             <input type="hidden" name="id" value="<%= user._id %>">
             <input type="submit" value="UPDATE">
@@ -112,7 +112,6 @@
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {
-            e.target.reset();
             alert(result);
             location.reload();
         }).fail(function(err) {
