@@ -6,9 +6,9 @@
             <div id="stats">
                 <div class="row">
                     <div class="col-sm-<%= reviews.length ? '4' : '12' %>">
-                        <button id="review-submission-link-btn" type="button">
-                            <a href="/reviews/new">WRITE A REVIEW</a>
-                        </button>
+                        <a href="/reviews/new">
+                            <button id="review-submission-link-btn" type="button">WRITE A REVIEW</button>
+                        </a>
                         <p style="text-align: center; margin-bottom: 2em">
                             <%= reviews.length %> REVIEW<%= reviews.length !== 1 ? "S" : "" %>
                         </p>
@@ -72,6 +72,13 @@
                             </div>
                         </div>
                     </div>
+                    <%_ if (review.images.length) { _%>
+                    <div class="images">
+                        <%_ review.images.forEach(img => { _%>
+                        <img src="<%- img.url %>" alt="<%- img.url %>">
+                        <%_ }) _%>
+                    </div>
+                    <%_ } _%>
                     <div class="comment"><p><%- review.commentry.replace(/\r?\n/g, "</p><p>") %></p></div>
                 </div>
                 <%_ }) _%>

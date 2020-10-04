@@ -25,7 +25,7 @@ router.post('/submit', (req, res) => {
         const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image, { public_id }, (err, result) => {
             if (err) return cb(err.message);
-            review.image = { p_id: result.public_id, url: result.secure_url };
+            review.images.push({ p_id: result.public_id, url: result.secure_url });
             cb();
         });
     }, err => {

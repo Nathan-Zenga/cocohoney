@@ -597,7 +597,7 @@ textarea {
 }
 
 button {
-    padding: 5px 12px;
+    padding: 8px 10px;
     margin-bottom: 1em;
     -webkit-transition: .5s opacity;
     transition: .5s opacity;
@@ -1293,6 +1293,20 @@ input.product-quantity:disabled {
 #customer-reviews-page .review .verified-badge {
     font-size: 1.2em;
     margin: 0 5px;
+}
+
+#customer-reviews-page .review .images {
+    white-space: nowrap;
+    overflow: auto;
+    height: 200px;
+    padding-bottom: 1em;
+    margin-bottom: 1.5em;
+}
+
+#customer-reviews-page .review .images img {
+    height: 100%;
+    display: inline-block;
+    margin-right: 20px;
 }
 
 #customer-reviews-page .rating-meter {
