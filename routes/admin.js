@@ -5,7 +5,7 @@ const { each } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, FAQ, Member, Ambassador } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product } = require('../models/models');
 require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
@@ -23,6 +23,21 @@ router.get('/mail/form', isAuthed, (req, res) => {
     Member.find((err, members) => {
         res.render('admin-mail-form', { title: "Admin - Compose Mail", pagename: "admin-mail-form", members })
     })
+});
+
+router.get('/ambassador/account/:name', isAuthed, async (req, res) => {
+    const { name } = req.params;
+    const firstname = new RegExp(`^${name.split(/[ _]/g)[0]}$`, "i");
+    const lastname = new RegExp(`^${name.split(/[ _]/g)[1]}$`, "i");
+    const ambassador = await Ambassador.findOne({ firstname, lastname });
+    if (!ambassador) return next();
+    const discount_code = await Discount_code.findOne({ code: ambassador.discount_code });
+    const { orders_applied } = discount_code || {};
+    const orders = await Order.find({ _id: { $in: orders_applied || [] } });
+    const products = await Product.find();
+    const docs = { ambassador, discount_code, orders, products };
+    const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
+    res.render('ambassador-account', opts);
 });
 
 router.post('/login', (req, res) => {
@@ -87,8 +102,18 @@ router.post("/activate/:token", async (req, res) => {
 
 router.post("/search", isAuthed, (req, res) => {
     Collections(db => {
-        const { members, banner_slides, discount_codes, products, faqs, shipping_methods, boxes, overview_images, lookbook_media } = db;
-        res.send([...members, ...banner_slides, ...discount_codes, ...products, ...faqs, ...shipping_methods, ...boxes, ...overview_images, ...lookbook_media]);
+        const docs = [];
+        docs.push(...db.members);
+        docs.push(...db.ambassadors);
+        docs.push(...db.banner_slides);
+        docs.push(...db.discount_codes);
+        docs.push(...db.products);
+        docs.push(...db.faqs);
+        docs.push(...db.shipping_methods);
+        docs.push(...db.boxes);
+        docs.push(...db.overview_images);
+        docs.push(...db.lookbook_media);
+        res.send(docs);
     })
 });
 

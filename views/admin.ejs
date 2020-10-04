@@ -3,7 +3,7 @@
         <div class="mb-view-md section-dropdown-options">
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
-                <option value="#reports">REPORTS</option>
+                <option value="#home">HOME</option>
                 <option value="#product">PRODUCTS</option>
                 <option value="#overview-image">OVERVIEW IMAGES</option>
                 <option value="#banner">BANNER SLIDES</option>
@@ -17,7 +17,7 @@
         </div>
         <div class="nav-pills-container dt-view-md">
             <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#reports">REPORTS</a></li>
+                <li class="active"><a data-toggle="pill" href="#home">HOME</a></li>
                 <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
                 <li><a data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a></li>
                 <li><a data-toggle="pill" href="#banner">BANNER SLIDES</a></li>
@@ -30,16 +30,35 @@
             </ul>
         </div>
         <div class="tab-content container">
-            <div id="reports" class="tab-pane fade in active" style="text-align: center">
-                <p>
-                    <i class="fal fa-info-circle" style="margin-right: 5px; font-size: 1.2em"></i>
-                    <b>Click the following button below to recieve a mail report</b>
-                </p>
-                <br><br>
-
-                <form id="report-submit-form" action="/report/submit" class="minimal">
-                    <button type="submit">SEND AMBASSADOR SALES REPORT</button>
-                </form>
+            <div id="home" class="tab-pane fade in active" style="text-align: center">
+                <div class="row">
+                    <div class="col-sm-5 col-sm-push-7" style="margin-bottom: 4em">
+                        <h2>REPORTS</h2>
+                        <div class="info-label">
+                            <i class="fal fa-info-circle info-icon"></i>
+                            <b>Click below to recieve a report via mail</b>
+                        </div>
+                        <form id="report-submit-form" action="/report/submit" class="minimal">
+                            <button type="submit">SEND AMBASSADOR SALES REPORT</button>
+                        </form>
+                    </div>
+                    <div class="col-sm-7 col-sm-pull-5" style="margin-bottom: 4em">
+                        <h2>AMBASSADORS</h2>
+                        <div class="info-label">
+                            <i class="fal fa-info-circle info-icon"></i>
+                            <b>Click a name to go to their account page</b>
+                        </div>
+                        <ul style="text-align: left">
+                            <% ambassadors.forEach(amb => { %>
+                            <li>
+                                <a href="/admin/ambassador/account/<%- `${amb.firstname}_${amb.lastname}` %>">
+                                    <%- `${amb.firstname} ${amb.lastname}` %>
+                                </a>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
             </div>
 
             <div id="product" class="tab-pane fade">

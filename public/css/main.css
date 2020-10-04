@@ -6,6 +6,10 @@ h2 {
     font-size: 1.75em;
 }
 
+li {
+    margin-bottom: .4em;
+}
+
 body {
     overflow-x: hidden;
 }
@@ -926,6 +930,16 @@ label .dropdown-arrow {
     padding-top: 10px;
     padding-bottom: 15px;
     background-color: rgba(0, 0, 0, .15);
+}
+
+.info-label {
+    font-size: .75em;
+    margin-bottom: 2em;
+}
+
+.info-label .info-icon {
+    margin-right: 5px;
+    font-size: 1.2em;
 }
 
 .tab-content {

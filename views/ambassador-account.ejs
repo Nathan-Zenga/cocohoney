@@ -1,20 +1,23 @@
 <%- include ('partials/header') -%>
+    <%_ const amb = is_admin ? ambassador : user; _%>
     <br>
     <section>
         <div class="container">
             <div class="profile-info">
                 <div class="row">
                     <div class="info col-sm-7">
-                        <h1><%= user.firstname +" "+ user.lastname %></h1>
+                        <h1><%= amb.firstname +" "+ amb.lastname %></h1>
                         <%_ if (is_ambassador || is_admin) { _%>
                         <p><small>Ambassador <i class="fal fa-badge-check"></i></small></p>
                         <%_ } _%>
-                        <p><%= user.email %></p>
+                        <p><%= amb.email %></p>
                     </div>
                     <div class="options col-sm-5">
+                        <%_ if (!is_admin) { _%>
                         <button type="button" data-toggle="modal" data-target="#settings-modal">
                             EDIT PROFILE
                         </button>
+                        <%_ } _%>
                     </div>
                 </div>
             </div>
@@ -77,6 +80,7 @@
                 
             </div>
 
+            <%_ if (!is_admin) { _%>
             <div id="settings-modal" class="modal fade in" role="dialog">
                 <div class="modal-icons">
                     <button type="button" class="close-view" data-dismiss="modal">&times;</button>
@@ -121,11 +125,12 @@
                             </div>
                         </fieldset>
 
-                        <input type="hidden" name="id" value="<%- user._id %>">
+                        <input type="hidden" name="id" value="<%- amb._id %>">
                         <input type="submit" value="UPDATE">
                     </form>
                 </div>
             </div>
+            <%_ } _%>
 
         </div>
     </section>

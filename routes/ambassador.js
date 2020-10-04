@@ -116,7 +116,7 @@ router.get('/account', isAuthed, async (req, res) => {
     const { orders_applied } = discount_code || {};
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
-    const docs = { discount_code, orders, products };
+    const docs = { ambassador: null, discount_code, orders, products };
     const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
     res.render('ambassador-account', opts);
 });
