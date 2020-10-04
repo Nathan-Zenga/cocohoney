@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
 const { each } = require('async');
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-admin');
 const { Product } = require('../models/models');
 
 router.get('/:category/collection/:product_collection', (req, res, next) => {

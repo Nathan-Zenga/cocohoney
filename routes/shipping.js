@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Shipping_method, Order } = require('../models/models');
 
@@ -7,12 +7,12 @@ router.get('/', (req, res) => {
     res.render('shipping', { title: "Shipping Information", pagename: "shipping-info" })
 });
 
-router.post('/new', (req, res) => {
+router.post('/new', isAuthed, (req, res) => {
     const { name, fee, info } = req.body;
     new Shipping_method({ name, fee, info }).save(err => res.send("Shipping method saved"));
 });
 
-router.post('/edit', (req, res) => {
+router.post('/edit', isAuthed, (req, res) => {
     const { id, name, fee, info } = req.body;
     Shipping_method.findById(id, (err, method) => {
         if (err) return res.status(500).send(err.message);
@@ -33,7 +33,7 @@ router.post('/remove', isAuthed, (req, res) => {
     })
 });
 
-router.get("/tracking/ref/send", isAuthed, (req, res, next) => {
+router.get("/tracking/ref/send", (req, res, next) => {
     const { id } = req.query;
     if (!id) return next();
     Order.findById(Array.isArray(id) ? id[0] : id, (err, order) => {
@@ -51,7 +51,7 @@ router.get("/tracking/ref/send", isAuthed, (req, res, next) => {
     })
 });
 
-router.post("/tracking/ref/send", isAuthed, (req, res) => {
+router.post("/tracking/ref/send", (req, res) => {
     const { id, tracking_ref } = req.body;
     if (!tracking_ref.trim()) return res.status(400).send("Missing tracking reference number");
     Order.findById(Array.isArray(id) ? id[0] : id, (err, order) => {

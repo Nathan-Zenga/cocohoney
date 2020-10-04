@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { FAQ, Review, Overview_image } = require('../models/models');
 const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
@@ -22,7 +22,7 @@ router.get('/faq', (req, res) => {
     FAQ.find((err, faqs) => res.render('faq', { title: "FAQs", pagename: "faq", faqs }))
 });
 
-router.post('/contact/mail/send', (req, res) => {
+router.post('/contact/mail/send', isAuthed, (req, res) => {
     const { firstname, lastname, email, message } = req.body;
     const transporter = new MailingListMailTransporter({ req, res }, { email: req.session.admin_email });
     const mail = { subject: "New message / enquiry", message: `New message from ${firstname} ${lastname} (${email}):\n\n${message}` };

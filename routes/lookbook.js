@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-admin');
 const { each } = require('async');
 const { Lookbook_media } = require('../models/models');
 

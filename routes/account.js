@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const isAuthed = require('../modules/authCheck');
+const isAuthed = require('../modules/auth-check-customer');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Member, Order } = require('../models/models');
 
