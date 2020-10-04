@@ -8,7 +8,7 @@ const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
 const { CHCDB, NODE_ENV } = process.env;
-const { Site_content, Banner_slide } = require("./models/models");
+const { Site_content, Banner_slide, Sale } = require("./models/models");
 const production = NODE_ENV === "production";
 
 mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
@@ -43,7 +43,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
     res.locals.banner_slides = await Banner_slide.find();
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
-    res.locals.sale = ((await Site_content.find())[0] || {}).active || false;
+    res.locals.sale = ((await Sale.find())[0] || {}).active || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
     next();
 });

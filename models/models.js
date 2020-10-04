@@ -2,7 +2,8 @@ const { model, Schema } = require('mongoose');
 Schema.Types.String.set('trim', true);
 
 module.exports.Sale = model('Sale', Schema({
-    active: { type: Boolean, default: false }
+    active: { type: Boolean, default: false },
+    percentage: { type: Number, min: 1, max: 100 }
 }));
 
 module.exports.Product = model('Product', Schema({
@@ -21,6 +22,7 @@ module.exports.Member = model('Member', Schema({
     lastname: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
+    image: { p_id: String, url: String },
     phone_number: {
         type: String,
         validate: {
