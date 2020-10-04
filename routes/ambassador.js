@@ -181,7 +181,7 @@ router.post('/delete', isAuthed, (req, res) => {
     Ambassador.findByIdAndDelete(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
-        cloud.api.delete_resources([amb.image.p_id], err => {
+        cloud.api.delete_resources([(amb.image || {}).p_id], err => {
             new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
                 subject: "Your account is now deleted",
                 message: `Hi ${amb.firstname},\n\n` +
