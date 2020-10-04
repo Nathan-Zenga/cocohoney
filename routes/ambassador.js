@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const cloud = require('cloudinary').v2;
+const { waterfall } = require('async');
 const isAuthed = require('../modules/authCheck');
 const { Ambassador, Discount_code, Product, Order } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
@@ -10,20 +12,45 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    const { firstname, lastname, email, phone_number, instagram } = req.body;
-    new Ambassador({ firstname, lastname, email, phone_number, instagram }).save((err, saved) => {
+    const { firstname, lastname, email, phone_number, instagram, image_file, image_url } = req.body;
+    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
+    ambassador.save((err, saved) => {
         if (err) return res.status(400).send(err.message);
-        saved.token = crypto.randomBytes(20).toString("hex");
-        saved.save();
-        new MailingListMailTransporter({ req, res }, { email: req.session.admin_email }).sendMail({
-            subject: `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`,
-            message: "The following candidate wants to sign up as an ambassador.\n\n" +
-            `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
-            "Please click the link below to verify them:\n" +
-            `${res.locals.location_origin}/ambassador/register/verify?token=${saved.token}\n\n` +
-            "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
-            `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved.id}\n\n`
-        }, err => res.send("Registered. Submitted to administration for verification"));
+
+        waterfall([
+            (done) => {
+                if (!image_file.trim() && !image_url.trim()) return done(null, saved);
+                const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                    if (err) return done(err.message);
+                    saved.image = { p_id: result.public_id, url: result.secure_url };
+                    saved.save((err, doc) => err ? done(err.message) : done(null, doc));
+                });
+            },
+            (amb, done) => {
+                amb.token = crypto.randomBytes(20).toString("hex");
+                amb.save((err, doc) => err ? done(err.message) : done(null, doc));
+            },
+            (amb, done) => {
+                const mail_transporter = new MailingListMailTransporter({ req, res });
+                const subject = `Account verification: ${amb.firstname} ${amb.lastname} wants to be an Ambassador`;
+                const message = "The following candidate wants to sign up as an ambassador.\n\n" +
+                    `${amb.firstname} ${amb.lastname} (${amb.email})\n\n` +
+                    "Please click the link below to verify them:\n" +
+                    `${res.locals.location_origin}/ambassador/register/verify?token=${amb.token}\n\n` +
+                    "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
+                    `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb.id}\n\n`;
+
+                mail_transporter.setRecipient({ email: req.session.admin_email });
+                mail_transporter.sendMail({ subject, message }, err => {
+                    if (err) return done(err.message);
+                    done(null, "Registered. Submitted to administration for verification");
+                });
+            }
+        ], (err, message) => {
+            if (err) return res.status(500).send(err.message);
+            res.send(message)
+        })
     });
 });
 
@@ -116,7 +143,7 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, image_file, image_url } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (firstname)      amb.firstname = firstname;
@@ -126,10 +153,20 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (instagram)      amb.instagram = instagram;
         if (sort_code)      amb.sort_code = sort_code;
         if (account_number) amb.account_number = account_number;
+
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             if (res.locals.is_ambassador) req.session.user = saved;
-            res.send("Account details updated");
+            if (!image_file.trim() && !image_url.trim()) return res.send("Account details updated");
+            const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                if (err) return res.status(500).send(err.message);
+                saved.image = { p_id: result.public_id, url: result.secure_url };
+                saved.save(() => {
+                    if (res.locals.is_ambassador) req.session.user = saved;
+                    res.send("Account details updated")
+                });
+            });
         });
     });
 });
@@ -139,15 +176,17 @@ router.post('/delete', isAuthed, (req, res) => {
     Ambassador.findByIdAndDelete(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
-        new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
-            subject: "Your account is now deleted",
-            message: `Hi ${amb.firstname},\n\n` +
-            "Your account is now successfully deleted.\n" +
-            "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-        });
+        cloud.api.delete_resources([amb.image.p_id], err => {
+            new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
+                subject: "Your account is now deleted",
+                message: `Hi ${amb.firstname},\n\n` +
+                "Your account is now successfully deleted.\n" +
+                "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
+            }, err => {
+                if (err) return res.status(500).send(err.message);
+                res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+            });
+        })
     });
 });
 

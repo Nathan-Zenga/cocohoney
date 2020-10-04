@@ -28,6 +28,7 @@
             $.post(this.action, $(this).serializeArray(), function(result) {
                 alert(result);
                 e.target.reset();
+                location.href = "/ambassador/account/login";
             }).fail(function(err) {
                 alert(err.responseText);
             }).always(function() {
