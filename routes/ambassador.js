@@ -4,16 +4,17 @@ const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const { waterfall } = require('async');
 const isAuthed = require('../modules/authCheck');
+const countries = require("../modules/country-list");
 const { Ambassador, Discount_code, Product, Order } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 
 router.get('/register', (req, res) => {
-    res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register" })
+    res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })
 });
 
 router.post('/register', (req, res) => {
-    const { firstname, lastname, email, phone_number, instagram, image_file, image_url } = req.body;
-    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
+    const { firstname, lastname, email, phone_number, city, country, postcode, instagram, image_file, image_url } = req.body;
+    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, city, country, postcode, instagram });
     ambassador.save((err, saved) => {
         if (err) return res.status(400).send(err.message);
 
@@ -117,7 +118,7 @@ router.get('/account', isAuthed, async (req, res) => {
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
     const docs = { ambassador: null, discount_code, orders, products };
-    const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
+    const opts = { title: "My Account | Ambassador", pagename: "account", countries, ...docs };
     res.render('ambassador-account', opts);
 });
 
@@ -143,7 +144,7 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, image_file, image_url } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, city, country, postcode, image_file, image_url } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (firstname)      amb.firstname = firstname;
@@ -153,6 +154,9 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (instagram)      amb.instagram = instagram;
         if (sort_code)      amb.sort_code = sort_code;
         if (account_number) amb.account_number = account_number;
+        if (city)           amb.city = city;
+        if (country)        amb.country = country;
+        if (postcode)       amb.postcode = postcode;
 
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);

@@ -6,6 +6,16 @@
 
                 <span class="note">Already have an account? <a href="/ambassador/account/login">Log in here</a></span>
 
+                <label>PROFILE PICTURE <span>(OPTIONAL)</span></label>
+                <fieldset class="file-upload-container">
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp"></div>
+                        <input type="hidden" name="image_file">
+                        <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                        <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                    </div>
+                </fieldset>
+
                 <fieldset>
                     <div class="row">
                         <div class="col-sm-6">
@@ -28,13 +38,25 @@
                 <label>INSTAGRAM HANDLE</label>
                 <input type="text" name="instagram" id="instagram" required>
 
-                <label>PROFILE PICTURE</label>
-                <fieldset class="file-upload-container">
+                <fieldset>
                     <div class="row">
-                        <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp"></div>
-                        <input type="hidden" name="image_file">
-                        <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
-                        <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                        <div class="col-sm-4">
+                            <label for="city">CITY</label>
+                            <input type="text" name="city" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                            <select name="country" required>
+                                <option value="">-</option>
+                                <%_ for (var k in countries) { _%>
+                                <option value="<%- k %>"><%- countries[k] %></option>
+                                <%_ } _%>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="postcode">POST CODE</label>
+                            <input type="text" name="postcode" required>
+                        </div>
                     </div>
                 </fieldset>
 
