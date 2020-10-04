@@ -604,6 +604,11 @@ button {
     border: none;
 }
 
+button.minimal {
+    background-color: transparent;
+    color: inherit;
+}
+
 button + button {
     margin-left: 10px;
 }
@@ -1334,27 +1339,41 @@ input.product-quantity:disabled {
     }
 }
 
-#account-page .profile-info {
-    margin: 0 auto;
-    max-width: 600px;
-    padding: 40px 30px;
-    margin-bottom: 2em;
-    border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, .4);
+#account-page #banner-1 {
+    display: none;
+}
+
+#account-page .profile-body {
+    margin-top: 130px;
+    padding: 30px 0;
+    background-color: rgba(0, 0, 0, .4);
+}
+
+#account-page .profile-card {
+    margin-top: -130px;
     text-align: center;
 }
 
-#account-page .profile-info h1 {
-    font-size: 1.5em;
-    font-weight: 400;
+#account-page .profile-picture {
+    margin: 0 auto 2em;
+    border-radius: 100%;
+    background-position: center;
+    background-size: cover;
+    background-color: rgb(124, 76, 76);
+    height: 200px;
+    width: 200px;
 }
 
-#account-page .profile-info .links {
-    margin-bottom: 1em;
+#account-page .profile-summary .name {
+    font-size: 1.5em;
 }
 
-#account-page .profile-info .icon {
-    font-size: 1.5em;
+#account-page .profile-summary .role {
+    font-size: .85em;
+}
+
+#account-page .dashboard .nav.nav-pills {
+    margin: 30px auto;
 }
 
 #account-page .thumb .thumb-info {
@@ -1372,6 +1391,23 @@ input.product-quantity:disabled {
 #account-page .order-summary ul {
     padding-left: 15px;
     font-weight: 300;
+}
+
+#account-page #settings-button {
+    padding: 10px;
+    font-weight: 300;
+    font-size: .8em;
+    border: 1px solid white;
+}
+
+@media (min-width: 768px) {
+    #account-page .dashboard .nav.nav-pills {
+        margin: 0 auto 30px;
+    }
+
+    #account-page .dashboard .nav.nav-pills {
+        margin-left: 0;
+    }
 }
 
 .modal-backdrop {

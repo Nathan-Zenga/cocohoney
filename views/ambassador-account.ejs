@@ -1,178 +1,165 @@
 <%- include ('partials/header') -%>
-    <%_ const amb = is_admin ? ambassador : user; _%>
-    <br>
-    <section>
-        <div class="container">
-            <div class="profile-info">
+<%_ const amb = is_admin ? ambassador : user; _%>
+<div class="profile-body">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-5">
                 <div class="row">
-                    <div class="info col-sm-7">
-                        <h1><%= amb.firstname +" "+ amb.lastname %></h1>
-                        <%_ if (is_ambassador || is_admin) { _%>
-                        <p><small>Ambassador <i class="fal fa-badge-check"></i></small></p>
-                        <%_ } _%>
-                        <p><%= amb.email %></p>
-                    </div>
-                    <div class="options col-sm-5">
-                        <%_ if (!is_admin) { _%>
-                        <button type="button" data-toggle="modal" data-target="#settings-modal">
-                            EDIT PROFILE
-                        </button>
-                        <%_ } _%>
-                        <div class="discount-code">
-                            <small>Discount Code</small><br>
-                            <b><%- amb.discount_code %></b>
+                    <div class="col-sm-12 profile-card">
+                        <div class="profile-picture" style="background-image: url('<%- (amb.image || {}).url %>');"></div>
+                        <div class="profile-summary">
+                            <p class="name"><%- amb.firstname %> <%- amb.lastname %></p>
+                            <p class="role">Ambassador <i class="fal fa-badge-check"></i></p>
+                            <%_ if (!is_admin) { _%>
+                            <br>
+                            <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
+                            <br>
+                            <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
+                                EDIT PROFILE
+                            </button>
+                            <%_ } _%>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="mb-view-md section-dropdown-options">
-            <label>SELECT PAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-            <select>
-                <option value="#sales">SALES</option>
-                <option value="#products">PRODUCTS</option>
-            </select>
-        </div>
-        <div class="nav-pills-container dt-view-md">
-            <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
-                <li><a data-toggle="pill" href="#products">PRODUCTS</a></li>
-            </ul>
-        </div>
-        <div class="tab-content">
-
-            <div id="sales" class="tab-pane fade in active">
-                <div class="thumb-container no-wrap">
-                    <div class="container">
-                        <div class="row">
-                            <%_ orders.forEach((order, i, arr) => { _%>
-                            <div class="thumb">
-                                <div class="thumb-inner">
-                                    <div class="thumb-info">
-                                        <div class="order-header">
-                                            <div class="row">
-                                                <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
-                                                <%_ const day = order.created_at.getDate(); _%>
-                                                <%_ const month = order.created_at.getMonth() + 1; _%>
-                                                <%_ const year = order.created_at.getFullYear(); _%>
-                                                <div class="col-sm-6 order-date">
-                                                    <p><%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %></p>
+            <div class="col-sm-7 dashboard">
+                <div class="nav-pills-container">
+                    <ul class="nav nav-pills">
+                        <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
+                    </ul>
+                </div>
+                <div class="tab-content" style="padding: 0;">
+                    <div id="sales" class="tab-pane fade in active">
+                        <div class="thumb-container no-wrap">
+                            <div class="container" style="padding: 20px 0 20px 30px;">
+                                <div class="row">
+                                    <%_ orders.forEach((order, i, arr) => { _%>
+                                    <div class="thumb">
+                                        <div class="thumb-inner">
+                                            <div class="thumb-info">
+                                                <div class="order-header">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
+                                                        <%_ const day = order.created_at.getDate(); _%>
+                                                        <%_ const month = order.created_at.getMonth() + 1; _%>
+                                                        <%_ const year = order.created_at.getFullYear(); _%>
+                                                        <div class="col-sm-6 order-date">
+                                                            <p><%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="order-summary">
+                                                    <ul>
+                                                        <%_ const list_filtered = order.cart.slice(0, 3); _%>
+                                                        <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
+                                                        <%_ list_filtered.forEach((item, i, arr) => { _%>
+                                                        <li><%- item.qty %> x <%- item.name %></li>
+                                                        <%_ }) _%>
+                                                        <%- diff_length ? "..." : "" %>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
-                                        <br>
-                                        <div class="order-summary">
-                                            <ul>
-                                                <%_ const list_filtered = order.cart.slice(0, 3); _%>
-                                                <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
-                                                <%_ list_filtered.forEach((item, i, arr) => { _%>
-                                                <li><%- item.qty %> x <%- item.name %></li>
-                                                <%_ }) _%>
-                                                <%- diff_length ? "..." : "" %>
-                                            </ul>
-                                        </div>
                                     </div>
+                                    <%_ }) _%>
                                 </div>
                             </div>
-                            <%_ }) _%>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div id="products" class="tab-pane fade">
-                
-            </div>
-
-            <%_ if (!is_admin) { _%>
-            <div id="settings-modal" class="modal fade in" role="dialog">
-                <div class="modal-icons">
-                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="/account/edit">
-                        <label>PROFILE PICTURE</label>
-                        <fieldset class="file-upload-container">
-                            <div class="row">
-                                <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp"></div>
-                                <input type="hidden" name="image_file">
-                                <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
-                                <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
-                            </div>
-                        </fieldset>
-
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <label>FIRST NAME</label>
-                                    <input type="text" name="firstname">
-                                </div>
-                                <div class="col-sm-6">
-                                    <label>LAST NAME</label>
-                                    <input type="text" name="lastname">
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <label>PHONE NUMBER</label>
-                        <input type="tel" name="phone_number" pattern="[0-9]{11}">
-
-                        <label>EMAIL</label>
-                        <input type="email" name="email">
-
-                        <label>INSTAGRAM</label>
-                        <input type="text" name="instagram">
-
-                        <label>SORT CODE</label>
-                        <input type="text" name="sort_code" id="sort_code" placeholder="e.g. 11-11-11" pattern="^\d{2}-\d{2}-\d{2}$">
-
-                        <label>ACCOUNT NUMBER</label>
-                        <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$">
-
-                        <fieldset>
-                            <div class="row">
-                                <div class="col-sm-4">
-                                    <label for="city">CITY</label>
-                                    <input type="text" name="city">
-                                </div>
-                                <div class="col-sm-4">
-                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                                    <select name="country">
-                                        <option value="">-</option>
-                                        <%_ for (var k in countries) { _%>
-                                        <option value="<%- k %>"><%- countries[k] %></option>
-                                        <%_ } _%>
-                                    </select>
-                                </div>
-                                <div class="col-sm-4">
-                                    <label for="postcode">POST CODE</label>
-                                    <input type="text" name="postcode">
-                                </div>
-                            </div>
-                        </fieldset>
-
-                        <input type="hidden" name="id" value="<%- amb._id %>">
-                        <input type="submit" value="UPDATE">
-                    </form>
-                </div>
-            </div>
-            <%_ } _%>
-
         </div>
-    </section>
-    <script>
-        $("form").submit(function(e) {
-            e.preventDefault();
-            var btnController = new submitBtnController(this);
-            $.post(this.action, $(this).serializeArray(), function(result) {
-                e.target.reset();
-                alert(result);
-                location.reload();
-            }).fail(function(err) {
-                alert(err.responseText);
-            }).always(function() {
-                btnController.finish();
-            });
+    </div>
+</div>
+
+<%_ if (!is_admin) { _%>
+<div id="settings-modal" class="modal fade in" role="dialog">
+    <div class="modal-icons">
+        <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+    </div>
+    <div class="modal-body">
+        <form method="post" action="/ambassador/account/edit">
+            <label>PROFILE PICTURE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                    <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label>FIRST NAME</label>
+                        <input type="text" name="firstname">
+                    </div>
+                    <div class="col-sm-6">
+                        <label>LAST NAME</label>
+                        <input type="text" name="lastname">
+                    </div>
+                </div>
+            </fieldset>
+
+            <label>PHONE NUMBER</label>
+            <input type="tel" name="phone_number" pattern="[0-9]{11}">
+
+            <label>EMAIL</label>
+            <input type="email" name="email">
+
+            <label>INSTAGRAM</label>
+            <input type="text" name="instagram">
+
+            <label>SORT CODE</label>
+            <input type="text" name="sort_code" id="sort_code" placeholder="Format - e.g.: 11-11-11" pattern="^\d{2}-\d{2}-\d{2}$">
+
+            <label>ACCOUNT NUMBER</label>
+            <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$">
+
+            <fieldset>
+                <div class="row">
+                    <div class="col-sm-4">
+                        <label for="city">CITY</label>
+                        <input type="text" name="city">
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                        <select name="country">
+                            <option value="">-</option>
+                            <%_ for (var k in countries) { _%>
+                            <option value="<%- k %>"><%- countries[k] %></option>
+                            <%_ } _%>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="postcode">POST CODE</label>
+                        <input type="text" name="postcode">
+                    </div>
+                </div>
+            </fieldset>
+
+            <input type="hidden" name="id" value="<%= amb._id %>">
+            <input type="submit" value="UPDATE">
+        </form>
+    </div>
+</div>
+<%_ } _%>
+
+<script>
+    $("form").submit(function(e) {
+        e.preventDefault();
+        var btnController = new submitBtnController(this);
+        $.post(this.action, $(this).serializeArray(), function(result) {
+            e.target.reset();
+            alert(result);
+            location.reload();
+        }).fail(function(err) {
+            alert(err.responseText);
+        }).always(function() {
+            btnController.finish();
         });
-    </script>    
+    });
+</script>
 <%- include ('partials/footer') -%>

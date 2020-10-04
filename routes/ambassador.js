@@ -40,7 +40,7 @@ router.post('/register', (req, res) => {
                     "Please click the link below to verify them:\n" +
                     `${res.locals.location_origin}/ambassador/register/verify?token=${amb.token}\n\n` +
                     "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
-                    `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb.id}\n\n`;
+                    `${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id}\n\n`;
 
                 mail_transporter.setRecipient({ email: req.session.admin_email });
                 mail_transporter.sendMail({ subject, message }, err => {
@@ -147,6 +147,7 @@ router.post('/account/edit', isAuthed, (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, city, country, postcode, image_file, image_url } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(500).send("Ambassador not found");
         if (firstname)      amb.firstname = firstname;
         if (lastname)       amb.lastname = lastname;
         if (email)          amb.email = email;
@@ -168,7 +169,7 @@ router.post('/account/edit', isAuthed, (req, res) => {
                 saved.image = { p_id: result.public_id, url: result.secure_url };
                 saved.save(() => {
                     if (res.locals.is_ambassador) req.session.user = saved;
-                    res.send("Account details updated")
+                    res.send("Account details updated");
                 });
             });
         });

@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
+const cloud = require('cloudinary').v2;
+const { waterfall } = require('async');
 const isAuthed = require('../modules/auth-check-customer');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Member, Order } = require('../models/models');
@@ -65,17 +67,28 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number } = req.body;
+    const { id, firstname, lastname, email, phone_number, image_file, image_url } = req.body;
     Member.findById(id, (err, member) => {
         if (err) return res.status(500).send(err.message);
+        if (!member) return res.status(404).send("Customer not found");
         if (firstname)    member.firstname = firstname;
         if (lastname)     member.lastname = lastname;
         if (email)        member.email = email;
         if (phone_number) member.phone_number = phone_number;
+
         member.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             req.session.user = saved;
-            res.send("Account details updated");
+            if (!image_file.trim() && !image_url.trim()) return res.send("Account details updated");
+            const public_id = `cocohoney/customer/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                if (err) return res.status(500).send(err.message);
+                saved.image = { p_id: result.public_id, url: result.secure_url };
+                saved.save(() => {
+                    req.session.user = saved;
+                    res.send("Account details updated");
+                });
+            });
         });
     });
 });
