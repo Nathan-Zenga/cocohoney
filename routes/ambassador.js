@@ -179,7 +179,7 @@ router.post('/account/edit', isAuthed, (req, res) => {
     });
 });
 
-router.post('/delete', isAuthed, (req, res) => {
+router.post('/delete', (req, res) => {
     const { id } = req.body;
     Ambassador.findByIdAndDelete(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
