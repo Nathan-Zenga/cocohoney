@@ -224,12 +224,15 @@ router.post('/discount_code/add', (req, res) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account not found or isn't verified");
         amb.discount_code = code;
-        Discount_code.find({ code }, (err, dc) => {
+        amb.save(err => {
             if (err) return res.status(500).send(err.message);
-            if (!dc) new Discount_code({ code, percentage: 10, expiry_date: Date.now() + 31556952000 }).save();
-            amb.save(err => {
+            Discount_code.find({ code }, (err, dc) => {
                 if (err) return res.status(500).send(err.message);
-                res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
+                if (dc) return res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
+                new Discount_code({ code, percentage: 10, expiry_date: Date.now() + 31556952000 }).save(err => {
+                    if (err) return res.status(500).send(err.message);
+                    res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
+                });
             });
         })
     });
