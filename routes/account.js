@@ -41,7 +41,7 @@ router.get('/logout', (req, res) => {
 
 router.post('/signup', (req, res) => {
     const { firstname, lastname, email_new, phone_number, password_new, password_confirm } = req.body;
-    Member.findOne({ email }, (err, existing) => {
+    Member.findOne({ email: email_new }, (err, existing) => {
         if (existing) return res.status(400).send("This email is already registered");
         if (password_new !== password_confirm) return res.status(400).send("Confirmed password does not match");
 
