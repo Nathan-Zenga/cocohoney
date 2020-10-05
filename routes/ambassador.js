@@ -192,7 +192,9 @@ router.post('/delete', isAuthed, (req, res) => {
                 "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
             }, err => {
                 if (err) return res.status(500).send(err.message);
-                res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+                Discount_code.findByIdAndDelete({ code: amb.discount_code }, err => {
+                    res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+                })
             });
         })
     });
