@@ -13,7 +13,7 @@
                 <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                 <select name="email" id="email" required>
                     <option value="">-</option>
-                    <%_ members.forEach((member, i) => {
+                    <%_ members.sort((a,b) => a.firstname - b.firstname).forEach((member, i) => {
                         if (i === 0) { _%>
                     <option value="all">EVERYONE</option>
                     <%_ } _%>
