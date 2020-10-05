@@ -57,10 +57,6 @@ $(function() {
         $(".nav-pills a[href='"+ this.value +"']").get(0).click()
     });
 
-    $(".nav-pills a[data-toggle='pill']").on('shown.bs.tab', function(e) {
-        $(".section-dropdown-options select").prop("value", $(e.target).attr("href"));
-    })
-
     window.readDataURLs = function(files, cb) {
         $.each(files, function(i, file) {
             var reader = new FileReader();
