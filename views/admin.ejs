@@ -54,6 +54,11 @@
                                 <a href="/admin/ambassador/account?firstname=<%- amb.firstname %>&lastname=<%- amb.lastname %>">
                                     <%- `${amb.firstname} ${amb.lastname}` %>
                                 </a>
+                                <div>
+                                    <form id="delete-ambassador-form" method="post" action="/ambassador/delete/<%- amb._id %>" class="minimal" style="display: inline-block; margin: 5px 0">
+                                    <button type="submit" style="padding: 6px 10px">Delete</button>
+                                    </form>
+                                </div>
                             </li>
                             <% }) %>
                         </ul>
@@ -197,6 +202,25 @@
             }).always(function() {
                 btnController.finish();
             });
+        });
+
+        $("#delete-ambassador-form").submit(function(e) {
+            e.preventDefault();
+            var confirmation = confirm("Are you sure you want to delete this ambassador?");
+            if (confirmation) {
+                var form = this;
+                var btnController = new submitBtnController(form);
+
+                $.post(form.action, $(form).serializeArray(), function(result) {
+                    alert(result);
+                    $(form).closest("li").slideUp(function() { $(this).remove() });
+                    form.reset();
+                }).fail(function(err, status, codeMessage) {
+                    alert(codeMessage + (err ? ": " + err.responseText : ""));
+                }).always(function() {
+                    btnController.finish();
+                });
+            }
         });
 
         $(".remove-form-tab form").submit(function(e) {
