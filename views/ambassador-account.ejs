@@ -35,7 +35,11 @@
                         <div class="thumb-container no-wrap">
                             <div class="container" style="padding: 20px 0 20px 30px;">
                                 <div class="row">
-                                    <%_ orders.forEach((order, i, arr) => { _%>
+                                    <%_ if (!orders.length) { _%>
+                                    <div style="text-align: center">
+                                        <p>No orders made (they will show up here</p>
+                                    </div>
+                                    <%_ } orders.forEach((order, i, arr) => { _%>
                                     <div class="thumb">
                                         <div class="thumb-inner">
                                             <div class="thumb-info">
@@ -73,6 +77,9 @@
                     <div id="personal-info" class="tab-pane fade">
                         <div class="row">
                             <div class="col-md-6">
+                                <p><b>EMAIL</b></p>
+                                <p><%- amb.email %></p>
+
                                 <p><b>HOME ADDRESS</b></p>
                                 <p><%- amb.address.line1 %></p>
                                 <p><%- amb.address.line2 %></p>
