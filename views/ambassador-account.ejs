@@ -10,9 +10,9 @@
                         <div class="profile-summary">
                             <p class="name"><%- amb.firstname %> <%- amb.lastname %></p>
                             <p class="role">Ambassador <i class="fal fa-badge-check"></i></p>
-                            <%_ if (!is_admin) { _%>
                             <br>
                             <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
+                            <%_ if (!is_admin) { _%>
                             <br>
                             <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
                                 EDIT PROFILE
