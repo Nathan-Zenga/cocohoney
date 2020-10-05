@@ -13,8 +13,9 @@ router.get('/register', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    const { firstname, lastname, email, phone_number, city, country, postcode, instagram, image_file, image_url } = req.body;
-    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, city, country, postcode, instagram });
+    const { firstname, lastname, email, phone_number, line1, line2, city, country, postcode, instagram, image_file, image_url } = req.body;
+    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
+    ambassador.address = { line1, line2, city, country, postcode };
     ambassador.save((err, saved) => {
         if (err) return res.status(400).send(err.message);
 
@@ -144,7 +145,7 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, city, country, postcode, image_file, image_url } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, country, postcode, image_file, image_url } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(500).send("Ambassador not found");
@@ -155,9 +156,11 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (instagram)      amb.instagram = instagram;
         if (sort_code)      amb.sort_code = sort_code;
         if (account_number) amb.account_number = account_number;
-        if (city)           amb.city = city;
-        if (country)        amb.country = country;
-        if (postcode)       amb.postcode = postcode;
+        if (line1)          amb.address.line1 = line1;
+        if (line2)          amb.address.line2 = line2;
+        if (city)           amb.address.city = city;
+        if (country)        amb.address.country = country;
+        if (postcode)       amb.address.postcode = postcode;
 
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
@@ -237,102 +240,12 @@ router.post('/discount_code/edit', (req, res) => {
 });
 
 // router.get('/test', (req, res) => {
-//     [{
-//         firstname: "Ciara",
-//         password: "Cocohoneyyellow",
-//         discount_code: "MODICH01",
-//         verified: true
-//     },{
-//         firstname: "Akira",
-//         password: "Cocohoneyblue",
-//         discount_code: "AKIRCH02",
-//         verified: true
-//     },{
-//         firstname: "Denise",
-//         password: "Cocohoneypurple",
-//         discount_code: "DENISECH03",
-//         verified: true
-//     },{
-//         firstname: "Maita",
-//         password: "Cocohoneyred",
-//         discount_code: "MAITACH04",
-//         verified: true
-//     },{
-//         firstname: "Raissa ",
-//         password: "Cocohoneypink",
-//         discount_code: "RICECH05",
-//         verified: true
-//     },{
-//         firstname: "Claire",
-//         password: "Cocohoneybrown",
-//         discount_code: "CLAIRECH06",
-//         verified: true
-//     },{
-//         firstname: "Stephany",
-//         password: "Cocohoneyorange",
-//         discount_code: "STEPHCH07",
-//         verified: true
-//     },{
-//         firstname: "Helen ",
-//         password: "Cocohoneygreen",
-//         discount_code: "HELENCH08",
-//         verified: true
-//     },{
-//         firstname: "Kyra ",
-//         password: "Cocohoneyblack",
-//         discount_code: "KYRACH09",
-//         verified: true
-//     },{
-//         firstname: "Mayo ",
-//         password: "Cocohoneywhite",
-//         discount_code: "MAYOCH10",
-//         verified: true
-//     },{
-//         firstname: "Nessa",
-//         password: "Cocohoneygrey",
-//         discount_code: "NESSACH11",
-//         verified: true
-//     },{
-//         firstname: "Nyasha",
-//         password: "Cocohoneyindigo",
-//         discount_code: "NYASHACH12",
-//         verified: true
-//     },{
-//         firstname: "Thema",
-//         password: "Cocohoneyviolet",
-//         discount_code: "THEMACH13",
-//         verified: true
-//     },{
-//         firstname: "Benedicta ",
-//         password: "Cocohoneygold",
-//         discount_code: "BENEDICH14",
-//         verified: true
-//     },{
-//         firstname: "Sandra ",
-//         password: "Cocohoneylime",
-//         discount_code: "SANDRACH15",
-//         verified: true
-//     },{
-//         firstname: "Racheal ",
-//         password: "Cocohoneypeach",
-//         discount_code: "RACHCH16",
-//         verified: true
-//     },{
-//         firstname: "Josphin",
-//         password: "Cocohoneysilver",
-//         discount_code: "JOSPHCH17",
-//         verified: true
-//     },{
-//         firstname: "Deanna",
-//         password: "Cocohoneycream",
-//         discount_code: "DEANNACH18",
-//         verified: true
-//     }].forEach((amb, i, arr) => {
-//         const { firstname, password, discount_code } = amb;
-//         new Ambassador({ firstname, password, amb_ref: password, discount_code, verified: true }).save({ validateBeforeSave: false }, err => {
+//     Ambassador.find((err, docs) => {
+//         docs.forEach((doc, i, arr) => {
+//             doc.save();
 //             if (i === arr.length-1) res.send("DONE!!!");
 //         })
-//     })    
+//     })
 // });
 
 module.exports = router;

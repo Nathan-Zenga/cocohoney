@@ -112,9 +112,13 @@ module.exports.Ambassador = model('Ambassador', Schema({
             message: props => `${props.value} is not a valid phone number!`
         }
     },
-    city: String,
-    country: String,
-    postcode: String,
+    address: {
+        line1: { type: String, default: "" },
+        line2: { type: String, default: "" },
+        city: { type: String, default: "" },
+        country: { type: String, default: "" },
+        postcode: { type: String, default: "" }
+    },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
     password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
     sort_code: {

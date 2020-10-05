@@ -26,9 +26,11 @@
                 <div class="nav-pills-container">
                     <ul class="nav nav-pills">
                         <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
+                        <li><a data-toggle="pill" href="#personal-info">INFO</a></li>
                     </ul>
                 </div>
                 <div class="tab-content" style="padding: 0;">
+
                     <div id="sales" class="tab-pane fade in active">
                         <div class="thumb-container no-wrap">
                             <div class="container" style="padding: 20px 0 20px 30px;">
@@ -67,6 +69,25 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="personal-info" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><b>HOME ADDRESS</b></p>
+                                <p><%- amb.address.line1 %></p>
+                                <p><%- amb.address.line2 %></p>
+                                <p><%- amb.address.city %>, <%- amb.address.country %></p>
+                                <p><%- amb.address.postcode %></p><br>
+                            </div>
+                            <div class="col-md-6">
+                                <p><b>SORT CODE</b></p>
+                                <p><%- amb.sort_code %></p><br>
+                                <p><b>ACCOUNT NUMBER</b></p>
+                                <p><%- amb.account_number %></p><br>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -120,25 +141,29 @@
             <label>ACCOUNT NUMBER</label>
             <input type="text" name="account_number" id="account_number" pattern="^[0-9]*$" value="<%- amb.account_number %>">
 
+            <label>ADDRESS</label>
+            <input type="text" name="line1" id="address_line1" placeholder="LINE 1" value="<%= amb.address.line1 %>">
+            <input type="text" name="line2" id="address_line2" placeholder="LINE 2 (OPTIONAL)" value="<%= amb.address.line2 %>">
+
             <fieldset>
                 <div class="row">
                     <div class="col-sm-4">
                         <label for="city">CITY</label>
-                        <input type="text" name="city" value="<%- amb.city %>">
+                        <input type="text" name="city" value="<%- amb.address.city %>">
                     </div>
                     <div class="col-sm-4">
                         <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                         <select name="country">
                             <option value="">-</option>
                             <%_ for (var k in countries) { _%>
-                            <%_ let selected = countries[k] === amb.country ? "selected" : "" _%>
+                            <%_ let selected = countries[k] === amb.address.country ? "selected" : "" _%>
                             <option value="<%- k %>" <%= selected %>><%- countries[k] %></option>
                             <%_ } _%>
                         </select>
                     </div>
                     <div class="col-sm-4">
                         <label for="postcode">POST CODE</label>
-                        <input type="text" name="postcode" value="<%- amb.postcode %>">
+                        <input type="text" name="postcode" value="<%- amb.address.postcode %>">
                     </div>
                 </div>
             </fieldset>

@@ -1365,6 +1365,7 @@ input.product-quantity:disabled {
 
 #account-page .profile-card {
     margin-top: -130px;
+    margin-bottom: 50px;
     text-align: center;
 }
 
@@ -1414,13 +1415,23 @@ input.product-quantity:disabled {
     border: 1px solid white;
 }
 
+#account-page #personal-info {
+    text-align: center;
+}
+
 @media (min-width: 768px) {
     #account-page .dashboard .nav.nav-pills {
         margin: 0 auto 30px;
     }
+}
 
+@media (min-width: 992px) {
     #account-page .dashboard .nav.nav-pills {
         margin-left: 0;
+    }
+
+    #account-page #personal-info {
+        text-align: left;
     }
 }
 
