@@ -51,7 +51,7 @@
                         <ul style="text-align: left">
                             <% ambassadors.forEach(amb => { %>
                             <li>
-                                <a href="/admin/ambassador/account/<%- `${amb.firstname}_${amb.lastname}` %>">
+                                <a href="/admin/ambassador/account?firstname=<%- amb.firstname %>&lastname=<%- amb.lastname %>">
                                     <%- `${amb.firstname} ${amb.lastname}` %>
                                 </a>
                             </li>

@@ -25,10 +25,10 @@ router.get('/mail/form', isAuthed, (req, res) => {
     })
 });
 
-router.get('/ambassador/account/:name', isAuthed, async (req, res, next) => {
-    const { name } = req.params;
-    const firstname = new RegExp(`^${name.split(/[ _]/g)[0]}$`, "i");
-    const lastname = new RegExp(`^${name.split(/[ _]/g)[1]}$`, "i");
+router.get('/ambassador/account', isAuthed, async (req, res, next) => {
+    var { firstname, lastname } = req.query;
+    firstname = new RegExp(`^${firstname}$`, "i");
+    lastname = new RegExp(`^${lastname}$`, "i");
     const ambassador = await Ambassador.findOne({ firstname, lastname });
     if (!ambassador) return next();
     const discount_code = await Discount_code.findOne({ code: ambassador.discount_code });
