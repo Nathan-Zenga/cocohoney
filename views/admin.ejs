@@ -55,7 +55,7 @@
                                     <%- `${amb.firstname} ${amb.lastname}` %>
                                 </a>
                                 <div>
-                                    <form id="delete-ambassador-form" method="post" action="/ambassador/delete" class="minimal" style="display: inline-block; margin: 5px 0">
+                                    <form class="delete-ambassador-form" method="post" action="/ambassador/delete" class="minimal" style="display: inline-block; margin: 5px 0">
                                         <input type="hidden" name="id" id="<%- amb._id %>">
                                         <button type="submit" style="padding: 6px 10px">Delete</button>
                                     </form>
@@ -205,7 +205,7 @@
             });
         });
 
-        $("#delete-ambassador-form").submit(function(e) {
+        $(".delete-ambassador-form").submit(function(e) {
             e.preventDefault();
             var confirmation = confirm("Are you sure you want to delete this ambassador?");
             if (confirmation) {
