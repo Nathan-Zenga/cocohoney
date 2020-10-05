@@ -204,7 +204,7 @@ router.get('/discount_code/add', (req, res) => {
     Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account not found or isn't verified");
-        if (amb.discount_code === "null") return res.status(400).send("Account already has a discount code");
+        if (amb.discount_code !== "null") return res.status(400).send("Account already has a discount code");
         res.render('ambassador-discount-code-add', {
             title: "Add Ambassador Discount Code",
             pagename: "ambassador-discount-code-add",
