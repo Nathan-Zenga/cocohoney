@@ -25,7 +25,7 @@ router.get('/mail/form', isAuthed, (req, res) => {
     })
 });
 
-router.get('/ambassador/account/:name', isAuthed, async (req, res) => {
+router.get('/ambassador/account/:name', isAuthed, async (req, res, next) => {
     const { name } = req.params;
     const firstname = new RegExp(`^${name.split(/[ _]/g)[0]}$`, "i");
     const lastname = new RegExp(`^${name.split(/[ _]/g)[1]}$`, "i");
