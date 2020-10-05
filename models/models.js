@@ -30,6 +30,7 @@ module.exports.Member = model('Member', Schema({
             message: props => `${props.value} is not a valid phone number!`
         }
     },
+    password_reset_token: String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', Schema({
@@ -139,7 +140,8 @@ module.exports.Ambassador = model('Ambassador', Schema({
     token: String,
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: "null" },
-    ambassador: { type: Boolean, default: true }
+    ambassador: { type: Boolean, default: true },
+    password_reset_token: String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.FAQ = model('FAQ', Schema({

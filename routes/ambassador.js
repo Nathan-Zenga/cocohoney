@@ -248,6 +248,61 @@ router.post('/discount_code/edit', (req, res) => {
     });
 });
 
+router.get('/password-reset-request', (req, res) => {
+    res.render('password-reset-request-ambassador', {
+        title: "Password Reset Request",
+        pagename: "password-reset"
+    });
+});
+
+router.get('/password-reset', (req, res) => {
+    const { token } = req.query;
+    Ambassador.findOne({ password_reset_token: token }, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(400).send("Invalid password reset token");
+        res.render('password-reset-ambassador', {
+            title: "Password Reset",
+            pagename: "password-reset",
+            id: amb.id
+        });
+    })
+});
+
+router.post('/password-reset-request', async (req, res) => {
+    const { email } = req.body;
+    const ambassador = await Ambassador.findOne({ email });
+    const mail_transporter = new MailingListMailTransporter({ req, res });
+    if (!ambassador) return res.status(404).send("Cannot find you on our system");
+    ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
+    const saved = await ambassador.save();
+    mail_transporter.setRecipient(saved).sendMail({
+        subject: "Your Password Reset Token",
+        message: "You can reset your password via the link below:\n\n" +
+        `${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}`
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send("An email has been sent your email to reset your password");
+    });
+});
+
+router.post('/password-reset', (req, res) => {
+    const { password, password_confirm, id } = req.body;
+    if (password !== password_confirm) return res.status(400).send("Passwords do not match");
+    Ambassador.findById(id, (err, amb) => {
+        if (err) return res.status(500).send(err.message);
+        if (!amb) return res.status(404).send("Cannot find you on our system");
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) return res.status(500).send(err.message);
+            amb.password = hash;
+            amb.password_reset_token = undefined;
+            amb.save(err => {
+                if (err) return res.status(500).send(err.message);
+                res.send("Password has been reset!\n\n You can now log in");
+            })
+        })
+    })
+});
+
 // router.get('/test', (req, res) => {
 //     Ambassador.find((err, docs) => {
 //         docs.forEach((doc, i, arr) => {
