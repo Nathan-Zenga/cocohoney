@@ -226,12 +226,12 @@ router.post('/discount_code/add', (req, res) => {
         amb.discount_code = code;
         amb.save(err => {
             if (err) return res.status(500).send(err.message);
-            Discount_code.find({ code }, (err, dc) => {
+            Discount_code.findOne({ code }, (err, dc) => {
                 if (err) return res.status(500).send(err.message);
                 if (dc) return res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
-                new Discount_code({ code, percentage: 10, expiry_date: Date.now() + 31556952000 }).save(err => {
+                new Discount_code({ code, percentage: 10, expiry_date: new Date(Date.now() + 31556952000) }).save(err => {
                     if (err) return res.status(500).send(err.message);
-                    res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
+                    res.send(`New discount code saved and added for ${amb.firstname} ${amb.lastname}`);
                 });
             });
         })
@@ -246,7 +246,11 @@ router.post('/discount_code/edit', (req, res) => {
         if (code) amb.discount_code = code;
         amb.save(err => {
             if (err) return res.status(500).send(err.message);
-            res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
+            if (!code) return res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
+            Discount_code.findOne({ code }, (err, dc) => {
+                if (dc) { dc.code = code; dc.save() }
+                res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
+            })
         });
     });
 });
