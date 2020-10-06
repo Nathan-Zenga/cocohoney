@@ -19,9 +19,14 @@ router.get('/login', (req, res) => {
 
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
-router.get('/mail/form', isAuthed, (req, res) => {
-    Member.find((err, members) => {
-        res.render('admin-mail-form', { title: "Admin - Compose Mail", pagename: "admin-mail-form", members })
+router.get('/mail/form', isAuthed, async (req, res) => {
+    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    res.render('admin-mail-form', {
+        title: "Admin - Compose Mail",
+        pagename: "admin-mail-form",
+        members: [...ambassadors, ...members],
+        ambassadors
     })
 });
 
@@ -150,18 +155,49 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
     })
 });
 
-router.post('/mail/send', isAuthed, (req, res) => {
+router.post('/mail/send', isAuthed, async (req, res) => {
     const { email, subject, message } = req.body;
-    Member.find(email === "all" ? {} : { email }, (err, members) => {
-        const transporter = new MailingListMailTransporter({ req, res });
-        each(members, (member, cb) => {
-            transporter.setRecipient(member).sendMail({ subject, message }, err => {
-                if (err) return cb(err.message); cb();
-            });
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            res.send(`Email${members.length > 1 ? "s" : ""} sent`);
-        })
+    const member = await Member.findOne({ email });
+    const ambassador = await Ambassador.findOne({ email });
+    const transporter = new MailingListMailTransporter({ req, res });
+
+    if (!member && !ambassador) return res.status(404).send("Recipient not found or specified");
+    transporter.setRecipient(member || ambassador);
+    transporter.sendMail({ subject, message }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send(`Email sent`);
+    });
+});
+
+router.post('/mail/send/all', isAuthed, async (req, res) => {
+    const { subject, message } = req.body;
+    const members = await Member.find();
+    const ambassadors = await Ambassador.find();
+    const everyone = [...members, ...ambassadors];
+    const transporter = new MailingListMailTransporter({ req, res });
+
+    if (!everyone.length) return res.status(404).send("No recipients to send this email to");
+    each(everyone, (recipient, cb) => {
+        transporter.setRecipient(recipient);
+        transporter.sendMail({ subject, message }, err => err ? cb(err.message) : cb());
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
+    })
+});
+
+router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
+    const { subject, message } = req.body;
+    const ambassadors = await Ambassador.find();
+    const transporter = new MailingListMailTransporter({ req, res });
+
+    if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
+    each(ambassadors, (recipient, cb) => {
+        transporter.setRecipient(recipient);
+        transporter.sendMail({ subject, message }, err => err ? cb(err.message) : cb());
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send(`Email${ambassadors.length > 1 ? "s" : ""} sent`);
     })
 });
 
