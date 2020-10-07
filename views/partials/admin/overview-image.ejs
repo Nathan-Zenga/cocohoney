@@ -6,8 +6,8 @@
 
 <div class="tab-content" style="padding-top: 10px;">
     <div id="new-overview-img" class="new-form-tab tab-pane fade in active">
-        <form method="post" action="/site-content/overview-images/upload" style="padding: 30px">
-            <label>UPLOAD OVERVIEW IMAGE</label><br><br>
+        <form method="post" action="/site/content/overview-images/upload" style="padding: 30px">
+            <label>UPLOAD HOMEPAGE IMAGE</label><br><br>
             <fieldset class="file-upload-container">
                 <div class="row">
                     <div class="col-sm-6 col-xs-9"><input type="file" id="overview_image_file" accept=".jpg,.jpeg,.png,.bmp" multiple></div>
@@ -23,7 +23,7 @@
     </div>
 
     <div id="edit-overview-img" class="edit-form-tab tab-pane fade">
-        <form method="post" action="/site-content/overview-images/edit" style="padding: 30px">
+        <form method="post" action="/site/content/overview-images/edit" style="padding: 30px">
             <label>SELECT IMAGE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select name="id" id="overview_image_id">
                 <option value="">-</option>
@@ -32,7 +32,7 @@
                 <%_ }) _%>
             </select>
 
-            <label>UPLOAD OVERVIEW IMAGE <span>(REPLACES CURRENT ONE)</span></label><br><br>
+            <label>UPLOAD HOMEPAGE IMAGE <span>(REPLACES CURRENT ONE)</span></label><br><br>
             <fieldset class="file-upload-container">
                 <div class="row">
                     <div class="col-sm-6 col-xs-9"><input type="file" id="overview_image_file_edit" accept=".jpg,.jpeg,.png,.bmp"></div>
