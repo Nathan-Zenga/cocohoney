@@ -7,19 +7,19 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <label for="firstname">FIRST NAME</label>
-                            <%_ const firstname_val = user ? `value="${user.firstname}"` : '' _%>
-                            <input type="text" name="firstname" <%- firstname_val %> <%- !!user ? "disabled" : "" %> required>
+                            <%_ const firstname_val = user && !is_admin ? `value="${user.firstname}"` : '' _%>
+                            <input type="text" name="firstname" <%- firstname_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
                         </div>
                         <div class="col-sm-6">
                             <label for="lastname">LAST NAME</label>
-                            <%_ const lastname_val = user ? `value="${user.lastname}"` : '' _%>
-                            <input type="text" name="lastname" <%- lastname_val %> <%- !!user ? "disabled" : "" %> required>
+                            <%_ const lastname_val = user && !is_admin ? `value="${user.lastname}"` : '' _%>
+                            <input type="text" name="lastname" <%- lastname_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
                         </div>
                     </div>
                 </fieldset>
                 <label for="email">EMAIL</label>
-                <%_ const email_val = user ? `value="${user.email}"` : '' _%>
-                <input type="email" name="email" <%- email_val %> <%- !!user ? "disabled" : "" %> required>
+                <%_ const email_val = user && !is_admin ? `value="${user.email}"` : '' _%>
+                <input type="email" name="email" <%- email_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
                 <label for="address_l1">ADDRESS</label>
                 <input type="text" name="address_l1" placeholder="LINE 1" required>
                 <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
