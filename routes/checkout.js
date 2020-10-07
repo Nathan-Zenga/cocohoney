@@ -18,9 +18,12 @@ router.get("/", (req, res) => {
 
 router.post("/session/create", async (req, res) => {
     const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
-    const { firstname, lastname, email } = res.locals.user || req.body;
+    const { firstname, lastname, email, ambassador } = res.locals.user || req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
-    const price_total = cart.map(p => ({ price: p.price, quantity: p.qty })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
+    const price_total = cart.map(p => ({
+        price: ambassador && !p.deal ? p.price_amb : p.price,
+        quantity: p.qty
+    })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
     try {
         const field_check = { email, address_l1, city, country, postcode, shipping_method_id };

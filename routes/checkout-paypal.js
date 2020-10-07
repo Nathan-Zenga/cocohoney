@@ -13,10 +13,10 @@ paypal.configure({
 
 router.post("/create-payment", async (req, res) => {
     const { address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
-    const { firstname, lastname, email } = res.locals.user || req.body;
+    const { firstname, lastname, email, ambassador } = res.locals.user || req.body;
     const { cart, location_origin } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
-        price: (res.locals.user || {}).ambassador ? p.price_amb : p.price,
+        price: ambassador && !p.deal ? p.price_amb : p.price,
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
