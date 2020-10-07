@@ -244,7 +244,7 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
                 sale.sitewide = true;
                 sale.percentage = percentage;
                 each(products, (product, cb) => {
-                    const sale_discount = (percentage / 100) * product.price;
+                    const sale_discount = (parseInt(percentage) / 100) * product.price;
                     product.price_sale = ((product.price - sale_discount) / 100).toFixed(2);
                     product.save(err => cb());
                 }, err => sale.save(err => res.send("Sale period now started site wide")));
