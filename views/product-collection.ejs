@@ -11,13 +11,17 @@
                         <div class="thumb col-md-3 col-sm-4">
                             <div class="thumb-inner">
                                 <a href="/product/<%= product.category + '/' + product.name %>">
-                                    <div class="thumb-img product-image" style="background-image: url('<%- product.image.url %>');"></div>
+                                    <div class="thumb-img product-image" style="background-image: url('<%- product.image.url %>');">
+                                        <%_ if (product.price_sale) { _%>
+                                        <div class="sale-ribbon">SALE</div>
+                                        <%_ } _%>
+                                    </div>
                                 </a>
                                 <div class="thumb-info">
                                     <div class="product-name"><p><%= product.name %></p></div>
                                     <div class="product-price">
-                                        <%_ const price = is_ambassador ? product.price_amb : product.price;
-                                            const price_original = is_ambassador ? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+                                        <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
+                                            const price_original = product.price_sale? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
                                         <p>£<%- (price / 100).toFixed(2) + price_original %></p>
                                     </div>
                                     <div class="cart-options">

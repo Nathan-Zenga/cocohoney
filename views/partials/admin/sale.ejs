@@ -1,0 +1,60 @@
+<form method="post" action="/admin/sale/toggle/">
+    <div class="row" style="margin-bottom: 2em">
+        <div class="col-xs-6">
+            <label>SALE</label><br><br>
+            <span class="switch-toggle-label">OFF</span>
+            <label class="switch" id="sale-switch" style="margin: 0 5px">
+                <input type="checkbox" name="sale_on" <%- !!sale ? 'checked' : '' %>>
+                <span class="slider round"></span>
+            </label>
+            <span class="switch-toggle-label">ON</span>
+        </div>
+        <div class="col-xs-6">
+            <label>SITE-WIDE</label><br><br>
+            <span class="switch-toggle-label">NO</span>
+            <label class="switch" id="sitewide-switch" style="margin: 0 5px">
+                <input type="checkbox" name="sitewide" <%- !!sale_sitewide ? 'checked' : '' %> <%- !sale_sitewide ? 'disabled' : '' %>>
+                <span class="slider round"></span>
+            </label>
+            <span class="switch-toggle-label">YES</span>
+            <br><br>
+            <input id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %> style="display: inline-block; width: 100px; margin: 0; padding: 5px; border-radius: 0"> % off
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <%_ products.forEach((item, i) => {
+                var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+                product_collection = product_collection ? product_collection + " Collection" : "Others"; _%>
+            <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="margin: 1em 0">'+product_collection+'</div>' : '' %>
+            <div class="input-checkbox">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
+                    </div>
+                    <div class="col-xs-6">
+                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0"> % off
+                    </div>
+                </div>
+            </div>
+            <%_ }) _%>
+        </div>
+    </div>
+    <br><br>
+    <input type="submit" value="TURN ON / OFF">
+</form>
+<script>
+    $("#sale-switch input").change(function() {
+        $("#sitewide-switch input").prop("checked", false).trigger("change").attr("disabled", !this.checked);
+        $(".sale-product").prop("checked", false).attr("disabled", !this.checked).trigger("change");
+    });
+
+    $("#sitewide-switch input").change(function() {
+        $("#sitewide-sale-percentage").attr("disabled", !this.checked).val("0");
+        $(".sale-product").prop("checked", false).attr("disabled", this.checked).trigger("change");
+    });
+
+    $(".sale-product").change(function() {
+        $(this).closest(".input-checkbox").find(".sale-percentage").attr("disabled", !this.checked);
+    });
+</script>

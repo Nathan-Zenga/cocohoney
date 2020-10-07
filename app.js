@@ -43,7 +43,10 @@ app.use(async (req, res, next) => { // global variables
     res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
     res.locals.banner_slides = await Banner_slide.find();
     res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
-    res.locals.sale = ((await Sale.find())[0] || {}).active || false;
+    const sale_doc = (await Sale.find())[0] || {};
+    res.locals.sale = sale_doc.active || false;
+    res.locals.sale_percentage = sale_doc.percentage || false;
+    res.locals.sale_sitewide = (res.locals.sale && sale_doc.sitewide) || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
     next();
 });

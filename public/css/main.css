@@ -428,11 +428,28 @@ section .media-wrapper .main-media.small {
 }
 
 .thumb .thumb-img {
+    position: relative;
     height: 240px;
     overflow: hidden;
     background-position: center;
     background-size: cover;
     margin: -10px -10px 10px;
+}
+
+.thumb .thumb-img .sale-ribbon {
+    position: absolute;
+    bottom: 37px;
+    right: -100px;
+    width: 300px;
+    -webkit-transform-origin: center;
+    -webkit-transform: rotate(-45deg);
+    transform-origin: center;
+    transform: rotate(-45deg);
+    background-color: rgb(240, 230, 140);
+    color: rgb(124, 76, 76);
+    font-size: 1.5em;
+    font-weight: 700;
+    text-align: center;
 }
 
 .thumb .thumb-info {
@@ -548,6 +565,16 @@ textarea, select {
     border-bottom: 1px solid white;
     border-radius: 0;
     outline: none;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input:not([type=submit]):disabled, textarea:disabled, select:disabled {
@@ -1001,6 +1028,16 @@ label .dropdown-arrow {
     color: rgb(240, 230, 140);
 }
 
+#product-view-page #sale-label {
+    margin: 2em 0 3em;
+    font-weight: 500;
+}
+
+#product-view-page #sale-label span {
+    padding: 10px;
+    border: 2px solid white;
+}
+
 #product-view-page #extra-info {
     margin-top: 2em;
 }
@@ -1026,13 +1063,6 @@ input.product-quantity {
     max-width: 70px;
     border: none;
     text-align: center;
-    -moz-appearance: textfield;
-}
-
-input.product-quantity::-webkit-inner-spin-button,
-input.product-quantity::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
 }
 
 input.product-quantity:disabled {
@@ -1468,3 +1498,72 @@ input.product-quantity:disabled {
     color: white;
     font-size: 1.3em;
 }
+
+/* SWITCH ICON styles */
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 1.2em;
+}
+
+.switch span {
+    opacity: 1;
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 10px;
+    width: 10px;
+    left: 4px;
+    bottom: 3.5px;
+    background-color: rgb(124, 76, 76);
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.switch input:checked + .slider {
+    background-color: rgb(124, 76, 76);
+}
+
+.switch input:focus + .slider {
+    box-shadow: 0 0 1px rgb(124, 76, 76);
+}
+
+.switch input:checked + .slider:before {
+    -webkit-transform: translateX(42px);
+    -ms-transform: translateX(42px);
+    transform: translateX(42px);
+    background-color: white;
+}
+
+/* Rounded sliders */
+.switch .slider.round {
+    border-radius: 34px;
+}
+
+.switch .slider.round:before {
+    border-radius: 50%;
+}
+
+/* End of SWITCH ICON styles */

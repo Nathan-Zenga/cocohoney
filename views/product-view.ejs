@@ -7,9 +7,12 @@
         </div>
         <div class="col-sm-6 product-info">
             <div class="details" id="name"><%= product.name %></div>
-            <%_ const price = is_ambassador ? product.price_amb : product.price;
-                const price_original = is_ambassador ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+            <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
+                const price_original = product.price_sale ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
             <div class="details" id="price">£<%- (price / 100).toFixed(2) + price_original %></div>
+            <%_ if (product.price_sale) { _%>
+            <div class="details" id="sale-label"><span>SALE</span></div>
+            <%_ } _%>
             <div class="details" id="category"><%= product.category.charAt(0).toUpperCase() + product.category.slice(1).replace(/_/g, " ") %></div>
             <%_ if (product.product_collection) { _%>
             <div class="details" id="collection"><%= product.product_collection.charAt(0).toUpperCase() + product.product_collection.slice(1).replace(/_/g, " ") %> Collection</div>

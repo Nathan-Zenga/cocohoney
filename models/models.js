@@ -2,7 +2,8 @@ const { model, Schema } = require('mongoose');
 Schema.Types.String.set('trim', true);
 
 module.exports.Sale = model('Sale', Schema({
-    active: { type: Boolean, default: false },
+    active: Boolean,
+    sitewide: Boolean,
     percentage: { type: Number, min: 1, max: 100 }
 }));
 
@@ -10,6 +11,7 @@ module.exports.Product = model('Product', Schema({
     name: { type: String, index: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
+    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     image: { p_id: String, url: String },
     category: { type: String, enum: ["lashes", "palettes"] },
     info: { type: String, default: "" },
