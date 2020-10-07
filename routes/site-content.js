@@ -29,7 +29,7 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
     const { image_url, image_file } = req.body;
     const image_files = (image_file instanceof Array ? image_file : [image_file]).filter(e => e);
     const image_urls = (image_url instanceof Array ? image_url : [image_url]).filter(e => e);
-    if (!image_files.length && !image_urls.length) return res.send("No images uploaded");
+    if (!image_files.length && !image_urls.length) return res.status(400).send("No images uploaded");
     const arr = await Overview_image.find();
     forEachOf([...image_files, ...image_urls], (file, i, cb) => {
         const overview_img = new Overview_image();
@@ -49,7 +49,7 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
 
 router.post('/overview-images/edit', isAuthed, (req, res) => {
     const { id, image_file, image_url } = req.body;
-    if (!image_file && !image_url) return res.send("No image uploaded");
+    if (!image_file && !image_url) return res.status(400).send("No image uploaded");
     Overview_image.findById(id, (err, image) => {
         if (err) return res.status(500).send(err.message);
         if (!image) return res.status(404).send("Image not found");

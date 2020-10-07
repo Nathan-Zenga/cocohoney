@@ -18,9 +18,9 @@ router.get('/tutorial', (req, res) => {
 
 router.post('/gallery/add', isAuthed, (req, res) => {
     const { image_file, image_url } = req.body;
-    const image_files = (image_file instanceof Array ? image_file : [image_file]).filter(e => e);
-    const image_urls = (image_url instanceof Array ? image_url : [image_url]).filter(e => e);
-    if (!image_files.length && !image_urls.length) return res.send("No images / videos uploaded");
+    const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
+    const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e.trim());
+    if (!image_files.length && !image_urls.length) return res.status(400).send("No images / videos uploaded");
     each([...image_files, ...image_urls], (file, cb) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-gallery/IMG_" + new_media.id;
@@ -31,7 +31,7 @@ router.post('/gallery/add', isAuthed, (req, res) => {
             new_media.url = secure_url;
             new_media.media_type = resource_type;
             new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
-            new_media.save(err => { if (err) return cb(err.message); cb() });
+            new_media.save(err => err ? cb(err.message) : cb());
         });
     }, err => {
         if (err) return res.status(500).send(err.message);
@@ -43,7 +43,7 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
     const { video_file, video_url } = req.body;
     const video_files = (video_file instanceof Array ? video_file : [video_file]).filter(e => e);
     const video_urls = (video_url instanceof Array ? video_url : [video_url]).filter(e => e);
-    if (!video_files.length && !video_urls.length) return res.send("No images / videos uploaded");
+    if (!video_files.length && !video_urls.length) return res.status(400).send("No images / videos uploaded");
     each([...video_files, ...video_urls], (file, cb) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-tutorial/VID_" + new_media.id;
