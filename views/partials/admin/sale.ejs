@@ -33,7 +33,7 @@
                         <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
                     </div>
                     <div class="col-xs-6">
-                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0"> % off
+                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
                     </div>
                 </div>
             </div>
