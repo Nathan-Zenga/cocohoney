@@ -5,7 +5,7 @@ const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box } = require('../models/models');
 require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
@@ -230,43 +230,45 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
     const { sale_on, sitewide, id, percentage } = req.body;
     const docs = await Sale.find();
     const sale = docs.length ? docs[0] : new Sale();
+    const ids = (Array.isArray(id) ? id : [id]).filter(e => e);
+    const percentages = (Array.isArray(percentage) ? percentage : [percentage]).filter(e => e);
+    if (ids.length !== percentages.length && !sitewide) return res.status(400).send("Uneven number of selected items and specified percentages");
 
     sale.active = false;
     sale.sitewide = false;
     sale.percentage = undefined;
-    Product.updateMany({}, { $set: { price_sale: undefined } }, err => {
-        if (err) return res.status(500).send(err.message);
-        if (!sale_on) return sale.save(err => res.send("Sale period now turned off"));
+    await Product.updateMany({}, { $set: { price_sale: undefined } });
+    await Box.updateMany({}, { $set: { price_sale: undefined } });
+    if (!sale_on) return sale.save(err => res.send("Sale period now turned off"));
 
-        sale.active = true;
-        Product.find((err, products) => {
-            if (sitewide) {
-                sale.sitewide = true;
-                sale.percentage = percentage;
-                each(products, (product, cb) => {
-                    const sale_discount = (parseInt(percentage) / 100) * product.price;
-                    product.price_sale = ((product.price - sale_discount) / 100).toFixed(2);
-                    product.save(err => cb());
-                }, err => sale.save(err => res.send("Sale period now started site wide")));
+    sale.active = true;
+    const products = await Product.find();
+    const boxes = await Box.find();
 
-            } else {
-                const ids = (Array.isArray(id) ? id : [id]).filter(e => e);
-                const percentages = (Array.isArray(percentage) ? percentage : [percentage]).filter(e => e);
-                if (ids.length !== percentages.length) return res.status(400).send("Uneven number of selected items and specified percentages");
-                forEachOf(ids, (product_id, i, cb) => {
-                    const product = products.find(p => p.id == product_id);
-                    const percent = parseInt(percentages[i]);
-                    if (!product) return cb();
-                    const sale_discount = (percent / 100) * (product.price / 100);
-                    product.price_sale = ((product.price - sale_discount) / 100).toFixed(2);
-                    product.save(err => err ? cb(err.message) : cb());
-                }, err => {
-                    if (err) return res.status(500).send(err.message);
-                    sale.save(err => res.send("Sale period now started for the selected products"));
-                })
-            }
+    if (sitewide) {
+        sale.sitewide = true;
+        sale.percentage = percentage;
+        each([...products, ...boxes], (item, cb) => {
+            const sale_discount = (parseInt(percentage) / 100) * item.price;
+            item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
+            item.save(err => cb());
+        }, err => sale.save(err => res.send("Sale period now started site wide")));
+
+    } else {
+        forEachOf(ids, (product_id, i, cb) => {
+            const product = products.find(p => p.id == product_id);
+            const box = boxes.find(p => p.id == product_id);
+            const item = product || box;
+            const percent = parseInt(percentages[i]);
+            if (!item) return cb();
+            const sale_discount = (percent / 100) * item.price;
+            item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
+            item.save(err => err ? cb(err.message) : cb());
+        }, err => {
+            if (err) return res.status(500).send(err.message);
+            sale.save(err => res.send("Sale period now started for the selected products"));
         })
-    })
+    }
 });
 
 module.exports = router;

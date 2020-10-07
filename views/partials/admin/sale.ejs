@@ -18,7 +18,7 @@
             </label>
             <span class="switch-toggle-label">YES</span>
             <br><br>
-            <input id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %> style="display: inline-block; width: 100px; margin: 0; padding: 5px; border-radius: 0"> % off
+            <input id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0"> % off
         </div>
     </div>
     <div class="row">
@@ -26,7 +26,7 @@
             <%_ products.forEach((item, i) => {
                 var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
                 product_collection = product_collection ? product_collection + " Collection" : "Others"; _%>
-            <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="margin: 1em 0">'+product_collection+'</div>' : '' %>
+            <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="padding: 1em 0; margin: 1em 0">'+product_collection+'</div>' : '' %>
             <div class="input-checkbox">
                 <div class="row">
                     <div class="col-xs-6">
@@ -37,7 +37,21 @@
                     </div>
                 </div>
             </div>
-            <%_ }) _%>
+            <%_ }); boxes.forEach((item, i) => {
+                if (i == 0) { _%>
+            <div style="padding: 1em 0; margin: 1em 0">Box Deals</div>
+            <%_ } _%>
+            <div class="input-checkbox">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
+                    </div>
+                    <div class="col-xs-6">
+                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
+                    </div>
+                </div>
+            </div>
+            <%_ }); _%>
         </div>
     </div>
     <br><br>
