@@ -244,8 +244,8 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
                 sale.sitewide = true;
                 sale.percentage = percentage;
                 each(products, (product, cb) => {
-                    const price_sale = (percentage / 100) * (product.price / 100);
-                    product.price_sale = price_sale.toFixed(2);
+                    const sale_discount = (percentage / 100) * product.price;
+                    product.price_sale = ((product.price - sale_discount) / 100).toFixed(2);
                     product.save(err => cb());
                 }, err => sale.save(err => res.send("Sale period now started site wide")));
 
@@ -257,8 +257,8 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
                     const product = products.find(p => p.id == product_id);
                     const percent = parseInt(percentages[i]);
                     if (!product) return cb();
-                    const price_sale = (percent / 100) * (product.price / 100);
-                    product.price_sale = price_sale.toFixed(2);
+                    const sale_discount = (percent / 100) * (product.price / 100);
+                    product.price_sale = ((product.price - sale_discount) / 100).toFixed(2);
                     product.save(err => err ? cb(err.message) : cb());
                 }, err => {
                     if (err) return res.status(500).send(err.message);
