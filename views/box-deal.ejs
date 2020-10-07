@@ -8,7 +8,7 @@
                 <div class="col-sm-6 col-sm-pull-6 column text-container">
                     <div class="text-content">
                         <h1><%= box.name %> Box</h1><br>
-                        <%_ if (box.price_sale) { _%>
+                        <%_ if (!is_ambassador && box.price_sale) { _%>
                         <p style="font-size: 1.5em; color: rgba(240, 230, 140); margin-top: -1em">
                             £<%- (box.price_sale / 100).toFixed(2) %> <small><del>£<%- (box.price / 100).toFixed(2) %></del></small>
                         </p><br>
