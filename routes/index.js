@@ -7,7 +7,7 @@ const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
     const reviews = await Review.find({ rating: { $gt: 3 } }).sort({ created_at: -1 }).exec();
-    res.render('index', { title: null, pagename: "home", overview_images, reviews: chunk(reviews, 2).slice(0, 2) })
+    res.render('index', { title: null, pagename: "home", overview_images, reviews })
 });
 
 router.get('/about', (req, res) => {

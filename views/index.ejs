@@ -69,25 +69,30 @@
         </section>
         <section id="adverts-section">
             <div class="container">
-                <div id="adverts-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
-                    <div class="carousel-inner">
-                        <div class="item active lg-text">
-                            <a href="/ambassador/register">WANT TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
-                        </div>
-                        <%_ reviews.forEach(group => { _%>
-                        <div class="item">
-                            <div class="row" style="text-align: center;">
-                                <%_ group.forEach(review => { _%>
-                                <div class="col-xs-<%= 12 / group.length %>">
-                                    <div><%_ for(i = 0; i < review.rating; i++) { _%>★<%_ } _%></div>
-                                    <%_ const commentry = (review.headline || review.commentry).split(/\r?\n/)[0]; _%>
-                                    <div><%= commentry.length > 40 ? commentry.slice(0, 40)+"..." : commentry %></div>
-                                    <div><small><%= review.author_name %></small></div>
+                <div class="row" style="margin-bottom: 5em">
+                    <div class="col-xs-12 lg-text">
+                        <a href="/ambassador/register">WANT TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="reviews-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
+                            <div class="carousel-inner">
+                                <%_ reviews.forEach((review, i) => { _%>
+                                <div class="review item <%= i == 0 ? 'active' : '' %>">
+                                    <%_ if (review.headline) { _%>
+                                    <div class="review-headline"><%- review.headline %></div>
+                                    <%_ } _%>
+                                    <div class="review-rating"><%_ for(i = 0; i < review.rating; i++) { _%>★<%_ } _%></div>
+                                    <br>
+                                    <%_ var commentry = review.commentry.length > 140 ? review.commentry.slice(0, 140).replace(/\r?\n/g, '<br>')+"..." : review.commentry.replace(/\r?\n/g, '<br>') _%>
+                                    <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ' <a class="read-more-link" href="/reviews">read more</a>' : '' %></div>
+                                    <br>
+                                    <div class="review-author-name"><small>- <%= review.author_name %></small> <%- review.author_verified ? '<i class="arrow fal fa-badge-check"></i>' : '' %></div>
                                 </div>
                                 <%_ }) _%>
                             </div>
                         </div>
-                        <%_ }) _%>
                     </div>
                 </div>
             </div>

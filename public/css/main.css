@@ -376,14 +376,27 @@ section .media-wrapper .main-media.small {
     background-image: linear-gradient(45deg, rgba(240, 230, 140, .9), rgba(240, 230, 140, .3));
     color: rgb(124, 76, 76);
     text-align: center;
-    font-weight: 600;
     padding: 100px 0;
+}
+
+#adverts-section #reviews-carousel {
+    margin: 0 auto;
+    max-width: 900px;
+}
+
+#adverts-section .review {
+    font-weight: 500;
+    text-align: left;
+}
+
+#adverts-section .review .read-more-link {
+    text-decoration: underline;
+    margin-left: 10px;
 }
 
 @media (min-width: 768px) {
     #adverts-section .lg-text {
         font-size: 2em;
-        font-weight: 300;
     }
 }
 
