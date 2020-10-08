@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
-const { waterfall } = require('async');
 const isAuthed = require('../modules/auth-check-customer');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { Member, Order } = require('../models/models');
@@ -109,6 +108,61 @@ router.post('/delete', isAuthed, (req, res) => {
             });
         })
     });
+});
+
+router.get('/password-reset-request', (req, res) => {
+    res.render('password-reset-request-customer', {
+        title: "Password Reset Request",
+        pagename: "password-reset"
+    });
+});
+
+router.get('/password-reset', (req, res) => {
+    const { token } = req.query;
+    Member.findOne({ password_reset_token: token }, (err, member) => {
+        if (err) return res.status(500).send(err.message);
+        if (!member) return res.status(400).send("Invalid password reset token");
+        res.render('password-reset-customer', {
+            title: "Password Reset",
+            pagename: "password-reset",
+            id: member.id
+        });
+    })
+});
+
+router.post('/password-reset-request', async (req, res) => {
+    const { email } = req.body;
+    const member = await Member.findOne({ email });
+    const mail_transporter = new MailingListMailTransporter({ req, res });
+    if (!member) return res.status(404).send("Cannot find you on our system");
+    member.password_reset_token = crypto.randomBytes(20).toString("hex");
+    const saved = await member.save();
+    mail_transporter.setRecipient(saved).sendMail({
+        subject: "Your Password Reset Token",
+        message: "You can reset your password via the link below:\n\n" +
+        `${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}`
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send("An email has been sent your email to reset your password");
+    });
+});
+
+router.post('/password-reset', (req, res) => {
+    const { password, password_confirm, id } = req.body;
+    if (password !== password_confirm) return res.status(400).send("Passwords do not match");
+    Member.findById(id, (err, member) => {
+        if (err) return res.status(500).send(err.message);
+        if (!member) return res.status(404).send("Cannot find you on our system");
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) return res.status(500).send(err.message);
+            member.password = hash;
+            member.password_reset_token = undefined;
+            member.save(err => {
+                if (err) return res.status(500).send(err.message);
+                res.send("Password has been reset!\n\n You can now log in");
+            })
+        })
+    })
 });
 
 module.exports = router;
