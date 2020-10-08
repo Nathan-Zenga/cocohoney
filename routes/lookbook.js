@@ -19,12 +19,12 @@ router.get('/tutorial', (req, res) => {
 router.post('/gallery/add', isAuthed, (req, res) => {
     const { image_file, image_url } = req.body;
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
-    const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e.trim());
+    const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
     if (!image_files.length && !image_urls.length) return res.status(400).send("No images / videos uploaded");
     each([...image_files, ...image_urls], (file, cb) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-gallery/IMG_" + new_media.id;
-        cloud.uploader.upload(file, { public_id, resource_type: "image" }, (err, result) => {
+        cloud.uploader.upload(file.trim(), { public_id, resource_type: "image" }, (err, result) => {
             if (err) return cb(err.message);
             const { secure_url, resource_type, width, height } = result;
             new_media.p_id = public_id;
@@ -35,7 +35,7 @@ router.post('/gallery/add', isAuthed, (req, res) => {
         });
     }, err => {
         if (err) return res.status(500).send(err.message);
-        saved.save(() => { res.send("Lookbook images(s) saved") });
+        res.send("Lookbook images(s) saved");
     })
 });
 
@@ -47,7 +47,7 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
     each([...video_files, ...video_urls], (file, cb) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-tutorial/VID_" + new_media.id;
-        cloud.uploader.upload(file, { public_id, resource_type: "video" }, (err, result) => {
+        cloud.uploader.upload(file.trim(), { public_id, resource_type: "video" }, (err, result) => {
             if (err) return cb(err.message);
             const { secure_url, resource_type, width, height } = result;
             new_media.p_id = public_id;
@@ -59,7 +59,7 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
         });
     }, err => {
         if (err) return res.status(500).send(err.message);
-        saved.save(() => { res.send("Lookbook tutorial video(s) saved") });
+        res.send("Lookbook tutorial video(s) saved");
     })
 });
 

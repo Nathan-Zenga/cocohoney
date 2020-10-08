@@ -65,11 +65,11 @@
 
     <div id="remove-lookbook-media" class="remove-form-tab tab-pane fade">
         <%_ if (lookbook_media.length) { _%>
-        <form action="/product/stock/remove" method="post">
-            <label>DELETE IMAGE(S)/VIDEO(S) FROM LOOKBOOK</label><br><br>
+        <form action="/lookbook/remove" method="post">
+            <label>DELETE IMAGES / VIDEOS</label><br><br>
             <%_ lookbook_media.forEach((item, i) => { _%>
             <div class="input-checkbox">
-                <input type="checkbox" name="media<%= i %>" value="<%= item._id %>">
+                <input type="checkbox" name="id" value="<%= item._id %>">
                 <%_ if (item.media_type === "image") { _%>
                 <img src="<%= item.url %>" alt="<%= item.url %>">
                 <%_ } else { _%>
