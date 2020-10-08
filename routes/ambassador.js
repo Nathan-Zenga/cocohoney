@@ -21,7 +21,7 @@ router.post('/register', (req, res) => {
 
         waterfall([
             (done) => {
-                if (!image_file.trim() && !image_url.trim()) return done(null, saved);
+                if (!image_file && !image_url) return done(null, saved);
                 const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
                 cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
                     if (err) return done(err.message);
