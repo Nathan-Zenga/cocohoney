@@ -39,7 +39,8 @@
                                     <div style="text-align: center">
                                         <p>No orders made (they will show up here</p>
                                     </div>
-                                    <%_ } orders.forEach((order, i, arr) => { _%>
+                                    <%_ } if (!is_ambassador) {
+                                        orders.forEach((order, i, arr) => { _%>
                                     <div class="thumb">
                                         <div class="thumb-inner">
                                             <div class="thumb-info">
@@ -68,7 +69,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <%_ }) _%>
+                                    <%_ })} _%>
                                 </div>
                             </div>
                         </div>
