@@ -13,6 +13,7 @@ router.post('/banner/edit', isAuthed, (req, res) => {
     Banner_slide.findById(id, (err, slide) => {
         if (err || !slide) return res.status(err ? 500 : 404).send(err ? err.message : "Banner slide not found");
         if (text) slide.text = text;
+        slide.save(err => res.send("Banner saved"));
     });
 });
 
