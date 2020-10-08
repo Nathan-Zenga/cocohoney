@@ -70,7 +70,7 @@ router.post("/tracking/ref/send", (req, res) => {
                 message: `Hi ${customer_name},\n\n` +
                 "Following your recent order, we can confirm your tracking number shown below:\n\n" +
                 `<b><u>${tracking_ref}</u></b>\n\n` +
-                "We apologise for any inconvenience for any delay and inconvience caused in sending this. " +
+                "You can use this to track your order via Royal Mail (https://www3.royalmail.com/track-your-item#/). " +
                 "Again, thank you for shopping with us at Cocohoney Cosmetics!"
             }, err => {
                 if (err) return res.status(500).send(err.message);
