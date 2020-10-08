@@ -2,7 +2,6 @@ const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
-const { waterfall } = require('async');
 const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
 const { Ambassador, Discount_code, Product, Order } = require('../models/models');
@@ -19,21 +18,13 @@ router.post('/register', (req, res) => {
     ambassador.save((err, saved) => {
         if (err) return res.status(400).send(err.message);
 
-        waterfall([
-            (done) => {
-                if (!image_file && !image_url) return done(null, saved);
-                const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
-                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return done(err.message);
-                    saved.image = { p_id: result.public_id, url: result.secure_url };
-                    saved.save((err, doc) => err ? done(err.message) : done(null, doc));
-                });
-            },
-            (amb, done) => {
-                amb.token = crypto.randomBytes(20).toString("hex");
-                amb.save((err, doc) => err ? done(err.message) : done(null, doc));
-            },
-            (amb, done) => {
+        const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        cloud.uploader.upload(image_url || image_file || "", { public_id }, (err, result) => {
+            if (err && (image_file || image_url)) return res.status(500).send(err.message);
+            saved.image = { p_id: result.public_id, url: result.secure_url };
+            saved.token = crypto.randomBytes(20).toString("hex");
+            saved.save((err, amb) => {
+                if (err) return res.status(500).send(err.message);
                 const mail_transporter = new MailingListMailTransporter({ req, res });
                 const subject = `Account verification: ${amb.firstname} ${amb.lastname} wants to be an Ambassador`;
                 const message = "The following candidate wants to sign up as an ambassador.\n\n" +
@@ -45,14 +36,11 @@ router.post('/register', (req, res) => {
 
                 mail_transporter.setRecipient({ email: req.session.admin_email });
                 mail_transporter.sendMail({ subject, message }, err => {
-                    if (err) return done(err.message);
-                    done(null, "Registered. Submitted to administration for verification");
+                    if (err) return res.status(500).send(err.message);
+                    res.send("Registered. Submitted to administration for verification")
                 });
-            }
-        ], (err, message) => {
-            if (err) return res.status(500).send(err.message);
-            res.send(message)
-        })
+            });
+        });
     });
 });
 
