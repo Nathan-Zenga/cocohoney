@@ -11,6 +11,10 @@
                             <p class="name"><%- amb.firstname %> <%- amb.lastname %></p>
                             <p class="role">Ambassador <i class="fal fa-badge-check"></i></p>
                             <br>
+                            <a class="insta" href="https://www.instagram.com/<%- amb.instagram %>/">
+                                <i class="fab fa-instagram" style="font-size: 1.5em"></i>
+                            </a>
+                            <br><br>
                             <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
                             <%_ if (!is_admin) { _%>
                             <br>
@@ -36,8 +40,8 @@
                             <div class="container" style="padding: 20px 0 20px 30px;">
                                 <div class="row">
                                     <%_ if (!orders.length) { _%>
-                                    <div style="text-align: center">
-                                        <p>No orders made (they will show up here</p>
+                                    <div>
+                                        <p>No orders made (they will show up here)</p>
                                     </div>
                                     <%_ } if (!is_ambassador) {
                                         orders.forEach((order, i, arr) => { _%>
@@ -79,7 +83,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <p><b>EMAIL</b></p>
-                                <p><%- amb.email %></p>
+                                <p><%- amb.email %></p><br>
 
                                 <p><b>HOME ADDRESS</b></p>
                                 <p><%- amb.address.line1 %></p>

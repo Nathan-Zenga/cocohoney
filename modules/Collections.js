@@ -8,8 +8,8 @@ const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box,
 module.exports = async cb => {
     const docs = {};
     docs.products = await Product.find().sort({ product_collection: -1, name: 1 }).exec();
-    docs.members = await Member.find();
-    docs.ambassadors = await Ambassador.find();
+    docs.members = await Member.find().sort({ firstname: 1 }).exec();
+    docs.ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     docs.banner_slides = await Banner_slide.find();
     docs.discount_codes = await Discount_code.find();
     docs.faqs = await FAQ.find();
