@@ -187,16 +187,18 @@ router.get("/session/complete", async (req, res) => {
 
 router.get("/cancel", async (req, res) => {
     const { customer, checkout_session, promotion_code_obj } = req.session;
-    if (promotion_code_obj) {
-        await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
-        req.session.promotion_code_obj = undefined;
-    }
-    if (customer && checkout_session) {
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
-        const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
-        if (session.payment_status != "paid") await Stripe.customers.del(customer.id);
-        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
-    }
+    try {
+        if (promotion_code_obj) {
+            await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
+            req.session.promotion_code_obj = undefined;
+        }
+        if (customer && checkout_session) {
+            const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
+            const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
+            if (session.payment_status != "paid") await Stripe.customers.del(customer.id);
+            if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
+        }
+    } catch(err) {}
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
