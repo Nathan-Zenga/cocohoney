@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const passport = require('passport');
+const bcrypt = require('bcrypt');
 const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
@@ -80,29 +81,31 @@ router.post('/login', (req, res) => {
 
 router.get("/activate", async (req, res, next) => {
     const { token } = req.query;
-    Ambassador.findOne({ password: token, token_expiry_date: { $gte: Date.now() } }, (err, amb) => {
+    Admin.findOne({ password: token, token_expiry_date: { $gte: Date.now() } }, (err, admin) => {
         if (err) return res.status(500).send(err.message);
-        if (!amb) return next();
-        res.render('ambassador-activate', {
-            title: "Ambassador Account Activation",
-            pagename: "ambassador-activate",
-            id: amb.id
+        if (!admin) return next();
+        res.render('admin-activate', {
+            title: "Admin Account Activation",
+            pagename: "admin-activate",
+            token: admin.password
         })
     });
 });
 
-router.post("/activate/:token", async (req, res) => {
-    req.body.username = req.session.admin_email; Object.freeze(req.body);
-    passport.authenticate("local-register-admin", (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
-        if (!user) return res.status(400).send(info.message);
-        req.logIn(user, err => {
-            if (err) return res.status(500).send(err.message || err);
-            Admin.deleteMany({ email: "temp" }, err => {
-                res.status(err ? 500 : 200).send(err ? err.message : "/admin")
-            });
+router.post("/activate", async (req, res) => {
+    const { token, password, password_confirm } = req.body;
+    if (password !== password_confirm) return res.status(400).send("Passwords do not match");
+    const admin = await Admin.findOne({ password: token });
+    admin.email = req.session.admin_email;
+    admin.password = bcrypt.hashSync(password, 10);
+    admin.token_expiry_date = undefined;
+    admin.save(err => {
+        if (err) return res.status(500).send(err.message);
+        Admin.deleteMany({ email: "temp" }, err => {
+            if (err) return res.status(500).send(err.message);
+            res.send("Account made and you can now log in");
         });
-    })(req, res);
+    });
 });
 
 router.post("/search", isAuthed, (req, res) => {

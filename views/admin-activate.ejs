@@ -1,0 +1,33 @@
+<%- include ('partials/header') -%>
+    <div class="form-container">
+        <form method="post" action="/admin/activate">
+            <fieldset>
+                <legend>ACTIVATE ADMIN ACCOUNT</legend>
+
+                <label>CREATE NEW PASSWORD</label>
+                <input type="password" name="password" id="password" required>
+
+                <label>CONFIRM NEW PASSWORD</label>
+                <input type="password" name="password_confirm" id="password_confirm" required>
+
+                <input type="hidden" name="token" value="<%- token %>" required>
+                <input type="submit" value="ACTIVATE ACCOUNT">
+            </fieldset>
+        </form>
+    </div>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                alert(result);
+                e.target.reset();
+                location.href = "/admin/login";
+            }).fail(function(err) {
+                alert(err.responseText);
+            }).always(function() {
+                btnController.finish();
+            });
+        });
+    </script>
+<%- include ('partials/footer') -%>
