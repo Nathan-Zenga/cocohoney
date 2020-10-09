@@ -121,9 +121,8 @@
             alert(result);
             location.reload();
         }).fail(function(err) {
-            alert(err.responseText);
-        }).always(function() {
             btnController.finish();
+            alert(err.responseText);
         });
     });
 </script>

@@ -14,9 +14,8 @@
                 e.target.reset();
                 location.href = result;
             }).fail(function(err) {
-                alert(err.responseText);
-            }).always(function() {
                 btnController.finish();
+                alert(err.responseText);
             });
         });
     </script>

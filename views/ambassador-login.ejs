@@ -29,9 +29,8 @@
             $.post(this.action, $(this).serializeArray(), function(result) {
                 location.href = result;
             }).fail(function(err) {
-                alert(err.responseText);
-            }).always(function() {
                 btnController.finish();
+                alert(err.responseText);
             });
         });
     </script>

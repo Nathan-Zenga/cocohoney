@@ -89,9 +89,8 @@
             $.post(this.action, $("#payment-form").serializeArray(), function(href) {
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
-            }).always(function() {
                 btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
         });
 
