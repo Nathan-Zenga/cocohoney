@@ -115,7 +115,7 @@ router.get("/complete", async (req, res) => {
             customer_name: user ? `${user.firstname} ${user.lastname}` : recipient_name,
             customer_email: user ? user.email : email,
             shipping_method: shipping_method.name,
-            destination: { line1, line2, city, country_code, postal_code },
+            destination: { line1, line2, city, country: country_code, postal_code, state },
             cart
         });
 
