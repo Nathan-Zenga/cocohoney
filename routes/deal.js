@@ -38,6 +38,7 @@ router.post("/cart/add", (req, res) => {
             deal_item.qty = 1;
             deal_item.deal = true;
             deal_item.items = [];
+            deal_item.image = box.image;
 
             const item_qty_excess = {};
             for (let i = 0; i < products.length; i++) {
