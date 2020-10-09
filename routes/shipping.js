@@ -53,7 +53,7 @@ router.get("/tracking/ref/send", (req, res, next) => {
 
 router.post("/tracking/ref/send", (req, res) => {
     const { id, tracking_ref } = req.body;
-    if (!tracking_ref.trim()) return res.status(400).send("Missing tracking reference number");
+    if (!tracking_ref) return res.status(400).send("Missing tracking reference number");
     Order.findById(Array.isArray(id) ? id[0] : id, (err, order) => {
         if (err) return res.status(500).send(err.message);
         if (!order) return res.status(404).send("Cannot find order");
