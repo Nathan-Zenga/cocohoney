@@ -540,10 +540,6 @@ form legend + .note {
     margin-bottom: 3em;
 }
 
-form legend + .note a {
-    text-decoration: underline;
-}
-
 form.minimal {
     border-radius: 0;
     background-color: transparent;
