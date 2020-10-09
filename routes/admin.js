@@ -78,7 +78,7 @@ router.post('/login', (req, res) => {
     })(req, res);
 });
 
-router.get("/activate", async (req, res) => {
+router.get("/activate", async (req, res, next) => {
     const { token } = req.query;
     Ambassador.findOne({ password: token, token_expiry_date: { $gte: Date.now() } }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
