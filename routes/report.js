@@ -1,32 +1,35 @@
 const router = require('express').Router();
 const { each } = require('async');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Discount_code, Ambassador } = require('../models/models');
+const { Discount_code, Ambassador, Order } = require('../models/models');
 
 router.post("/submit", async (req, res) => {
     const items = [];
-    const ambassadors = await Ambassador.find();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 });
+    const discount_codes = await Discount_code.find();
     each(ambassadors, (amb, cb) => {
-        Discount_code.findOne({ code: amb.discount_code }, (err, dc_doc) => {
-            if (err || !amb) return err ? cb(err) : cb();
-            const ambassador = amb.firstname;
-            const total_sales = dc_doc ? dc_doc.orders_applied.length : 0;
-            const code = dc_doc ? dc_doc.code : { code: "No code" };
-            items.push({ ambassador, code, total_sales });
+        const ambassador = `${amb.firstname} ${amb.lastname}`;
+        const dc_doc = discount_codes.find(dc => dc.code === amb.discount_code);
+        const { code, orders_applied } = dc_doc || {};
+        Order.find({ _id: { $in: orders_applied || [] } }, (err, orders) => {
+            const orders_this_month = orders.filter(o => o.created_at.getMonth() === new Date().getMonth());
+            const total_sales = orders_this_month.length;
+            items.push({ ambassador, code: code || "No code", total_sales });
             cb();
         });
     }, err => {
         if (err) return res.status(500).send(err.message);
-        const current_date = new Date().toDateString();
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        const current_month = months[new Date().getMonth()];
         const mail_transporter = new MailingListMailTransporter({ req, res });
-        const summary = items.map(item => `<b>${item.ambassador}</b> (${item.code}): ${item.total_sales} orders sold`);
+        const summary = items.map(item => `<b>${item.ambassador}</b> (${item.code}):\n\t${item.total_sales} order${item.total_sales > 1 ? "s" : ""} sold`);
         mail_transporter.setRecipient({ email: req.session.admin_email }).sendMail({
-            subject: `Ambassador Sales Report - ${ current_date }`,
-            message: "Below is a summary of ambassadors' total sales so far, " +
-            `as of ${ current_date }:\n\n- ${ summary.join("\n- ") }`
+            subject: `Ambassador Sales Report - ${ current_month } ${ new Date().getFullYear() }`,
+            message: "Below is a summary of each ambassador's current total sales this month:\n\n" +
+            `- ${ summary.join("\n\n- ") }`
         }, err => {
             if (err) return res.status(500).send(err.message || err);
-            res.send("Email sent successfully - Ambassador Sales Report");
+            res.send("Ambassador Sales Report emailed to you successfully");
         })
     })
 });

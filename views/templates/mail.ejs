@@ -28,14 +28,20 @@
                 -webkit-filter: invert(100%);
                 filter: invert(100%);
             }
+            .centered-block {
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 550px;
+                padding-left: 15px;
+                padding-right: 15px;
+            }
         </style>
     </head>
     <body id="mail-body">
         <div class="header section">
             <div id="logo">COCOHONEY COSMETICS</div>
         </div>
-        <%_ var centered_block_style = "margin-left: auto; margin-right: auto; max-width: 500px; padding-left: 15px; padding-right: 15px;" _%>
-        <div class="main section" id="message" style="<%- centered_block_style %>">
+        <div class="main section centered-block" id="message">
             <%- 
                 (function() {
                     var url_pattern = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
@@ -59,7 +65,7 @@
             <br>
             <p style="font-size: .8em;">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
             <%_ if (member.id) { _%>
-            <p style="<%- centered_block_style %> font-size: .8em;">You are receiving this email because you have subscribed to us, Cocohoney Cosmetics, to receive updates and promotional material.</p>
+            <p class="centered-block" style="font-size: .8em;">You are receiving this email because you have subscribed to us, Cocohoney Cosmetics, to receive updates and promotional material.</p>
             <p style="font-size: .8em;"><a style="color: inherit!important" href="<%- location_origin %>/<%= member.ambassador ? 'ambassador/' : '' %>account/delete?id=<%= member.id %>&src=email_unsub_link<%= member.id %>">Unsubscribe</a></p>
             <%_ } _%>
         </div>
