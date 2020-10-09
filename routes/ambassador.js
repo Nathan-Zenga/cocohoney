@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
+const send_verification_email = require("../modules/send-ambassador-verification-email");
 const { Ambassador, Discount_code, Product, Order } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 
@@ -44,47 +45,12 @@ router.post('/register', (req, res) => {
     });
 });
 
-router.get('/register/verify', (req, res) => {
-    const { token } = req.query;
-    Ambassador.findOne({ token }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (!amb) return res.status(404).send("Invalid entry");
-        new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
-            subject: "Your account is now verified.",
-            message: "Hello,\n\n Your account has been verified and confirmed by " +
-            "the administrator of Cocohoney Cosmetics.\n\n" +
-            "Please click the following link below to activate your account:\n" +
-            `${res.locals.location_origin}/ambassador/register/activate?token=${amb.token}`
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            amb.verified = true;
-            amb.save(err => res.send(`${amb.firstname} now verified. Email sent to ${amb.email} for account activation`));
-        });
-    })
-});
-
-router.post('/register/verify', (req, res) => {
-    const { token } = req.body;
-    Ambassador.findOne({ token }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (!amb) return res.status(404).send("Invalid entry");
-        new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
-            subject: "Your account is now verified.",
-            message: "Hello,\n\n Your account has been verified and confirmed by " +
-            "the administrator of Cocohoney Cosmetics.\n\n" +
-            "Please click the following link below to activate your account:\n" +
-            `${res.locals.location_origin}/ambassador/register/activate?token=${amb.token}`
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            amb.verified = true;
-            amb.save(err => res.send(`${amb.firstname} now verified. Email sent to ${amb.email} for account activation`));
-        });
-    })
-});
+router.get('/register/verify', send_verification_email);
+router.post('/register/verify', send_verification_email);
 
 router.get('/register/activate', (req, res, next) => {
     const { token } = req.query;
-    Ambassador.findOne({ token, verified: true }, (err, amb) => {
+    Ambassador.findOne({ token }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return next();
         res.render('ambassador-activate', {
@@ -98,7 +64,7 @@ router.get('/register/activate', (req, res, next) => {
 router.post('/register/activate', (req, res) => {
     const { id, password, password_confirm, sort_code, account_number } = req.body;
     if (password !== password_confirm) return res.status(400).send("Password confirm does not match");
-    Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
+    Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Invalid entry: account not found");
         bcrypt.hash(password, 10, (err, hash) => {
