@@ -75,7 +75,7 @@ router.post("/session/create", async (req, res) => {
             line_items: cart.map(item => ({
                 price_data: {
                     product_data: { name: item.name },
-                    unit_amount: item.price,
+                    unit_amount: parseInt(item.price),
                     currency: "gbp"
                 },
                 description: item.deal ? item.items.map(p => `${p.qty}x ${p.name}`).join(", ") : item.info || undefined,
@@ -83,7 +83,7 @@ router.post("/session/create", async (req, res) => {
             })).concat([{
                 price_data: {
                     product_data: { name: shipping_method.name },
-                    unit_amount: shipping_method.fee,
+                    unit_amount: parseInt(shipping_method.fee),
                     currency: "gbp"
                 },
                 description: shipping_method.info || undefined,
@@ -101,7 +101,7 @@ router.post("/session/create", async (req, res) => {
         req.session.customer = customer;
         req.session.shipping_method = shipping_method;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
-    } catch(err) { res.status(400).send(err.message) };
+    } catch(err) { console.log(err); res.status(400).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
