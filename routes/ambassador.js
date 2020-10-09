@@ -137,14 +137,14 @@ router.post('/account/edit', isAuthed, (req, res) => {
 
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
-            if (res.locals.is_ambassador) req.session.user = saved;
+            res.locals.user = req.session.user = saved;
             if (!image_file && !image_url) return res.send("Account details updated");
             const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
             cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
                 if (err) return res.status(500).send(err.message);
                 saved.image = { p_id: result.public_id, url: result.secure_url };
                 saved.save(() => {
-                    if (res.locals.is_ambassador) req.session.user = saved;
+                    res.locals.user = req.session.user = saved;
                     res.send("Account details updated");
                 });
             });
