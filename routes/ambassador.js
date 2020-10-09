@@ -116,6 +116,7 @@ router.post('/register/activate', (req, res) => {
 });
 
 router.get('/account/login', (req, res) => {
+    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("/"));
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
@@ -130,8 +131,7 @@ router.get('/account', isAuthed, async (req, res) => {
     res.render('ambassador-account', opts);
 });
 
-router.post('/account/login', (req, res, next) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("referrer"));
+router.post('/account/login', (req, res) => {
     const { email, password } = req.body;
     Ambassador.findOne({ email }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
