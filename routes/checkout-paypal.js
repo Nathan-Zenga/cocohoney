@@ -80,7 +80,7 @@ router.post("/create-payment", async (req, res) => {
         }]
     }, (err, payment) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
-        req.session.current_discount_code = dc_doc;
+        req.session.current_dc_doc = dc_doc;
         req.session.transaction = payment.transactions[0];
         req.session.shipping_method = shipping_method;
         res.send(payment.links.find(link => link.rel === "approval_url").href);
@@ -89,10 +89,10 @@ router.post("/create-payment", async (req, res) => {
 
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
-    const { cart, current_discount_code, transaction, shipping_method } = req.session;
+    const { cart, current_dc_doc, transaction, shipping_method } = req.session;
     const { user } = res.locals;
     const products = await Product.find();
-    const dc_doc = current_discount_code ? await Discount_code.findById(current_discount_code.id) : null;
+    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc.id) : null;
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
@@ -134,7 +134,7 @@ router.get("/complete", async (req, res) => {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
             dc_doc.save();
-            req.session.current_dc_object = undefined;
+            req.session.current_dc_doc = undefined;
         }
 
         order.save();
@@ -143,21 +143,24 @@ router.get("/complete", async (req, res) => {
         transporter.setRecipient({ email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${recipient_name},\n\n` +
-                `Your payment was successful. Below is a summary of your purchase:\n\n${purchase_summary}\n\n` +
-                "If you have not yet received your PayPal receipt via email, do not hesistate to contact us.\n\n" +
-                "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
+            "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
+            `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
+            "Click below to view further details about this order:\n\n" +
+            `${res.locals.location_origin}/order/${order.id}\n\n` +
+            (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
+            "A tracking number / reference will be sent to you via email as soon as possible. " +
+            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
+            "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
-                message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
-                `<b>Name</b>: ${recipient_name}\n</b>Email: ${email}\n\n` +
-                `<b>Purchased items</b>\n${purchase_summary}\n\n` +
-                `<b>Address</b>\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
-                `<b>Date of purchase</b>\n${Date(payment.create_time)}\n\n` +
-                `<b>Total amount</b>\n£${payment.transactions[0].amount.total}\n\n` +
+                message: "You've received a new purchase from a new customer.\n\n" +
+                "<b>View the order summary below:</b>\n" +
+                `${res.locals.location_origin}/order/${order.id}\n\n` +
+                (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
                 "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
-                "Full details of this transaction can be found on your Paypal account"
+                "Details of this transaction can also be found on your Paypal account"
             }, err2 => {
                 if (err) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })

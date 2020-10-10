@@ -96,7 +96,7 @@ router.post("/session/create", async (req, res) => {
         });
 
         req.session.checkout_session = session;
-        req.session.current_dc_object = dc_doc;
+        req.session.current_dc_doc = dc_doc;
         req.session.promotion_code_obj = promotion_code;
         req.session.customer = customer;
         req.session.shipping_method = shipping_method;
@@ -105,9 +105,9 @@ router.post("/session/create", async (req, res) => {
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, customer, cart, current_dc_object, promotion_code_obj, shipping_method } = req.session;
+    const { checkout_session, customer, cart, current_dc_doc, promotion_code_obj, shipping_method } = req.session;
     const products = await Product.find();
-    const dc_doc = current_dc_object ? await Discount_code.findById(current_dc_object._id) : null;
+    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
     const purchase_summary = cart.map(item => {
         const description = item.deal ? `(${item.items.map(i => `${i.qty}x ${i.name}`).join(", ")}) ` : "";
         return `${item.qty} X ${item.name} ${description}- £${(item.price / 100).toFixed(2)}`
@@ -147,7 +147,7 @@ router.get("/session/complete", async (req, res) => {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
             dc_doc.save();
-            req.session.current_dc_object = undefined;
+            req.session.current_dc_doc = undefined;
         }
 
         order.save();
@@ -156,19 +156,21 @@ router.get("/session/complete", async (req, res) => {
         transporter.setRecipient({ email: customer_found.email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${customer_found.name},\n\n` +
-            `Your payment was successful. Below is a summary of your purchase:\n\n${purchase_summary}\n\n` +
-            "If you have not yet received your PayPal receipt via email, do not hesistate to contact us.\n\n" +
+            "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
+            `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
+            "Click below to view further details about this order:\n\n" +
+            `${res.locals.location_origin}/order/${order.id}\n\n` +
+            (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
+            "A tracking number / reference will be sent to you via email as soon as possible. " +
+            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
-            const { line1, line2, city, postal_code } = customer_found.shipping.address;
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
-                message: "You've received a new purchase from a new customer. Summary shown below\n\n" +
-                `<b>Name</b>: ${customer_found.name}\n<b>Email</b>: ${customer_found.email}\n\n` +
-                `<b>Purchased items</b>\n${purchase_summary}\n\n` +
-                `<b>Address</b>\n${ (line1 + "\n" + line2).trim() }\n${city},\n${postal_code}\n\n` +
-                `<b>Date of purchase</b>\n${Date(order.created_at)}\n\n` +
-                `<b>Total amount</b>\n£${(session.amount_total / 100).toFixed(2)}\n\n` +
+                message: "You've received a new purchase from a new customer.\n\n" +
+                "<b>View the order summary below:</b>\n" +
+                `${res.locals.location_origin}/order/${order.id}\n\n` +
+                (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
                 "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n`
             }, err2 => {
