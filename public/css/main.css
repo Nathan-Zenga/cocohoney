@@ -967,6 +967,12 @@ label .dropdown-arrow {
     color: rgb(124, 76, 76);
 }
 
+@media (max-width: 767px) {
+    #admin-page #home ul {
+        padding-left: 20px;
+    }
+}
+
 #admin-page .nav-pills-container {
     padding-top: 10px;
     padding-bottom: 15px;
@@ -1576,3 +1582,63 @@ input.product-quantity:disabled {
 }
 
 /* End of SWITCH ICON styles */
+
+#orders-page .order {
+    padding: 50px;
+    margin: 50px 0;
+    background-color: rgba(0, 0, 0, .15);
+    border-radius: 10px;
+}
+
+#orders-page .order h1,
+#orders-page .order h2 {
+    margin-bottom: 1.5em;
+}
+
+#orders-page .order h1 {
+    text-align: center;
+}
+
+#orders-page #header-summary > * {
+    text-align: center;
+}
+
+#orders-page #header-summary > *,
+#orders-page #order-details .detail {
+    margin-bottom: 3em;
+}
+
+#orders-page #tracking-ref {
+    font-weight: 400;
+}
+
+#orders-page #tracking-ref #link-to-add-btn {
+    display: block;
+    margin: 0 auto;
+}
+
+#orders-page #order-items-table td {
+    width: 25%;
+}
+
+#orders-page #order-items-table td ul {
+    padding-left: 12px;
+}
+
+@media (max-width: 767px) {
+    #orders-page .order {
+        padding: 50px 15px;
+    }
+
+    #orders-page #header-summary > * {
+        text-align: left;
+    }
+}
+
+@media (max-width: 991px) {
+    #orders-page .order h1 span {
+        display: block;
+        font-size: 16px;
+        margin-top: 1em;
+    }
+}

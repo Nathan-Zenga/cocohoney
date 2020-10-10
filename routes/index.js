@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { FAQ, Review, Overview_image } = require('../models/models');
+const { FAQ, Review, Overview_image, Order, Shipping_method } = require('../models/models');
 const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
 
 router.get('/', async (req, res) => {
@@ -20,6 +20,14 @@ router.get('/contact', (req, res) => {
 
 router.get('/faq', (req, res) => {
     FAQ.find((err, faqs) => res.render('faq', { title: "FAQs", pagename: "faq", faqs }))
+});
+
+router.get('/order/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const order = await Order.findById(id);
+    if (!order) return next();
+    const shipping_method = await Shipping_method.findOne({ name: order.shipping_method });
+    res.render('orders', { title: "Order " + order.id, pagename: "orders", order, shipping_method })
 });
 
 router.post('/contact/mail/send', isAuthed, (req, res) => {
