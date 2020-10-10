@@ -60,7 +60,7 @@ router.post('/login', (req, res) => {
                     new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
                         new MailingListMailTransporter({ req, res }, { email }).sendMail({
                             subject: "Admin Account Activation",
-                            message: "You're recieving this email because an admin account needs setting up. " +
+                            message: "You're receiving this email because an admin account needs setting up. " +
                                 "Please click the link below to activate the account, as this will only be " +
                                 "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
                                 `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`
