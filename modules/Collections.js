@@ -17,6 +17,6 @@ module.exports = async cb => {
     docs.boxes = await Box.find();
     docs.overview_images = await Overview_image.find();
     docs.lookbook_media = await Lookbook_media.find();
-    docs.orders = await Order.find().sort({ created_at: -1 });
+    docs.orders = await Order.find().sort({ tracking_ref: 1, created_at: -1 });
     cb(docs);
 };
