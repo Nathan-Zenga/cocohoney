@@ -96,16 +96,15 @@
 
         $("#stripe-payment-opt").submit(function(e) {
             e.preventDefault();
-            var btnControl = new submitBtnController(this);
+            var btnControl = new submitBtnController(this, "REDIRECTING");
             $.post(this.action, $("#payment-form").serializeArray(), function(data) {
                 var stripe = Stripe(data.pk);
                 return stripe.redirectToCheckout({ sessionId: data.id });
             }).then(function(result) {
-                if (result.error) alert(result.error.message);
+                if (result.error) { btnControl.finish(); alert(result.error.message); }
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
-            }).always(function() {
                 btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
         });
     </script>
