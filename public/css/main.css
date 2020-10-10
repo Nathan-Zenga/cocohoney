@@ -35,14 +35,6 @@ header .link-icon:not(:first-child) {
     text-align: right;
 }
 
-#nav-toggle {
-    position: fixed;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
-    z-index: 40;
-}
-
 nav {
     position: fixed;
     display: none;
