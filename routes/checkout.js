@@ -63,7 +63,8 @@ router.post("/session/create", async (req, res) => {
 
         const promotion_code = !dc_doc ? null : await Stripe.promotionCodes.create({
             coupon: coupon.id,
-            code: dc_doc.code
+            code: dc_doc.code,
+            customer: customer.id
         });
 
         const session = await Stripe.checkout.sessions.create({
@@ -97,7 +98,6 @@ router.post("/session/create", async (req, res) => {
 
         req.session.checkout_session = session;
         req.session.current_dc_doc = dc_doc;
-        req.session.promotion_code_obj = promotion_code;
         req.session.customer = customer;
         req.session.shipping_method = shipping_method;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
@@ -105,7 +105,7 @@ router.post("/session/create", async (req, res) => {
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, customer, cart, current_dc_doc, promotion_code_obj, shipping_method } = req.session;
+    const { checkout_session, customer, cart, current_dc_doc, shipping_method } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
     const purchase_summary = cart.map(item => {
@@ -114,7 +114,6 @@ router.get("/session/complete", async (req, res) => {
     }).join("\n");
 
     try {
-        if (promotion_code_obj) await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
         const customer_found = await Stripe.customers.retrieve(customer.id);
 
@@ -188,12 +187,8 @@ router.get("/session/complete", async (req, res) => {
 });
 
 router.get("/cancel", async (req, res) => {
-    const { customer, checkout_session, promotion_code_obj } = req.session;
+    const { customer, checkout_session } = req.session;
     try {
-        if (promotion_code_obj) {
-            await Stripe.promotionCodes.update(promotion_code_obj.id, { active: false });
-            req.session.promotion_code_obj = undefined;
-        }
         if (customer && checkout_session) {
             const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
             const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
