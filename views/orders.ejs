@@ -40,11 +40,10 @@
                         <p><b>ADDRESS</b></p>
                         <p>
                             <%= order.destination.line1 %><br>
-                            <%_ if (order.destination.line2) { _%>
-                            <%= order.destination.line2 %><br>
-                            <%_ } _%>
+                            <%- order.destination.line2 ? order.destination.line2 + "<br>": "" %>
                             <%= order.destination.city %><br>
                             <%= order.destination.country == "GB" ? "UK" : order.destination.country %><br>
+                            <%- order.destination.state ? order.destination.state + "<br>": "" %>
                             <%= order.destination.postcode ? order.destination.postcode : "" %>
                         </p>
                     </div>
