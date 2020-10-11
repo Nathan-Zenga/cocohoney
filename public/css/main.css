@@ -1238,9 +1238,13 @@ input.product-quantity:disabled {
     text-transform: uppercase;
 }
 
+#box-deal-page .header .img-container {
+    padding: 0 0 30px 0;
+    margin: 0 -15px;
+}
+
 #box-deal-page .header .img-container img {
     width: 100%;
-    border-radius: 10px;
 }
 
 @media (min-width: 768px) {
@@ -1265,6 +1269,11 @@ input.product-quantity:disabled {
     #box-deal-page .header .text-container .text-content {
         display: table-cell;
         vertical-align: middle;
+    }
+
+    #box-deal-page .header .img-container {
+        padding: 0;
+        margin: 0 -15px;
     }
 
     #box-deal-page .header .img-container img {
