@@ -33,72 +33,7 @@
         </div>
         <div class="tab-content container">
             <div id="home" class="tab-pane fade in active" style="text-align: center">
-                <div class="row">
-                    <div class="col-sm-12" style="margin-bottom: 4em">
-                        <h2>REPORTS</h2>
-                        <div class="info-label">
-                            <i class="fal fa-info-circle info-icon"></i>
-                            <b>Click below to receive a report via mail</b>
-                        </div>
-                        <form id="report-submit-form" action="/report/submit" class="minimal">
-                            <button type="submit">SEND AMBASSADOR SALES REPORT</button>
-                        </form>
-                    </div>
-                </div>
-                <div class="row" style="margin-bottom: 4em">
-                    <div class="col-sm-6">
-                        <h2>AMBASSADORS</h2>
-                        <div class="info-label">
-                            <i class="fal fa-info-circle info-icon"></i>
-                            <b>Click a name to go to their account page</b>
-                        </div>
-                        <ul style="text-align: left">
-                            <% ambassadors.forEach(amb => { %>
-                            <li>
-                                <a href="/admin/ambassador/account?firstname=<%- amb.firstname %>&lastname=<%- amb.lastname %>">
-                                    <%- `${amb.firstname} ${amb.lastname}` %>
-                                </a>
-                                <div>
-                                    <%_ if (amb.verified === false) { _%>
-                                    <form class="verify-ambassador-form minimal" method="post" action="/ambassador/register/verify" style="display: inline-block; margin: 5px 5px 5px 0">
-                                        <input type="hidden" name="token" value="<%- amb.token %>">
-                                        <button type="submit" style="padding: 6px 10px">Verify</button>
-                                    </form>
-                                    <%_ } _%>
-                                    <form class="delete-ambassador-form minimal" method="post" action="/ambassador/delete" style="display: inline-block; margin: 5px 0">
-                                        <input type="hidden" name="id" value="<%- amb._id %>">
-                                        <button type="submit" style="padding: 6px 10px">Delete</button>
-                                    </form>
-                                </div>
-                            </li>
-                            <% }) %>
-                        </ul>
-                    </div>
-                    <div class="col-sm-6">
-                        <h2>ORDERS</h2>
-                        <div class="info-label">
-                            <i class="fal fa-info-circle info-icon"></i>
-                            <b>Labelled by customer name</b>
-                        </div>
-                        <ul style="text-align: left">
-                            <% orders.forEach(order => { %>
-                            <li>
-                                <%- `${order.customer_name}` %>
-                                <div>
-                                    <a href="/order/<%- order.id %>">
-                                        <button type="button" style="padding: 6px 10px; font-weight: 400">View details</button>
-                                    </a>
-                                    <%_ if (!order.tracking_ref) { _%>
-                                    <a href="/shipping/tracking/ref/send?id=<%= order.id %>">
-                                        <button type="button" style="padding: 6px 10px; font-weight: 400">Add Tracking Number</button>
-                                    </a>
-                                    <%_ } _%>
-                                </div>
-                            </li>
-                            <% }) %>
-                        </ul>
-                    </div>
-                </div>
+            <%- include ('partials/admin/home') -%>
             </div>
 
             <div id="sale" class="tab-pane fade">

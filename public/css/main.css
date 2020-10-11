@@ -976,6 +976,10 @@ label .dropdown-arrow {
     margin-bottom: 2em;
 }
 
+#admin-page .info-label {
+    font-size: 1em;
+}
+
 .info-label .info-icon {
     margin-right: 5px;
     font-size: 1.2em;
