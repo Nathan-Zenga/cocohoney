@@ -173,7 +173,7 @@ router.get("/session/complete", async (req, res) => {
                 "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n`
             }, err2 => {
-                if (err) console.error(err || err2), res.status(500);
+                if (err || err2) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
             });
         });

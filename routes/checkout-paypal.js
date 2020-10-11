@@ -162,7 +162,7 @@ router.get("/complete", async (req, res) => {
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
                 "Details of this transaction can also be found on your Paypal account"
             }, err2 => {
-                if (err) console.error(err || err2), res.status(500);
+                if (err || err2) console.error(err || err2), res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
             });
         });
