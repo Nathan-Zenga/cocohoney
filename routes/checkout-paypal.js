@@ -104,7 +104,7 @@ router.get("/complete", async (req, res) => {
             error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
         });
 
-        const { recipient_name, line1, line2, city, country_code, postal_code } = payment.transactions[0].item_list.shipping_address;
+        const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
         const { email } = payment.payer.payer_info;
         const purchase_summary = payment.transactions[0].item_list.items.map(item => {
             const description = item.description ? `(${item.description}) ` : "";
