@@ -132,7 +132,7 @@ router.get("/session/complete", async (req, res) => {
         });
 
         if (production) cart.forEach(item => {
-            const product = products.filter(p => p.id === item.id)[0];
+            const product = products.find(p => p.id == item.id);
             if (product) {
                 product.stock_qty -= item.qty;
                 if (product.stock_qty < 0) product.stock_qty = 0;
