@@ -43,7 +43,6 @@ router.post('/stock/edit', isAuthed, (req, res) => {
     Product.findById(id, (err, product) => {
         if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
 
-        const prefix = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
         if (name)               product.name = name;
         if (price)              product.price = price;
         if (price_amb)          product.price_amb = price_amb;
@@ -51,18 +50,6 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         if (category)           product.category = category;
         if (product_collection) product.product_collection = product_collection;
         if (stock_qty)          product.stock_qty = stock_qty;
-
-        req.session.cart = req.session.cart.map(item => {
-            if (item.id === product.id) {
-                if (name)      item.name = name;
-                if (price)     item.price = price;
-                if (price_amb) item.price_amb = price_amb;
-                if (info)      item.info = info;
-                if (stock_qty) item.stock_qty = stock_qty;
-                item.qty = item.qty > item.stock_qty ? item.stock_qty : item.qty;
-            }
-            return item;
-        });
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
