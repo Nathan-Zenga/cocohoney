@@ -37,20 +37,24 @@
 
                     <div id="sales" class="tab-pane fade in active">
                         <div class="thumb-container no-wrap">
-                            <div class="container" style="padding: 20px 0 20px 30px;">
+                            <div class="<%- orders.length && is_admin ? 'container' : '' %>" style="<%- orders.length && is_admin ? 'padding: 20px 0 20px 30px;' : '' %>">
                                 <div class="row">
-                                    <%_ if (!orders.length) { _%>
-                                    <div>
-                                        <p>No orders made (they will show up here)</p>
+                                <%_ if (!orders.length) { _%>
+                                    <div id="order-sales-counter">
+                                        <h1>0 <small>ORDERS SOLD</small></h1>
                                     </div>
-                                    <%_ } if (!is_ambassador) {
-                                        orders.forEach((order, i, arr) => { _%>
+                                <%_ } else if (is_ambassador) { _%>
+                                    <div id="order-sales-counter">
+                                        <h1><%= orders.length %> <small>ORDERS SOLD</small></h1>
+                                    </div>
+                                <%_ } else if (is_admin) {
+                                    orders.forEach((order, i, arr) => { _%>
                                     <div class="thumb">
                                         <div class="thumb-inner">
                                             <div class="thumb-info">
                                                 <div class="order-header">
                                                     <div class="row">
-                                                        <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
+                                                        <div class="col-sm-6 order-name"><p>Order # <%- arr.length - i %></p></div>
                                                         <%_ const day = order.created_at.getDate(); _%>
                                                         <%_ const month = order.created_at.getMonth() + 1; _%>
                                                         <%_ const year = order.created_at.getFullYear(); _%>
@@ -59,21 +63,23 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <br>
                                                 <div class="order-summary">
                                                     <ul>
                                                         <%_ const list_filtered = order.cart.slice(0, 3); _%>
-                                                        <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
+                                                        <%_ const info_overflow = order.cart.length > list_filtered.length; _%>
                                                         <%_ list_filtered.forEach((item, i, arr) => { _%>
                                                         <li><%- item.qty %> x <%- item.name %></li>
                                                         <%_ }) _%>
-                                                        <%- diff_length ? "..." : "" %>
+                                                        <%- info_overflow ? "..." : "" %>
                                                     </ul>
+                                                </div>
+                                                <div class="order-summary-link">
+                                                    <a href="/order/<%- order.id %>">VIEW DETAILS</a>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <%_ })} _%>
+                                <%_ })} _%>
                                 </div>
                             </div>
                         </div>
@@ -137,13 +143,13 @@
                     </div>
                     <div class="col-sm-6">
                         <label>LAST NAME</label>
-                        <input type="text" name="<%- amb.lastname %>" value="<%- user.lastname %>">
+                        <input type="text" name="<%- amb.lastname %>" value="<%- amb.lastname %>">
                     </div>
                 </div>
             </fieldset>
 
             <label>PHONE NUMBER</label>
-            <input type="tel" name="phone_number" pattern="[0-9]{11}" value="<%- user.phone_number %>">
+            <input type="tel" name="phone_number" pattern="[0-9]{11}" value="<%- amb.phone_number %>">
 
             <label>EMAIL</label>
             <input type="email" name="email" value="<%- amb.email %>">

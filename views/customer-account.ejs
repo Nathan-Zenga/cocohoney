@@ -24,11 +24,11 @@
                 <div class="tab-content" style="padding: 0;">
                     <div id="history" class="tab-pane fade in active">
                         <div class="thumb-container no-wrap">
-                            <div class="container" style="padding: 20px 0 20px 30px;">
+                            <div class="<%- orders.length ? 'container' : '' %>" style="<%- orders.length ? 'padding: 20px 0 20px 30px;' : '' %>">
                                 <div class="row">
                                     <%_ if (!orders.length) { _%>
-                                    <div style="text-align: center">
-                                        <p>No orders made (they will show up here)</p>
+                                    <div id="order-sales-counter">
+                                        <h1>0 <small>ORDERS MADE</small></h1>
                                     </div>
                                     <%_ } orders.forEach((order, i, arr) => { _%>
                                     <div class="thumb">
@@ -36,7 +36,7 @@
                                             <div class="thumb-info">
                                                 <div class="order-header">
                                                     <div class="row">
-                                                        <div class="col-sm-6 order-name"><p>Order #<%- arr.length - i %></p></div>
+                                                        <div class="col-sm-6 order-name"><p>Order # <%- arr.length - i %></p></div>
                                                         <%_ const day = order.created_at.getDate(); _%>
                                                         <%_ const month = order.created_at.getMonth() + 1; _%>
                                                         <%_ const year = order.created_at.getFullYear(); _%>
@@ -45,16 +45,18 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <br>
                                                 <div class="order-summary">
                                                     <ul>
                                                         <%_ const list_filtered = order.cart.slice(0, 3); _%>
-                                                        <%_ const diff_length = order.cart.length !== list_filtered.length; _%>
+                                                        <%_ const info_overflow = order.cart.length > list_filtered.length; _%>
                                                         <%_ list_filtered.forEach((item, i, arr) => { _%>
                                                         <li><%- item.qty %> x <%- item.name %></li>
                                                         <%_ }) _%>
-                                                        <%- diff_length ? "..." : "" %>
+                                                        <%- info_overflow ? "..." : "" %>
                                                     </ul>
+                                                </div>
+                                                <div class="order-summary-link">
+                                                    <a href="/order/<%- order.id %>">VIEW DETAILS</a>
                                                 </div>
                                             </div>
                                         </div>

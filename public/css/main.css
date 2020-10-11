@@ -1429,9 +1429,14 @@ input.product-quantity:disabled {
 }
 
 #account-page .thumb .thumb-info {
+    position: relative;
     text-align: left;
     padding: 10px;
-    height: 180px;
+    height: 220px;
+}
+
+#account-page .order-header {
+    margin-bottom: .5em;
 }
 
 #account-page .order-date {
@@ -1445,6 +1450,14 @@ input.product-quantity:disabled {
     font-weight: 300;
 }
 
+#account-page .order-summary-link {
+    position: absolute;
+    left: 0;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
 #account-page #settings-button {
     padding: 10px;
     font-weight: 300;
@@ -1452,13 +1465,23 @@ input.product-quantity:disabled {
     border: 1px solid white;
 }
 
-#account-page #personal-info {
+#account-page #personal-info,
+#account-page #order-sales-counter {
     text-align: center;
+}
+
+#account-page #order-sales-counter small {
+    color: inherit;
+    font-weight: 300;
 }
 
 @media (min-width: 768px) {
     #account-page .dashboard .nav.nav-pills {
         margin: 0 auto 30px;
+    }
+
+    #account-page #order-sales-counter {
+        text-align: left;
     }
 }
 
