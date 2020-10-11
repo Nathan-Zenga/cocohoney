@@ -1027,7 +1027,8 @@ label .dropdown-arrow {
 }
 
 #product-view-page .product-info {
-    padding-top: 2em; padding-bottom: 2em;
+    padding-top: 2em;
+    padding-bottom: 2em;
 }
 
 #product-view-page #name {
@@ -1083,6 +1084,19 @@ input.product-quantity:disabled {
 .quantity-control-btn {
     background-color: transparent;
     color: white;
+}
+
+.sold-out-label {
+    font-weight: 400;
+    padding: 39px 0;
+}
+
+#product-view-page .sold-out-label {
+    padding: 0;
+}
+
+#box-deal-page .sold-out-label {
+    padding: 24px 0;
 }
 
 .chc .carousel-control {

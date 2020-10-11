@@ -9,7 +9,7 @@ router.get('/:name', (req, res, next) => {
     const name = { $regex: RegExp(`^${req.params.name.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     Box.findOne({ name }, (err, box) => {
         if (!box) return next();
-        Product.find({ stock_qty: { $gt: 0 } }).sort({ product_collection: -1 }).exec((err, products) => {
+        Product.find().sort({ product_collection: -1 }).exec((err, products) => {
             res.render('box-deal', { title: `${box.name} Box`, pagename: "box-deal", box, products })
         })
     })
@@ -29,7 +29,7 @@ router.post("/cart/add", (req, res) => {
         Product.find({ _id: { $in: product_ids }, stock_qty: { $gt: 0 } }, (err, products) => {
             if (err) return res.status(500).send(err.message);
             if (!products.length) return res.status(404).send("Chosen item(s) currently not in stock");
-            if (product_ids.length !== products.length) return res.status(404).send("One or more of the chosen items aren't in stock");
+            if (product_ids.length !== products.length) return res.status(404).send("One or more of the chosen items currently not in stock");
 
             const deal_item = {};
             deal_item.id = box.id;

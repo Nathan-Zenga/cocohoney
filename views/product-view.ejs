@@ -1,11 +1,11 @@
 <%- include ('partials/header') -%>
     <div class="product-view-container container">
-        <div class="col-sm-6 product-images">
+        <div class="col-sm-7 product-images">
             <div class="product-image-single">
-                <img src="<%- product.image.url %>" alt="<%- product.name %>">
+                <img src="<%- product.image ? product.image.url : '' %>" alt="<%- product.name %>">
             </div>
         </div>
-        <div class="col-sm-6 product-info">
+        <div class="col-sm-5 product-info">
             <div class="details" id="name"><%= product.name %></div>
             <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
                 const price_original = product.price_sale ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
@@ -21,6 +21,7 @@
             <%_ } _%>
             <br><br>
             <div class="cart-options">
+                <%_ if (product.stock_qty > 0) { _%>
                 <form class="add-to-cart minimal" action="/shop/cart/add">
                     <div class="quantity-wrapper">
                         <button type="button" class="quantity-control-btn" data-step="-1">-</button>
@@ -33,6 +34,9 @@
                         <span class="dt-view" style="font-size: .75em;">ADD TO CART</span>
                     </button>
                 </form>
+                <%_ } else { _%>
+                <div class="sold-out-label">SOLD OUT</div>
+                <%_ } _%>
             </div>
         </div>
     </div>
