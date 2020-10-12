@@ -174,30 +174,29 @@ router.post('/mail/send', isAuthed, async (req, res) => {
 
 router.post('/mail/send/all', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
-    const members = await Member.find();
-    const ambassadors = await Ambassador.find();
-    const everyone = [...members, ...ambassadors];
-    const transporter = new MailingListMailTransporter({ req, res });
+    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    const everyone = [...ambassadors, ...members];
 
+    if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
-    transporter.setRecipients(ambassadors);
-    transporter.sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message || err);
-        each(members, (recipient, cb) => {
-            setTimeout(() => {
-                transporter.setRecipient(recipient);
-                transporter.sendMail({ subject, message }, err => err ? cb(err.message || err) : cb());
-            }, 1500)
-        }, err => {
-            if (err) return res.status(500).send(err.message || err);
-            res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
-        })
-    });
+    for (let i = 0; i < everyone.length; i++) {
+        setTimeout(() => {
+            const recipient = everyone[i];
+            const transporter = new MailingListMailTransporter({ req, res });
+            transporter.setRecipient(recipient);
+            transporter.sendMail({ subject, message }, err => {
+                if (err) return console.log(err.message || err), console.log(`Not sent for ${recipient.firstname} ${recipient.lastname} onwards`);
+                console.log("Email sent");
+            });
+        }, i * 2000);
+    }
+    res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
 });
 
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
-    const ambassadors = await Ambassador.find();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const transporter = new MailingListMailTransporter({ req, res });
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");

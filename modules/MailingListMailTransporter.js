@@ -62,7 +62,7 @@ class MailingListMailTransporter {
     sendMail(mailOpts, cb) {
         const { subject, message } = mailOpts;
         if (!this.#member && !this.#members.length) return cb("Recipient(s) not set");
-        if (!subject || !message) return cb("Email field(s) missing");
+        if (!subject || !message) return cb("Subject and message cannot be empty");
         this.#getTransportOpts((err, options) => {
             if (err) return cb(err.message || err);
             this.#res.render('templates/mail', { message, member: this.#member }, (err, html) => {
