@@ -5,16 +5,17 @@ const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV } = 
 
 /** Class for processing mail transports */
 class MailingListMailTransporter {
-    #req; #res; #member; #user; #pass; #getTransportOpts;
+    #req; #res; #member; #members; #user; #pass; #getTransportOpts;
 
     /**
      * @param {RouteHandlerParams} routeHandlerParams route handler parameters, containing request and response objects
-     * @param {mongoose.Document} member existing mailing list member
+     * @param {(mongoose.Document | mongoose.Document[])} member existing mailing list member(s)
      */
     constructor(routeHandlerParams, member) {
         this.#req = routeHandlerParams.req;
         this.#res = routeHandlerParams.res;
-        this.#member = member;
+        this.#member = !Array.isArray(member) ? member : null;
+        this.#members = Array.isArray(member) ? member : [];
         const oauth2Client = new OAuth2( OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, "https://developers.google.com/oauthplayground" );
         oauth2Client.setCredentials({ refresh_token: OAUTH_REFRESH_TOKEN });
 
@@ -60,7 +61,7 @@ class MailingListMailTransporter {
      */
     sendMail(mailOpts, cb) {
         const { subject, message } = mailOpts;
-        if (!this.#member) return cb("Recipient not set");
+        if (!this.#member && !this.#members.length) return cb("Recipient(s) not set");
         if (!subject || !message) return cb("Email field(s) missing");
         this.#getTransportOpts((err, options) => {
             if (err) return cb(err.message || err);
@@ -68,7 +69,7 @@ class MailingListMailTransporter {
                 let attachments = [{ path: 'public/img/chc-logo.jpg', cid: 'logo' }];
                 nodemailer.createTransport(options).sendMail({
                     from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
-                    to: this.#member.email,
+                    to: this.#member ? this.#member.email : this.#members.map(m => m.email),
                     subject,
                     html,
                     attachments
@@ -78,7 +79,18 @@ class MailingListMailTransporter {
     };
 
     /** @param {mongoose.Document} member existing mailing list member */
-    setRecipient(member) { this.#member = member; return this };
+    setRecipient(member) {
+        this.#members = [];
+        this.#member = member;
+        return this
+    };
+
+    /** @param {mongoose.Document[]} members existing mailing list member */
+    setRecipients(members) {
+        this.#member = null;
+        this.#members = members;
+        return this
+    };
 };
 
 module.exports = MailingListMailTransporter;

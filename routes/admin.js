@@ -167,7 +167,7 @@ router.post('/mail/send', isAuthed, async (req, res) => {
     if (!member && !ambassador) return res.status(404).send("Recipient not found or specified");
     transporter.setRecipient(member || ambassador);
     transporter.sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(500).send(err.message || err);
         res.send(`Email sent`);
     });
 });
@@ -180,13 +180,19 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     const transporter = new MailingListMailTransporter({ req, res });
 
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
-    each(everyone, (recipient, cb) => {
-        transporter.setRecipient(recipient);
-        transporter.sendMail({ subject, message }, err => err ? cb(err.message) : cb());
-    }, err => {
-        if (err) return res.status(500).send(err.message);
-        res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
-    })
+    transporter.setRecipients(ambassadors);
+    transporter.sendMail({ subject, message }, err => {
+        if (err) return res.status(500).send(err.message || err);
+        each(members, (recipient, cb) => {
+            setTimeout(() => {
+                transporter.setRecipient(recipient);
+                transporter.sendMail({ subject, message }, err => err ? cb(err.message || err) : cb());
+            }, 1500)
+        }, err => {
+            if (err) return res.status(500).send(err.message || err);
+            res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
+        })
+    });
 });
 
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
@@ -195,13 +201,11 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const transporter = new MailingListMailTransporter({ req, res });
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
-    each(ambassadors, (recipient, cb) => {
-        transporter.setRecipient(recipient);
-        transporter.sendMail({ subject, message }, err => err ? cb(err.message) : cb());
-    }, err => {
+    transporter.setRecipients(ambassadors);
+    transporter.sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send(`Email${ambassadors.length > 1 ? "s" : ""} sent`);
-    })
+    });
 });
 
 router.post('/faqs/add', isAuthed, (req, res) => {
