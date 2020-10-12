@@ -207,6 +207,11 @@ router.get("/cancel", async (req, res) => {
             if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
         }
     } catch(err) {}
+    req.session.checkout_session = undefined;
+    req.session.current_dc_doc = undefined;
+    req.session.customer = undefined;
+    req.session.shipping_method = undefined;
+    req.session.transaction = undefined;
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
