@@ -13,7 +13,7 @@ module.exports = (req, res) => {
             "Please click the following link below to activate your account:\n" +
             `${res.locals.location_origin}/ambassador/register/activate?token=${amb.token}`
         }, err => {
-            if (err) return res.status(500).send(err.message);
+            if (err) return res.status(500).send(err.message || err);
             amb.verified = true;
             amb.save(err => res.send(`${amb.firstname} now verified. Email sent to ${amb.email} for account activation`));
         });

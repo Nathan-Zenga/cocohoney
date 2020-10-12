@@ -199,7 +199,7 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
         transporter.setRecipient(recipient);
         transporter.sendMail({ subject, message }, err => err ? cb(err.message) : cb());
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(500).send(err.message || err);
         res.send(`Email${ambassadors.length > 1 ? "s" : ""} sent`);
     })
 });

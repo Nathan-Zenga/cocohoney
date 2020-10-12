@@ -37,7 +37,7 @@ router.post('/register', (req, res) => {
 
                 mail_transporter.setRecipient({ email: req.session.admin_email });
                 mail_transporter.sendMail({ subject, message }, err => {
-                    if (err) return res.status(500).send(err.message);
+                    if (err) return res.status(500).send(err.message || err);
                     res.send("Registered. Submitted to administration for verification")
                 });
             });
@@ -168,7 +168,7 @@ router.post('/delete', (req, res) => {
                     "Your account is now successfully deleted.\n" +
                     "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
                 }, err => {
-                    if (err) return res.status(500).send(err.message);
+                    if (err) return res.status(500).send(err.message || err);
                     res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
                 });
             })
@@ -260,7 +260,7 @@ router.post('/password-reset-request', async (req, res) => {
         message: "You can reset your password via the link below:\n\n" +
         `${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}`
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");
     });
 });

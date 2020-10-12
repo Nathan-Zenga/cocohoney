@@ -34,7 +34,10 @@ router.post('/contact/mail/send', isAuthed, (req, res) => {
     const { firstname, lastname, email, message } = req.body;
     const transporter = new MailingListMailTransporter({ req, res }, { email: req.session.admin_email });
     const mail = { subject: "New message / enquiry", message: `New message from ${firstname} ${lastname} (${email}):\n\n${message}` };
-    transporter.sendMail(mail, err => res.status(err ? 500 : 200).send(err ? err.message : "Email sent"));
+    transporter.sendMail(mail, err => {
+        if (err) return res.status(500).send(err.message || err);
+        res.send("Email sent");
+    });
 });
 
 module.exports = router;

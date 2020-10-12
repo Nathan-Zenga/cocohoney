@@ -57,7 +57,7 @@ router.post('/signup', (req, res) => {
                     `You can now log in here:\n\n${res.locals.location_origin}/account/login\n\n` +
                     "Thank you for signing up with Cocohoney Cosmetics!"
                 }, err => {
-                    if (err) return res.status(500).send(err.message);
+                    if (err) return res.status(500).send(err.message || err);
                     res.send("You have successfully signed up and can now log in");
                 });
             });
@@ -103,7 +103,7 @@ router.post('/delete', isAuthed, (req, res) => {
                 message: `Hi ${member.firstname},\n\n` +
                 "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
             }, err => {
-                if (err) return res.status(500).send(err.message);
+                if (err) return res.status(500).send(err.message || err);
                 res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
             });
         })
@@ -142,7 +142,7 @@ router.post('/password-reset-request', async (req, res) => {
         message: "You can reset your password via the link below:\n\n" +
         `${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}`
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");
     });
 });
