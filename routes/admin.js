@@ -73,7 +73,9 @@ router.post('/login', (req, res) => {
             });
         } else {
             req.logIn(user, err => {
-                res.status(err ? 500 : 200).send(err ? err.message || err : "/admin")
+                if (err) return res.status(500).send(err.message || err);
+                res.locals.cart = req.session.cart = [];
+                res.send("/admin")
             });
         }
     })(req, res);

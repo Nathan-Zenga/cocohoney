@@ -106,6 +106,7 @@ router.post('/account/login', (req, res) => {
             if (err) return res.status(500).send(err.message);
             if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
             req.session.user = amb;
+            res.locals.cart = req.session.cart = [];
             res.send("/ambassador/account");
         });
     });
