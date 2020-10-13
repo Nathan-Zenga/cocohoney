@@ -76,7 +76,7 @@ router.post("/session/create", async (req, res) => {
             },
             line_items: cart.map(item => ({
                 price_data: {
-                    product_data: { name: item.name },
+                    product_data: { name: item.name, images: item.image ? [item.image.url] : undefined },
                     unit_amount: parseInt(item.price),
                     currency: "gbp"
                 },
