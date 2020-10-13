@@ -26,7 +26,8 @@ router.post("/session/create", async (req, res) => {
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
     try {
-        const field_check = { email, address_line1: address_l1, city, country, postcode, shipping_method: shipping_method_id };
+        const field_check = { email, address_line1: address_l1, city, country, postcode };
+        if (price_total < 4000) field_check.shipping_method = shipping_method_id;
         const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
         const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
         if (missing_fields.length) { res.status(400); throw Error(`Missing fields: ${missing_fields.join(", ")}`) }
@@ -38,7 +39,7 @@ router.post("/session/create", async (req, res) => {
         if (!dc_doc && discount_code) { res.status(404); throw Error("Discount code invalid or expired") }
         if (dc_doc && dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
         if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") }
-        let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name);
+        let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;;
         if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") }
     } catch (err) {
         if (res.statusCode === 200) res.status(500);
