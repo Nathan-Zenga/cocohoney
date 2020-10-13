@@ -1371,6 +1371,19 @@ input.product-quantity:disabled {
     height: 100%;
     display: inline-block;
     margin-right: 20px;
+    cursor: pointer;
+}
+
+#customer-reviews-page #image-lg-modal .modal-body,
+#customer-reviews-page #image-lg-modal .img {
+    width: 100%;
+    height: 100%;
+}
+
+#customer-reviews-page #image-lg-modal .img {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 #customer-reviews-page .rating-meter {
