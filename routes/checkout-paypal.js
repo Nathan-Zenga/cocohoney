@@ -164,6 +164,7 @@ router.get("/complete", async (req, res) => {
             "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
+            if (err) console.error(err), res.status(500);
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer.\n\n" +
@@ -173,8 +174,8 @@ router.get("/complete", async (req, res) => {
                 "<b>Link to send the customer a Tracking Number:</b>\n" +
                 `${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}\n\n` +
                 "Details of this transaction can also be found on your Paypal account"
-            }, err2 => {
-                if (err || err2) console.error(err || err2), res.status(500);
+            }, err => {
+                if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
             });
         });
