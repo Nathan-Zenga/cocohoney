@@ -1204,11 +1204,12 @@ input.product-quantity:disabled {
 }
 
 #box-deal-page .thumb .thumb-img {
-    transition: .25s box-shadow;
+    transition: .25s border;
+    border: 0 solid rgb(240, 230, 140);
 }
 
 #box-deal-page .thumb .thumb-img.checked {
-    box-shadow: 0 10px 20px rgb(240, 230, 140);
+    border-width: 10px;
 }
 
 #box-deal-page #submit-btn {
