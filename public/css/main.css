@@ -476,6 +476,12 @@ section .media-wrapper .main-media.small {
     font-size: 2.5em;
 }
 
+.add-to-cart-btn.pre-order {
+    font-size: 1em;
+    padding: 7px 5px !important;
+    border: 2px solid white;
+}
+
 .thumb .add-to-cart, .thumb .add-to-cart-btn {
     margin: 0;
 }
@@ -1057,6 +1063,13 @@ label .dropdown-arrow {
 #product-view-page .add-to-cart-btn {
     width: 100%;
     text-align: left;
+}
+
+#product-view-page .add-to-cart-btn.pre-order {
+    width: auto;
+    text-align: center;
+    padding-left: 20px!important;
+    padding-right: 20px!important;
 }
 
 @media (max-width: 767px) {

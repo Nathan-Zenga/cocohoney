@@ -4,29 +4,33 @@ const { each } = require('async');
 const isAuthed = require('../modules/auth-check-admin');
 const { Product } = require('../models/models');
 
-router.get('/:category/collection/:product_collection', (req, res, next) => {
+router.get('/:category/collection/:product_collection', async (req, res, next) => {
     const { category, product_collection } = req.params;
     if (!category || !product_collection) return next();
-    const coll = { $regex: RegExp(`^${product_collection.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
-    Product.find({ category, product_collection: coll }).sort({ _id: -1 }).exec((err, collection) => {
-        if (!collection.length) return next();
-        const title = collection[0].product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
-        res.render('product-collection', { title, pagename: "lash-collection", collection });
-    })
+    const coll = RegExp(`^${product_collection.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi");
+    const collection = await Product.find({ category, product_collection: coll }).sort({ _id: -1 }).exec();
+    if (!collection.length) return next();
+    const title = collection[0].product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ") + " Collection";
+    res.render('product-collection', { title, pagename: "lash-collection", collection });
 });
 
-router.get('/:category/:name', (req, res, next) => {
-    const category = { $regex: RegExp(`^${req.params.category.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
-    const name = { $regex: RegExp(`^${req.params.name.replace(/[_+]/g, " ")}$`, "i") };
-    Product.findOne({ category, name }, (err, product) => {
-        if (err || !product) return next();
-        res.render('product-view', { title: product.name, pagename: "product-view", product });
-    })
+router.get('/lipsticks-lipliners', async (req, res) => {
+    const products = await Product.find({ category: /(lipsticks|lipliners)/ }).sort({ _id: -1 }).exec();
+    res.render('product-collection', { title: "Lipsticks & Lipliners", pagename: "lipsticks-lipliners", collection: products });
+});
+
+router.get('/:category/:name', async (req, res, next) => {
+    const { name: n, category: ctg } = req.params;
+    const category = RegExp(`^${ ctg.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]") }$`, "gi");
+    const name = RegExp(`^${ n.replace(/[_+]/g, " ") }$`, "i");
+    const product = await Product.findOne({ category, name });
+    if (!product) return next();
+    res.render('product-view', { title: product.name, pagename: "product-view", product });
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
-    const product = new Product({ name, price, price_amb, category, product_collection, stock_qty, info });
+    const { name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
+    const product = new Product({ name, price, price_amb, category, product_collection, stock_qty, info, pre_release });
     if (!image_url && !image_file) return product.save(() => res.send("Product saved in stock"));
 
     const public_id = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -38,7 +42,7 @@ router.post('/stock/add', isAuthed, (req, res) => {
 });
 
 router.post('/stock/edit', isAuthed, (req, res) => {
-    const { id, name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url } = req.body;
+    const { id, name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
     Product.findById(id, (err, product) => {
         if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
 
@@ -49,6 +53,7 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         if (category)           product.category = category;
         if (product_collection) product.product_collection = product_collection;
         if (stock_qty)          product.stock_qty = stock_qty;
+        if (pre_release)        product.pre_release = pre_release;
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");

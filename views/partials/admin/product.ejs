@@ -8,6 +8,10 @@
 <div class="tab-content" style="padding-top: 10px;">
     <div id="new-product" class="new-form-tab tab-pane fade in active">
         <form method="post" action="/product/stock/add">
+            <div class="input-checkbox" style="margin-bottom: 2em">
+                <input type="checkbox" name="pre_release" id="pre_release" value="true"> <span>TO PRE-ORDER?</span>
+            </div>
+
             <label>PRODUCT NAME</label>
             <input type="text" name="name" id="product_name" required>
 
@@ -32,6 +36,8 @@
                 <option value="">Select category</option>
                 <option value="lashes">Lashes</option>
                 <option value="palettes">Palette</option>
+                <option value="lipsticks">Lipstick</option>
+                <option value="lipliners">Lip Liner</option>
             </select>
 
             <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
@@ -71,33 +77,39 @@
                 <%_ }) _%>
             </select>
 
+            <div class="input-checkbox" style="margin-bottom: 2em">
+                <input type="checkbox" name="pre_release" id="pre_release_edit" value="true"> <span>TO PRE-ORDER?</span>
+            </div>
+
             <label>PRODUCT NAME</label>
-            <input type="text" name="name" id="product_name_edit" required>
+            <input type="text" name="name" id="product_name_edit">
 
             <fieldset>
                 <div class="row">
                     <div class="col-sm-6">
                         <label>PRICE (£)</label>
-                        <input type="number" name="price" id="price_edit" min="0.01" step="0.01" required>
+                        <input type="number" name="price" id="price_edit" min="0.01" step="0.01">
                     </div>
                     <div class="col-sm-6">
                         <label>AMBASSADORS' PRICE (£)</label>
-                        <input type="number" name="price_amb" id="price_amb_edit" min="0.01" step="0.01" required>
+                        <input type="number" name="price_amb" id="price_amb_edit" min="0.01" step="0.01">
                     </div>
                 </div>
             </fieldset>
 
             <label>TOTAL IN STOCK</label>
-            <input type="number" name="stock_qty" id="stock_qty_edit" min="0" value="1" required>
+            <input type="number" name="stock_qty" id="stock_qty_edit" min="0" value="1">
 
             <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
-            <select name="category" id="product_category_edit" required>
+            <select name="category" id="product_category_edit">
                 <option value="">Select category</option>
                 <option value="lashes">Lashes</option>
                 <option value="palettes">Palette</option>
+                <option value="lipsticks">Lipstick</option>
+                <option value="lipliners">Lip Liner</option>
             </select>
 
-            <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+            <label>COLLECTION<i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="product_collection" id="product_collection_edit">
                 <option value="">Select collection</option>
                 <option value="Original">Original</option>
@@ -105,7 +117,7 @@
                 <option value="Emerald">Emerald</option>
             </select>
 
-            <label>PRODUCT INFO <span>(OPTIONAL)</span></label>
+            <label>PRODUCT INFO</label>
             <textarea name="info" id="product_info_edit" rows="10"></textarea>
 
             <label>PRODUCT IMAGE</label>
@@ -120,7 +132,7 @@
                 </div>
             </fieldset>
 
-            <input type="submit" value="SAVE">
+            <input type="submit" value="UPDATE">
         </form>
     </div>
 

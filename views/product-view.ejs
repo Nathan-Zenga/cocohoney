@@ -29,10 +29,14 @@
                         <button type="button" class="quantity-control-btn" data-step="1">+</button>
                     </div>
                     <input type="hidden" name="id" value="<%- product.id %>">
+                    <%_ if (product.pre_release) { _%>
+                    <button class="add-to-cart-btn pre-order">PRE-ORDER</button>
+                    <%_ } else { _%>
                     <button class="add-to-cart-btn">
                         <i class="icon fal fa-cart-arrow-down" style=""></i>
                         <span class="dt-view" style="font-size: .75em;">ADD TO CART</span>
                     </button>
+                    <%_ } _%>
                 </form>
                 <%_ } else { _%>
                 <div class="sold-out-label">SOLD OUT</div>

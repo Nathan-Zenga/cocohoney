@@ -13,10 +13,11 @@ module.exports.Product = model('Product', Schema({
     price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     image: { p_id: String, url: String },
-    category: { type: String, enum: ["lashes", "palettes"] },
+    category: { type: String, enum: ["lashes", "palettes", "lipsticks", "lipliners"] },
     info: { type: String, default: "" },
     product_collection: { type: String, default: "" },
-    stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] }
+    stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] },
+    pre_release: { type: Boolean, default: false }
 }));
 
 module.exports.Member = model('Member', Schema({
