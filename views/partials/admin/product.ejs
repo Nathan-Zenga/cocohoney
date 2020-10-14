@@ -142,8 +142,9 @@
             <label>DELETE PRODUCT(S) FROM STOCK</label><br><br>
             <%_ products.forEach((item, i) => {
                 var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
-                product_collection = product_collection ? product_collection + " Collection" : "Others"; _%>
-            <%- item.product_collection !== (products[i-1] || {}).product_collection ? '<div style="margin: .5em 0">'+product_collection+'</div>' : '' %>
+                var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+                var group = product_collection ? product_collection + " Collection" : category ? category : "Others"; _%>
+            <%- (item.product_collection || item.category) !== ((products[i-1] || {}).product_collection || (products[i-1] || {}).category) ? '<div style="margin: .5em 0">'+group+'</div>' : '' %>
             <div class="input-checkbox">
                 <input type="checkbox" name="product<%= i %>" value="<%= item._id %>"> <span><%= item.name %></span>
             </div>
