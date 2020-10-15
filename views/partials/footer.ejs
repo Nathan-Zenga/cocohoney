@@ -27,11 +27,11 @@
                 </div>
             </div>
             <div class="row" id="copyright">
-                <div class="col-sm-12">&copy; <%= new Date().getFullYear() %> COCOHONEY COSMETICS</div>
+                <div class="col-sm-12">&copy; <%= new Date().getFullYear() %> COCOHONEY COSMETICS LTD.</div>
             </div>
         </div>
     </footer>
-    <%_ if (production && location_origin === "https://cocohoneycosmetics.com") { _%>
+    <%_ if (production && location_origin === "https://cocohoneycosmetics.com" && !/admin/gi.test(url) && !is_admin) { _%>
     <!-- Default Statcounter code for Cocohoney Cosmetics
     website https://cocohoneycosmetics.com -->
     <script type="text/javascript">
