@@ -44,7 +44,9 @@ router.post('/stock/add', isAuthed, (req, res) => {
 router.post('/stock/edit', isAuthed, (req, res) => {
     const { id, name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
     Product.findById(id, (err, product) => {
-        if (err || !product) return res.status(err ? 500 : 404).send(err ? err.message || "Error occurred" : "Product not found");
+        if (err) return res.status(500).send(err.message || "Error occurred");
+        if (!product) return res.status(404).send("Product not found");
+        const p_id_prev = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
 
         if (name)               product.name = name;
         if (price)              product.price = price;
@@ -59,10 +61,12 @@ router.post('/stock/edit', isAuthed, (req, res) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
             if (!image_url && !image_file) return res.send("Product details updated successfully");
             const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
-            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                if (err) return res.status(500).send(err.message);
-                saved.image = { p_id: result.public_id, url: result.secure_url };
-                saved.save(() => { res.send("Product details updated successfully") });
+            cloud.api.delete_resources([p_id_prev], () => {
+                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                    if (err) return res.status(500).send(err.message);
+                    saved.image = { p_id: result.public_id, url: result.secure_url };
+                    saved.save(() => { res.send("Product details updated successfully") });
+                });
             });
         });
     })
