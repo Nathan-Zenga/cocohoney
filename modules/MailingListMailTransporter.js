@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
+const e = require('express');
 const { OAuth2 } = require("googleapis").google.auth;
 const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV } = process.env;
 
@@ -8,12 +9,14 @@ class MailingListMailTransporter {
     #req; #res; #member; #members; #user; #pass; #getTransportOpts;
 
     /**
-     * @param {RouteHandlerParams} routeHandlerParams route handler parameters, containing request and response objects
-     * @param {(mongoose.Document | mongoose.Document[])} member existing mailing list member(s)
+     * @param {object} routerParams route handler parameters, containing request and response objects
+     * @param {e.Request} routerParams.req request object
+     * @param {e.Response} routerParams.res response object
+     * @param {(mongoose.Document | mongoose.Document[])} member recipient or existing mailing list member(s)
      */
-    constructor(routeHandlerParams, member) {
-        this.#req = routeHandlerParams.req;
-        this.#res = routeHandlerParams.res;
+    constructor(routerParams, member) {
+        this.#req = routerParams.req;
+        this.#res = routerParams.res;
         this.#member = !Array.isArray(member) ? member : null;
         this.#members = Array.isArray(member) ? member : [];
         const oauth2Client = new OAuth2( OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, "https://developers.google.com/oauthplayground" );
@@ -66,26 +69,25 @@ class MailingListMailTransporter {
         this.#getTransportOpts((err, options) => {
             if (err) return cb(err.message || err);
             this.#res.render('templates/mail', { message, member: this.#member }, (err, html) => {
-                let attachments = [{ path: 'public/img/chc-logo.jpg', cid: 'logo' }];
+                if (err) return cb(err.message);
                 nodemailer.createTransport(options).sendMail({
                     from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
                     to: this.#member ? this.#member.email : this.#members.map(m => m.email),
                     subject,
-                    html,
-                    attachments
+                    html
                 }, cb);
             })
         });
     };
 
-    /** @param {mongoose.Document} member existing mailing list member */
+    /** @param {mongoose.Document} member recipient or existing mailing list member */
     setRecipient(member) {
         this.#members = [];
         this.#member = member;
         return this
     };
 
-    /** @param {mongoose.Document[]} members existing mailing list member */
+    /** @param {mongoose.Document[]} members recipients or existing mailing list members */
     setRecipients(members) {
         this.#member = null;
         this.#members = members;
