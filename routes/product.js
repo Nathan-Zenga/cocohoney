@@ -53,7 +53,7 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         if (category)           product.category = category;
         if (product_collection) product.product_collection = product_collection;
         if (stock_qty)          product.stock_qty = stock_qty;
-        if (pre_release)        product.pre_release = pre_release;
+                                product.pre_release = !!pre_release;
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
