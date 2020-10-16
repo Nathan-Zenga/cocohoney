@@ -77,7 +77,7 @@ router.post("/create-payment", async (req, res) => {
                     shipping_discount: `-${(discount_rate / 100).toFixed(2)}`
                 }
             },
-            description: "Cocohoney Cosmetics Online Store Purchase" + dc_doc ? `- ${dc_doc.percentage}% off (${dc_doc.code})` : ""
+            description: "Cocohoney Cosmetics Online Store Purchase"
         }]
     }, (err, payment) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
