@@ -9,7 +9,7 @@ router.get('/:name', (req, res, next) => {
     const name = { $regex: RegExp(`^${req.params.name.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
     Box.findOne({ name }, (err, box) => {
         if (!box) return next();
-        Product.find().sort({ product_collection: -1 }).exec((err, products) => {
+        Product.find({ category: { $in: box.products_applied } }).sort({ product_collection: -1, category: 1, _id: -1 }).exec((err, products) => {
             res.render('box-deal', { title: `${box.name} Box`, pagename: "box-deal", box, products })
         })
     })
@@ -57,8 +57,9 @@ router.post("/cart/add", (req, res) => {
 });
 
 router.post('/box/add', isAuthed, (req, res) => {
-    const { name, price, info, max_items, image_file, image_url } = req.body;
+    const { name, price, info, max_items, image_file, image_url, products_applied } = req.body;
     const box = new Box({ name, price, info, max_items });
+    box.products_applied = Array.isArray(products_applied) ? products_applied : [products_applied];
     if (!image_file && !image_url) return box.save(err => res.send("Box deal saved"));
 
     const public_id = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -70,16 +71,17 @@ router.post('/box/add', isAuthed, (req, res) => {
 });
 
 router.post('/box/edit', isAuthed, (req, res) => {
-    const { id, name, price, info, max_items, image_file, image_url } = req.body;
+    const { id, name, price, info, max_items, image_file, image_url, products_applied } = req.body;
     Box.findById(id, (err, box) => {
         if (err) return res.status(500).send(err.message);
         if (!box) return res.status(404).send("Box deal not found");
         const p_id_prev = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
 
         if (name) box.name = name;
-        if (price) box.price = price;
-        if (info) box.info = info;
+        if (price)     box.price = price;
+        if (info)      box.info = info;
         if (max_items) box.max_items = max_items;
+                       box.products_applied = Array.isArray(products_applied) ? products_applied : [products_applied];
 
         box.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");

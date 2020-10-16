@@ -19,6 +19,19 @@
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="box_info" rows="10"></textarea>
 
+            <label>PRODUCTS THIS DEAL APPLIES TO</label>
+            <%_ var props = [
+                { value: "lashes", type: "Lashes" },
+                { value: "palettes", type: "Palettes" },
+                { value: "lipsticks", type: "Lipsticks" },
+                { value: "lipliners", type: "Lip Liners" }
+            ]; props.forEach(prop => { _%>
+            <div class="input-checkbox" style="margin: .5em 0">
+                <input type="checkbox" class="box_products_applied" name="products_applied" value="<%= prop.value %>"> <span><%= prop.type %></span></input>
+            </div>
+            <%_ }) _%>
+            <br><br>
+
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
@@ -56,6 +69,14 @@
 
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="box_info_edit" rows="10"></textarea>
+
+            <label>PRODUCTS THIS DEAL APPLIES TO</label>
+            <%_ props.forEach(prop => { _%>
+            <div class="input-checkbox" style="margin: .5em 0">
+                <input type="checkbox" class="box_products_applied_edit" name="products_applied" value="<%= prop.value %>"> <span><%= prop.type %></span></input>
+            </div>
+            <%_ }) _%>
+            <br><br>
 
             <label>IMAGE</label>
             <fieldset class="file-upload-container">

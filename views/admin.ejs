@@ -138,6 +138,10 @@
                 $form.find("#box_price_edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
                 $form.find("#box_max_items_edit").val(result.max_items);
                 $form.find("#box_info_edit").val(result.info);
+                $form.find(".box_products_applied_edit").each(function() {
+                    var checked = (result.products_applied || []).includes($(this).prop("value"));
+                    $(this).prop("checked", checked)
+                });
 
                 $form.find("#overview_image_url_edit").val(result.url);
             });
