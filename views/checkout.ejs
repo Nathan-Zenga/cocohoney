@@ -3,23 +3,23 @@
     <div id="payment-form-container" style="margin-top: 2em">
         <div class="content container">
             <form id="payment-form">
+                <%_ const firstname = user && !is_admin ? user.firstname : "";
+                    const lastname = user && !is_admin ? user.lastname : "";
+                    const email = user && !is_admin ? user.email : ""; _%>
                 <fieldset>
                     <div class="row">
                         <div class="col-sm-6">
                             <label for="firstname">FIRST NAME</label>
-                            <%_ const firstname_val = user && !is_admin ? `value="${user.firstname}"` : '' _%>
-                            <input type="text" name="firstname" <%- firstname_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
+                            <input type="text" name="firstname" value="<%- firstname %>" required>
                         </div>
                         <div class="col-sm-6">
                             <label for="lastname">LAST NAME</label>
-                            <%_ const lastname_val = user && !is_admin ? `value="${user.lastname}"` : '' _%>
-                            <input type="text" name="lastname" <%- lastname_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
+                            <input type="text" name="lastname" value="<%- lastname %>" required>
                         </div>
                     </div>
                 </fieldset>
                 <label for="email">EMAIL</label>
-                <%_ const email_val = user && !is_admin ? `value="${user.email}"` : '' _%>
-                <input type="email" name="email" <%- email_val %> <%- !!user && !is_admin ? "disabled" : "" %> required>
+                <input type="email" name="email" value="<%= email %>" required>
                 <label for="address_l1">ADDRESS</label>
                 <input type="text" name="address_l1" placeholder="LINE 1" required>
                 <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
