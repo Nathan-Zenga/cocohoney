@@ -29,20 +29,23 @@ router.post("/session/create", async (req, res) => {
         if (price_total < 4000) field_check.shipping_method = shipping_method_id;
         const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
         const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
-        if (missing_fields.length) { res.status(400); throw Error(`Missing fields: ${missing_fields.join(", ")}`) }
-        if (!email_pattern.test(email)) { res.status(400); throw Error("Invalid email format") }
-        if (is_ambassador && discount_code) { res.status(404); throw Error("This discount code cannot be used as you are an ambassador") }
+        if (missing_fields.length) throw { status: 400, msg: `Missing fields: ${missing_fields.join(", ")}` }
+        if (!email_pattern.test(email)) throw { status: 400, msg: "Invalid email format" }
+        if (is_ambassador && discount_code) throw { status: 400, msg: "Discount code cannot be applied as you are an ambassador" }
 
         var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
-        if (!dc_doc && discount_code) { res.status(404); throw Error("Discount code invalid or expired") }
-        if (dc_doc && dc_doc.max_reached) { res.status(400); throw Error("This discount code can no longer be applied") }
-        if (!shipping_method) { res.status(404); throw Error("Invalid shipping fee chosen") }
-        let outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
-        if (outside_range) { res.status(403); throw Error("Shipping method not available for your country") }
+        if (!dc_doc && discount_code) throw { status: 404, msg: "Discount code invalid or expired" }
+        if (!shipping_method) throw { status: 404, msg: "Invalid shipping fee chosen" }
+
+        const orders = await Order.find({ _id: { $in: (dc_doc || {}).orders_applied || [] } });
+        const dc_used = orders.find(order => email === order.customer_email);
+        if (dc_used) throw { status: 400, msg: "You have already used this discount code" }
+
+        const outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
+        if (outside_range) throw { status: 403, msg: "Shipping method not available for your country" }
     } catch (err) {
-        if (res.statusCode === 200) res.status(500);
-        return res.send(err.message);
+        return res.status(err.status).send(err.msg);
     };
 
     try {
@@ -98,14 +101,13 @@ router.post("/session/create", async (req, res) => {
 
         req.session.checkout_session = session;
         req.session.current_dc_doc = dc_doc;
-        req.session.customer = customer;
         req.session.shipping_method = shipping_method;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.log(err); res.status(400).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, customer, cart, current_dc_doc, shipping_method } = req.session;
+    const { checkout_session, cart, current_dc_doc, shipping_method } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
     const purchase_summary = cart.map(item => {
@@ -114,8 +116,8 @@ router.get("/session/complete", async (req, res) => {
     }).join("\n");
 
     try {
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
-        const customer_found = await Stripe.customers.retrieve(customer.id);
+        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
+        const { customer } = session;
 
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
@@ -124,10 +126,10 @@ router.get("/session/complete", async (req, res) => {
         });
 
         const order = new Order({
-            customer_name: customer_found.name,
-            customer_email: customer_found.email,
+            customer_name: customer.name,
+            customer_email: customer.email,
             shipping_method: shipping_method.name,
-            destination: customer_found.shipping.address,
+            destination: customer.shipping.address,
             cart
         });
 
@@ -156,16 +158,16 @@ router.get("/session/complete", async (req, res) => {
         if (dc_doc) {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
-            dc_doc.save();
+            if (production) dc_doc.save();
             req.session.current_dc_doc = undefined;
         }
 
-        order.save();
+        if (production) order.save();
 
         const transporter = new MailingListMailTransporter({ req, res });
-        transporter.setRecipient({ email: customer_found.email }).sendMail({
+        transporter.setRecipient({ email: customer.email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
-            message: `Hi ${customer_found.name},\n\n` +
+            message: `Hi ${customer.name},\n\n` +
             "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
             `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
             "Click below to view further details about this order:\n\n" +
@@ -199,20 +201,18 @@ router.get("/session/complete", async (req, res) => {
 });
 
 router.get("/cancel", async (req, res) => {
-    const { customer, checkout_session } = req.session;
+    const { checkout_session } = req.session;
     try {
-        if (customer && checkout_session) {
-            const session = await Stripe.checkout.sessions.retrieve(checkout_session.id);
-            const pi = await Stripe.paymentIntents.retrieve(session.payment_intent);
-            if (session.payment_status != "paid") await Stripe.customers.del(customer.id);
+        if (checkout_session) {
+            const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer", "payment_intent"] });
+            const { customer, payment_intent: pi } = session;
+            if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
             if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
         }
     } catch(err) {}
     req.session.checkout_session = undefined;
     req.session.current_dc_doc = undefined;
-    req.session.customer = undefined;
     req.session.shipping_method = undefined;
-    req.session.transaction = undefined;
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
