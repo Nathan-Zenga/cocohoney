@@ -1,8 +1,6 @@
 const router = require('express').Router();
-const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method } = require('../models/models');
-const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size));
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
@@ -30,11 +28,12 @@ router.get('/order/:id', async (req, res, next) => {
     res.render('orders', { title: "Order " + order.id, pagename: "orders", order, shipping_method })
 });
 
-router.post('/contact/mail/send', isAuthed, (req, res) => {
+router.post('/contact/mail/send', (req, res) => {
     const { firstname, lastname, email, message } = req.body;
     const transporter = new MailingListMailTransporter({ req, res }, { email: req.session.admin_email });
-    const mail = { subject: "New message / enquiry", message: `New message from ${firstname} ${lastname} (${email}):\n\n${message}` };
-    transporter.sendMail(mail, err => {
+    const subject = "New message / enquiry";
+    const msg = `New message from ${firstname} ${lastname} (${email}):\n\n${message}`;
+    transporter.sendMail({ subject, message: msg }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("Email sent");
     });
