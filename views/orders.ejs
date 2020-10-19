@@ -51,7 +51,7 @@
 
                 <h2>
                     TOTAL:
-                    <%_ const sum = order.cart.map(item => item.price).reduce((sum, item) => sum + item);
+                    <%_ const sum = order.cart.map(item => ({ price: item.price, qty: item.qty })).reduce((sum, item) => sum + (item.price * item.qty), 0);
                         const method = shipping_method ? shipping_method : { name: "Free", fee: 0 } _%>
                     <b>£<%= (sum > 1 ? sum / 100 : 0).toFixed(2) %></b><br><br>
                     <small style="color: inherit;">+ £<%= (method.fee > 1 ? method.fee / 100 : 0).toFixed(2) %> (<%= method.name %>)</small>
