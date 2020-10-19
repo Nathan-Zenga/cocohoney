@@ -85,7 +85,6 @@ module.exports.Shipping_method = model('Shipping_method', Schema({
 module.exports.Discount_code = model('Discount_code', Schema({
     code: { type: String, required: true },
     percentage: { type: Number, min: 1, max: 100 },
-    max_use_limit: { type: Number, min: 1, default: 10 },
     orders_applied: [String], // array of order IDs
     expiry_date: { type: Date, required: true }
 }));

@@ -128,20 +128,19 @@ router.post("/search", isAuthed, (req, res) => {
 });
 
 router.post('/discount_code/add', isAuthed, (req, res) => {
-    const { code, percentage, max_use_limit, expiry_date } = req.body;
-    new Discount_code({ code, percentage, max_use_limit, expiry_date }).save(err => {
+    const { code, percentage, expiry_date } = req.body;
+    new Discount_code({ code, percentage, expiry_date }).save(err => {
         if (err) return res.status(500).send(err.message);
         res.send("Discount code added");
     })
 });
 
 router.post('/discount_code/edit', isAuthed, (req, res) => {
-    const { id, code, percentage, max_use_limit, expiry_date } = req.body;
+    const { id, code, percentage, expiry_date } = req.body;
     Discount_code.findById(id, (err, discount_code) => {
         if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
         if (code) discount_code.code = code;
         if (percentage) discount_code.percentage = percentage;
-        if (max_use_limit) discount_code.max_use_limit = max_use_limit;
         if (expiry_date) discount_code.expiry_date = expiry_date;
         discount_code.save(err => {
             if (err) return res.status(500).send(err.message);
