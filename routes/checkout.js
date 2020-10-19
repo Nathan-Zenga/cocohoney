@@ -38,10 +38,6 @@ router.post("/session/create", async (req, res) => {
         if (!dc_doc && discount_code) throw { status: 404, msg: "Discount code invalid or expired" }
         if (!shipping_method) throw { status: 404, msg: "Invalid shipping fee chosen" }
 
-        const orders = await Order.find({ _id: { $in: (dc_doc || {}).orders_applied || [] } });
-        const dc_used = orders.find(order => email === order.customer_email);
-        if (dc_used) throw { status: 400, msg: "You have already used this discount code" }
-
         const outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
         if (outside_range) throw { status: 403, msg: "Shipping method not available for your country" }
     } catch (err) {
