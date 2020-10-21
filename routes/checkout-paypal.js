@@ -91,7 +91,7 @@ router.get("/complete", async (req, res) => {
     const { cart, current_dc_doc, transaction, shipping_method } = req.session;
     const { user } = res.locals;
     const products = await Product.find();
-    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc.id) : null;
+    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
