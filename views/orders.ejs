@@ -4,7 +4,7 @@
             <div class="order">
                 <h1>ORDER <span># <%- order.id %></span></h1>
                 <div class="row" id="header-summary">
-                    <div class="col-sm-6">
+                    <div class="col-sm-<%= dc_used ? '4 col-xs-6' : 6 %>">
                         <p>Date of purchase</p>
                         <%_ const day = order.created_at.getDate(); _%>
                         <%_ const month = order.created_at.getMonth() + 1; _%>
@@ -12,7 +12,13 @@
                         <%_ const order_date = `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` _%>
                         <p><b><%- order_date %></b></p>
                     </div>
-                    <div class="col-sm-6" id="tracking-ref">
+                    <%_ if (dc_used) { _%>
+                    <div class="col-sm-4 col-xs-6 col-sm-push-4">
+                        <p>Discount code</p>
+                        <p><b><%= dc_used.code %></b><br><%= dc_used.percentage %>% off</p>
+                    </div>
+                    <%_ } _%>
+                    <div class="col-sm-<%= dc_used ? '4 col-sm-pull-4' : 6 %>" id="tracking-ref">
                         <%_ if (!order.tracking_ref) {
                             if (is_admin) { _%>
                         <a href="/shipping/tracking/ref/send?id=<%- order.id %>">

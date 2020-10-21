@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { FAQ, Review, Overview_image, Order, Shipping_method } = require('../models/models');
+const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code } = require('../models/models');
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
@@ -25,7 +25,8 @@ router.get('/order/:id', async (req, res, next) => {
     const order = await Order.findById(id);
     if (!order) return next();
     const shipping_method = await Shipping_method.findOne({ name: order.shipping_method });
-    res.render('orders', { title: "Order " + order.id, pagename: "orders", order, shipping_method })
+    const dc_used = await Discount_code.findOne({ orders_applied: { $all: [order.id] } });
+    res.render('orders', { title: "Order " + order.id, pagename: "orders", order, shipping_method, dc_used })
 });
 
 router.post('/contact/mail/send', (req, res) => {
