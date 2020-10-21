@@ -33,7 +33,7 @@
                     <div class="panel-heading">
                         <h2 class="panel-title collapsed" data-toggle="collapse" data-target="#collapse<%= i %>">
                             <i class="fal fa-chevron-down dropdown-arrow" style="margin-right: 5px;"></i>
-                            <%= field.collection ? field.collection + " Collection" : field.category.charAt(0).toUpperCase() + field.category.slice(1) %>
+                            <%= field.collection ? field.collection + " Collection" : field.category.charAt(0).toUpperCase() + field.category.slice(1).replace(/_/g, " ") %>
                         </h2>
                     </div>
                     <div id="collapse<%= i %>" class="panel-collapse collapse">
