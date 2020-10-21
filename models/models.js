@@ -23,7 +23,7 @@ module.exports.Product = model('Product', Schema({
 module.exports.Member = model('Member', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     image: { p_id: String, url: String },
     phone_number: {
@@ -102,7 +102,7 @@ module.exports.Order = model('Order', Schema({
 module.exports.Ambassador = model('Ambassador', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
     phone_number: {
         type: String,
         validate: {
