@@ -1711,3 +1711,7 @@ input.product-quantity:disabled {
         margin-top: 1em;
     }
 }
+
+#product.tab-pane form .new-product-category {
+    display: none;
+}

@@ -34,11 +34,17 @@
             <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="category" id="product_category" required>
                 <option value="">Select category</option>
-                <option value="lashes">Lashes</option>
-                <option value="palettes">Palette</option>
-                <option value="lipsticks">Lipstick</option>
-                <option value="lipliners">Lip Liner</option>
+                <option value="new">Make new type</option>
+                <%_ const categories = [...new Set(products.map(p => p.category))];
+                    categories.forEach(c => { _%>
+                <option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option>
+                <%_ }) _%>
             </select>
+
+            <div class="new-product-category">
+                <label>NEW PRODUCT TYPE</label>
+                <input type="text" name="category_new" id="product_category_new" disabled required>
+            </div>
 
             <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="product_collection" id="product_collection">
@@ -103,11 +109,16 @@
             <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="category" id="product_category_edit">
                 <option value="">Select category</option>
-                <option value="lashes">Lashes</option>
-                <option value="palettes">Palette</option>
-                <option value="lipsticks">Lipstick</option>
-                <option value="lipliners">Lip Liner</option>
+                <option value="new">Make new type</option>
+                <%_ categories.forEach(c => { _%>
+                <option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option>
+                <%_ }) _%>
             </select>
+
+            <div class="new-product-category">
+                <label>NEW PRODUCT TYPE</label>
+                <input type="text" name="category_new" id="product_category_new_edit" disabled required>
+            </div>
 
             <label>COLLECTION<i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="product_collection" id="product_collection_edit">
@@ -190,3 +201,11 @@
         <%_ } _%>
     </div>
 </div>
+
+<script>
+    $("#product.tab-pane select").change(function() {
+        var isNew = this.value === "new";
+        var method = isNew ? "show" : "hide";
+        $(this).closest("form").find(".new-product-category")[method]().find(":input").attr("disabled", !isNew);
+    });
+</script>

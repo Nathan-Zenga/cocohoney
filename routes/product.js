@@ -29,8 +29,9 @@ router.get('/:category/:name', async (req, res, next) => {
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
-    const { name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
-    const product = new Product({ name, price, price_amb, category, product_collection, stock_qty, info, pre_release });
+    const { name, price, price_amb, category, category_new, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
+    const product = new Product({ name, price, price_amb, product_collection, stock_qty, info, pre_release });
+    product.category = category_new || category;
     if (!image_url && !image_file) return product.save(() => res.send("Product saved in stock"));
 
     const public_id = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -42,20 +43,20 @@ router.post('/stock/add', isAuthed, (req, res) => {
 });
 
 router.post('/stock/edit', isAuthed, (req, res) => {
-    const { id, name, price, price_amb, category, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
+    const { id, name, price, price_amb, category, category_new, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
     Product.findById(id, (err, product) => {
         if (err) return res.status(500).send(err.message || "Error occurred");
         if (!product) return res.status(404).send("Product not found");
         const p_id_prev = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
 
-        if (name)               product.name = name;
-        if (price)              product.price = price;
-        if (price_amb)          product.price_amb = price_amb;
-        if (info)               product.info = info;
-        if (category)           product.category = category;
-        if (product_collection) product.product_collection = product_collection;
-        if (stock_qty)          product.stock_qty = stock_qty;
-                                product.pre_release = !!pre_release;
+        if (name)                     product.name = name;
+        if (price)                    product.price = price;
+        if (price_amb)                product.price_amb = price_amb;
+        if (info)                     product.info = info;
+        if (category_new || category) product.category = category_new || category;
+        if (product_collection)       product.product_collection = product_collection;
+        if (stock_qty)                product.stock_qty = stock_qty;
+                                      product.pre_release = !!pre_release;
 
         product.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");

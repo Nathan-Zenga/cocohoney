@@ -13,7 +13,7 @@ module.exports.Product = model('Product', Schema({
     price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     image: { p_id: String, url: String },
-    category: { type: String, enum: ["lashes", "palettes", "lipsticks", "lipliners"] },
+    category: { type: String, set: v => v.toLowerCase().replace(/ /g, "_") },
     info: { type: String, default: "" },
     product_collection: { type: String, default: "" },
     stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] },
@@ -153,7 +153,7 @@ module.exports.Box = model('Box', Schema({
     info: String,
     max_items: { type: Number, min: 1 },
     image: { p_id: String, url: String },
-    products_applied: [{ type: String, enum: ["lashes", "palettes", "lipsticks", "lipliners"] }],
+    products_applied: [{ type: String, set: v => v.toLowerCase().replace(/ /g, "_") }],
     products_inc: [String] // array of product IDs
 }));
 
