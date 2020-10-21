@@ -14,18 +14,21 @@ router.get('/:category/collection/:product_collection', async (req, res, next) =
     res.render('product-collection', { title, pagename: "lash-collection", collection });
 });
 
-router.get('/lipsticks-lipliners', async (req, res) => {
-    const products = await Product.find({ category: /(lipsticks|lipliners)/ }).sort({ _id: -1 }).exec();
-    res.render('product-collection', { title: "Lipsticks & Lipliners", pagename: "lipsticks-lipliners", collection: products });
-});
-
-router.get('/:category/:name', async (req, res, next) => {
+router.get('/:category/:name?', async (req, res, next) => {
     const { name: n, category: ctg } = req.params;
+    if (!n) return next();
     const category = RegExp(`^${ ctg.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]") }$`, "gi");
     const name = RegExp(`^${ n.replace(/[_+]/g, " ") }$`, "i");
     const product = await Product.findOne({ category, name });
     if (!product) return next();
     res.render('product-view', { title: product.name, pagename: "product-view", product });
+}, async (req, res, next) => {
+    const { category } = req.params;
+    if (!category) return next();
+    const products = await Product.find({ category }).sort({ _id: -1 }).exec();
+    if (!products.length) return next();
+    const title = products[0].category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+    res.render('product-collection', { title, pagename: category, collection: products });
 });
 
 router.post('/stock/add', isAuthed, (req, res) => {
