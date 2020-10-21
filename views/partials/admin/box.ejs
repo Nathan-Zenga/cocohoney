@@ -161,5 +161,8 @@
 <script>
     $(".box_item_all").change(function() {
         $(this).closest(".tab-pane").find(".box_item, .box_item_edit").prop("checked", this.checked);
-    })
+    });
+    $(".box_item, .box_item_edit").change(function() {
+        $(this).closest(".tab-pane").find(".box_item_all").prop("checked", false);
+    });
 </script>
