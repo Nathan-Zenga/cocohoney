@@ -25,14 +25,15 @@
 
         <div class="container" style="padding-left: 0; padding-right: 0;">
             <form class="panel-group minimal" action="/deal/cart/add">
-                <%_ var groups = products.map(p => p.product_collection || p.category);
-                    products.forEach((product, i, arr) => {
-                    if (groups[i] && (i === 0 || groups[i] !== groups[i-1])) { _%>
+                <%_ var collections = [...new Set(products.filter(p => p.product_collection).map(p => p.product_collection))].map(c => ({ collection: c }));
+                    var categories = [...new Set(products.filter(p => !p.product_collection).map(p => p.category))].map(c => ({ category: c }));
+                    const groups = [...collections, ...categories];
+                    groups.forEach((field, i) => { _%>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h2 class="panel-title collapsed" data-toggle="collapse" data-target="#collapse<%= i %>">
                             <i class="fal fa-chevron-down dropdown-arrow" style="margin-right: 5px;"></i>
-                            <%= product.product_collection ? product.product_collection + " Collection" : product.category.charAt(0).toUpperCase() + product.category.slice(1) %>
+                            <%= field.collection ? field.collection + " Collection" : field.category.charAt(0).toUpperCase() + field.category.slice(1) %>
                         </h2>
                     </div>
                     <div id="collapse<%= i %>" class="panel-collapse collapse">
@@ -40,7 +41,7 @@
                             <div class="thumb-container">
                                 <div class="container">
                                     <div class="row">
-                                        <%_ products.filter(p => p.product_collection ? p.product_collection === product.product_collection : p.category === product.category).forEach(p => { _%>
+                                        <%_ products.filter(p => field.collection ? field.collection === p.product_collection : field.category === p.category).forEach(p => { _%>
                                         <div class="thumb col-md-3 col-sm-4">
                                             <div class="thumb-inner">
                                                 <div class="thumb-img product-image" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
@@ -67,7 +68,7 @@
                         </div>
                     </div>
                 </div>
-                <%_ }}) _%>
+                <%_ }) _%>
                 <br>
                 <input type="hidden" name="box_id" value="<%= box.id %>" required>
                 <input type="submit" id="submit-btn" value="ADD TO CART">

@@ -4,15 +4,13 @@ const { each } = require('async');
 const isAuthed = require('../modules/auth-check-admin');
 const { Box, Product } = require('../models/models');
 
-router.get('/:name', (req, res, next) => {
+router.get('/:name', async (req, res, next) => {
     if (!req.params.name) return next();
     const name = { $regex: RegExp(`^${req.params.name.replace(/[\_\+\- ]/g, "[\\\_\\\+\\\- ]")}$`, "gi") };
-    Box.findOne({ name }, (err, box) => {
-        if (!box) return next();
-        Product.find({ category: { $in: box.products_applied } }).sort({ product_collection: -1, category: 1, _id: -1 }).exec((err, products) => {
-            res.render('box-deal', { title: `${box.name} Box`, pagename: "box-deal", box, products })
-        })
-    })
+    const box = await Box.findOne({ name });
+    if (!box) return next();
+    const products = await Product.find({ _id: { $in: box.products_inc } }).sort({ product_collection: -1, category: 1, _id: -1 }).exec();
+    res.render('box-deal', { title: `${box.name} Box`, pagename: "box-deal", box, products })
 });
 
 router.post("/cart/add", (req, res) => {
@@ -24,7 +22,10 @@ router.post("/cart/add", (req, res) => {
     Box.findById(box_id, (err, box) => {
         if (err) return res.status(500).send(err.message);
         if (!box) return res.status(404).send("Box deal does not exist");
-        if (quantities.reduce((sum, i) => sum + parseInt(i), 0) !== box.max_items) return res.status(400).send(`Please choose ${box.max_items} items\nClick the image(s) to choose or re-adjust the quantities`);
+        const item_count = product_ids.length;
+        const quantity_count = quantities.reduce((sum, q) => sum + parseInt(q), 0);
+        const count_not_reached = item_count !== box.max_items && quantity_count !== box.max_items;
+        if (count_not_reached) return res.status(400).send(`Please choose ${box.max_items} items\nClick the image(s) to choose or change the quantities`);
 
         Product.find({ _id: { $in: product_ids }, stock_qty: { $gt: 0 } }, (err, products) => {
             if (err) return res.status(500).send(err.message);
@@ -48,7 +49,7 @@ router.post("/cart/add", (req, res) => {
                 deal_item.items.unshift({ id, name, category, image, info, stock_qty, qty: quantities[i] });
             };
             if (item_qty_excess.min) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is below the minimum limit`);
-            if (item_qty_excess.max) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is over the maximum limit`);
+            if (item_qty_excess.max) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is above the maximum limit`);
 
             cart.unshift(deal_item);
             res.send(`${cart.length}`);
@@ -57,9 +58,12 @@ router.post("/cart/add", (req, res) => {
 });
 
 router.post('/box/add', isAuthed, (req, res) => {
-    const { name, price, info, max_items, image_file, image_url, products_applied } = req.body;
+    const { name, price, info, image_file, image_url, max_items, box_item } = req.body;
     const box = new Box({ name, price, info, max_items });
-    box.products_applied = Array.isArray(products_applied) ? products_applied : [products_applied];
+    const error = box.validateSync();
+    if (error) return res.status(400).send(error.message);
+    if (box_item) res.status(400).send("Please choose which items to include in this deal");
+    box.products_inc = Array.isArray(box_item) ? box_item : [box_item];
     if (!image_file && !image_url) return box.save(err => res.send("Box deal saved"));
 
     const public_id = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
@@ -71,17 +75,17 @@ router.post('/box/add', isAuthed, (req, res) => {
 });
 
 router.post('/box/edit', isAuthed, (req, res) => {
-    const { id, name, price, info, max_items, image_file, image_url, products_applied } = req.body;
+    const { id, name, price, info, image_file, image_url, max_items, box_item } = req.body;
     Box.findById(id, (err, box) => {
         if (err) return res.status(500).send(err.message);
         if (!box) return res.status(404).send("Box deal not found");
         const p_id_prev = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
 
-        if (name) box.name = name;
+        if (name)      box.name = name;
         if (price)     box.price = price;
         if (info)      box.info = info;
         if (max_items) box.max_items = max_items;
-                       box.products_applied = Array.isArray(products_applied) ? products_applied : [products_applied];
+                       box.products_inc = box_item ? Array.isArray(box_item) ? box_item : [box_item] : [];
 
         box.save((err, saved) => {
             if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");

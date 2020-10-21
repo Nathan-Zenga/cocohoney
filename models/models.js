@@ -151,9 +151,10 @@ module.exports.Box = model('Box', Schema({
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     info: String,
-    max_items: Number,
+    max_items: { type: Number, min: 1 },
     image: { p_id: String, url: String },
-    products_applied: [{ type: String, enum: ["lashes", "palettes", "lipsticks", "lipliners"] }]
+    products_applied: [{ type: String, enum: ["lashes", "palettes", "lipsticks", "lipliners"] }],
+    products_inc: [String] // array of product IDs
 }));
 
 module.exports.Review = model('Review', Schema({

@@ -16,21 +16,42 @@
             <label>MAX NUMBER OF ITEMS</label>
             <input type="number" name="max_items" id="box_max_items" min="1" required>
 
+            <label>ITEMS TO INCLUDE</label><br>
+            <%_ const categories = [...new Set(products.map(p => p.category))]; _%>
+            <ul class="nav nav-pills">
+                <%_ categories.forEach((c, i) => {
+                    const c_name = c.charAt(0).toUpperCase() + c.slice(1); _%>
+                <li class="<%= i == 0 ? 'active' : '' %>"><a data-toggle="pill" href="#<%= c %>"><%= c_name %></a></li>
+                <%_ }) _%>
+            </ul>
+            <div class="tab-content" style="padding-top: 10px;">
+                <%_ categories.forEach((c, i) => { _%>
+                <div id="<%= c %>" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
+                    <%_ const filtered = products.filter(p => p.category === c); _%>
+                    <%_ if (filtered.length > 1) { _%>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="input-checkbox">
+                                <input type="checkbox" class="box_item_all" value="true"> <span>Select all</span></input>
+                            </div>
+                        </div>
+                    </div>
+                    <%_ } _%>
+                    <div class="row">
+                        <%_ filtered.forEach(p => { _%>
+                        <div class="col-sm-6">
+                            <div class="input-checkbox">
+                                <input type="checkbox" class="box_item" name="box_item" value="<%= p._id %>"> <span><%= p.name %></span></input>
+                            </div>
+                        </div>
+                        <%_ }) _%>
+                    </div>
+                </div>
+                <%_ }) _%>
+            </div>
+
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="box_info" rows="10"></textarea>
-
-            <label>PRODUCTS THIS DEAL APPLIES TO</label>
-            <%_ var props = [
-                { value: "lashes", type: "Lashes" },
-                { value: "palettes", type: "Palettes" },
-                { value: "lipsticks", type: "Lipsticks" },
-                { value: "lipliners", type: "Lip Liners" }
-            ]; props.forEach(prop => { _%>
-            <div class="input-checkbox" style="margin: .5em 0">
-                <input type="checkbox" class="box_products_applied" name="products_applied" value="<%= prop.value %>"> <span><%= prop.type %></span></input>
-            </div>
-            <%_ }) _%>
-            <br><br>
 
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
@@ -59,24 +80,49 @@
             </select>
 
             <label>NAME</label>
-            <input type="text" name="name" id="box_name_edit" required>
+            <input type="text" name="name" id="box_name_edit">
 
             <label>PRICE (£)</label>
-            <input type="number" name="price" id="box_price_edit" min="0.01" step="0.01" required>
+            <input type="number" name="price" id="box_price_edit" min="0.01" step="0.01">
 
             <label>MAX NUMBER OF ITEMS</label>
-            <input type="number" name="max_items" id="box_max_items_edit" min="1" required>
+            <input type="number" name="max_items" id="box_max_items_edit" min="1">
+
+            <label>ITEMS TO INCLUDE</label><br>
+            <ul class="nav nav-pills">
+                <%_ categories.forEach((c, i) => {
+                    const c_name = c.charAt(0).toUpperCase() + c.slice(1); _%>
+                <li class="<%= i == 0 ? 'active' : '' %>"><a data-toggle="pill" href="#<%= c %>_edit"><%= c_name %></a></li>
+                <%_ }) _%>
+            </ul>
+            <div class="tab-content" style="padding-top: 10px;">
+                <%_ categories.forEach((c, i) => { _%>
+                <div id="<%= c %>_edit" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
+                    <%_ const filtered = products.filter(p => p.category === c); _%>
+                    <%_ if (filtered.length > 1) { _%>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="input-checkbox">
+                                <input type="checkbox" class="box_item_all" value="true"> <span>Select all</span></input>
+                            </div>
+                        </div>
+                    </div>
+                    <%_ } _%>
+                    <div class="row">
+                        <%_ filtered.forEach(p => { _%>
+                        <div class="col-sm-6">
+                            <div class="input-checkbox">
+                                <input type="checkbox" class="box_item_edit" name="box_item" value="<%= p._id %>"> <span><%= p.name %></span></input>
+                            </div>
+                        </div>
+                        <%_ }) _%>
+                    </div>
+                </div>
+                <%_ }) _%>
+            </div>
 
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="box_info_edit" rows="10"></textarea>
-
-            <label>PRODUCTS THIS DEAL APPLIES TO</label>
-            <%_ props.forEach(prop => { _%>
-            <div class="input-checkbox" style="margin: .5em 0">
-                <input type="checkbox" class="box_products_applied_edit" name="products_applied" value="<%= prop.value %>"> <span><%= prop.type %></span></input>
-            </div>
-            <%_ }) _%>
-            <br><br>
 
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
@@ -111,3 +157,9 @@
         <%_ } _%>
     </div>
 </div>
+
+<script>
+    $(".box_item_all").change(function() {
+        $(this).closest(".tab-pane").find(".box_item, .box_item_edit").prop("checked", this.checked);
+    })
+</script>
