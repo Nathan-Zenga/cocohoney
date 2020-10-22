@@ -42,8 +42,8 @@ router.post("/cart/add", (req, res) => {
             deal_item.image = box.image;
 
             const item_qty_excess = {};
-            for (let i = 0; i < products.length; i++) {
-                const { id, name, category, image, info, stock_qty } = products[i];
+            for (let i = 0; i < product_ids.length; i++) {
+                const { id, name, category, image, info, stock_qty } = products.find(p => p.id == product_ids[i]);
                 if (quantities[i] < 1) { item_qty_excess.min = true; item_qty_excess.name = name; break }
                 if (quantities[i] > stock_qty) { item_qty_excess.max = true; item_qty_excess.name = name; break }
                 deal_item.items.unshift({ id, name, category, image, info, stock_qty, qty: quantities[i] });
