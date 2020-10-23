@@ -19,7 +19,7 @@
             <label>UPLOAD LOOKBOOK IMAGE</label><br><br>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp" multiple></div>
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
                     <input type="hidden" name="image_file">
                     <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
                 </div>
@@ -44,7 +44,7 @@
             <label>UPLOAD TUTORIAL VIDEO</label><br><br>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".mp4,.mov,.wav" multiple></div>
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".mp4,.mov,.wav" data-fieldname="video_file" multiple></div>
                     <input type="hidden" name="video_file">
                     <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
                 </div>

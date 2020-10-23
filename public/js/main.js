@@ -72,13 +72,14 @@ $(function() {
 
     $(".file-upload-container :file").change(function() {
         var files = this.files;
+        var field = this.dataset.fieldname;
         var $container = $(this).closest(".file-upload-container");
         var $image_url = $container.find("input[type=url]").attr("disabled", false).val("");
         $container.find("input:hidden").remove();
         if (files && files.length) {
             var $submitInput = $(this).closest("form").find(":submit").attr("disabled", true);
             readDataURLs(files, function(e) {
-                $("<input type='hidden' name='image_file'>").val(e.target.result).appendTo($container);
+                $("<input type='hidden' name='"+ field +"'>").val(e.target.result).appendTo($container);
                 $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
                 $submitInput.attr("disabled", false);
             });
