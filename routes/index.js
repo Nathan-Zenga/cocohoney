@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code } = require('../models/models');
+const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post } = require('../models/models');
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
     const reviews = await Review.find({ rating: { $gt: 3 } }).sort({ created_at: -1 }).exec();
-    res.render('index', { title: null, pagename: "home", overview_images, reviews })
+    const highlights = await Highlights_post.find().sort({ _id: -1 }).exec();
+    res.render('index', { title: null, pagename: "home", overview_images, reviews, highlights })
 });
 
 router.get('/about', (req, res) => {

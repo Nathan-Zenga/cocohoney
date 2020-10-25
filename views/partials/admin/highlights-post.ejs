@@ -1,0 +1,110 @@
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-highlights-post">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-highlights-post">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-highlights-post">REMOVE</a></li>
+</ul>
+
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-highlights-post" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/highlights-post/add">
+            <label>TITLE / HEADLINE</label>
+            <input type="text" name="title" id="highlights_post_title" required>
+
+            <label>TEXT BODY</label>
+            <textarea name="text_body" id="highlights_post_text_body" rows="10" required></textarea>
+
+            <label>LINK URL <span>(OPTIONAL)</span></label>
+            <input type="url" name="link" id="highlights_post_link" value="<%= location_origin %>/">
+
+            <label>MAIN IMAGE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_lg_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
+                    <input type="hidden" name="media_lg_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_lg_file">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="media_lg_url" id="media_lg_url" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
+
+            <label>SECOND IMAGE / VIDEO</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_sm_file" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
+                    <input type="hidden" name="media_sm_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_sm_file">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="media_sm_url" id="media_sm_url" placeholder="Or enter the image / video URL"></div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-highlights-post" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/highlights-post/edit">
+            <label>SELECT HIGHLIGHTS SLIDE <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="highlights_post_id">
+                <option value="">-</option>
+                <%_ highlights_posts.forEach(item => { _%>
+                <option value="<%= item._id %>"><%= item.title %></option>
+                <%_ }) _%>
+            </select>
+
+            <label>TITLE / HEADLINE</label>
+            <input type="text" name="title" id="highlights_post_title_edit">
+
+            <label>TEXT BODY</label>
+            <textarea name="text_body" id="highlights_post_text_body_edit" rows="10"></textarea>
+
+            <label>LINK URL <span>(OPTIONAL)</span></label>
+            <input type="url" name="link" id="highlights_post_link_edit">
+
+            <label>MAIN IMAGE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_lg_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
+                    <input type="hidden" name="media_lg_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_lg_file_edit">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="media_lg_url" id="media_lg_url_edit" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
+
+            <label>SECOND IMAGE / VIDEO</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_sm_file_edit" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
+                    <input type="hidden" name="media_sm_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_sm_file_edit">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="media_sm_url" id="media_sm_url_edit" placeholder="Or enter the image / video URL"></div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="UPDATE">
+        </form>
+    </div>
+
+    <div id="remove-highlights-post" class="remove-form-tab tab-pane fade">
+        <%_ if (highlights_posts.length) { _%>
+        <form action="/highlights-post/remove" method="post">
+            <label>DELETE HIGHLIGHTS POSTS(S)</label><br><br>
+            <%_ highlights_posts.forEach((item, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="post<%= i %>" value="<%= item._id %>"> <span><%= item.title %></span>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE POSTS">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO HIGHLIGHTS POSTS TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>

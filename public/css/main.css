@@ -257,6 +257,7 @@ section .bg-layer .bg-img {
 }
 
 section .text {
+    display: block;
     padding: 0 10px 20px;
 }
 
@@ -265,7 +266,6 @@ section .text h1 {
 }
 
 section .media-wrapper {
-    /* height: 500px; */
     padding: 0;
     margin: 0 -15px;
 }
@@ -286,8 +286,8 @@ section .media-wrapper .main-media.small {
 }
 
 @media (min-width: 768px) {
-    section .media-wrapper .main-media {
-        border-radius: 10px;
+    section .text-wrapper {
+        min-height: 400px;
     }
 
     section .text {
@@ -300,9 +300,11 @@ section .media-wrapper .main-media.small {
 
     section .media-wrapper {
         margin: 0;
+        min-height: 400px;
     }
 
     section .media-wrapper .main-media {
+        border-radius: 10px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, .4);
     }
 
@@ -321,6 +323,10 @@ section .media-wrapper .main-media.small {
         top: 0;
         background-image: linear-gradient(to bottom, rgb(124, 76, 76) 20px, rgba(124, 76, 76, .75));
         box-shadow: 0 25px 30px 20px rgba(124, 76, 76, .75)
+    }
+
+    #highlights {
+        margin-top: -30px;
     }
 }
 
@@ -362,6 +368,12 @@ section .media-wrapper .main-media.small {
 #overview {
     margin-top: 0;
     min-height: 80vh;
+}
+
+.carousel-item-row {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #adverts-section {

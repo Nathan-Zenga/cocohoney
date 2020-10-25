@@ -55,6 +55,7 @@ app.use(async (req, res, next) => { // global variables
 });
 
 app.use('/', require('./routes/index'));
+app.use('/highlights-post', require('./routes/highlights-post'));
 app.use('/admin', require('./routes/admin'));
 app.use('/product', require('./routes/product'));
 app.use('/shop', require('./routes/shop'));

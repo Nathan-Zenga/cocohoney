@@ -4,6 +4,7 @@
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
                 <option value="#home">HOME</option>
+                <option value="#highlights">HIGHLIGHTS POSTS</option>
                 <option value="#sale">SALE</option>
                 <option value="#product">PRODUCTS</option>
                 <option value="#overview-image">OVERVIEW IMAGES</option>
@@ -19,6 +20,7 @@
         <div class="nav-pills-container dt-view-md">
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#home">HOME</a></li>
+                <li><a data-toggle="pill" href="#highlights">HIGHLIGHTS POSTS</a></li>
                 <li><a data-toggle="pill" href="#sale">SALE</a></li>
                 <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
                 <li><a data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a></li>
@@ -34,6 +36,10 @@
         <div class="tab-content container">
             <div id="home" class="tab-pane fade in active" style="text-align: center">
             <%- include ('partials/admin/home') -%>
+            </div>
+
+            <div id="highlights" class="tab-pane fade">
+            <%- include ('partials/admin/highlights-post') -%>
             </div>
 
             <div id="sale" class="tab-pane fade">
@@ -144,6 +150,10 @@
                 });
 
                 $form.find("#overview_image_url_edit").val(result.url);
+
+                $form.find("#highlights_post_title_edit").val(result.title);
+                $form.find("#highlights_post_text_body_edit").val(result.text_body);
+                $form.find("#highlights_post_link_edit").val(result.link);
             });
         });
 

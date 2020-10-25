@@ -70,12 +70,6 @@ module.exports.Overview_image = model('Overview_image', Schema({
     position: Number
 }));
 
-module.exports.Hightlight_media = model('Hightlight_media', Schema({
-    media_lg_url: String,
-    media_sm_url: String,
-    media_text: String,
-}));
-
 module.exports.Shipping_method = model('Shipping_method', Schema({
     name: String,
     info: String,
@@ -165,3 +159,11 @@ module.exports.Review = model('Review', Schema({
     rating: { type: Number, min: 0, max: 5, default: 0 },
     images: [{ p_id: String, url: String }]
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
+
+module.exports.Highlights_post = model('Highlights_post', Schema({
+    media_lg: { p_id: String, url: String, media_type: String },
+    media_sm: { p_id: String, url: String, media_type: String },
+    title: String,
+    text_body: String,
+    link: String
+}));
