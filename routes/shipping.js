@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Shipping_method, Order } = require('../models/models');
+const { Shipping_method, Order, Shipping_page } = require('../models/models');
 
-router.get('/', (req, res) => {
-    res.render('shipping', { title: "Shipping Information", pagename: "shipping-info" })
+router.get('/', async (req, res) => {
+    const info = (await Shipping_page.find())[0].info || "";
+    res.render('shipping', { title: "Shipping Information", pagename: "shipping-info", info })
 });
 
 router.post('/new', isAuthed, (req, res) => {
@@ -21,6 +22,14 @@ router.post('/edit', isAuthed, (req, res) => {
         if (info) method.info = info;
         method.save(err => res.send("Shipping method updated"));
     });
+});
+
+router.post('/page/edit', isAuthed, async (req, res) => {
+    const { info } = req.body;
+    const docs = await Shipping_page.find();
+    const info_page = docs.length ? docs[0] : new Shipping_page();
+    info_page.info = info;
+    info_page.save(err => res.send("Shipping & delivery page updated"));
 });
 
 router.post('/remove', isAuthed, (req, res) => {

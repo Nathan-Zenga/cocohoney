@@ -76,6 +76,10 @@ module.exports.Shipping_method = model('Shipping_method', Schema({
     fee: { type: Number, set: n => parseFloat(n) * 100 }
 }));
 
+module.exports.Shipping_page = model('Shipping_page', Schema({
+    info: String
+}), 'shipping_page');
+
 module.exports.Discount_code = model('Discount_code', Schema({
     code: { type: String, required: true },
     percentage: { type: Number, min: 1, max: 100 },
