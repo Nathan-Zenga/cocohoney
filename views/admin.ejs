@@ -213,15 +213,18 @@
         $(".verify-ambassador-form").off("submit").submit(function(e) {
             e.preventDefault();
             var form = this;
-            var btnController = new submitBtnController(form);
-            $.post(form.action, $(form).serializeArray(), function(result) {
-                alert(result);
-                $(form).slideUp(function() { $(this).remove() });
-            }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
-            }).always(function() {
-                btnController.finish();
-            });
+            var confirmation = confirm("Verify this ambassador?");
+            if (confirmation) {
+                var btnController = new submitBtnController(form);
+                $.post(form.action, $(form).serializeArray(), function(result) {
+                    alert(result);
+                    $(form).slideUp(function() { $(this).remove() });
+                }).fail(function(err, status, codeMessage) {
+                    alert(codeMessage + (err ? ": " + err.responseText : ""));
+                }).always(function() {
+                    btnController.finish();
+                });
+            }
         });
 
         $(".remove-form-tab form").off("submit").submit(function(e) {
