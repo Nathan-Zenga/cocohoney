@@ -1,0 +1,71 @@
+<%- include ('partials/header') -%>
+    <%- include ('partials/stripe-checkout-css') -%>
+    <div id="payment-form-container" style="margin-top: 2em">
+        <div class="content container">
+            <form id="payment-form" method="post" action="/shop/checkout/direct-debit/setup">
+                <%_ const firstname = user && !is_admin ? user.firstname : "";
+                    const lastname = user && !is_admin ? user.lastname : "";
+                    const email = user && !is_admin ? user.email : ""; _%>
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="firstname">FIRST NAME</label>
+                            <input type="text" name="firstname" value="<%- firstname %>" required>
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="lastname">LAST NAME</label>
+                            <input type="text" name="lastname" value="<%- lastname %>" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <label for="email">EMAIL</label>
+                <input type="email" name="email" value="<%= email %>" required>
+                <label for="address_l1">ADDRESS</label>
+                <input type="text" name="address_l1" placeholder="LINE 1" required>
+                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <label for="city">CITY</label>
+                            <input type="text" name="city" required>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                            <select name="country" required>
+                                <option value="">-</option>
+                                <%_ for (var k in countries) { _%>
+                                <option value="<%- k %>"><%- countries[k] %></option>
+                                <%_ } _%>
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="postcode">POST / ZIP CODE</label>
+                            <input type="text" name="postcode" required>
+                        </div>
+                    </div>
+                </fieldset>
+                <br><br>
+                <button class="checkout-btn" type="submit">
+                    <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>PROCEED TO CHECKOUT</span></span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnControl = new submitBtnController(this, "REDIRECTING");
+            $.post(this.action, $(this).serializeArray(), function(data) {
+                var stripe = Stripe(data.pk);
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            }).then(function(result) {
+                if (result.error) { btnControl.finish(); alert(result.error.message); }
+            }).fail(function(err, status, codeMessage) {
+                btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            });
+        });
+    </script>
+<%- include ('partials/footer') -%>
