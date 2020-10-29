@@ -57,10 +57,17 @@
 
                 <h2>
                     TOTAL:
-                    <%_ const sum = order.cart.map(item => ({ price: item.price, qty: item.qty })).reduce((sum, item) => sum + (item.price * item.qty), 0);
-                        const method = shipping_method ? shipping_method : { name: "Free", fee: 0 } _%>
+                    <%_ var sum = order.cart.map(item => ({ price: item.price, qty: item.qty })).reduce((sum, item) => sum + (item.price * item.qty), 0);
+                        const method = shipping_method || { name: "Free", fee: 0 }
+                        const discount_calc = dc_used ? (dc_used.percentage / 100) * sum : 0;
+                        const sum_original = sum;
+                        sum = (sum + method.fee) - discount_calc; _%>
                     <b>£<%= (sum > 1 ? sum / 100 : 0).toFixed(2) %></b><br><br>
-                    <small style="color: inherit;">+ £<%= (method.fee > 1 ? method.fee / 100 : 0).toFixed(2) %> (<%= method.name %>)</small>
+                    <small style="color: inherit;">£<%= (sum_original > 1 ? sum_original / 100 : 0).toFixed(2) %> (Original total)</small><br>
+                    <small style="color: inherit;">+ £<%= (method.fee > 1 ? method.fee / 100 : 0).toFixed(2) %> (<%= method.name %> delivery)</small><br>
+                    <%_ if (dc_used) { _%>
+                    <small style="color: inherit;">- £<%= (discount_calc / 100).toFixed(2) %> (Discounted from total, excluding delivery)</small>
+                    <%_ } _%>
                 </h2>
                 <div class='table-responsive'>
                     <table id="order-items-table" class="table table-borderless table-hover">
