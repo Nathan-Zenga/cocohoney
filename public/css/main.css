@@ -398,9 +398,14 @@ section .media-wrapper .main-media.small {
     margin-left: 10px;
 }
 
+#adverts-section .lg-text {
+    font-weight: 500;
+}
+
 @media (min-width: 768px) {
     #adverts-section .lg-text {
         font-size: 2em;
+        font-weight: 300;
     }
 }
 
