@@ -55,33 +55,27 @@
                 <%_ } _%>
             </div>
         </section>
-        <section id="adverts-section">
-            <div class="container">
-                <div class="row" style="margin-bottom: 5em">
-                    <div class="col-xs-12 lg-text">
-                        <a href="/ambassador/register">WANT TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-12">
-                        <div id="reviews-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
-                            <div class="carousel-inner">
-                                <%_ reviews.forEach((review, i) => { _%>
-                                <div class="review item <%= i == 0 ? 'active' : '' %>">
-                                    <%_ if (review.headline) { _%>
-                                    <div class="review-headline"><%- review.headline %></div>
-                                    <%_ } _%>
-                                    <div class="review-rating"><%_ for(i = 0; i < review.rating; i++) { _%>★<%_ } _%></div>
-                                    <br>
-                                    <%_ var commentry = review.commentry.length > 140 ? review.commentry.slice(0, 140).replace(/\r?\n/g, '<br>')+"..." : review.commentry.replace(/\r?\n/g, '<br>') _%>
-                                    <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ' <a class="read-more-link" href="/reviews">read more</a>' : '' %></div>
-                                    <br>
-                                    <div class="review-author-name"><small>- <%= review.author_name %></small> <%- review.author_verified ? '<i class="arrow fal fa-badge-check"></i>' : '' %></div>
-                                </div>
-                                <%_ }) _%>
-                            </div>
+        <section id="adverts-section" class="lg-text">
+            <a href="/ambassador/register">WANT TO BECOME AN AMBASSADOR? CLICK HERE TO JOIN</a>
+        </section>
+        <section id="reviews-preview-section">
+            <div id="reviews-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
+                <div class="carousel-inner">
+                    <%_ reviews.forEach((review, i) => { _%>
+                    <div class="review item <%= i == 0 ? 'active' : '' %>">
+                        <div class="container" style="max-width: 900px">
+                            <%_ if (review.headline) { _%>
+                            <div class="review-headline"><%- review.headline %></div>
+                            <%_ } _%>
+                            <div class="review-rating"><%- "★ ".repeat(review.rating) %></div>
+                            <br>
+                            <%_ var commentry = review.commentry.length > 140 ? review.commentry.slice(0, 140).replace(/\r?\n/g, '<br>')+"..." : review.commentry.replace(/\r?\n/g, '<br>') _%>
+                            <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ' <a class="read-more-link" href="/reviews">Read more</a>' : '' %></div>
+                            <br>
+                            <div class="review-author-name"><small>- <%= review.author_name %></small> <%- review.author_verified ? '<i class="arrow fal fa-badge-check"></i>' : '' %></div>
                         </div>
                     </div>
+                    <%_ }) _%>
                 </div>
             </div>
         </section>

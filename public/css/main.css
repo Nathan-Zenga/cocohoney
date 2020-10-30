@@ -383,27 +383,31 @@ section .media-wrapper .main-media.small {
     padding: 100px 0;
 }
 
-#adverts-section #reviews-carousel {
-    margin: 0 auto;
-    max-width: 900px;
+#reviews-preview-section {
+    padding: 4em 0;
 }
 
-#adverts-section .review {
+#reviews-preview-section .review {
     font-weight: 500;
     text-align: left;
 }
 
-#adverts-section .review .read-more-link {
+#reviews-preview-section .review .read-more-link {
     text-decoration: underline;
     margin-left: 10px;
 }
 
-#adverts-section .lg-text {
+#reviews-preview-section .review-rating {
+    color: rgb(240, 230, 140);
+    font-size: 1.2em;
+}
+
+.lg-text {
     font-weight: 500;
 }
 
 @media (min-width: 768px) {
-    #adverts-section .lg-text {
+    .lg-text {
         font-size: 2em;
         font-weight: 300;
     }
