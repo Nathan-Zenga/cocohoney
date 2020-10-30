@@ -26,13 +26,7 @@ module.exports.Member = model('Member', Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     image: { p_id: String, url: String },
-    phone_number: {
-        type: String,
-        validate: {
-            validator: v => /\d{11}/.test(v),
-            message: props => `${props.value} is not a valid phone number!`
-        }
-    },
+    phone_number: String,
     password_reset_token: String
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
@@ -101,13 +95,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phone_number: {
-        type: String,
-        validate: {
-            validator: v => /^\d{11}$/.test(v),
-            message: props => `${props.value} is not a valid phone number!`
-        }
-    },
+    phone_number: String,
     address: {
         line1: { type: String, default: "" },
         line2: { type: String, default: "" },
