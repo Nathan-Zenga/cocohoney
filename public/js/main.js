@@ -1,6 +1,7 @@
 $(function() {
     window.submitBtnController = function(form, progressMsg) {
-        var $submitBtn = this.submitBtn = $(form).find(":submit:focus").attr("disabled", true);
+        var focus = $(form).find(":submit:focus").length ? ":focus" : "";
+        var $submitBtn = this.submitBtn = $(form).find(":submit"+ focus).attr("disabled", true);
         var method = this.method = this.submitBtn.is(":button") ? "html" : "val";
         this.originalVal = this.submitBtn[method]();
         var progressVal = this.submitBtn[method](progressMsg || "SUBMITTING")[method]();
@@ -31,7 +32,9 @@ $(function() {
         e.preventDefault();
         var formaction = $(this).find(":submit:focus").attr("formaction");
         var btnControl = new submitBtnController(this, ".");
-        $.post(formaction || this.action, $(this).serializeArray(), function(item_count) {
+        var action = formaction || this.action;
+        $.post(action, $(this).serializeArray(), function(item_count) {
+            if (action === "/wishlist/remove") $(e.target).closest(".thumb").slideUp();
             var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
             $("#cart-item-count").text(item_count);
             $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });

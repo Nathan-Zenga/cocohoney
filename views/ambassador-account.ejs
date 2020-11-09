@@ -30,6 +30,7 @@
                 <div class="nav-pills-container">
                     <ul class="nav nav-pills">
                         <li class="active"><a data-toggle="pill" href="#sales">SALES</a></li>
+                        <li><a data-toggle="pill" href="#wishlist">WISH LIST</a></li>
                         <li><a data-toggle="pill" href="#personal-info">INFO</a></li>
                     </ul>
                 </div>
@@ -80,6 +81,54 @@
                                         </div>
                                     </div>
                                 <%_ })} _%>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="wishlist" class="tab-pane fade">
+                        <div class="thumb-container no-wrap">
+                            <div class="<%- wishlist.length ? 'container' : '' %>" style="<%- wishlist.length ? 'padding: 20px 0 20px 30px;' : '' %>">
+                                <div class="row">
+                                    <%_ if (!wishlist.length) { _%>
+                                    <div id="order-sales-counter"><h1>EMPTY WISHLIST</h1></div>
+                                    <%_ } wishlist.forEach((product, i, arr) => { _%>
+                                    <div class="thumb">
+                                        <div class="thumb-inner">
+                                            <a href="/product/<%= product.category + '/' + product.name %>">
+                                                <div class="thumb-img product-image<%= product.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- product.image ? product.image.url : '' %>');">
+                                                    <%_ if (product.price_sale) { _%>
+                                                    <div class="sale-ribbon">SALE</div>
+                                                    <%_ } _%>
+                                                </div>
+                                            </a>
+                                            <div class="thumb-info">
+                                                <div class="product-name"><p><%= product.name %></p></div>
+                                                <div class="product-price"><p>£<%- (product.price_amb / 100).toFixed(2) %></p></div>
+                                                <div class="cart-options">
+                                                    <%_ if (product.stock_qty > 0) { _%>
+                                                    <form class="add-to-cart minimal">
+                                                        <div class="quantity-wrapper">
+                                                            <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                                                            <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
+                                                            <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                                                        </div>
+                                                        <input type="hidden" name="id" value="<%- product.id %>">
+                                                        <%_ if (product.pre_release) { _%>
+                                                        <button formaction="/shop/cart/add" class="add-to-cart-btn pre-order">PRE-ORDER</button>
+                                                        <%_ } else { _%>
+                                                        <button formaction="/shop/cart/add" class="add-to-cart-btn"><i class="fal fa-cart-arrow-down"></i></button>
+                                                        <%_ } _%>
+                                                        <button formaction="/wishlist/remove" class="add-to-cart-btn wishlist-remove"><i class="fal fa-trash-alt"></i></button>
+                                                    </form>
+                                                    <%_ } else { _%>
+                                                    <div class="sold-out-label">SOLD OUT</div>
+                                                    <%_ } _%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <%_ }) _%>
                                 </div>
                             </div>
                         </div>
