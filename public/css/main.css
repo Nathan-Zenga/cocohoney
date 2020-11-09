@@ -1,4 +1,4 @@
-﻿h1 {
+h1 {
     font-size: 2.5em;
 }
 
@@ -460,6 +460,10 @@ section .media-wrapper .main-media.small {
     background-position: center;
     background-size: cover;
     margin: -10px -10px 10px;
+}
+
+.thumb .thumb-img.sold-out {
+    opacity: .5;
 }
 
 .thumb .thumb-img .sale-ribbon {

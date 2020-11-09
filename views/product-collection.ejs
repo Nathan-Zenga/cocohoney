@@ -11,7 +11,7 @@
                         <div class="thumb col-md-3 col-sm-4">
                             <div class="thumb-inner">
                                 <a href="/product/<%= product.category + '/' + product.name %>">
-                                    <div class="thumb-img product-image" style="background-image: url('<%- product.image ? product.image.url : '' %>');">
+                                    <div class="thumb-img product-image<%= product.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- product.image ? product.image.url : '' %>');">
                                         <%_ if (product.price_sale) { _%>
                                         <div class="sale-ribbon">SALE</div>
                                         <%_ } _%>
