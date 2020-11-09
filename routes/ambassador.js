@@ -93,7 +93,7 @@ router.get('/account', isAuthed, async (req, res) => {
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: user._id });
-    const wishlist_items = await Product.find({ _id: { $in: wishlist.items } });
+    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
     const docs = { ambassador: null, discount_code, orders, products, wishlist: wishlist_items };
     const opts = { title: "My Account | Ambassador", pagename: "account", countries, ...docs };
     res.render('ambassador-account', opts);
@@ -160,20 +160,23 @@ router.post('/delete', (req, res) => {
     Ambassador.findByIdAndDelete(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
-        cloud.api.delete_resources([(amb.image || {}).p_id], err => {
-            Discount_code.findByIdAndDelete({ code: amb.discount_code }, err => {
-                if (res.locals.is_admin) {
-                    return res.send("The account is now successfully deleted.");
-                };
-                new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
-                    subject: "Your account is now deleted",
-                    message: `Hi ${amb.firstname},\n\n` +
-                    "Your account is now successfully deleted.\n" +
-                    "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
-                }, err => {
-                    if (err) return res.status(500).send(err.message || err);
-                    res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-                });
+        Wishlist.findOneAndDelete({ customer_id: amb.id }, err => {
+            if (err) return res.status(500).send(err.message);
+            cloud.api.delete_resources([(amb.image || {}).p_id], err => {
+                Discount_code.findByIdAndDelete({ code: amb.discount_code }, err => {
+                    if (res.locals.is_admin) {
+                        return res.send("The account is now successfully deleted.");
+                    };
+                    new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
+                        subject: "Your account is now deleted",
+                        message: `Hi ${amb.firstname},\n\n` +
+                        "Your account is now successfully deleted.\n" +
+                        "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
+                    }, err => {
+                        if (err) return res.status(500).send(err.message || err);
+                        res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+                    });
+                })
             })
         })
     });

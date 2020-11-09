@@ -9,7 +9,7 @@ router.get('/', isAuthed, async (req, res) => {
     const { user } = res.locals;
     const orders = await Order.find({ customer_email: user.email }).sort({ created_at: -1 }).exec();
     const wishlist = await Wishlist.findOne({ customer_id: user._id });
-    const wishlist_items = await Product.find({ _id: { $in: wishlist.items } });
+    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
     res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items });
 });
 
@@ -100,15 +100,18 @@ router.post('/delete', isAuthed, (req, res) => {
     Member.findByIdAndDelete(id, (err, member) => {
         if (err) return res.status(500).send(err.message);
         if (!member) return res.status(404).send("Account does not exist or already deleted");
-        cloud.api.delete_resources([(member.image || {}).p_id], err => {
-            new MailingListMailTransporter({ req, res }, { email: member.email }).sendMail({
-                subject: `Your account is now deleted`,
-                message: `Hi ${member.firstname},\n\n` +
-                "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
-            }, err => {
-                if (err) return res.status(500).send(err.message || err);
-                res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-            });
+        Wishlist.findOneAndDelete({ customer_id: member.id }, err => {
+            if (err) return res.status(500).send(err.message);
+            cloud.api.delete_resources([(member.image || {}).p_id], err => {
+                new MailingListMailTransporter({ req, res }, { email: member.email }).sendMail({
+                    subject: `Your account is now deleted`,
+                    message: `Hi ${member.firstname},\n\n` +
+                    "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
+                }, err => {
+                    if (err) return res.status(500).send(err.message || err);
+                    res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+                });
+            })
         })
     });
 });
