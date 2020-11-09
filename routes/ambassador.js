@@ -5,7 +5,7 @@ const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
-const { Ambassador, Discount_code, Product, Order } = require('../models/models');
+const { Ambassador, Discount_code, Product, Order, Wishlist } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 
 router.get('/register', (req, res) => {
@@ -92,7 +92,9 @@ router.get('/account', isAuthed, async (req, res) => {
     const { orders_applied } = discount_code || {};
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
-    const docs = { ambassador: null, discount_code, orders, products };
+    const wishlist = await Wishlist.findOne({ customer_id: user._id });
+    const wishlist_items = await Product.find({ _id: { $in: wishlist.items } });
+    const docs = { ambassador: null, discount_code, orders, products, wishlist: wishlist_items };
     const opts = { title: "My Account | Ambassador", pagename: "account", countries, ...docs };
     res.render('ambassador-account', opts);
 });

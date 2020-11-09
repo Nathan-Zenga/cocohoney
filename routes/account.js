@@ -3,12 +3,14 @@ const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-customer');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Member, Order } = require('../models/models');
+const { Member, Order, Wishlist, Product } = require('../models/models');
 
 router.get('/', isAuthed, async (req, res) => {
     const { user } = res.locals;
     const orders = await Order.find({ customer_email: user.email }).sort({ created_at: -1 }).exec();
-    res.render('customer-account', { title: "My Account", pagename: "account", orders });
+    const wishlist = await Wishlist.findOne({ customer_id: user._id });
+    const wishlist_items = await Product.find({ _id: { $in: wishlist.items } });
+    res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items });
 });
 
 router.get('/login', (req, res) => {

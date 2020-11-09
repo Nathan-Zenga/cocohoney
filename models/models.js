@@ -139,7 +139,6 @@ module.exports.Box = model('Box', Schema({
     info: String,
     max_items: { type: Number, min: 1 },
     image: { p_id: String, url: String },
-    products_applied: [{ type: String, set: v => v.toLowerCase().replace(/ /g, "_") }],
     products_inc: [String] // array of product IDs
 }));
 
@@ -159,3 +158,8 @@ module.exports.Highlights_post = model('Highlights_post', Schema({
     text_body: String,
     link: String
 }));
+
+module.exports.Wishlist = model('Wishlist', Schema({
+    customer_id: { type: String, required: true, index: true, unique: true },
+    items: [String] // array of product IDs
+}), 'wishlist');
