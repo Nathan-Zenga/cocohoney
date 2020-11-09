@@ -1,6 +1,6 @@
 $(function() {
     window.submitBtnController = function(form, progressMsg) {
-        var $submitBtn = this.submitBtn = $(form).find(":submit").attr("disabled", true);
+        var $submitBtn = this.submitBtn = $(form).find(":submit:focus").attr("disabled", true);
         var method = this.method = this.submitBtn.is(":button") ? "html" : "val";
         this.originalVal = this.submitBtn[method]();
         var progressVal = this.submitBtn[method](progressMsg || "SUBMITTING")[method]();
@@ -29,8 +29,9 @@ $(function() {
 
     $(".add-to-cart").submit(function(e) {
         e.preventDefault();
+        var formaction = $(this).find(":submit:focus").attr("formaction");
         var btnControl = new submitBtnController(this, ".");
-        $.post(this.action, $(this).serializeArray(), function(item_count) {
+        $.post(formaction || this.action, $(this).serializeArray(), function(item_count) {
             var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
             $("#cart-item-count").text(item_count);
             $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });

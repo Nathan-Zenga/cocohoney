@@ -26,7 +26,7 @@
                                     </div>
                                     <div class="cart-options">
                                         <%_ if (product.stock_qty > 0) { _%>
-                                        <form class="add-to-cart minimal" action="/shop/cart/add">
+                                        <form class="add-to-cart minimal">
                                             <div class="quantity-wrapper">
                                                 <button type="button" class="quantity-control-btn" data-step="-1">-</button>
                                                 <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
@@ -34,10 +34,11 @@
                                             </div>
                                             <input type="hidden" name="id" value="<%- product.id %>">
                                             <%_ if (product.pre_release) { _%>
-                                            <button class="add-to-cart-btn pre-order">PRE-ORDER</button>
+                                            <button formaction="/shop/cart/add" class="add-to-cart-btn pre-order">PRE-ORDER</button>
                                             <%_ } else { _%>
-                                            <button class="add-to-cart-btn"><i class="fal fa-cart-arrow-down" style=""></i></button>
+                                            <button formaction="/shop/cart/add" class="add-to-cart-btn"><i class="fal fa-cart-arrow-down"></i></button>
                                             <%_ } _%>
+                                            <button formaction="/wishlist/add" class="add-to-cart-btn"><i class="fal fa-heart"></i></button>
                                         </form>
                                         <%_ } else { _%>
                                         <div class="sold-out-label">SOLD OUT</div>

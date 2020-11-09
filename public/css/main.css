@@ -1,4 +1,4 @@
-h1 {
+﻿h1 {
     font-size: 2.5em;
 }
 
@@ -495,16 +495,14 @@ section .media-wrapper .main-media.small {
 }
 
 .add-to-cart-btn {
-    width: 50%;
     background-color: transparent;
     color: inherit;
-    font-size: 2.5em;
+    font-size: 2em;
 }
 
 .add-to-cart-btn.pre-order {
     font-size: 1em;
-    padding: 7px 5px !important;
-    border: 2px solid white;
+    padding: 0 5px !important;
 }
 
 .thumb .add-to-cart, .thumb .add-to-cart-btn {
@@ -514,6 +512,10 @@ section .media-wrapper .main-media.small {
 .thumb .add-to-cart-btn {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+.thumb .add-to-cart-btn:not(:last-child) {
+    margin-right: 10px;
 }
 
 @media (min-width: 768px) {
@@ -1086,15 +1088,16 @@ label .dropdown-arrow {
 }
 
 #product-view-page .add-to-cart-btn {
-    width: 100%;
+    font-weight: 500;
     text-align: left;
 }
 
 #product-view-page .add-to-cart-btn.pre-order {
     width: auto;
     text-align: center;
-    padding-left: 20px!important;
-    padding-right: 20px!important;
+    font-size: 1.5em;
+    padding-top: 5px!important;
+    padding-bottom: 5px!important;
 }
 
 @media (max-width: 767px) {
