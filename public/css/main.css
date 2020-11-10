@@ -70,7 +70,7 @@ nav .sub-list {
     font-size: 1.5em;
     -webkit-transform: translateX(-50%);
     transform: translateX(-50%);
-    padding: 0 30px 30px 30px;
+    padding: 0 60px 30px;
 }
 
 #banner-1 {
@@ -1079,8 +1079,10 @@ label .dropdown-arrow {
 }
 
 #product-view-page #sale-label span {
-    padding: 10px;
-    border: 2px solid white;
+    padding: 10px 30px;
+    border: 2px solid rgb(240, 230, 140);
+    background-color: rgb(124, 76, 76);
+    color: rgb(240, 230, 140);
 }
 
 #product-view-page #extra-info {
