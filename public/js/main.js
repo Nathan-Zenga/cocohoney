@@ -1,7 +1,7 @@
 $(function() {
     window.submitBtnController = function(form, progressMsg) {
-        var focus = $(form).find(":submit:focus").length ? ":focus" : "";
-        var $submitBtn = this.submitBtn = $(form).find(":submit"+ focus).attr("disabled", true);
+        var clicked = $(form).find("#clicked:submit").length ? "#clicked" : "";
+        var $submitBtn = this.submitBtn = $(form).find(clicked+":submit").attr("disabled", true);
         var method = this.method = this.submitBtn.is(":button") ? "html" : "val";
         this.originalVal = this.submitBtn[method]();
         var progressVal = this.submitBtn[method](progressMsg || "SUBMITTING")[method]();
@@ -28,9 +28,11 @@ $(function() {
         $(this).parent(".quantity-wrapper").find("input[type=number]").get(0).stepUp($(this).data("step"));
     });
 
-    $(".add-to-cart").submit(function(e) {
+    $(".add-to-cart").find(":submit").click(function() {
+        $(this).attr("id", "clicked");
+    }).end().submit(function(e) {
         e.preventDefault();
-        var formaction = $(this).find(":submit:focus").attr("formaction");
+        var formaction = $(this).find("#clicked:submit").attr("formaction");
         var btnControl = new submitBtnController(this, ".");
         var action = formaction || this.action;
         $.post(action, $(this).serializeArray(), function(item_count) {
@@ -41,6 +43,7 @@ $(function() {
         }).fail(function(err) {
             alert(err.responseText);
         }).always(function() {
+            $("#clicked").attr("id", "");
             btnControl.finish();
         })
     });
