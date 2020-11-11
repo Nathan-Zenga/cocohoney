@@ -35,7 +35,9 @@ router.post("/session/create", async (req, res) => {
 
         var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
         var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
+        const non_sale_item_present = cart.filter(item => !item.sale_item).length;
         if (!dc_doc && discount_code) throw { stat: 404, msg: "Discount code invalid or expired" }
+        if (dc_doc && !non_sale_item_present) throw { stat: 400, msg: "Discount code cannot be applied as all your cart items are on sale" }
         if (!shipping_method) throw { stat: 404, msg: "Invalid shipping fee chosen" }
 
         const outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
