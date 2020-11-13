@@ -52,4 +52,7 @@
                 </div>
             </div>
         </section>
+        <script>
+            if (!("mix-blend-mode" in document.body.style)) $(".section-label .label-bg + .label-text h2").addClass("alt-fallback");
+        </script>
 <%- include ('partials/footer') -%>

@@ -1,4 +1,4 @@
-﻿h1 {
+h1 {
     font-size: 2.5em;
 }
 
@@ -334,9 +334,23 @@ section .media-wrapper .main-media.small {
     position: relative;
 }
 
-.section-label .label-text {
-    color: black;
+.section-label .label-text h2 {
+    color: rgb(240, 230, 140);
     text-shadow: none;
+}
+
+.section-label .label-bg + .label-text h2 {
+    mix-blend-mode: difference;
+}
+
+.section-label .label-bg + .label-text h2.alt-fallback {
+    color: black;
+}
+
+.section-label .label-text .col-title,
+.section-label .label-text .col-info {
+    margin-bottom: 1.5em;
+    text-align: center;
 }
 
 .section-label .label-bg {
@@ -360,6 +374,19 @@ section .media-wrapper .main-media.small {
 }
 
 @media (min-width: 768px) {
+    .section-label .label-text .col-title,
+    .section-label .label-text .col-info {
+        margin-bottom: 0;
+    }
+
+    .section-label .label-text .col-title {
+        text-align: left;
+    }
+
+    .section-label .label-text .col-info {
+        text-align: right;
+    }
+
     .section-overlapped {
         margin-bottom: -50px;
     }
