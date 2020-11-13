@@ -8,7 +8,7 @@ const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
 const { CHCDB, NODE_ENV } = process.env;
-const { Site_content, Banner_slide, Sale, Product, Box } = require("./models/models");
+const { Banner_slide, Sale, Product, Box } = require("./models/models");
 const production = NODE_ENV === "production";
 
 mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
@@ -45,7 +45,6 @@ app.use(async (req, res, next) => { // global variables
     res.locals.products_all = await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = await Box.find();
     res.locals.banner_slides = await Banner_slide.find();
-    res.locals.socials = ((await Site_content.find())[0] || {}).socials || [];
     const sale_doc = (await Sale.find())[0] || {};
     res.locals.sale = sale_doc.active || false;
     res.locals.sale_percentage = sale_doc.percentage || false;

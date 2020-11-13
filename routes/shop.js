@@ -13,12 +13,14 @@ router.post("/cart/add", (req, res) => {
         const cartItemIndex = req.session.cart.findIndex(item => item.id === id);
         const qty = parseInt(req.body.quantity);
 
-        if (qty === NaN) return res.status(400).send("Quantity value not a number");
+        if (isNaN(qty)) return res.status(400).send("Quantity value not a number");
         if (cartItemIndex >= 0) {
             const currentItem = req.session.cart[cartItemIndex];
             currentItem.qty += qty;
             if (currentItem.qty > stock_qty) currentItem.qty = stock_qty;
         } else {
+            if (qty < 1) return res.status(400).send("Quantity is under the limit");
+            if (qty > stock_qty) return res.status(400).send("Quantity is over the limit");
             const { is_ambassador } = res.locals;
             const price_rendered = is_ambassador ? price_amb : price_sale ? price_sale : price;
             const sale_item = price_rendered === price_sale;

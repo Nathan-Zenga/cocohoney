@@ -46,14 +46,6 @@ module.exports.Lookbook_media = model('Lookbook_media', Schema({
     tutorial: { type: Boolean, default: false }
 }));
 
-module.exports.Site_content = model('Site_content', Schema({
-    background_image: String,
-    socials: [{
-        name: String,
-        url: { type: String, set: v => !/^https?:\/\//i.test(v) ? "https://" + v : v }
-    }]
-}));
-
 module.exports.Banner_slide = model('Banner_slide', Schema({
     text: String
 }));
