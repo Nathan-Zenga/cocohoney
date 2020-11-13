@@ -21,21 +21,25 @@
                         <div class="content-layer container">
                             <div class="row carousel-item-row">
                                 <div class="col-sm-5 media-wrapper">
-                                    <img class="main-media large" src="<%- slide.media_lg.url %>" alt="<%- slide.media_lg.url.slice(slide.media_lg.url.lastIndexOf('/') + 1) %>">
+                                    <div class="main-media-large-wrapper" style="background-image: url('<%- slide.media_lg.url %>')">
+                                        <img class="main-media large" src="<%- slide.media_lg.url %>" alt="<%- slide.media_lg.url.slice(slide.media_lg.url.lastIndexOf('/') + 1) %>">
+                                    </div>
                                     <%_ if (slide.media_sm.url) { _%>
-                                    <%_ if (slide.media_sm.media_type === "video") { _%>
-                                    <video class="main-media small dt-view" playsinline autoplay muted loop>
-                                        <source src="<%- slide.media_sm.url %>">
-                                    </video>
-                                    <%_ } else { _%>
-                                    <img class="main-media small dt-view" src="<%- slide.media_sm.url %>" alt="<%- slide.media_sm.url.slice(slide.media_sm.url.lastIndexOf('/') + 1) %>">
-                                    <%_ }} _%>
+                                    <div class="main-media small dt-view">
+                                        <%_ if (slide.media_sm.media_type === "video") { _%>
+                                        <video playsinline autoplay muted loop>
+                                            <source src="<%- slide.media_sm.url %>">
+                                        </video>
+                                        <%_ } else { _%>
+                                        <img src="<%- slide.media_sm.url %>" alt="<%- slide.media_sm.url.slice(slide.media_sm.url.lastIndexOf('/') + 1) %>">
+                                        <%_ }} _%>
+                                    </div>
                                 </div>
                                 <div class="col-sm-7 text-wrapper">
-                                    <a class="text" <%- slide.link ? `href="${slide.link}"` : '' %>>
+                                    <div class="text">
                                         <h1><%- slide.title %></h1>
-                                        <p><%- slide.text_body.replace(/\r?\n/g, "</p><p>") %></p>
-                                    </a>
+                                        <p><a <%- slide.link ? `href="${slide.link}"` : '' %>><%- slide.text_body.replace(/\r?\n/g, "</p><p>") %></a></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
