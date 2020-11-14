@@ -101,7 +101,7 @@ router.post("/session/create", async (req, res) => {
         req.session.current_dc_doc = dc_doc;
         req.session.shipping_method = shipping_method;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
-    } catch(err) { console.log(err); res.status(400).send(err.message) };
+    } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
