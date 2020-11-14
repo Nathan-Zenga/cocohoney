@@ -45,6 +45,10 @@
                                         <div class="thumb col-md-3 col-sm-4">
                                             <div class="thumb-inner">
                                                 <div class="thumb-img product-image" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
+                                                    <div class="item-select-check">
+                                                        <i class="check-symbol fal fa-circle"></i>
+                                                        <i class="check-symbol fas fa-check-circle"></i>
+                                                    </div>
                                                     <input type="checkbox" name="product_id" value="<%= p.id %>" <%- p.stock_qty > 0 ? '' : 'disabled' %>>
                                                 </div>
                                                 <div class="thumb-info">
@@ -89,8 +93,7 @@
         });
 
         $("input[type=checkbox]").change(function() {
-            $(this).closest(".thumb-img").toggleClass("checked", this.checked);
-            $(this).closest(".thumb").find(".product-quantity").attr({ disabled: !this.checked, required: this.checked });
+            $(this).closest(".thumb").toggleClass("checked", this.checked).find(".product-quantity").attr({ disabled: !this.checked, required: this.checked });
         });
 
         $("form").submit(function(e) {
