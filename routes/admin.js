@@ -6,7 +6,7 @@ const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
-const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box, Wishlist } = require('../models/models');
 require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
@@ -32,16 +32,18 @@ router.get('/mail/form', isAuthed, async (req, res) => {
 });
 
 router.get('/ambassador/account', isAuthed, async (req, res, next) => {
-    var { firstname, lastname } = req.query;
-    firstname = new RegExp(`^${firstname}$`, "i");
-    lastname = new RegExp(`^${lastname}$`, "i");
+    const { firstname: fn, lastname: ln } = req.query;
+    const firstname = new RegExp(`^${fn}$`, "i");
+    const lastname = new RegExp(`^${ln}$`, "i");
     const ambassador = await Ambassador.findOne({ firstname, lastname });
     if (!ambassador) return next();
     const discount_code = await Discount_code.findOne({ code: ambassador.discount_code });
     const { orders_applied } = discount_code || {};
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
-    const docs = { ambassador, discount_code, orders, products };
+    const wishlist = await Wishlist.findOne({ customer_id: ambassador.id });
+    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
+    const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items };
     const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
     res.render('ambassador-account', opts);
 });
