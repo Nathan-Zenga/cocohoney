@@ -201,3 +201,14 @@ module.exports.MailTest = model('MailTest', (() => {
     schema.virtual("newDay").get((val, vt, doc) => doc.last_sent_date.toDateString() != new Date().toDateString());
     return schema;
 })(), "mail_test");
+
+module.exports.Subscription_plan = model('Subscription_plan', Schema({
+    interval: { type: String, enum: ["day", "month", "week", "year"] },
+    interval_count: { type: Number, required: true, min: 1 },
+    price: { type: Number, set: n => parseFloat(n) * 100 },
+    info: { type: String, default: "" }
+}));
+
+module.exports.Subcriber = model('Subcriber', Schema({
+    sub_id: { type: String, required: true, unique: true }
+}));

@@ -1,12 +1,12 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
-const { Product } = require('../models/models');
+const { Subscription_plan } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", async (req, res) => {
-    const products = await Product.find({ category: "lashes" }).sort({ product_collection: -1, _id: 1 }).exec();
-    res.render('subscription', { title: "Subscriptions", pagename: "subscription", products })
+    const subscription_plans = await Subscription_plan.find().sort({ interval: 1, interval_count: 1 }).exec();
+    res.render('subscription', { title: "Subscriptions", pagename: "subscription", subscription_plans })
 });
 
 router.post("/setup", async (req, res) => {

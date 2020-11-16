@@ -1,67 +1,65 @@
 <%- include ('partials/header') -%>
-        <section>
-            <div class="container section-label">
-                <div class="label-bg"></div>
-                <div class="label-text"><h2>COCOHONEY MONTHLY LASHES</h2></div>
-            </div>
-        </section>
-        <section id="summary">
-            <p>Get four pairs of lashes every month for as little as <b>£10</b> a month.</p>
-            <p>For the first three months we will ensure you have been sent the full Cocohoney Eyelash Collection.</p>
-            <p>Every month in areas, you will be given a free additional gift within your Cocohoney package.</p>
-        </section>
-        <section>
-            <div class="container">
-                <form action="" class="minimal" id="subscription-options">
-                    <div class="row">
-                        <%_ [{
-                            _id: 1,
-                            interval: "Monthly",
-                            price: 1399,
-                            info: "Rolling monthly subscription box (including delivery)",
-                        },
-                        {
-                            _id: 2,
-                            interval: "3-Monthly",
-                            price: 3000,
-                            info: "3 months upfront subscription box (including delivery)",
-                        },
-                        {
-                            _id: 3,
-                            interval: "6-Monthly",
-                            price: 5000,
-                            info: "6 months upfront subscription box (including delivery)",
-                        },
-                        {
-                            _id: 4,
-                            interval: "Yearly",
-                            price: 10000,
-                            info: "12 months upfront subscription box (including delivery)",
-                        }].forEach(sub => { _%>
-                        <div class="col-md-3 col-sm-4">
-                            <div class="subscription-opt">
-                                <p class="sub-label"><%= sub.interval %></p>
-                                <h3 class="price">£<%= (sub.price / 100).toFixed(2) %></h3>
-                                <p class="info"><%- sub.info %></p>
-                                <input class="select-radio-opt" type="radio" name="plan" value="<%= sub._id %>" required>
-                                <button class="select-btn" type="button">
-                                    <span><i class="fal fa-circle"></i></span>
-                                    <span><i class="fas fa-check-circle"></i></span>
-                                </button>
+    <section>
+        <div class="container section-label">
+            <div class="label-bg"></div>
+            <div class="label-text"><h2>COCOHONEY MONTHLY LASHES</h2></div>
+        </div>
+    </section>
+    <section id="summary">
+        <p>Get four pairs of lashes every month for as little as <b>£10</b> a month.</p>
+        <p>For the first three months we will ensure you have been sent the full Cocohoney Eyelash Collection.</p>
+        <p>Every month in areas, you will be given a free additional gift within your Cocohoney package.</p>
+    </section>
+    <section>
+        <div class="container">
+            <form method="post" action="/shop/subscription/setup" class="minimal" id="subscription-options">
+                <div class="row">
+                    <%_ subscription_plans.forEach(plan => { _%>
+                    <div class="col-md-3 col-sm-4">
+                        <div class="subscription-opt">
+                            <%_ var interval = plan.interval === "day" ? "Daily" : plan.interval + "ly";
+                                var interval_count = plan.interval_count > 1 ? plan.interval_count + "-" : "";
+                                interval = interval.charAt(0).toUpperCase() + interval.slice(1).toLowerCase(); _%>
+                            <p class="sub-label"><%= interval_count + interval %></p>
+                            <h3 class="price">£<%= (plan.price / 100).toFixed(2) %></h3>
+                            <div class="info">
+                                <p><%- plan.info.replace(/\r?\n/, "<br>") %></p>
                             </div>
+                            <input class="select-radio-opt" type="radio" name="plan" value="<%= plan._id %>" required>
+                            <button class="select-btn" type="button">
+                                <span><i class="fal fa-circle"></i></span>
+                                <span><i class="fas fa-check-circle"></i></span>
+                            </button>
                         </div>
-                        <%_ }) _%>
                     </div>
-                    <div class="row">
-                        <button type="submit">START TODAY</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-        <script>
-            if (!("mix-blend-mode" in document.body.style)) $(".section-label .label-bg + .label-text h2").addClass("alt-fallback");
-            $(".select-btn").click(function() {
-                $(this).prev(".select-radio-opt").prop("checked", true);
+                    <%_ }) _%>
+                </div>
+                <div class="row">
+                    <button type="submit">START TODAY</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        if (!("mix-blend-mode" in document.body.style)) $(".section-label .label-bg + .label-text h2").addClass("alt-fallback");
+
+        $(".select-btn").click(function() {
+            $(this).prev(".select-radio-opt").prop("checked", true);
+        });
+
+        $("#subscription-options").submit(function(e) {
+            e.preventDefault();
+            var btnControl = new submitBtnController(this, "REDIRECTING");
+            $.post(this.action, $(this).serializeArray(), function(data) {
+                var stripe = Stripe(data.pk);
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            }).then(function(result) {
+                if (result.error) { btnControl.finish(); alert(result.error.message); }
+            }).fail(function(err, status, codeMessage) {
+                btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
-        </script>
+        });
+    </script>
 <%- include ('partials/footer') -%>
