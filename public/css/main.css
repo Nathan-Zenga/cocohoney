@@ -2392,3 +2392,63 @@ img[data-target='#image-lg-modal'] {
 #new-review-form > fieldset > label:nth-last-of-type(1) + fieldset {
     display: none;
 }
+
+#subscription-page #summary {
+    text-align: center;
+    padding: 0 30px;
+}
+
+#subscription-options {
+    margin: 0 auto 2em;
+    padding: 30px 0;
+    max-width: 900px;
+}
+
+#subscription-options .subscription-opt {
+    text-align: center;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, .15);
+    max-width: 250px;
+    margin: 0 auto 50px;
+}
+
+#subscription-options .subscription-opt .sub-label {
+    width: 80%;
+    padding: 5px;
+    background-color: rgb(240, 230, 140);
+    color: rgb(124, 76, 76);
+    font-weight: 700;
+    margin: -35px auto 2em;
+    border-radius: 5px;
+}
+
+#subscription-options .subscription-opt .info {
+    margin: 1.5em 0 1em;
+    max-height: 5em;
+    overflow: auto;
+}
+
+#subscription-options .subscription-opt .select-radio-opt {
+    position: absolute;
+    width: 0;
+    height: 0;
+    margin: 0;
+}
+
+#subscription-options .subscription-opt .select-btn {
+    position: relative;
+    background-color: transparent;
+    color: rgb(240, 230, 140);
+    font-size: 1.5em;
+    padding: 5px 15px;
+    margin: 0;
+}
+
+#subscription-options .subscription-opt .select-radio-opt:not(:checked) + .select-btn span:last-child {
+    display: none;
+}
+
+#subscription-options .subscription-opt .select-radio-opt:checked + .select-btn span:first-child {
+    display: none;
+}

@@ -1,26 +1,17 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
-const countries = require("../modules/country-list");
+const { Product } = require('../models/models');
 const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", async (req, res) => {
-    res.render('checkout-direct-debit', { title: "Checkout", pagename: "checkout-direct-debit", countries })
+    const products = await Product.find({ category: "lashes" }).sort({ product_collection: -1, _id: 1 }).exec();
+    res.render('subscription', { title: "Subscriptions", pagename: "subscription", products })
 });
 
 router.post("/setup", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
     const { location_origin } = res.locals;
     try {
-        const customer = await Stripe.customers.create({
-            name: `${firstname} ${lastname}`,
-            email,
-            shipping: {
-                name: `${firstname} ${lastname}`,
-                address: { line1: address_l1, line2: address_l2, city, country, postal_code: postcode }
-            }
-        });
-
         const product = await Stripe.products.create({
             name: "T-shirt",
             description: "Some t-shirt you get more of every month"
@@ -36,8 +27,7 @@ router.post("/setup", async (req, res) => {
         const session = await Stripe.checkout.sessions.create({
             payment_method_types: ["bacs_debit"],
             mode: "setup",
-            customer: customer.id,
-            success_url: location_origin + "/shop/checkout/direct-debit/complete",
+            success_url: location_origin + "/shop/subscription/complete",
             cancel_url: location_origin + "/shop/checkout/cancel"
         });
 
