@@ -197,13 +197,17 @@ footer #footer-links .link {
     margin-bottom: 1em;
 }
 
+footer #accepted-cards {
+    text-align: right;
+}
+
 footer #accepted-cards .card-icon {
     font-size: 3em;
     margin-bottom: 10px;
 }
 
-footer #accepted-cards .card-icon:not(:last-child) {
-    margin-right: 10px;
+footer #accepted-cards .card-icon:not(:first-child) {
+    margin-left: 10px;
 }
 
 footer #copyright {
@@ -440,20 +444,27 @@ section .media-wrapper .main-media.small video {
 }
 
 #reviews-preview-section {
+    height: 300px;
     padding: 4em 0;
 }
 
-#reviews-preview-section .review {
+#reviews-carousel {
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+#reviews-carousel .review {
     font-weight: 500;
     text-align: left;
 }
 
-#reviews-preview-section .review .read-more-link {
+#reviews-carousel .review .read-more-link {
     text-decoration: underline;
     margin-left: 10px;
 }
 
-#reviews-preview-section .review-rating {
+#reviews-carousel .review-rating {
     color: rgb(240, 230, 140);
     font-size: 1.2em;
 }
