@@ -12,15 +12,12 @@
     </section>
     <section>
         <div class="container">
-            <form method="post" action="/shop/subscription/setup" class="minimal" id="subscription-options">
+            <form id="subscription-options" method="post" action="/shop/subscription/setup" class="minimal">
                 <div class="row">
                     <%_ subscription_plans.forEach(plan => { _%>
                     <div class="col-md-3 col-sm-4">
                         <div class="subscription-opt">
-                            <%_ var interval = plan.interval === "day" ? "Daily" : plan.interval + "ly";
-                                var interval_count = plan.interval_count > 1 ? plan.interval_count + "-" : "";
-                                interval = interval.charAt(0).toUpperCase() + interval.slice(1).toLowerCase(); _%>
-                            <p class="sub-label"><%= interval_count + interval %></p>
+                            <p class="sub-label"><%= plan.name %></p>
                             <h3 class="price">£<%= (plan.price / 100).toFixed(2) %></h3>
                             <div class="info">
                                 <p><%- plan.info.replace(/\r?\n/, "<br>") %></p>
@@ -34,8 +31,67 @@
                     </div>
                     <%_ }) _%>
                 </div>
+
                 <div class="row">
-                    <button type="submit">START TODAY</button>
+                    <button type="button" class="submit" data-toggle="modal" data-target="#customer-details-modal">START TODAY</button>
+                </div>
+
+                <div id="customer-details-modal" class="modal fade in" role="dialog">
+                    <div class="modal-icons">
+                        <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form">
+                            <fieldset>
+                                <legend>CHECKOUT DETAILS</legend>
+                                <%_ const firstname = user && !is_admin ? user.firstname : "";
+                                    const lastname = user && !is_admin ? user.lastname : "";
+                                    const email = user && !is_admin ? user.email : ""; _%>
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="firstname">FIRST NAME</label>
+                                            <input type="text" name="firstname" value="<%- firstname %>" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="lastname">LAST NAME</label>
+                                            <input type="text" name="lastname" value="<%- lastname %>" required>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <label for="email">EMAIL</label>
+                                <input type="email" name="email" value="<%= email %>" required>
+                                <label for="address_l1">ADDRESS</label>
+                                <input type="text" name="address_l1" placeholder="LINE 1" required>
+                                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label for="city">CITY</label>
+                                            <input type="text" name="city" required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                            <select name="country" required>
+                                                <option value="">-</option>
+                                                <%_ for (var k in countries) { _%>
+                                                <option value="<%- k %>"><%- countries[k] %></option>
+                                                <%_ } _%>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="postcode">POST / ZIP CODE</label>
+                                            <input type="text" name="postcode" required>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <br>
+                                <button type="submit">
+                                    <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>BUY NOW</span></span>
+                                </button>
+                            </fieldset>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
