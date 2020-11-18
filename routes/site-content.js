@@ -2,7 +2,7 @@ const router = require('express').Router();
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-admin');
 const { Banner_slide, Overview_image } = require('../models/models');
-const { forEachOf } = require('async');
+const { forEachOf, each } = require('async');
 
 router.post('/banner/add', isAuthed, (req, res) => {
     new Banner_slide({ text: req.body.text }).save(err => res.send("Banner text saved"));
