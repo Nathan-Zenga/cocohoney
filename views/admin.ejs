@@ -150,10 +150,14 @@
                 });
 
                 $form.find("#overview_image_url_edit").val(result.url);
+                $form.find(".img-preview").toggleClass("show", !!result.url).empty().append(result.url ? $("<img src='" + result.url + "'>") : "");
 
                 $form.find("#highlights_post_title_edit").val(result.title);
                 $form.find("#highlights_post_text_body_edit").val(result.text_body);
                 $form.find("#highlights_post_link_edit").val(result.link);
+                $form.find(".img-preview:first-child").toggleClass("show", !!result.media_lg).empty().append(result.media_lg ? $("<img src='" + result.media_lg.url + "'>") : "");
+                var media_sm = result.media_sm ? $(/(.jpe?g|.png)$/i.test(result.media_sm.url) ? "<img src='" + result.media_sm.url + "'>" : "<video playsinline autoplay muted loop><source src='"+ result.media_sm.url +"'></source></video>") : "";
+                $form.find(".img-preview:last-child").toggleClass("show", !!result.media_sm).empty().append(media_sm);
             });
         });
 
