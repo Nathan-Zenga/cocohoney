@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require('../modules/country-list');
 const { Subscription_plan, Subscriber } = require('../models/models');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", async (req, res) => {
@@ -13,8 +13,8 @@ router.get("/", async (req, res) => {
 router.post("/setup", async (req, res) => {
     const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
     const { location_origin } = res.locals;
-    const field_check = { firstname, lastname, email, address_line1: address_l1, city, country, postcode };
-    const missing_fields = Object.keys(field_check).filter(k => !field_check[k]).map(k => k.replace(/_/g, " "));
+    const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
+    const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
     const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
     if (missing_fields.length) return res.status(400).send(`Missing fields: ${missing_fields.join(", ")}`);
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
@@ -32,7 +32,7 @@ router.post("/setup", async (req, res) => {
         });
 
         const product = await Stripe.products.create({
-            name: subscription_plan.name,
+            name: subscription_plan.name + " Lash Subscription",
             description: subscription_plan.info
         });
 
@@ -71,14 +71,38 @@ router.get("/complete", async (req, res) => {
             default_payment_method: intent.payment_method,
             items: [{ price: price_id }]
         });
+        const product = await Stripe.products.retrieve(subscription.items.data[0].price.product);
+        const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
         if (production) new Subscriber({
-            customer_name: customer.name,
-            customer_email: customer.email,
+            customer: { name: customer.name, email: customer.email },
             sub_id: subscription.id
         }).save();
 
-        res.send(subscription);
+        const transporter = new MailTransporter({ req, res });
+        transporter.setRecipient({ email: customer.email }).sendMail({
+            subject: "Subscription Sign-up & Payment Successful - Cocohoney Cosmetics",
+            message: `Hi ${customer.name},\n\n` +
+            "Thank you for signing up to one of our Monthly Lashes Subscriptions! We are happy to confirm your sign-up and payment was successful. " +
+            `Here is a summery of your order:\n\n${product.name} (£${(product.price / 100).toFixed(2)})\n\n` +
+            "Click below to view further details about this order:\n\n" +
+            `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>\n\n` +
+            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
+            "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            if (err) console.error(err), res.status(500);
+            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+                subject: "Purchase Report: You Got Paid!",
+                message: "You've received a new purchase from a new customer.\n\n" +
+                "<b>View the order summary below:</b>\n" +
+                `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
+                `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>`
+            }, err => {
+                if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
+                res.render('subscription-checkout-success', { title: "Subscription Payment Successful", pagename: "subscription-checkout-success" })
+            });
+        });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
