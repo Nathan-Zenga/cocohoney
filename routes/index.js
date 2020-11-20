@@ -34,7 +34,7 @@ router.post('/contact/mail/send', (req, res) => {
     const { firstname, lastname, email, message } = req.body;
     const transporter = new MailTransporter({ req, res }, { email: req.session.admin_email });
     const subject = "New message / enquiry";
-    const msg = `New message from ${firstname} ${lastname} (${email}):\n\n${message}`;
+    const msg = `New message from <b>${firstname} ${lastname} (${email})</b>:\n\n${message}`;
     transporter.sendMail({ subject, message: msg }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("Email sent");

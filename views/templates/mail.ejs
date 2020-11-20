@@ -35,6 +35,20 @@
                 padding-left: 15px;
                 padding-right: 15px;
             }
+            .button {
+                display: inline-block;
+                border: none;
+                border-radius: 5px;
+                width: auto;
+                background-color: rgb(124, 76, 76);
+                padding: 15px 30px;
+                font-weight: 400;
+                margin-bottom: 1em;
+                text-decoration: none;
+            }
+            .button + .button {
+                margin-left: 10px;
+            }
         </style>
     </head>
     <body id="mail-body">
@@ -44,24 +58,27 @@
         <div class="main section centered-block" id="message">
             <%- 
                 (function() {
-                    var url_pattern = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
-                    var email_pattern = /([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})/gi;
-                    return message.replace(/\r?\n/g, "<br>").replace(/\t/g, "&emsp;").replace(url_pattern, match => {
-                        var href = /^www/.test(match) || !/^(https?|ftp|file|data)/.test(match) ? "http://" + match : match;
-                        return "<a style='color: inherit!important' target='_blank' href='"+ href +"'>" + match + "</a>"
-                    }).replace(email_pattern, match => {
-                        var href = "mailto:" + match;
-                        return "<a style='color: inherit!important' target='_blank' href='"+ href +"'>" + match + "</a>"
-                    });
+                    const url_regex = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
+                    const url_btn_regex = /\(\((.*?)\)\)\[(.*?)\]/gi;
+                    const email_regex = /(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/gi;
+                    return message.replace(url_btn_regex, match => {
+                        const txt = match.match(/\(\((.*?)\)\)/gi)[0].replace(/[\(\)]/g, "");
+                        const url = match.match(/\[(.*?)\]/gi)[0].replace(/[\[\]]/g, "");
+                        const href = /^www/.test(url) || !/^(https?|ftp|file|data)/.test(url) ? "http://" + url : url;
+                        return `<a class="button" style="color: rgb(240, 230, 140)!important" target="_blank" href="${href.replace(/\//g, '&#47;')}">${txt}</a>`
+                    }).replace(url_regex, (match, pos, str) => {
+                        const href = /^www/.test(match) || !/^(https?|ftp|file|data)/.test(match) ? "http://" + match : match;
+                        const href_present = str.slice(pos-6, pos) === 'href="';
+                        return href_present ? `<a style="color: inherit!important" target="_blank" href="${href}">${match}</a>` : match;
+                    }).replace(email_regex, match => {
+                        const href = "mailto:" + match;
+                        return `<a style="color: inherit!important" target="_blank" href="${href}">${match}</a>`
+                    }).replace(/\r?\n/g, "<br>").replace(/\t/g, "&emsp;");
                 })()
             %>
         </div>
         <div class="footer section">
             <p style="font-size: .8em;">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
-            <%_ if (member.id) { _%>
-            <p class="centered-block" style="font-size: .8em;">You are receiving this email because you have subscribed to us, Cocohoney Cosmetics, to receive updates and promotional material.</p>
-            <p style="font-size: .8em;"><a style="color: inherit!important" href="<%- location_origin %>/<%= member.ambassador ? 'ambassador/' : '' %>account/delete?id=<%= member.id %>&src=email_unsub_link<%= member.id %>">Unsubscribe</a></p>
-            <%_ } _%>
         </div>
     </body>
 </html>

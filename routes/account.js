@@ -56,8 +56,8 @@ router.post('/signup', (req, res) => {
                 new MailTransporter({ req, res }, saved).sendMail({
                     subject: `You have successfully signed up with Cocohoney Cosmetics!`,
                     message: `Hi ${saved.firstname} ${saved.lastname},\n\n` +
-                    "This is a confirmation email to let you know that your account has been successfully set up. " +
-                    `You can now log in here:\n\n${res.locals.location_origin}/account/login\n\n` +
+                    "This is a confirmation email to let you know that your account has been successfully set up\n\n" +
+                    `((LOGIN))[${res.locals.location_origin}/account/login]\n\n` +
                     "Thank you for signing up with Cocohoney Cosmetics!"
                 }, err => {
                     if (err) return res.status(500).send(err.message || err);
@@ -145,8 +145,9 @@ router.post('/password-reset-request', async (req, res) => {
     const saved = await member.save();
     mail_transporter.setRecipient(saved).sendMail({
         subject: "Your Password Reset Token",
-        message: "You can reset your password via the link below:\n\n" +
-        `${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}`
+        message: "You are receiving this email because you requested to reset your password.\n\n" +
+        "Please click the link below to proceed:\n\n" +
+        `((RESET PASSWORD))[${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}]`
     }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");
