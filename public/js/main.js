@@ -93,6 +93,8 @@ $(function() {
         }
     });
 
+    if ($("form :input").length) $("form :input").get(0).focus();
+
     if ($(".slider-container").length) {
         var repeat = false;
         var noArrows = false;
