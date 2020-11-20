@@ -50,6 +50,20 @@
     </div>
 
     <div id="remove-overview-img" class="remove-form-tab tab-pane fade">
-        <p style="text-align: center;">IN CONSTRUCTION</p>
+        <%_ if (overview_images.length) { _%>
+        <form action="/site/content/overview-images/remove" method="post">
+            <label>DELETE IMAGES</label><br><br>
+            <%_ overview_images.forEach((img, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="id" value="<%= img._id %>">
+                <img src="<%= img.url %>" alt="<%= img.url %>">
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="REMOVE">
+        </form>
+        <%_ } else { _%>
+        <p style="text-align: center; margin-top: 2em"><b>NO IMAGES TO REMOVE</b></p>
+        <%_ } _%>
     </div>
 </div>
