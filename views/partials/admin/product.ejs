@@ -164,13 +164,13 @@
             <input type="submit" value="DELETE PRODUCTS">
         </form>
         <%_ } else { _%>
-        <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
+        <p class="no-removable-items-label"><b>NO SHOP PRODUCTS TO REMOVE</b></p>
         <%_ } _%>
     </div>
 
     <div id="product-list" class="list-tab tab-pane fade">
         <%_ if (!products.length) { _%>
-        <p style="text-align: center; margin-top: 2em"><b>NO SHOP PRODUCTS TO LIST</b></p>
+        <p class="no-removable-items-label"><b>NO SHOP PRODUCTS TO LIST</b></p>
         <%_ } else { _%>
         <div class='table-responsive'>
             <table id="products-table" class="table table-borderless table-hover">

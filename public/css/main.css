@@ -1119,6 +1119,11 @@ label .dropdown-arrow {
     margin-bottom: 4em;
 }
 
+.no-removable-items-label {
+    text-align: center;
+    margin-top: 2em;
+}
+
 #product-view-page .product-view-container {
     padding-top: 5em;
     padding-bottom: 5em;

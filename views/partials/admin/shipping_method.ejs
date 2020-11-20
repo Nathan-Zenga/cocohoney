@@ -69,14 +69,14 @@
             <input type="submit" value="DELETE SHIPPING METHODS">
         </form>
         <%_ } else { _%>
-        <p style="text-align: center; margin-top: 2em"><b>NO SHIPPING METHODS TO REMOVE</b></p>
+        <p class="no-removable-items-label"><b>NO SHIPPING METHODS TO REMOVE</b></p>
         <%_ } _%>
     </div>
 
     <style>#shipping-method-list td { width: 33.333% }</style>
     <div id="shipping-method-list" class="list-tab tab-pane fade">
         <%_ if (!shipping_methods.length) { _%>
-        <p style="text-align: center; margin-top: 2em"><b>NO SHIPPING METHODS TO LIST</b></p>
+        <p class="no-removable-items-label"><b>NO SHIPPING METHODS TO LIST</b></p>
         <%_ } else { _%>
         <div class='table-responsive'>
             <table id="products-table" class="table table-borderless table-hover">
