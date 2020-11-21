@@ -65,6 +65,10 @@
                 <%- include ('partials/admin/box') -%>
             </div>
 
+            <div id="subscriptions" class="tab-pane fade">
+            <%- include ('partials/admin/subscription') -%>
+            </div>
+
             <div id="mail" class="tab-pane fade">
                 <h1>MAIL</h1>
                 <%- include ('partials/admin/mail') -%>
@@ -165,6 +169,11 @@
                 $form.find("#event-info-edit").val(result.info);
                 $form.find("#event-price-edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
                 $form.find("#event-stock-qty-edit").val(result.stock_qty);
+
+                $form.find("#sub_interval_edit").val(result.interval);
+                $form.find("#sub_interval_count_edit").val(result.interval_count);
+                $form.find("#sub_price_edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
+                $form.find("#sub_info_edit").val(result.info);
             });
         });
 

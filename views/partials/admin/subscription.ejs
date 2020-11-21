@@ -1,0 +1,94 @@
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#new-subscription">NEW</a></li>
+    <li><a data-toggle="pill" href="#edit-subscription">EDIT</a></li>
+    <li><a data-toggle="pill" href="#remove-subscription">REMOVE</a></li>
+</ul>
+
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="new-subscription" class="new-form-tab tab-pane fade in active">
+        <form method="post" action="/subscription/add">
+            <fieldset>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label>NUMBER OF TIMES</label>
+                        <input type="number" name="interval_count" id="sub_interval_count" min="1" max="365" value="1" required>
+                    </div>
+                    <div class="col-xs-6">
+                        <label>PER MONTH, YEAR, etc.</label>
+                        <select name="interval" id="sub_interval" required>
+                            <option value="">-</option>
+                            <option value="day">Day</option>
+                            <option value="month" selected>Month</option>
+                            <option value="week">Week</option>
+                            <option value="year">Year</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <label>PRICE (£)</label>
+            <input type="number" name="sub_price" id="sub_price" min="1" step="0.01" required>
+
+            <label>INFO <span>(OPTIONAL)</span></label>
+            <textarea name="sub_info" id="sub_info" rows="10"></textarea>
+
+            <input type="submit" value="SAVE">
+        </form>
+    </div>
+
+    <div id="edit-subscription" class="edit-form-tab tab-pane fade">
+        <form method="post" action="/subscription/edit">
+            <label>SELECT SUBSCRIPTION PLAN <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+            <select name="id" id="subscription_plan_id">
+                <option value="">-</option>
+                <%_ subscription_plans.forEach(plan => { _%>
+                <option value="<%= plan._id %>"><%= plan.name %> Plan</option>
+                <%_ }) _%>
+            </select>
+
+            <fieldset>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label>NUMBER OF TIMES</label>
+                        <input type="number" name="interval_count" id="sub_interval_count_edit" min="1" max="365" value="1">
+                    </div>
+                    <div class="col-xs-6">
+                        <label>PER MONTH, YEAR, etc.</label>
+                        <select name="interval" id="sub_interval_edit">
+                            <option value="">-</option>
+                            <option value="day">Day</option>
+                            <option value="month" selected>Month</option>
+                            <option value="week">Week</option>
+                            <option value="year">Year</option>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <label>PRICE (£)</label>
+            <input type="number" name="sub_price" id="sub_price_edit" min="1" step="0.01">
+
+            <label>INFO <span>(OPTIONAL)</span></label>
+            <textarea name="sub_info" id="sub_info_edit" rows="10"></textarea>
+
+            <input type="submit" value="UPDATE">
+        </form>
+    </div>
+
+    <div id="remove-subscription" class="remove-form-tab tab-pane fade">
+        <%_ if (subscription_plans.length) { _%>
+        <form action="/subscription/remove" method="post">
+            <label>DELETE SUBSCRIPTION PLAN(S)</label><br><br>
+            <%_ subscription_plans.forEach((plan, i) => { _%>
+            <div class="input-checkbox">
+                <input type="checkbox" name="plan<%= i %>" value="<%= plan._id %>"><span><%= plan.name %> Plan</span>
+            </div>
+            <%_ }) _%>
+            <br>
+            <input type="submit" value="DELETE PLAN(S)">
+        </form>
+        <%_ } else { _%>
+        <p class="no-removable-items-label"><b>NO SUBSCRIPTION PLANS TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+</div>
