@@ -93,7 +93,7 @@ $(function() {
         }
     });
 
-    if ($("form :input").length) $("form :input").get(0).focus();
+    ($("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").get(0) || { focus: function() {} }).focus();
 
     if ($(".slider-container").length) {
         var repeat = false;

@@ -459,8 +459,12 @@ section .media-wrapper .main-media.small video {
     text-align: left;
 }
 
+#reviews-carousel .review-commentry {
+    font-weight: 300;
+}
+
 #reviews-carousel .review .read-more-link {
-    text-decoration: underline;
+    border-bottom: 1px solid white;
     margin-left: 10px;
 }
 
