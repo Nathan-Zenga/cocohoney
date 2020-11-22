@@ -39,8 +39,8 @@
     </div>
     <script>
         $("form").submit(function(e) {
+            e.preventDefault();
             if (confirm("Are you sure this is the right tracking number?")) {
-                e.preventDefault();
                 var btnController = new submitBtnController(this);
                 $.post(this.action, $(this).serializeArray(), function(result) {
                     alert(result);
