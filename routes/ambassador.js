@@ -31,9 +31,11 @@ router.post('/register', (req, res) => {
                 const message = "The following candidate wants to sign up as an ambassador.\n\n" +
                     `${amb.firstname} ${amb.lastname} (${amb.email})\n\n` +
                     "Please click the link below to verify them:\n" +
-                    `((VERIFY))[${res.locals.location_origin}/ambassador/register/verify?token=${amb.token}]\n\n` +
+                    `((VERIFY))[${res.locals.location_origin}/ambassador/register/verify?token=${amb.token}]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/register/verify?token=${amb.token})</small>\n\n` +
                     "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
-                    `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id}]\n\n`;
+                    `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id}]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id})</small>\n\n`;
 
                 mail_transporter.setRecipient({ email: req.session.admin_email });
                 mail_transporter.sendMail({ subject, message }, err => {
@@ -265,7 +267,8 @@ router.post('/password-reset-request', async (req, res) => {
         subject: "Your Password Reset Token",
         message: "You are receiving this email because you requested to reset your password.\n\n" +
         "Please click the link below to proceed:\n\n" +
-        `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]`
+        `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`
     }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");

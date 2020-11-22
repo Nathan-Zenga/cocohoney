@@ -57,7 +57,8 @@ router.post('/signup', (req, res) => {
                     subject: `You have successfully signed up with Cocohoney Cosmetics!`,
                     message: `Hi ${saved.firstname} ${saved.lastname},\n\n` +
                     "This is a confirmation email to let you know that your account has been successfully set up\n\n" +
-                    `((LOGIN))[${res.locals.location_origin}/account/login]\n\n` +
+                    `((LOGIN))[${res.locals.location_origin}/account/login]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/login)</small>\n\n` +
                     "Thank you for signing up with Cocohoney Cosmetics!"
                 }, err => {
                     if (err) return res.status(500).send(err.message || err);
@@ -147,7 +148,8 @@ router.post('/password-reset-request', async (req, res) => {
         subject: "Your Password Reset Token",
         message: "You are receiving this email because you requested to reset your password.\n\n" +
         "Please click the link below to proceed:\n\n" +
-        `((RESET PASSWORD))[${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}]`
+        `((RESET PASSWORD))[${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token})</small>`
     }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");
