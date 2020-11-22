@@ -124,46 +124,63 @@
         <button type="button" class="close-view" data-dismiss="modal">&times;</button>
     </div>
     <div class="modal-body">
-        <form method="post" action="/account/edit" id="account-edit-form">
-            <label>PROFILE PICTURE</label>
-            <fieldset class="file-upload-container">
-                <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
-                    <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+        <ul class="nav nav-pills">
+            <li class="active"><a data-toggle="pill" href="#personal-details-settings">EDIT PROFILE</a></li>
+            <li><a data-toggle="pill" href="#account-settings">ACCOUNT</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="personal-details-settings" class="tab-pane fade in active">
+                <form method="post" action="/account/edit" id="personal-details-edit-form">
+                    <label>PROFILE PICTURE</label>
+                    <fieldset class="file-upload-container">
+                        <div class="row">
+                            <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                            <input type="hidden" name="image_file">
+                            <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label>FIRST NAME</label>
+                                <input type="text" name="firstname" value="<%- user.firstname %>">
+                            </div>
+                            <div class="col-sm-6">
+                                <label>LAST NAME</label>
+                                <input type="text" name="lastname" value="<%- user.lastname %>">
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <label>PHONE NUMBER</label>
+                    <input type="tel" name="phone_number" value="<%- user.phone_number %>">
+
+                    <label>EMAIL</label>
+                    <input type="email" name="email" value="<%- user.email %>">
+
+                    <input type="hidden" name="id" value="<%= user._id %>">
+                    <input type="submit" value="UPDATE">
+                </form>
+            </div>
+
+            <div id="account-settings" class="tab-pane fade">
+                <div class="form-container">
+                    <form class="minimal sensitive-form" method="post" action="/account/delete">
+                        <input type="hidden" name="id" value="<%- user._id %>">
+                        <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
+                    </form>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <label>FIRST NAME</label>
-                        <input type="text" name="firstname" value="<%- user.firstname %>">
-                    </div>
-                    <div class="col-sm-6">
-                        <label>LAST NAME</label>
-                        <input type="text" name="lastname" value="<%- user.lastname %>">
-                    </div>
-                </div>
-            </fieldset>
-
-            <label>PHONE NUMBER</label>
-            <input type="tel" name="phone_number" value="<%- user.phone_number %>">
-
-            <label>EMAIL</label>
-            <input type="email" name="email" value="<%- user.email %>">
-
-            <input type="hidden" name="id" value="<%= user._id %>">
-            <input type="submit" value="UPDATE">
-        </form>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    $("#account-edit-form").submit(function(e) {
+    $("#personal-details-edit-form").submit(function(e) {
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {
@@ -173,6 +190,21 @@
             btnController.finish();
             alert(err.responseText);
         });
+    });
+
+    $(".sensitive-form").off("submit").submit(function(e) {
+        e.preventDefault();
+        var confirmation = confirm("Are you sure?");
+        if (confirmation) {
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                alert(result);
+                location.reload();
+            }).fail(function(err) {
+                btnController.finish();
+                alert(err.responseText);
+            });
+        }
     });
 </script>
 <%- include ('partials/footer') -%>
