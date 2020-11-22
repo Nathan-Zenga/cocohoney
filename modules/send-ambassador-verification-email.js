@@ -1,12 +1,12 @@
 const { Ambassador } = require("../models/models");
-const MailingListMailTransporter = require("./MailingListMailTransporter");
+const MailTransporter = require("./mail-transporter");
 
 module.exports = (req, res) => {
     const { token } = req.method === "POST" ? req.body : req.query;
     Ambassador.findOne({ token }, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(404).send("Invalid entry");
-        new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
+        new MailTransporter({ req, res }, { email: amb.email }).sendMail({
             subject: "Your account is now verified.",
             message: "Hello,\n\n Your account has been verified and confirmed by " +
             "the administrator of Cocohoney Cosmetics.\n\n" +

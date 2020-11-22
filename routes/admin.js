@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box, Wishlist } = require('../models/models');
 require('../config/passport-admin')(passport);
 
@@ -60,7 +60,7 @@ router.post('/login', (req, res) => {
                     let password = buf.toString("hex");
                     let token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
                     new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
-                        new MailingListMailTransporter({ req, res }, { email }).sendMail({
+                        new MailTransporter({ req, res }, { email }).sendMail({
                             subject: "Admin Account Activation",
                             message: "You're receiving this email because an admin account needs setting up. " +
                                 "Please click the link below to activate the account, as this will only be " +
@@ -167,7 +167,7 @@ router.post('/mail/send', isAuthed, async (req, res) => {
     const { email, subject, message } = req.body;
     const member = await Member.findOne({ email });
     const ambassador = await Ambassador.findOne({ email });
-    const transporter = new MailingListMailTransporter({ req, res });
+    const transporter = new MailTransporter({ req, res });
 
     if (!member && !ambassador) return res.status(404).send("Recipient not found or specified");
     transporter.setRecipient(member || ambassador);
@@ -188,7 +188,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     for (let i = 0; i < everyone.length; i++) {
         setTimeout(() => {
             const recipient = everyone[i];
-            const transporter = new MailingListMailTransporter({ req, res });
+            const transporter = new MailTransporter({ req, res });
             transporter.setRecipient(recipient);
             transporter.sendMail({ subject, message }, err => {
                 if (err) return console.log(err.message || err), console.log(`Not sent for ${recipient.firstname} ${recipient.lastname} onwards`);
@@ -202,7 +202,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const transporter = new MailingListMailTransporter({ req, res });
+    const transporter = new MailTransporter({ req, res });
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
     transporter.setRecipients(ambassadors);

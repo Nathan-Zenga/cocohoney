@@ -2,7 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-customer');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product } = require('../models/models');
 
 router.get('/', isAuthed, async (req, res) => {
@@ -53,7 +53,7 @@ router.post('/signup', (req, res) => {
             member.password = hash;
             member.save((err, saved) => {
                 if (err) return res.status(500).send(err.message);
-                new MailingListMailTransporter({ req, res }, saved).sendMail({
+                new MailTransporter({ req, res }, saved).sendMail({
                     subject: `You have successfully signed up with Cocohoney Cosmetics!`,
                     message: `Hi ${saved.firstname} ${saved.lastname},\n\n` +
                     "This is a confirmation email to let you know that your account has been successfully set up. " +
@@ -103,7 +103,7 @@ router.post('/delete', isAuthed, (req, res) => {
         Wishlist.findOneAndDelete({ customer_id: member.id }, err => {
             if (err) return res.status(500).send(err.message);
             cloud.api.delete_resources([(member.image || {}).p_id], err => {
-                new MailingListMailTransporter({ req, res }, { email: member.email }).sendMail({
+                new MailTransporter({ req, res }, { email: member.email }).sendMail({
                     subject: `Your account is now deleted`,
                     message: `Hi ${member.firstname},\n\n` +
                     "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
@@ -139,7 +139,7 @@ router.get('/password-reset', (req, res) => {
 router.post('/password-reset-request', async (req, res) => {
     const { email } = req.body;
     const member = await Member.findOne({ email });
-    const mail_transporter = new MailingListMailTransporter({ req, res });
+    const mail_transporter = new MailTransporter({ req, res });
     if (!member) return res.status(404).send("Cannot find you on our system");
     member.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await member.save();

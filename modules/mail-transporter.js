@@ -5,20 +5,20 @@ const { OAuth2 } = require("googleapis").google.auth;
 const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV } = process.env;
 
 /** Class for processing mail transports */
-class MailingListMailTransporter {
-    #req; #res; #member; #members; #user; #pass; #getTransportOpts;
+class MailTransporter {
+    #req; #res; #recipient; #recipients; #user; #pass; #getTransportOpts;
 
     /**
      * @param {object} routerParams route handler parameters, containing request and response objects
      * @param {e.Request} routerParams.req request object
      * @param {e.Response} routerParams.res response object
-     * @param {(mongoose.Document | mongoose.Document[])} member recipient or existing mailing list member(s)
+     * @param {(mongoose.Document | mongoose.Document[])} recipient new or existing (registered) recipient(s)
      */
-    constructor(routerParams, member) {
+    constructor(routerParams, recipient) {
         this.#req = routerParams.req;
         this.#res = routerParams.res;
-        this.#member = !Array.isArray(member) ? member : null;
-        this.#members = Array.isArray(member) ? member : [];
+        this.#recipient = !Array.isArray(recipient) ? recipient : null;
+        this.#recipients = Array.isArray(recipient) ? recipient : [];
         const oauth2Client = new OAuth2( OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, "https://developers.google.com/oauthplayground" );
         oauth2Client.setCredentials({ refresh_token: OAUTH_REFRESH_TOKEN });
 
@@ -64,15 +64,15 @@ class MailingListMailTransporter {
      */
     sendMail(mailOpts, cb) {
         const { subject, message } = mailOpts;
-        if (!this.#member && !this.#members.length) return cb("Recipient(s) not set");
+        if (!this.#recipient && !this.#recipients.length) return cb("Recipient(s) not set");
         if (!subject || !message) return cb("Subject and message cannot be empty");
         this.#getTransportOpts((err, options) => {
             if (err) return cb(err.message || err);
-            this.#res.render('templates/mail', { message, member: this.#member }, (err, html) => {
+            this.#res.render('templates/mail', { message, recipient: this.#recipient }, (err, html) => {
                 if (err) return cb(err.message);
                 nodemailer.createTransport(options).sendMail({
                     from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
-                    to: this.#member ? this.#member.email : this.#members.map(m => m.email),
+                    to: this.#recipient ? this.#recipient.email : this.#recipients.map(m => m.email),
                     subject,
                     html
                 }, cb);
@@ -80,19 +80,19 @@ class MailingListMailTransporter {
         });
     };
 
-    /** @param {mongoose.Document} member recipient or existing mailing list member */
-    setRecipient(member) {
-        this.#members = [];
-        this.#member = member;
+    /** @param {mongoose.Document} recipient new or existing (registered) recipient */
+    setRecipient(recipient) {
+        this.#recipients = [];
+        this.#recipient = recipient;
         return this
     };
 
-    /** @param {mongoose.Document[]} members recipients or existing mailing list members */
-    setRecipients(members) {
-        this.#member = null;
-        this.#members = members;
+    /** @param {mongoose.Document[]} recipients new or existing (registered) recipients */
+    setRecipients(recipients) {
+        this.#recipient = null;
+        this.#recipients = recipients;
         return this
     };
 };
 
-module.exports = MailingListMailTransporter;
+module.exports = MailTransporter;

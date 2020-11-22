@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", (req, res) => {
@@ -162,7 +162,7 @@ router.get("/session/complete", async (req, res) => {
 
         if (production) order.save();
 
-        const transporter = new MailingListMailTransporter({ req, res });
+        const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email: customer.email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${customer.name},\n\n` +

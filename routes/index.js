@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post } = require('../models/models');
 
 router.get('/', async (req, res) => {
@@ -32,7 +32,7 @@ router.get('/order/:id', async (req, res, next) => {
 
 router.post('/contact/mail/send', (req, res) => {
     const { firstname, lastname, email, message } = req.body;
-    const transporter = new MailingListMailTransporter({ req, res }, { email: req.session.admin_email });
+    const transporter = new MailTransporter({ req, res }, { email: req.session.admin_email });
     const subject = "New message / enquiry";
     const msg = `New message from ${firstname} ${lastname} (${email}):\n\n${message}`;
     transporter.sendMail({ subject, message: msg }, err => {

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { each } = require('async');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { Discount_code, Ambassador, Order } = require('../models/models');
 
 router.post("/submit", async (req, res) => {
@@ -21,7 +21,7 @@ router.post("/submit", async (req, res) => {
         if (err) return res.status(500).send(err.message);
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const current_month = months[new Date().getMonth()];
-        const mail_transporter = new MailingListMailTransporter({ req, res });
+        const mail_transporter = new MailTransporter({ req, res });
         const summary = items.map(item => `<b>${item.ambassador}</b> (${item.code}):\n\t${item.total_sales} order${item.total_sales > 1 ? "s" : ""} sold`);
         mail_transporter.setRecipient({ email: req.session.admin_email }).sendMail({
             subject: `Ambassador Sales Report - ${ current_month } ${ new Date().getFullYear() }`,

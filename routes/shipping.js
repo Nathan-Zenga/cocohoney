@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const isAuthed = require('../modules/auth-check-admin');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { Shipping_method, Order, Shipping_page } = require('../models/models');
 
 router.get('/', async (req, res) => {
@@ -72,7 +72,7 @@ router.post("/tracking/ref/send", (req, res) => {
         order.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             const { customer_name, customer_email, tracking_ref } = saved;
-            const transporter = new MailingListMailTransporter({ req, res });
+            const transporter = new MailTransporter({ req, res });
 
             transporter.setRecipient({ email: customer_email }).sendMail({
                 subject: `Your tracking number - ${tracking_ref}`,

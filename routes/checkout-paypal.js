@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const paypal = require('paypal-rest-sdk');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
 const { NODE_ENV, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = process.env;
 const production = NODE_ENV === "production";
@@ -151,7 +151,7 @@ router.get("/complete", async (req, res) => {
 
         if (production) order.save();
 
-        const transporter = new MailingListMailTransporter({ req, res });
+        const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${recipient_name},\n\n` +

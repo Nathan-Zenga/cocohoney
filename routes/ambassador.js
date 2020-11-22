@@ -6,7 +6,7 @@ const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
 const { Ambassador, Discount_code, Product, Order, Wishlist } = require('../models/models');
-const MailingListMailTransporter = require('../modules/MailingListMailTransporter');
+const MailTransporter = require('../modules/mail-transporter');
 
 router.get('/register', (req, res) => {
     res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })
@@ -26,7 +26,7 @@ router.post('/register', (req, res) => {
             saved.token = crypto.randomBytes(20).toString("hex");
             saved.save((err, amb) => {
                 if (err) return res.status(500).send(err.message);
-                const mail_transporter = new MailingListMailTransporter({ req, res });
+                const mail_transporter = new MailTransporter({ req, res });
                 const subject = `Account verification: ${amb.firstname} ${amb.lastname} wants to be an Ambassador`;
                 const message = "The following candidate wants to sign up as an ambassador.\n\n" +
                     `${amb.firstname} ${amb.lastname} (${amb.email})\n\n` +
@@ -167,7 +167,7 @@ router.post('/delete', (req, res) => {
                     if (res.locals.is_admin) {
                         return res.send("The account is now successfully deleted.");
                     };
-                    new MailingListMailTransporter({ req, res }, { email: amb.email }).sendMail({
+                    new MailTransporter({ req, res }, { email: amb.email }).sendMail({
                         subject: "Your account is now deleted",
                         message: `Hi ${amb.firstname},\n\n` +
                         "Your account is now successfully deleted.\n" +
@@ -257,7 +257,7 @@ router.get('/password-reset', (req, res) => {
 router.post('/password-reset-request', async (req, res) => {
     const { email } = req.body;
     const ambassador = await Ambassador.findOne({ email });
-    const mail_transporter = new MailingListMailTransporter({ req, res });
+    const mail_transporter = new MailTransporter({ req, res });
     if (!ambassador) return res.status(404).send("Cannot find you on our system");
     ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await ambassador.save();
