@@ -1,11 +1,12 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailTransporter = require('../modules/mail-transporter');
 const sale_toggle = require('../modules/sale_toggle');
-const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Wishlist } = require('../models/models');
+const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Wishlist, Subscriber } = require('../models/models');
 const passport = require('../config/passport');
 
 router.get('/', async (req, res) => {
@@ -35,7 +36,9 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: ambassador.id });
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
-    const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items };
+    const subscriber_doc = await Subscriber.findOne({ "customer.email": ambassador.email });
+    const subscription = subscriber_doc ? await Stripe.subscriptions.retrieve(subscriber_doc.sub_id, { expand: ["customer"] }) : null;
+    const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items, subscription };
     const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
     res.render('ambassador-account', opts);
 });

@@ -2,16 +2,21 @@ const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const crypto = require('crypto');
+const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
-const { Member, Order, Wishlist, Product } = require('../models/models');
+const { Member, Order, Wishlist, Product, Subscriber } = require('../models/models');
 const passport = require('../config/passport');
 
 router.get('/', isAuthed, async (req, res) => {
     const orders = await Order.find({ customer_email: req.user.email }).sort({ created_at: -1 }).exec();
     const wishlist = await Wishlist.findOne({ customer_id: req.user._id });
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
-    res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items });
+    const subscriber_docs = await Subscriber.find({ "customer.member_id": user._id });
+    const subscriptions_all = await Stripe.subscriptions.list({ expand: ["data.customer", "data.latest_invoice", "data.default_payment_method"] });
+    const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
+    const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
+    res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items, subscriptions, subscription_products });
 });
 
 router.get('/login', (req, res) => {

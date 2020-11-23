@@ -64,6 +64,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div id="wishlist" class="tab-pane fade">
                         <div class="thumb-container no-wrap">
                             <div class="<%- wishlist.length ? 'container' : '' %>" style="<%- wishlist.length ? 'padding: 20px 0 20px 30px;' : '' %>">
@@ -170,6 +171,7 @@
                         </form>
                     </div>
 
+<<<<<<< HEAD
                     <div id="account-settings" class="tab-pane fade">
                         <div class="form-container">
                             <form class="minimal mail-sub-toggle-form" method="post" action="/account/edit" id="mail-sub-toggle">
@@ -187,12 +189,35 @@
                                 <input type="hidden" name="id" value="<%= user._id %>">
                             </form>
 
+                            <form class="minimal sensitive-form" method="post" action="/subscription/cancel">
+                                <input type="hidden" name="sub_id" value="<%- (subscription || {}).id %>">
+                                <input type="submit" value="CANCEL SUBSCRIPTION" <%- !subscription ? "disabled" : "" %>>
+                            </form>
+
                             <form class="minimal sensitive-form" method="post" action="/account/delete">
                                 <input type="hidden" name="id" value="<%- user._id %>">
                                 <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
                             </form>
                         </div>
                     </div>
+=======
+            <div id="account-settings" class="tab-pane fade">
+                <div class="form-container">
+                    <form class="minimal" method="post" action="/account/edit" id="mail-sub-toggle" style="text-align: center; padding: 0 30px">
+                        <input type="hidden" name="id" value="<%= user._id %>">
+                        <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
+                    </form>
+
+                    <form class="minimal sensitive-form" method="post" action="/subscription/cancel">
+                        <input type="hidden" name="sub_id" value="<%- (subscription || {}).id %>">
+                        <input type="submit" value="CANCEL SUBSCRIPTION" <%- !subscription ? "disabled" : "" %>>
+                    </form>
+
+                    <form class="minimal sensitive-form" method="post" action="/account/delete">
+                        <input type="hidden" name="id" value="<%- user._id %>">
+                        <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
+                    </form>
+>>>>>>> 80023ae (enable users to manually cancel subscriptions via their accounts)
                 </div>
             </div>
         </div>

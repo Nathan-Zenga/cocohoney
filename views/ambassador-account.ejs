@@ -289,6 +289,11 @@
                                 <input type="hidden" name="id" value="<%= amb._id %>">
                             </form>
 
+                            <form class="minimal sensitive-form" method="post" action="/subscription/cancel">
+                                <input type="hidden" name="sub_id" value="<%- (subscription || {}).id %>">
+                                <input type="submit" value="CANCEL SUBSCRIPTION" <%- !subscription ? "disabled" : "" %>>
+                            </form>
+
                             <form class="minimal sensitive-form" method="post" action="/ambassador/delete">
                                 <input type="hidden" name="id" value="<%- amb._id %>">
                                 <button type="submit" class="btn-danger">DELETE ACCOUNT</button>

@@ -2,10 +2,11 @@ const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
+const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
-const { Ambassador, Discount_code, Product, Order, Wishlist } = require('../models/models');
+const { Ambassador, Discount_code, Product, Order, Wishlist, Subscriber } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
 const passport = require('../config/passport');
 
@@ -83,7 +84,11 @@ router.get('/account', async (req, res) => {
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: user._id });
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
-    const docs = { ambassador: null, discount_code, orders, products, wishlist: wishlist_items };
+    const subscriber_docs = await Subscriber.find({ "customer.member_id": user._id });
+    const subscriptions_all = await Stripe.subscriptions.list({ expand: ["data.customer", "data.latest_invoice", "data.default_payment_method"] });
+    const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
+    const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
+    const docs = { ambassador: null, discount_code, orders, products, wishlist: wishlist_items, subscriptions, subscription_products };
     const opts = { title: "My Account | Ambassador", pagename: "account", countries, ...docs };
     res.render('ambassador-account', opts);
 });
