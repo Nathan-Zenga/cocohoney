@@ -74,7 +74,7 @@ router.get("/complete", async (req, res) => {
         const product = await Stripe.products.retrieve(subscription.items.data[0].price.product);
         const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
-        if (production) new Subscriber({
+        new Subscriber({
             customer: { name: customer.name, email: customer.email },
             sub_id: subscription.id
         }).save();

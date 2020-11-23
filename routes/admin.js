@@ -38,7 +38,8 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
     const subscriber_doc = await Subscriber.findOne({ "customer.email": ambassador.email });
     const subscription = subscriber_doc ? await Stripe.subscriptions.retrieve(subscriber_doc.sub_id, { expand: ["customer"] }) : null;
-    const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items, subscription };
+    const subscription_plan = subscription ? await Stripe.products.retrieve(subscription.items.data[0].price.product) : null;
+    const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items, subscription, subscription_plan };
     const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
     res.render('ambassador-account', opts);
 });

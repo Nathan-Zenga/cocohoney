@@ -2059,7 +2059,8 @@ input.product-quantity:disabled {
 }
 
 #account-page #personal-info,
-#account-page #order-sales-counter {
+#account-page #order-sales-counter,
+#account-page #subscriptions {
     text-align: center;
 }
 
@@ -2097,8 +2098,14 @@ input.product-quantity:disabled {
         justify-content: initial;
     }
 
-    #account-page #order-sales-counter {
+    #account-page #order-sales-counter,
+    #account-page #subscriptions {
         text-align: left;
+    }
+
+    #account-page .cancel-subscription-form {
+        display: inline-block;
+        margin: 0;
     }
 }
 
