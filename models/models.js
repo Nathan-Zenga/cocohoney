@@ -222,6 +222,7 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
 
 module.exports.Subscriber = model('Subscriber', Schema({
     customer: {
+        member_id: String,
         name: String,
         email: { type: String, required: true, unique: true }
     },

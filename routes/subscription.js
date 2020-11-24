@@ -75,7 +75,7 @@ router.get("/complete", async (req, res) => {
         const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
         new Subscriber({
-            customer: { name: customer.name, email: customer.email },
+            customer: { member_id: (res.locals.user || {})._id, name: customer.name, email: customer.email },
             sub_id: subscription.id
         }).save();
 
