@@ -15,6 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
+    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
     res.render('admin-login', { title: "Admin Login", pagename: "admin" })
 });
 

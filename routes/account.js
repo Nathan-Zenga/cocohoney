@@ -14,7 +14,7 @@ router.get('/', isAuthed, async (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("/"));
+    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
     res.render('customer-login', { title: "Sign Up / Log In", pagename: "customer-login" })
 });
 

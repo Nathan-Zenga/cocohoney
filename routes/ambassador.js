@@ -84,7 +84,7 @@ router.post('/register/activate', (req, res) => {
 });
 
 router.get('/account/login', (req, res) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect(req.get("/"));
+    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
