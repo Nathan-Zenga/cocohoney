@@ -110,7 +110,7 @@ router.post('/delete', isAuthed, (req, res) => {
                     "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
                 }, err => {
                     if (err) return res.status(500).send(err.message || err);
-                    if (res.locals.user._id == member.id) {
+                    if (res.locals.user && res.locals.user._id == member.id) {
                         res.locals.user = req.session.user = null;
                         res.locals.cart = req.session.cart = [];
                     }
