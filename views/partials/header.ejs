@@ -82,7 +82,9 @@
                 </div>
                 <div class="links-section header-content-section col-xs-4">
                     <%_ if (user) {
-                        if (!user.admin) { _%>
+                        if (user.admin) { _%>
+                    <a href="/admin">ADMIN</a> <span class="dt-view">&bullet;</span>
+                    <%_ } else { _%>
                     <a href="/<%= is_ambassador ? 'ambassador/' : '' %>account">PROFILE</a> <span class="dt-view">&bullet;</span>
                     <%_ } _%>
                     <a href="/<%= is_admin ? 'admin' : 'account' %>/logout">LOGOUT</a>
