@@ -1,11 +1,10 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
-const passport = require('passport');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product } = require('../models/models');
-require('../config/passport')(passport);
+const passport = require('../config/passport');
 
 router.get('/', isAuthed, async (req, res) => {
     const orders = await Order.find({ customer_email: req.user.email }).sort({ created_at: -1 }).exec();

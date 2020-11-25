@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const crypto = require('crypto');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-ambassador');
@@ -8,7 +7,7 @@ const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
 const { Ambassador, Discount_code, Product, Order, Wishlist } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
-require('../config/passport')(passport);
+const passport = require('../config/passport');
 
 router.get('/register', (req, res) => {
     res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })

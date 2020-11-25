@@ -1,13 +1,12 @@
 const router = require('express').Router();
 const crypto = require('crypto');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
 const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailTransporter = require('../modules/mail-transporter');
 const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box, Wishlist } = require('../models/models');
-require('../config/passport')(passport);
+const passport = require('../config/passport');
 
 router.get('/', (req, res) => {
     if (!res.locals.is_admin) return res.redirect("/admin/login");
