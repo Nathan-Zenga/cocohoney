@@ -84,13 +84,13 @@ router.post('/stock/remove', isAuthed, (req, res) => {
         if (!products.length) return res.status(404).send("No products found");
         each(products, (item, cb) => {
             Product.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err ? err.message : "Product(s) not found");
+                if (err || !result.deletedCount) return cb(err || "Product(s) not found");
                 cloud.api.delete_resources([item.image.p_id], () => cb());
             })
         }, err => {
             if (!err) return res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-            let is404 = err.message === "Product(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Product(s) not found");
+            let is404 = err === "Product(s) not found";
+            res.status(!is404 ? 500 : 404).send(!is404 ? err.message : "Product(s) not found");
         })
     });
 });

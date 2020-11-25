@@ -110,7 +110,7 @@ router.post('/box/remove', isAuthed, (req, res) => {
         if (!boxes.length) return res.status(400).send("No boxes found");
         each(boxes, (item, cb) => {
             Box.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err ? err.message : "Box(s) not found");
+                if (err || !result.deletedCount) return cb(err || "Box(s) not found");
                 cloud.api.delete_resources([item.image.p_id], () => cb());
             })
         }, err => {

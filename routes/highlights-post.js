@@ -57,7 +57,7 @@ router.post('/remove', isAuthed, (req, res) => {
         if (!posts.length) return res.status(404).send("No posts found");
         each(posts, (post, cb) => {
             Highlights_post.findByIdAndDelete(post.id, err => {
-                if (err) return cb(err.message || err);
+                if (err) return cb(err);
                 const opts_lg = { resource_type: post.media_lg.media_type };
                 const opts_sm = post.media_sm ? { resource_type: post.media_sm.media_type } : {};
                 cloud.api.delete_resources([post.media_lg.p_id], opts_lg, () => {

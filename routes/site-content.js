@@ -40,7 +40,7 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
             overview_img.p_id = result.public_id;
             overview_img.url = result.secure_url;
             overview_img.position = arr.length + (i+1);
-            overview_img.save(err => { if (err) return cb(err.message); cb() });
+            overview_img.save(err => { if (err) return cb(err); cb() });
         });
     }, err => {
         if (err) return res.status(err.http_code || 500).send(err.message);
@@ -74,7 +74,7 @@ router.post('/overview-images/remove', isAuthed, (req, res) => {
         if (!images.length) return res.status(404).send("No images found");
         each(images, (item, cb) => {
             Overview_image.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err ? err.message : "Image(s) not found");
+                if (err || !result.deletedCount) return cb(err || "Image(s) not found");
                 cloud.api.delete_resources([item.p_id], () => cb());
             })
         }, err => {

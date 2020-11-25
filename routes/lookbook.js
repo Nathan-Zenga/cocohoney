@@ -74,7 +74,7 @@ router.post('/remove', isAuthed, (req, res) => {
         if (!media.length) return res.status(404).send("No media found");
         each(media, (img, cb) => {
             Lookbook_media.findByIdAndDelete(img.id, err => {
-                if (err) return cb(err.message || err);
+                if (err) return cb(err);
                 cloud.api.delete_resources([img.p_id], () => cb());
             })
         }, err => {

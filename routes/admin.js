@@ -10,12 +10,12 @@ const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box
 require('../config/passport-admin')(passport);
 
 router.get('/', (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect("/admin/login");
+    if (!res.locals.is_admin) return res.redirect("/admin/login");
     Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db }))
 });
 
 router.get('/login', (req, res) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
+    if (res.locals.is_admin || res.locals.user) return res.redirect("/");
     res.render('admin-login', { title: "Admin Login", pagename: "admin" })
 });
 
@@ -275,7 +275,7 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
             if (!item) return cb();
             const sale_discount = (percent / 100) * item.price;
             item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
-            item.save(err => err ? cb(err.message) : cb());
+            item.save(err => err ? cb(err) : cb());
         }, err => {
             if (err) return res.status(500).send(err.message);
             sale.save(err => res.send("Sale period now started for the selected products"));
