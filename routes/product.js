@@ -39,7 +39,7 @@ router.post('/stock/add', isAuthed, (req, res) => {
 
     const public_id = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
     cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code).send(err.message);
         product.image = { p_id: result.public_id, url: result.secure_url };
         product.save(() => res.send("Product saved in stock"));
     });
@@ -67,7 +67,7 @@ router.post('/stock/edit', isAuthed, (req, res) => {
             const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
             cloud.api.delete_resources([p_id_prev], () => {
                 cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(500).send(err.message);
+                    if (err) return res.status(err.http_code).send(err.message);
                     saved.image = { p_id: result.public_id, url: result.secure_url };
                     saved.save(() => { res.send("Product details updated successfully") });
                 });

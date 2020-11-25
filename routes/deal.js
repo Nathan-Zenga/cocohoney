@@ -68,7 +68,7 @@ router.post('/box/add', isAuthed, (req, res) => {
 
     const public_id = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
     cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code).send(err.message);
         box.image = { p_id: result.public_id, url: result.secure_url };
         box.save(() => res.send("Box deal saved"));
     });
@@ -93,7 +93,7 @@ router.post('/box/edit', isAuthed, (req, res) => {
             const public_id = ("cocohoney/product/box_deals/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
             cloud.api.delete_resources([p_id_prev], () => {
                 cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(500).send(err.message);
+                    if (err) return res.status(err.http_code).send(err.message);
                     saved.image = { p_id: result.public_id, url: result.secure_url };
                     saved.save(() => { res.send("Box details updated successfully") });
                 });

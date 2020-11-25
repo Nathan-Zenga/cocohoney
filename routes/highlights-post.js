@@ -22,7 +22,7 @@ router.post('/add', isAuthed, async (req, res) => {
         slide.media_sm.url = result2.secure_url;
         slide.media_sm.media_type = result2.resource_type;
         await slide.save(); res.send("Saved");
-    } catch(err) { res.status(err.stat || 500).send(err.message) }
+    } catch(err) { res.status(err.stat || err.http_code || 500).send(err.message) }
 });
 
 router.post('/edit', isAuthed, async (req, res) => {
@@ -46,7 +46,7 @@ router.post('/edit', isAuthed, async (req, res) => {
         if (result2) slide.media_sm.url = result2.secure_url;
         if (result2) slide.media_sm.media_type = result2.resource_type;
         await slide.save(); res.send("Slide updated");
-    } catch(err) { res.status(500).send(err.message) }
+    } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });
 
 router.post('/remove', isAuthed, (req, res) => {

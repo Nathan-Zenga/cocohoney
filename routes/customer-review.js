@@ -3,10 +3,9 @@ const cloud = require('cloudinary').v2;
 const { each, forEachOf } = require('async');
 const { Review } = require('../models/models');
 
-router.get('/', (req, res) => {
-    Review.find().sort({ created_at: -1 }).exec((err, reviews) => {
-        res.render('customer-reviews', { title: "Reviews", pagename: "customer-reviews", reviews });
-    })
+router.get('/', async (req, res) => {
+    const reviews = await Review.find().sort({ created_at: -1 }).exec();
+    res.render('customer-reviews', { title: "Reviews", pagename: "customer-reviews", reviews });
 });
 
 router.get('/new', (req, res) => {
@@ -24,12 +23,12 @@ router.post('/submit', (req, res) => {
     forEachOf([...image_files, ...image_urls ], (image, i, cb) => {
         const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image, { public_id }, (err, result) => {
-            if (err) return cb(err.message);
+            if (err) return cb(err);
             review.images.push({ p_id: result.public_id, url: result.secure_url });
             cb();
         });
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code || 500).send(err.message);
         review.save(() => res.send("Review submitted"));
     })
 });

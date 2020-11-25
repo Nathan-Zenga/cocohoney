@@ -36,14 +36,14 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
         const overview_img = new Overview_image();
         const public_id = "cocohoney/site-content/pages/index/overview/" + overview_img.id;
         cloud.uploader.upload(file, { public_id, resource_type: "image" }, (err, result) => {
-            if (err) return cb(err.message);
+            if (err) return cb(err);
             overview_img.p_id = result.public_id;
             overview_img.url = result.secure_url;
             overview_img.position = arr.length + (i+1);
             overview_img.save(err => { if (err) return cb(err.message); cb() });
         });
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code || 500).send(err.message);
         res.send("Overview images(s) saved");
     })
 });
@@ -55,7 +55,7 @@ router.post('/overview-images/edit', isAuthed, (req, res) => {
         if (err) return res.status(500).send(err.message);
         if (!image) return res.status(404).send("Image not found");
         cloud.uploader.upload(image_url || image_file, { public_id: image.p_id, resource_type: "image" }, (err, result) => {
-            if (err) return res.status(500).send(err.message);
+            if (err) return res.status(err.http_code).send(err.message);
             image.p_id = result.public_id;
             image.url = result.secure_url;
             image.save(() => {

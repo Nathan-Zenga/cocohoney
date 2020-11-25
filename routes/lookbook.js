@@ -26,16 +26,16 @@ router.post('/gallery/add', isAuthed, (req, res) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-gallery/IMG_" + new_media.id;
         cloud.uploader.upload(img.trim(), { public_id, resource_type: "image" }, (err, result) => {
-            if (err) return cb(err.message);
+            if (err) return cb(err);
             const { secure_url, resource_type, width, height } = result;
             new_media.p_id = public_id;
             new_media.url = secure_url;
             new_media.media_type = resource_type;
             new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
-            new_media.save(err => err ? cb(err.message) : cb());
+            new_media.save(err => err ? cb(err) : cb());
         });
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code || 500).send(err.message);
         res.send("Lookbook images(s) saved");
     })
 });
@@ -50,17 +50,17 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
         const new_media = new Lookbook_media();
         const public_id = "cocohoney/lookbook-tutorial/VID_" + new_media.id;
         cloud.uploader.upload(vid.trim(), { public_id, resource_type: "video" }, (err, result) => {
-            if (err) return cb(err.message);
+            if (err) return cb(err);
             const { secure_url, resource_type, width, height } = result;
             new_media.p_id = public_id;
             new_media.url = secure_url;
             new_media.media_type = resource_type;
             new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
             new_media.tutorial = true;
-            new_media.save(err => { if (err) return cb(err.message); cb() });
+            new_media.save(err => { if (err) return cb(err); cb() });
         });
     }, err => {
-        if (err) return res.status(500).send(err.message);
+        if (err) return res.status(err.http_code || 500).send(err.message);
         res.send("Lookbook tutorial video(s) saved");
     })
 });
