@@ -198,7 +198,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <label>LAST NAME</label>
-                                <input type="text" name="<%- amb.lastname %>" value="<%- amb.lastname %>">
+                                <input type="text" name="lastname" value="<%- amb.lastname %>">
                             </div>
                         </div>
                     </fieldset>
@@ -233,8 +233,8 @@
                                 <select name="country">
                                     <option value="">-</option>
                                     <%_ for (var k in countries) { _%>
-                                    <%_ let selected = countries[k] === amb.address.country ? "selected" : "" _%>
-                                    <option value="<%- k %>" <%= selected %>><%- countries[k] %></option>
+                                    <%_ let selected = k === amb.address.country ? "selected" : "" _%>
+                                    <option value="<%- k %>" <%- selected %>><%- countries[k] %></option>
                                     <%_ } _%>
                                 </select>
                             </div>
