@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const crypto = require('crypto');
+const passport = require('passport');
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-ambassador');
@@ -7,6 +8,7 @@ const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
 const { Ambassador, Discount_code, Product, Order, Wishlist } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+require('../config/passport')(passport);
 
 router.get('/register', (req, res) => {
     res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })
@@ -84,7 +86,7 @@ router.post('/register/activate', (req, res) => {
 });
 
 router.get('/account/login', (req, res) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
+    if (req.isAuthenticated()) return res.redirect("/");
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
@@ -103,22 +105,19 @@ router.get('/account', async (req, res) => {
 });
 
 router.post('/account/login', (req, res) => {
-    const { email, password } = req.body;
-    Ambassador.findOne({ email }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (!amb) return res.status(400).send("Credentials are invalid, or this account is not registered");
-        bcrypt.compare(password, amb.password, (err, match) => {
-            if (err) return res.status(500).send(err.message);
-            if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
-            req.session.user = amb;
+    passport.authenticate("local-login-ambassador", (err, user, info) => {
+        if (err) return res.status(500).send(err.message || err);
+        if (!user) return res.status(400).send(info.message);
+        req.login(user, err => {
+            if (err) return res.status(500).send(err.message || err);
             res.locals.cart = req.session.cart = [];
             res.send("/ambassador/account");
         });
-    });
+    })(req, res);
 });
 
 router.get('/account/logout', (req, res) => { 
-    req.session.user = null;
+    req.logout();
     req.session.cart = [];
     res.redirect("/");
 });
@@ -143,14 +142,12 @@ router.post('/account/edit', isAuthed, (req, res) => {
 
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
-            res.locals.user = req.session.user = saved;
             if (!image_file && !image_url) return res.send("Account details updated");
             const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
             cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
                 if (err) return res.status(err.http_code).send(err.message);
                 saved.image = { p_id: result.public_id, url: result.secure_url };
                 saved.save(() => {
-                    res.locals.user = req.session.user = saved;
                     res.send("Account details updated");
                 });
             });
@@ -175,8 +172,8 @@ router.post('/delete', async (req, res) => {
             "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) return res.status(500).send(err.message || err);
-            if (res.locals.user && res.locals.user._id == amb.id) {
-                res.locals.user = req.session.user = null;
+            if (req.user && req.user._id == amb.id) {
+                req.logout();
                 res.locals.cart = req.session.cart = [];
             }
             res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");

@@ -14,8 +14,8 @@ router.get('/new', (req, res) => {
 
 router.post('/submit', (req, res) => {
     const { author_name, headline, rating, commentry, image_file, image_url } = req.body;
-    const name = res.locals.user ? `${res.locals.user.firstname} ${res.locals.user.lastname}` : author_name;
-    const review = new Review({ author_name: name, headline, rating, commentry, author_verified: !!res.locals.user });
+    const name = req.user ? `${req.user.firstname} ${req.user.lastname}` : author_name;
+    const review = new Review({ author_name: name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
     if (!image_urls.length && !image_files.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
@@ -34,7 +34,7 @@ router.post('/submit', (req, res) => {
 });
 
 router.post('/update', (req, res) => {
-    if (!res.locals.user) return res.sendStatus(401);
+    if (req.isUnauthenticated()) return res.sendStatus(401);
     const { id, author_name, headline, rating, commentry } = req.body;
     Review.findById(id, (err, review) => {
         if (author_name) review.author_name = author_name;

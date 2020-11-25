@@ -7,7 +7,7 @@ const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailTransporter = require('../modules/mail-transporter');
 const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box, Wishlist } = require('../models/models');
-require('../config/passport-admin')(passport);
+require('../config/passport')(passport);
 
 router.get('/', (req, res) => {
     if (!res.locals.is_admin) return res.redirect("/admin/login");
@@ -15,7 +15,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-    if (res.locals.is_admin || res.locals.user) return res.redirect("/");
+    if (req.isAuthenticated()) return res.redirect("/");
     res.render('admin-login', { title: "Admin Login", pagename: "admin" })
 });
 
@@ -57,25 +57,23 @@ router.post('/login', (req, res) => {
         if (!user) return res.status(400).send(info.message);
         if (user === "to_activate") {
             Admin.deleteMany({ email: "temp" }, err => {
-                crypto.randomBytes(20, (err, buf) => {
-                    let password = buf.toString("hex");
-                    let token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
-                    new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
-                        new MailTransporter({ req, res }, { email }).sendMail({
-                            subject: "Admin Account Activation",
-                            message: "You're receiving this email because an admin account needs setting up. " +
-                                "Please click the link below to activate the account, as this will only be " +
-                                "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
-                                `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`
-                        }, err => {
-                            if (err) return res.status(500).send(err.message || err);
-                            res.status(400).send(info.message);
-                        });
-                    })
+                const password = crypto.randomBytes(20).toString("hex");
+                const token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
+                new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
+                    new MailTransporter({ req, res }, { email }).sendMail({
+                        subject: "Admin Account Activation",
+                        message: "You're receiving this email because an admin account needs setting up. " +
+                            "Please click the link below to activate the account, as this will only be " +
+                            "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
+                            `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`
+                    }, err => {
+                        if (err) return res.status(500).send(err.message || err);
+                        res.status(400).send(info.message);
+                    });
                 })
             });
         } else {
-            req.logIn(user, err => {
+            req.login(user, err => {
                 if (err) return res.status(500).send(err.message || err);
                 res.locals.cart = req.session.cart = [];
                 res.send("/admin")

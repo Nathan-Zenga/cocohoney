@@ -1,42 +1,40 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
+const passport = require('passport');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product } = require('../models/models');
+require('../config/passport')(passport);
 
 router.get('/', isAuthed, async (req, res) => {
-    const { user } = res.locals;
-    const orders = await Order.find({ customer_email: user.email }).sort({ created_at: -1 }).exec();
-    const wishlist = await Wishlist.findOne({ customer_id: user._id });
+    const orders = await Order.find({ customer_email: req.user.email }).sort({ created_at: -1 }).exec();
+    const wishlist = await Wishlist.findOne({ customer_id: req.user._id });
     const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
     res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items });
 });
 
 router.get('/login', (req, res) => {
-    if (req.isAuthenticated() || res.locals.user) return res.redirect("/");
+    if (req.isAuthenticated()) return res.redirect("/");
     res.render('customer-login', { title: "Sign Up / Log In", pagename: "customer-login" })
 });
 
 router.get('/signup', (req, res) => res.redirect("/account/login"));
 
 router.post('/login', (req, res) => {
-    const { email, password } = req.body;
-    Member.findOne({ email }, (err, member) => {
-        if (err) return res.status(500).send(err);
-        if (!member) return res.status(400).send("Credentials are invalid, or this account is not registered");
-        bcrypt.compare(password, member.password, (err, match) => {
-            if (err) return res.status(500).send(err);
-            if (!match) return res.status(400).send("Credentials are invalid, or this account is not registered");
-            req.session.user = member;
+    passport.authenticate("local-login-customer", (err, user, info) => {
+        if (err) return res.status(500).send(err.message || err);
+        if (!user) return res.status(400).send(info.message);
+        req.login(user, err => {
+            if (err) return res.status(500).send(err.message || err);
             res.locals.cart = req.session.cart = [];
             res.send("/account");
         });
-    });
+    })(req, res);
 });
 
 router.get('/logout', (req, res) => {
-    req.session.user = null;
+    req.logout();
     req.session.cart = [];
     res.redirect("/");
 });
@@ -81,16 +79,12 @@ router.post('/edit', isAuthed, (req, res) => {
 
         member.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
-            res.locals.user = req.session.user = saved;
             if (!image_file && !image_url) return res.send("Account details updated");
             const public_id = `cocohoney/customer/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
             cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
                 if (err) return res.status(err.http_code).send(err.message);
                 saved.image = { p_id: result.public_id, url: result.secure_url };
-                saved.save((err, saved) => {
-                    res.locals.user = req.session.user = saved;
-                    res.send("Account details updated");
-                });
+                saved.save(err => res.send("Account details updated"));
             });
         });
     });
@@ -111,8 +105,8 @@ router.post('/delete', isAuthed, async (req, res) => {
             "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) return res.status(500).send(err.message || err);
-            if (res.locals.user && res.locals.user._id == member.id) {
-                res.locals.user = req.session.user = null;
+            if (req.user && req.user._id == member.id) {
+                req.logout();
                 res.locals.cart = req.session.cart = [];
             }
             res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
