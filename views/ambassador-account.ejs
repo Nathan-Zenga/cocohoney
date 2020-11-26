@@ -147,20 +147,36 @@
                         </div>
                     </div>
 
-                    <%_ if (subscription && subscription_plan) { _%>
-                    <div id="subscriptions" class="tab-pane fade">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <p><%- subscription_plan.name %></p>
-                                <p>£<%- (subscription.items.data[0].price.unit_amount / 100).toFixed(2) %></p><br>
-                                <p><a class="invoice-link" target="_blank" href="<%- subscription.latest_invoice.hosted_invoice_url %>">Click here</a> to view your latest invoice.</p><br>
+                    <%_ if (subscriptions && subscriptions.length) { _%>
+                    <div id="subscriptions" class="tab-pane fade" style="overflow: hidden">
+                        <div id="subscriptions-carousel" class="carousel slide">
+                            <div class="carousel-inner" style="overflow: initial;">
+                                <%_ subscriptions.forEach((subscription, i) => { _%>
+                                <div class="item<%= i === 0 ? ' active' : '' %>">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><%- subscription_products.data.find(p => p.id === subscription.items.data[0].price.product).name %></p>
+                                            <p>£<%- (subscription.items.data[0].price.unit_amount / 100).toFixed(2) %></p><br>
+                                            <p><a class="invoice-link" target="_blank" href="<%- subscription.latest_invoice.hosted_invoice_url %>">Click here</a> to view your latest invoice.</p><br>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <form class="minimal sensitive-form cancel-subscription-form" method="post" action="/subscription/cancel">
+                                                <input type="hidden" name="sub_id" value="<%- subscription.id %>">
+                                                <button type="submit" class="btn-danger">CANCEL SUBSCRIPTION</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <%_ }) _%>
                             </div>
-                            <div class="col-md-6">
-                                <form class="minimal sensitive-form cancel-subscription-form" method="post" action="/subscription/cancel">
-                                    <input type="hidden" name="sub_id" value="<%- subscription.id %>">
-                                    <button type="submit" class="btn-danger">CANCEL SUBSCRIPTION</button>
-                                </form>
-                            </div>
+
+                            <%_ if (subscriptions.length > 1) { _%>
+                            <ol class="carousel-indicators" style="position: static; bottom: auto; margin: 20px auto">
+                                <%_ subscriptions.forEach((subscription, i) => { _%>
+                                <li data-target="#subscriptions-carousel" data-slide-to="<%= i %>" class="<%= i === 0 ? ' active' : '' %>"></li>
+                                <%_ }) _%>
+                            </ol>
+                            <%_ } _%>
                         </div>
                     </div>
                     <%_ } _%>
