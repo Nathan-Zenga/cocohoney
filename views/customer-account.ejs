@@ -124,12 +124,17 @@
                                 <div class="item<%= i === 0 ? ' active' : '' %>">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <p><%- subscription_products.data.find(p => p.id === subscription.items.data[0].price.product).name %></p>
+                                            <p style="font-weight: 500"><%- subscription_products.data.find(p => p.id === subscription.items.data[0].price.product).name %></p>
                                             <p>£<%- (subscription.items.data[0].price.unit_amount / 100).toFixed(2) %></p><br>
                                             <p><a class="invoice-link" target="_blank" href="<%- subscription.latest_invoice.hosted_invoice_url %>">Click here</a> to view your latest invoice.</p><br>
                                         </div>
                                         <div class="col-md-6">
-                                            <form class="minimal sensitive-form cancel-subscription-form" method="post" action="/subscription/cancel">
+                                            <form class="minimal sensitive-form subscription-opts-form">
+                                                <input type="hidden" name="sub_id" value="<%- subscription.id %>">
+                                                <button type="button" class="submit" data-toggle="modal" data-target="#subscription-<%= subscription.id %>-modal">CHANGE DETAILS</button>
+                                            </form>
+
+                                            <form class="minimal sensitive-form subscription-opts-form" method="post" action="/subscription/cancel">
                                                 <input type="hidden" name="sub_id" value="<%- subscription.id %>">
                                                 <button type="submit" class="btn-danger">CANCEL SUBSCRIPTION</button>
                                             </form>
@@ -138,6 +143,56 @@
                                 </div>
                                 <%_ }) _%>
                             </div>
+
+                            <%_ subscriptions.forEach((subscription, i) => { _%>
+                            <div id="subscription-<%= subscription.id %>-modal" class="modal fade in" role="dialog">
+                                <div class="modal-icons">
+                                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post" action="/account/subscription/edit" class="settings-form">
+                                        <label>NAME</label>
+                                        <input type="text" name="name" value="<%- subscription.customer.name %>">
+
+                                        <label>PHONE NUMBER</label>
+                                        <input type="tel" name="phone_number" value="<%- subscription.customer.phone %>">
+
+                                        <label>EMAIL</label>
+                                        <input type="email" name="email" value="<%- subscription.customer.email %>">
+
+                                        <label>SHIPPING ADDRESS</label>
+                                        <input type="text" name="line1" value="<%= subscription.customer.shipping.address.line1 %>">
+                                        <input type="text" name="line2" value="<%= subscription.customer.shipping.address.line2 %>">
+
+                                        <fieldset>
+                                            <div class="row">
+                                                <div class="col-sm-4">
+                                                    <label for="city">CITY</label>
+                                                    <input type="text" name="city" value="<%= subscription.customer.shipping.address.city %>">
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                                    <select name="country">
+                                                        <option value="">-</option>
+                                                        <%_ for (var k in countries) { _%>
+                                                        <%_ const selected = k === subscription.customer.shipping.address.country ? "selected" : "" _%>
+                                                        <option value="<%- k %>" <%- selected %>><%- countries[k] %></option>
+                                                        <%_ } _%>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-4">
+                                                    <label for="postcode">POST CODE</label>
+                                                    <input type="text" name="postcode" value="<%- subscription.customer.shipping.address.postal_code %>">
+                                                </div>
+                                            </div>
+                                        </fieldset>
+
+                                        <input type="hidden" name="subscriber_id" value="<%= subscription.customer.id %>">
+                                        <button type="submit">UPDATE</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <%_ }) _%>
 
                             <%_ if (subscriptions.length > 1) { _%>
                             <ol class="carousel-indicators" style="position: static; bottom: auto; margin: 20px auto">
@@ -244,7 +299,7 @@
 </div>
 
 <script>
-    $("#personal-details-edit-form").submit(function(e) {
+    $(".settings-form").submit(function(e) {
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {

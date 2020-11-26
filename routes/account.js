@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const crypto = require('crypto');
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
+const countries = require("../modules/country-list");
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product, Subscriber } = require('../models/models');
@@ -16,7 +17,7 @@ router.get('/', isAuthed, async (req, res) => {
     const subscriptions_all = await Stripe.subscriptions.list({ expand: ["data.customer", "data.latest_invoice", "data.default_payment_method"] });
     const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
     const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
-    res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items, subscriptions, subscription_products });
+    res.render('customer-account', { title: "My Account", pagename: "account", countries, orders, wishlist: wishlist_items, subscriptions, subscription_products });
 });
 
 router.get('/login', (req, res) => {
@@ -144,6 +145,23 @@ router.post('/password-reset', async (req, res) => {
         member.password_reset_token = undefined;
         await member.save(); res.send("Password has been reset!\n\n You can now log in");
     } catch (err) { res.status(500).send(err.message) }
+});
+
+router.post('/subscription/edit', async (req, res) => {
+    if (req.isUnauthenticated()) return res.sendStatus(401);
+    const { subscriber_id: id, name, phone_number, email, line1, line2, city, country, postcode } = req.body;
+    const customer = await Stripe.customers.retrieve(id);
+    const params = { shipping: { address: {} } };
+    if (!customer) return res.status(404).send("Cannot find you as a valid customer of this subscription");
+    params.name = params.shipping.name = name || customer.name;
+    params.email = email || customer.email;
+    params.phone = phone_number;
+    params.shipping.address.line1 = line1 || customer.shipping.address.line1;
+    params.shipping.address.line2 = line2;
+    params.shipping.address.city = city || customer.shipping.address.city;
+    params.shipping.address.country = country || customer.shipping.address.country;
+    params.shipping.address.postal_code = postcode;
+    Stripe.customers.update(id, params).then(() => res.send("Subscription details updated")).catch(err => res.status(err.statusCode).send(err.message));
 });
 
 module.exports = router;

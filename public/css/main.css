@@ -2103,7 +2103,7 @@ input.product-quantity:disabled {
         text-align: left;
     }
 
-    #account-page .cancel-subscription-form {
+    #account-page .subscription-opts-form {
         display: inline-block;
         margin: 0;
     }
