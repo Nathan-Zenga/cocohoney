@@ -8,6 +8,7 @@ const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
 const { Ambassador, Discount_code, Product, Order, Wishlist, Subscriber } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+const { each } = require('async');
 const passport = require('../config/passport');
 
 router.get('/register', (req, res) => {
@@ -148,6 +149,12 @@ router.post('/delete', async (req, res) => {
         await Wishlist.findOneAndDelete({ customer_id: amb.id });
         await cloud.api.delete_resources([amb.image?.p_id || "blank"]);
         await Discount_code.findOneAndDelete({ code: amb.discount_code });
+
+        const subscriber_docs = await Subscriber.find({ "customer.member_id": amb.id });
+        const subscriptions_all = await Stripe.subscriptions.list();
+        const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
+        await each(subscriptions, (sub, cb) => { Stripe.subscriptions.del(sub.id).then(() => cb()).catch(err => cb(err)) });
+        await Subscriber.deleteMany({"customer.member_id": amb.id});
         await Ambassador.findByIdAndDelete(amb.id);
         if (res.locals.is_admin) return res.send("The account is now successfully deleted.");
 

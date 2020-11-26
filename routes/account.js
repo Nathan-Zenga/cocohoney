@@ -7,13 +7,14 @@ const countries = require("../modules/country-list");
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product, Subscriber } = require('../models/models');
+const { each } = require('async');
 const passport = require('../config/passport');
 
 router.get('/', isAuthed, async (req, res) => {
     const orders = await Order.find({ customer_email: req.user.email }).sort({ created_at: -1 }).exec();
     const wishlist = await Wishlist.findOne({ customer_id: req.user._id });
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
-    const subscriber_docs = await Subscriber.find({ "customer.member_id": user._id });
+    const subscriber_docs = await Subscriber.find({ "customer.member_id": req.user._id });
     const subscriptions_all = await Stripe.subscriptions.list({ expand: ["data.customer", "data.latest_invoice", "data.default_payment_method"] });
     const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
     const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
@@ -91,6 +92,12 @@ router.post('/delete', isAuthed, async (req, res) => {
         if (!member) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: member.id });
         await cloud.api.delete_resources([member.image?.p_id || "blank"]);
+
+        const subscriber_docs = await Subscriber.find({ "customer.member_id": member.id });
+        const subscriptions_all = await Stripe.subscriptions.list();
+        const subscriptions = subscriptions_all.data.filter(sub => subscriber_docs.find(subscriber => sub.id === subscriber.sub_id));
+        await each(subscriptions, (sub, cb) => { Stripe.subscriptions.del(sub.id).then(() => cb()).catch(err => cb(err)) });
+        await Subscriber.deleteMany({"customer.member_id": member.id});
         await Member.findByIdAndDelete(member.id);
         const subject = "Your account is now deleted";
         const message = `Hi ${member.firstname},\n\n` +
