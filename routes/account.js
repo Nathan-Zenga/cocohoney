@@ -96,29 +96,28 @@ router.post('/edit', isAuthed, (req, res) => {
     });
 });
 
-router.post('/delete', isAuthed, (req, res) => {
-    const { id } = Object.keys(req.body).length ? req.body : req.query;
-    Member.findByIdAndDelete(id, (err, member) => {
-        if (err) return res.status(500).send(err.message);
+router.post('/delete', isAuthed, async (req, res) => {
+    const id = req.body.id || req.query.id;
+    try {
+        const member = await Member.findById(id);
         if (!member) return res.status(404).send("Account does not exist or already deleted");
-        Wishlist.findOneAndDelete({ customer_id: member.id }, err => {
-            if (err) return res.status(500).send(err.message);
-            cloud.api.delete_resources([(member.image || {}).p_id], err => {
-                new MailTransporter({ req, res }, { email: member.email }).sendMail({
-                    subject: `Your account is now deleted`,
-                    message: `Hi ${member.firstname},\n\n` +
-                    "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
-                }, err => {
-                    if (err) return res.status(500).send(err.message || err);
-                    if (res.locals.user && res.locals.user._id == member.id) {
-                        res.locals.user = req.session.user = null;
-                        res.locals.cart = req.session.cart = [];
-                    }
-                    res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-                });
-            })
-        })
-    });
+        await Wishlist.findOneAndDelete({ customer_id: member.id });
+        await cloud.api.delete_resources([(member.image || {}).p_id || "blank"]);
+        await Member.findByIdAndDelete(member.id);
+
+        new MailTransporter({ req, res }, { email: member.email }).sendMail({
+            subject: "Your account is now deleted",
+            message: `Hi ${member.firstname},\n\n` +
+            "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            if (err) return res.status(500).send(err.message || err);
+            if (res.locals.user && res.locals.user._id == member.id) {
+                res.locals.user = req.session.user = null;
+                res.locals.cart = req.session.cart = [];
+            }
+            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+        });
+    } catch (err) { res.status(err.statusCode || 500).send(err.message) }
 });
 
 router.get('/password-reset-request', (req, res) => {

@@ -88,7 +88,8 @@ router.get('/account/login', (req, res) => {
     res.render('ambassador-login', { title: "Ambassador Login", pagename: "ambassador-login" })
 });
 
-router.get('/account', isAuthed, async (req, res) => {
+router.get('/account', async (req, res) => {
+    if (!res.locals.is_ambassador) return res.redirect("/");
     const { user } = res.locals;
     const discount_code = await Discount_code.findOne({ code: user.discount_code });
     const { orders_applied } = discount_code || {};
@@ -157,35 +158,30 @@ router.post('/account/edit', isAuthed, (req, res) => {
     });
 });
 
-router.post('/delete', (req, res) => {
+router.post('/delete', async (req, res) => {
     const { id } = req.body;
-    Ambassador.findByIdAndDelete(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const amb = await Ambassador.findById(id);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
-        Wishlist.findOneAndDelete({ customer_id: amb.id }, err => {
-            if (err) return res.status(500).send(err.message);
-            cloud.api.delete_resources([(amb.image || {}).p_id], err => {
-                Discount_code.findByIdAndDelete({ code: amb.discount_code }, err => {
-                    if (res.locals.is_admin) {
-                        return res.send("The account is now successfully deleted.");
-                    };
-                    new MailTransporter({ req, res }, { email: amb.email }).sendMail({
-                        subject: "Your account is now deleted",
-                        message: `Hi ${amb.firstname},\n\n` +
-                        "Your account is now successfully deleted.\n" +
-                        "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
-                    }, err => {
-                        if (err) return res.status(500).send(err.message || err);
-                        if (res.locals.user && res.locals.user._id == amb.id) {
-                            res.locals.user = req.session.user = null;
-                            res.locals.cart = req.session.cart = [];
-                        }
-                        res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-                    });
-                })
-            })
-        })
-    });
+        await Wishlist.findOneAndDelete({ customer_id: amb.id });
+        await cloud.api.delete_resources([(amb.image || {}).p_id || "blank"]);
+        await Discount_code.findOneAndDelete({ code: amb.discount_code });
+        await Ambassador.findByIdAndDelete(amb.id);
+
+        if (res.locals.is_admin) return res.send("The account is now successfully deleted.");
+        new MailTransporter({ req, res }, { email: amb.email }).sendMail({
+            subject: "Your account is now deleted",
+            message: `Hi ${amb.firstname},\n\nYour account is now successfully deleted.\n` +
+            "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
+        }, err => {
+            if (err) return res.status(500).send(err.message || err);
+            if (res.locals.user && res.locals.user._id == amb.id) {
+                res.locals.user = req.session.user = null;
+                res.locals.cart = req.session.cart = [];
+            }
+            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
+        });
+    } catch (err) { res.status(err.statusCode || 500).send(err.message) }
 });
 
 router.get('/discount_code/add', (req, res) => {
