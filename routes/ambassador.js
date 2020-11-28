@@ -10,10 +10,12 @@ const MailTransporter = require('../modules/mail-transporter');
 const passport = require('../config/passport');
 
 router.get('/register', (req, res) => {
+    if (req.isAuthenticated()) return res.redirect("/");
     res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })
 });
 
 router.post('/register', (req, res) => {
+    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     const { firstname, lastname, email, phone_number, line1, line2, city, country, postcode, instagram, image_file, image_url } = req.body;
     const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
     ambassador.address = { line1, line2, city, country, postcode };
@@ -65,6 +67,7 @@ router.get('/register/activate', (req, res, next) => {
 });
 
 router.post('/register/activate', (req, res) => {
+    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     const { id, password, password_confirm, sort_code, account_number } = req.body;
     if (password !== password_confirm) return res.status(400).send("Password confirm does not match");
     Ambassador.findById(id, (err, amb) => {
@@ -104,6 +107,7 @@ router.get('/account', async (req, res) => {
 });
 
 router.post('/account/login', (req, res) => {
+    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     passport.authenticate("local-login-ambassador", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);

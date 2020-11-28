@@ -21,6 +21,7 @@ router.get('/login', (req, res) => {
 router.get('/signup', (req, res) => res.redirect("/account/login"));
 
 router.post('/login', (req, res) => {
+    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     passport.authenticate("local-login-customer", (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
@@ -39,6 +40,7 @@ router.get('/logout', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
+    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     const { firstname, lastname, email_new, phone_number, password_new, password_confirm } = req.body;
     Member.findOne({ email: email_new }, (err, existing) => {
         if (existing) return res.status(400).send("This email is already registered");
