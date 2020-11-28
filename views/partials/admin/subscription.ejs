@@ -2,6 +2,7 @@
     <li class="active"><a data-toggle="pill" href="#new-subscription">NEW</a></li>
     <li><a data-toggle="pill" href="#edit-subscription">EDIT</a></li>
     <li><a data-toggle="pill" href="#remove-subscription">REMOVE</a></li>
+    <li><a data-toggle="pill" href="#subscription-list">LIST</a></li>
 </ul>
 
 <div class="tab-content" style="padding-top: 10px;">
@@ -89,6 +90,34 @@
         </form>
         <%_ } else { _%>
         <p class="no-removable-items-label"><b>NO SUBSCRIPTION PLANS TO REMOVE</b></p>
+        <%_ } _%>
+    </div>
+
+    <style>#subscription-list td { width: 33.333% }</style>
+    <div id="subscription-list" class="list-tab tab-pane fade">
+        <%_ if (!subscription_plans.length) { _%>
+        <p class="no-removable-items-label"><b>NO SUBSCRIPTION PLANS TO LIST</b></p>
+        <%_ } else { _%>
+        <div class='table-responsive'>
+            <table id="products-table" class="table table-borderless table-hover">
+                <thead>
+                    <tr>
+                        <th>PLAN</th>
+                        <th>PRICE</th>
+                        <th>TOTAL SUBSCRIBERS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <%_ subscription_plans.forEach((plan, i) => { _%>
+                    <tr>
+                        <th scope="row"><%= plan.name %> Plan</th>
+                        <td id="sub-price-<%= i %>">£<%= (plan.price / 100).toFixed(2) %></td>
+                        <td id="subscriber-count-<%= i %>"><%= subscription_product_names.filter(n => n === plan.name).length %></td>
+                    </tr>
+                    <%_ }) _%>
+                </tbody>
+            </table>
+        </div>
         <%_ } _%>
     </div>
 </div>

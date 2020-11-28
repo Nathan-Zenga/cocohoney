@@ -16,7 +16,10 @@ router.get('/', async (req, res) => {
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
-    Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db, recipients }))
+    const subscriptions_all = await Stripe.subscriptions.list();
+    const subscription_products = await Stripe.products.list({ ids: subscriptions_all.data.map(s => s.items.data[0].price.product) });
+    const subscription_product_names = subscription_products.data.map(p => p.name.replace(" Lash Subscription", ""));
+    Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db, recipients, subscription_product_names }))
 });
 
 router.get('/login', (req, res) => {
