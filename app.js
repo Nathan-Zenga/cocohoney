@@ -41,6 +41,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.user = req.user || null;
     res.locals.is_admin = (req.user || {}).admin;
     res.locals.is_ambassador = (req.user || {}).ambassador;
+    res.locals.is_customer = req.user && !res.locals.is_ambassador && !res.locals.is_admin;
     res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
     res.locals.products_all = await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = await Box.find();
