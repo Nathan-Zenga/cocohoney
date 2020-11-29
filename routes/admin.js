@@ -21,14 +21,12 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.get('/mail/form', isAuthed, async (req, res) => {
-    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const customers = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    res.render('admin-mail-form', {
-        title: "Admin - Compose Mail",
-        pagename: "admin-mail-form",
-        members: [...ambassadors, ...members],
-        ambassadors
-    })
+    const title = "Admin - Compose Mail";
+    const pagename = "admin-mail-form";
+    const members = [...ambassadors, ...customers];
+    res.render('admin-mail-form', { title, pagename, members })
 });
 
 router.get('/ambassador/account', isAuthed, async (req, res, next) => {

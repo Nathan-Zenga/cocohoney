@@ -14,7 +14,7 @@
                 <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                 <select name="email" id="email" required>
                     <option value="">-</option>
-                    <%_ [...ambassadors, ...members].forEach((member, i) => { _%>
+                    <%_ members.forEach((member, i) => { _%>
                     <option value="<%= member.email %>"><%= member.firstname+" "+member.lastname %></option>
                     <%_ }) _%>
                 </select>
