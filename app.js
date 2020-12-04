@@ -70,6 +70,7 @@ app.use('/reviews', require('./routes/customer-review'));
 app.use('/account', require('./routes/account'));
 app.use('/report', require('./routes/report'));
 app.use('/wishlist', require('./routes/wishlist'));
+app.use('/events', require('./routes/events'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;
