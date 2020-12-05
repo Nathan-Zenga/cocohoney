@@ -6,7 +6,7 @@
                 <option value="#home">HOME</option>
                 <option value="#highlights">HIGHLIGHTS POSTS</option>
                 <option value="#sale">SALE</option>
-                <option value="#product">PRODUCTS</option>
+                <option value="#event">EVENTS</option>
                 <option value="#overview-image">OVERVIEW IMAGES</option>
                 <option value="#banner">BANNER SLIDES</option>
                 <option value="#discount_code">DISCOUNT CODES</option>
@@ -22,6 +22,7 @@
                 <li class="active"><a data-toggle="pill" href="#home">HOME</a></li>
                 <li><a data-toggle="pill" href="#highlights">HIGHLIGHTS POSTS</a></li>
                 <li><a data-toggle="pill" href="#sale">SALE</a></li>
+                <li><a data-toggle="pill" href="#event">EVENTS</a></li>
                 <li><a data-toggle="pill" href="#product">PRODUCTS</a></li>
                 <li><a data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a></li>
                 <li><a data-toggle="pill" href="#banner">BANNER SLIDES</a></li>
@@ -44,6 +45,10 @@
 
             <div id="sale" class="tab-pane fade">
             <%- include ('partials/admin/sale') -%>
+            </div>
+
+            <div id="event" class="tab-pane fade">
+            <%- include ('partials/admin/event') -%>
             </div>
 
             <div id="product" class="tab-pane fade">
@@ -158,6 +163,11 @@
                 $form.find(".img-preview:first-child").toggleClass("show", !!result.media_lg).empty().append(result.media_lg ? $("<img src='" + result.media_lg.url + "'>") : "");
                 var media_sm = result.media_sm ? $(/(.jpe?g|.png)$/i.test(result.media_sm.url) ? "<img src='" + result.media_sm.url + "'>" : "<video playsinline autoplay muted loop><source src='"+ result.media_sm.url +"'></source></video>") : "";
                 $form.find(".img-preview:last-child").toggleClass("show", !!result.media_sm).empty().append(media_sm);
+
+                $form.find("#event-title-edit").val(result.title);
+                $form.find("#event-date-edit").val(result.date ? new Date(result.date).toISOString().slice(0, 10) : "");
+                $form.find("#event-info-edit").val(result.info);
+                $form.find("#event-link-edit").val(result.link);
             });
         });
 

@@ -155,3 +155,10 @@ module.exports.Wishlist = model('Wishlist', Schema({
     customer_id: { type: String, required: true, index: true, unique: true },
     items: [String] // array of product IDs
 }), 'wishlist');
+
+module.exports.Event = model('Event', Schema({
+    title: { type: String, required: true },
+    date: { type: Date, required: true },
+    info: String,
+    link: String
+}));

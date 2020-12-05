@@ -1,4 +1,4 @@
-const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box, Overview_image, Lookbook_media, Ambassador, Order, Highlights_post, Shipping_page } = require('../models/models');
+const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box, Overview_image, Lookbook_media, Ambassador, Order, Highlights_post, Shipping_page, Event } = require('../models/models');
 
 /**
  * Getting all documents from all collections
@@ -20,5 +20,6 @@ module.exports = async cb => {
     docs.orders = await Order.find().sort({ tracking_ref: 1, created_at: -1 }).exec();
     docs.highlights_posts = await Highlights_post.find();
     docs.shipping_page_info = await Shipping_page.find();
+    docs.events = await Event.find().sort({ date: -1 }).exec();
     cb(docs);
 };

@@ -123,6 +123,7 @@ router.post("/search", isAuthed, (req, res) => {
         docs.push(...db.lookbook_media);
         docs.push(...db.highlights_posts);
         docs.push(...db.shipping_page_info);
+        docs.push(...db.events);
         res.send(docs);
     })
 });
