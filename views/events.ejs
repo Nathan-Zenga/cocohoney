@@ -1,4 +1,28 @@
 <%- include ('partials/header') -%>
-    <section class="container">
+    <section>
+        <%_ if (!events.length) { _%>
+        <div class="container" style="padding: 10px 0; text-align: center">
+            <h1>No events at the moment</h1><p>Please come back later</p>
+        </div>
+        <%_ } events.forEach(event => { _%>
+        <div class="event-item">
+            <div class="event-title">
+                <div class="container"><h1 class="col-xs-12"><%= event.title %></h1></div>
+            </div>
+            <div class="event-info-body">
+                <div class="container">
+                    <div class="col-sm-3 col-sm-push-9 event-key-info-wrapper">
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-6 event-date"><span><%= event.date.toDateString().slice(4) %></span></div>
+                            <div class="col-sm-12 col-xs-6 event-link"><a href="<%= event.link %>">TICKET LINK</a></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9 col-sm-pull-3 event-info">
+                        <p><%- event.info.replace(/\r?\n/, "</p><p>") %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%_ }) %>
     </section>
 <%- include ('partials/footer') -%>
