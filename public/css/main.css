@@ -614,7 +614,7 @@ section .media-wrapper .main-media.small video {
     padding: 2em 0;
 }
 
-form {
+form, .form {
     max-width: 600px;
     margin: 0 auto 2em;
     border: none;
@@ -694,18 +694,22 @@ input[type=checkbox], input[type=radio] {
     margin-bottom: .5em;
 }
 
-input[type=submit], button {
+input[type=submit], input[type=button], button {
     width: auto;
     background-color: rgb(240, 230, 140);
     color: rgb(124, 76, 76);
 }
 
-input[type=submit], button[type=submit] {
+input[type=submit], input[type=button], button[type=submit], button.submit {
     display: table;
     padding: 15px 30px;
     margin-left: auto;
     margin-right: auto;
     font-weight: 400;
+}
+
+input[type=submit]:disabled, input[type=button]:disabled, button:disabled {
+    opacity: .5;
 }
 
 input[type=radio] + small {
@@ -1857,50 +1861,34 @@ input.product-quantity:disabled {
 
 .event-item {
     margin-bottom: 80px;
+    text-align: center;
 }
 
-.event-item .container {
-    max-width: 1000px;
+.event-item .max-width {
+    max-width: 950px;
 }
 
-.event-title {
-    padding: 10px 0 20px;
-    border-bottom: 5px solid rgba(255, 255, 255, .15);
+.event-title-row {
+    border-bottom: 5px solid rgba(255, 255, 255, .5);
+    margin-bottom: 20px;
+    padding-bottom: 75px;
 }
 
-.event-title h1 {
+.event-title-row h1 {
     margin-bottom: 0;
-    font-size: 1.5em;
-    text-align: center;
 }
 
-.event-key-info-wrapper {
-    margin-top: -5px;
-    text-align: center;
+.event-image-container {
+    margin-top: -80px;
+    margin-bottom: 30px;
 }
 
-.event-date, .event-link {
-    position: relative;
-    display: inline-block;
-    padding: 15px;
-    background-color: rgb(240, 230, 140);
-    color: rgb(124, 76, 76);
-    text-align: center;
-    font-weight: 600;
-    border-radius: 0 0 7px 7px;
-}
-
-.event-date {
-    z-index: 5;
-}
-
-.event-link {
-    background-color: rgb(250, 128, 114);
-}
-
-.event-info {
-    margin-top: 1.5em;
-    text-align: center;
+.event-image {
+    display: table;
+    margin: 0 auto;
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 10px;
 }
 
 .event-info p {
@@ -1908,38 +1896,11 @@ input.product-quantity:disabled {
 }
 
 @media (min-width: 768px) {
-    .event-title h1 {
-        font-size: 2em;
+    .event-title-row {
+        padding-bottom: 20px;
     }
 
-    .event-title h1, .event-info {
-        text-align: left;
-    }
-
-    .event-date {
-        margin-right: 0;
-    }
-
-    .event-link {
-        margin-top: -15px;
-        padding-top: 30px;
-    }
-}
-
-@media (max-width: 767px) {
-    .event-key-info-wrapper {
-        padding: 0 40px;
-    }
-
-    .event-date, .event-link {
-        padding: 10px;
-    }
-
-    .event-date {
-        border-radius: 0 0 0 7px;
-    }
-
-    .event-link {
-        border-radius: 0 0 7px 0;
+    .event-image {
+        max-height: 500px;
     }
 }
