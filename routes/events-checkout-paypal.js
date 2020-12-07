@@ -20,8 +20,10 @@ router.post("/create-payment", async (req, res) => {
     if (missing_fields.length) return res.status(400).send(`Missing fields: ${missing_fields.join(", ")}`);
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
 
-    try { var event = await Event.findById(event_id) } catch(err) { return res.status(400).send(err.message) }
-    if (!event) return res.status(404).send("Invalid / expired ticketv or the event has passed");
+    try { var event = await Event.findOne({ _id: event_id, stock_qty: { $gte: 1 }, date: { $gte: Date.now() } }) }
+    catch(err) { return res.status(400).send(err.message) }
+    if (!event) return res.status(404).send("Ticket invalid or no longer available to buy");
+    if (isNaN(parseInt(quantity))) return res.status(400).send("Quantity specified is not a number");
     if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
     if (quantity > event.stock_qty) return res.status(400).send("Quantity specified is over the limit");
 
@@ -29,17 +31,16 @@ router.post("/create-payment", async (req, res) => {
         intent: "sale",
         payer: { payment_method: "paypal" },
         redirect_urls: {
-            return_url: location_origin + "/shop/checkout/paypal/complete",
-            cancel_url: location_origin + "/shop/checkout/cancel"
+            return_url: location_origin + "/events/checkout/paypal/complete",
+            cancel_url: location_origin + "/events/checkout/cancel"
         },
         transactions: [{
             item_list: {
                 items: [{
-                    name: event.name,
+                    name: `'${event.title}' Event Ticket`,
                     price: (event.price / 100).toFixed(2),
                     quantity: parseInt(quantity),
-                    currency: "GBP",
-                    description: event.info || undefined
+                    currency: "GBP"
                 }],
                 shipping_address: {
                     recipient_name: `${firstname} ${lastname}`,
@@ -92,10 +93,15 @@ router.get("/complete", async (req, res) => {
             cart: [{ id, name, price, image, info, qty }]
         });
 
-        req.session.cart = [];
-        req.session.transaction = undefined;
+        if (production) {
+            event.stock_qty -= qty;
+            if (event.stock_qty < 0) event.stock_qty = 0;
+            event.save();
+            order.save();
+        };
 
-        if (production) order.save();
+        req.session.event_id = undefined;
+        req.session.transaction = undefined;
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email }).sendMail({

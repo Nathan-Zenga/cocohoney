@@ -23,9 +23,13 @@
                         <span>&bull;</span>
                         <span class="event-date"><%= event.date.toDateString().slice(4) %></span>
                     </p>
-                    <button type="button" class="submit" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" style="margin-top: 1em; margin-bottom: 2em">BUY TICKETS</button>
+                    <button type="button" class="submit event-checkout-modal-btn" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" <%- Date.now() > event.date.getTime() || event.stock_qty < 1 ? "disabled" : "" %>>
+                        <%= Date.now() > event.date.getTime() ? "TICKETS NO LONGER AVAILABLE" : event.stock_qty < 1 ? "SOLD OUT" : "BUY TICKETS" %>
+                    </button>
                     <div class="event-info-wrapper">
-                        <div><p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p></div>
+                        <div class="event-info">
+                            <p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p>
+                        </div>
                     </div>
                     <div class="event-info-toggle">
                         <span class="expand">See more</span>
@@ -146,10 +150,12 @@
             });
         });
 
-        var initial_max_height = $(".event-info-wrapper").css("max-height");
-        $(".event-info-toggle").click(function() {
-            var height = !$(".event-info-wrapper").hasClass("expanded") ? parseFloat($(".event-info-wrapper > div").css("height")) + 10 : initial_max_height;
-            $(this).prev(".event-info-wrapper").toggleClass("expanded").css("max-height", height);
+        $(".event-info-wrapper").each(function(i, e) {
+            var initial_max_height = $(e).css("max-height");
+            $(e).next(".event-info-toggle").click(function() {
+                var height = !$(e).hasClass("expanded") ? parseFloat($(e).find(".event-info").css("height")) + 10 : initial_max_height;
+                $(e).toggleClass("expanded").css("max-height", height);
+            });
         });
     </script>
 <%- include ('partials/footer') -%>

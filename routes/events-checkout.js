@@ -14,8 +14,9 @@ router.post("/session/create", async (req, res) => {
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
 
     try {
-        const event = await Event.findById(event_id);
-        if (!event) return res.status(404).send("Invalid / expired ticketv or the event has passed");
+        const event = await Event.findOne({ _id: event_id, stock_qty: { $gte: 1 }, date: { $gte: Date.now() } });
+        if (!event) return res.status(404).send("Ticket invalid or no longer available to buy");
+        if (isNaN(parseInt(quantity))) return res.status(400).send("Quantity specified is not a number");
         if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
         if (quantity > event.stock_qty) return res.status(400).send("Quantity specified is over the limit");
 
@@ -34,11 +35,10 @@ router.post("/session/create", async (req, res) => {
             payment_intent_data: { description: "Event Tickets Purchase" },
             line_items: [{
                 price_data: {
-                    product_data: { name: event.title, images: event.image ? [event.image.url] : undefined },
+                    product_data: { name: `'${event.title}' Event Ticket`, images: event.image ? [event.image.url] : undefined },
                     unit_amount: parseInt(event.price),
                     currency: "gbp"
                 },
-                description: event.info || undefined,
                 quantity: parseInt(quantity)
             }],
             mode: "payment",
@@ -54,10 +54,10 @@ router.post("/session/create", async (req, res) => {
 
 router.get("/session/complete", async (req, res) => {
     const { event_id, checkout_session } = req.session;
-    const event = await Event.findById(event_id);
-    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
 
     try {
+        const event = await Event.findById(event_id);
+        const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
 
         if (!session) return res.status(400).render('checkout-error', {
@@ -75,10 +75,15 @@ router.get("/session/complete", async (req, res) => {
             cart: [{ id, name, price, image, info, qty }]
         });
 
-        req.session.cart = [];
-        req.session.checkout_session = undefined;
+        if (production) {
+            event.stock_qty -= qty;
+            if (event.stock_qty < 0) event.stock_qty = 0;
+            event.save();
+            order.save();
+        };
 
-        if (production) order.save();
+        req.session.event_id = undefined;
+        req.session.checkout_session = undefined;
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email: customer.email }).sendMail({
@@ -122,8 +127,8 @@ router.get("/cancel", async (req, res) => {
             if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
         }
     } catch(err) {}
+    req.session.event_id = undefined;
     req.session.checkout_session = undefined;
-    req.session.shipping_method = undefined;
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
