@@ -167,7 +167,7 @@
                 $form.find("#event-title-edit").val(result.title);
                 $form.find("#event-date-edit").val(result.date ? new Date(result.date).toISOString().slice(0, 10) : "");
                 $form.find("#event-info-edit").val(result.info);
-                $form.find("#event-link-edit").val(result.link);
+                $form.find("#event-price-edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
             });
         });
 

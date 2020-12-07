@@ -5,7 +5,7 @@
             <h1>No events at the moment</h1><p>Please come back later</p>
         </div>
         <%_ } events.forEach((event, i) => { _%>
-        <form class="event-item minimal" method="post" action="/events/checkout/session/create">
+        <div class="event-item">
             <div class="event-title-row">
                 <div class="container max-width">
                     <div class="col-sm-6<%= i % 2 !== 0 ? ' col-sm-push-6' : '' %>">
@@ -18,11 +18,114 @@
                     <img class="event-image" src="<%- event.image.url %>" alt="">
                 </div>
                 <div class="col-sm-6<%= i % 2 === 0 ? ' col-sm-pull-6' : '' %>">
-                    <button type="button" class="submit">BUY TICKETS</button>
-                    <p><%- event.info.replace(/\r?\n/, "</p><p>") %></p>
+                    <h2>£<%= (event.price / 100).toFixed(2) %></h2>
+                    <button type="button" class="submit" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" style="margin-top: 1em; margin-bottom: 2em">BUY TICKETS</button>
+                    <p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p>
+
+                    <div id="event-checkout-modal-<%= i %>" class="modal fade in" role="dialog">
+                        <div class="modal-icons">
+                            <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="payment-form" method="post" style="text-align: left">
+                                <input type="hidden" name="event_id" value="<%= event._id %>">
+                                <%_ const firstname = user && !is_admin ? user.firstname : "";
+                                    const lastname = user && !is_admin ? user.lastname : "";
+                                    const email = user && !is_admin ? user.email : ""; _%>
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="firstname">FIRST NAME</label>
+                                            <input type="text" name="firstname" value="<%- firstname %>" required>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="lastname">LAST NAME</label>
+                                            <input type="text" name="lastname" value="<%- lastname %>" required>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <label for="email">EMAIL</label>
+                                <input type="email" name="email" value="<%= email %>" required>
+                                <label for="address_l1">ADDRESS</label>
+                                <input type="text" name="address_l1" placeholder="LINE 1" required>
+                                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                                <fieldset>
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <label for="city">CITY</label>
+                                            <input type="text" name="city" required>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                            <select name="country" required>
+                                                <option value="">-</option>
+                                                <%_ for (var k in countries) { _%>
+                                                <option value="<%- k %>"><%- countries[k] %></option>
+                                                <%_ } _%>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="postcode">POST / ZIP CODE</label>
+                                            <input type="text" name="postcode" required>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                            <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <form class="stripe-payment-opt minimal" action="/events/checkout/session/create">
+                                            <button class="checkout-btn" type="submit">
+                                                <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>PAY BY CARD</span></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <form class="paypal-payment-opt minimal" action="/events/checkout/paypal/create-payment">
+                                            <button class="checkout-btn" type="submit">
+                                                <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>PAY VIA PAYPAL</span></span>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
-        <%_ }) %>
+        </div>
+        <%_ }) _%>
     </section>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        $(".paypal-payment-opt").submit(function(e) {
+            e.preventDefault();
+            var btnControl = new submitBtnController(this, "REDIRECTING");
+            var $form = $(this).closest(".modal").find(".payment-form");
+            $.post(this.action, $form.serializeArray(), function(href) {
+                location.href = href;
+            }).fail(function(err, status, codeMessage) {
+                btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            });
+        });
+
+        $(".stripe-payment-opt").submit(function(e) {
+            e.preventDefault();
+            var btnControl = new submitBtnController(this, "REDIRECTING");
+            var $form = $(this).closest(".modal").find(".payment-form");
+            $.post(this.action, $form.serializeArray(), function(data) {
+                var stripe = Stripe(data.pk);
+                return stripe.redirectToCheckout({ sessionId: data.id });
+            }).then(function(result) {
+                if (result.error) { btnControl.finish(); alert(result.error.message); }
+            }).fail(function(err, status, codeMessage) {
+                btnControl.finish();
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            });
+        });
+    </script>
 <%- include ('partials/footer') -%>

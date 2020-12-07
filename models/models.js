@@ -160,5 +160,6 @@ module.exports.Event = model('Event', Schema({
     title: { type: String, required: true },
     date: { type: Date, required: true },
     info: String,
-    link: String
+    price: { type: Number, required: true, set: n => parseFloat(n) * 100 },
+    image: { p_id: String, url: String }
 }));

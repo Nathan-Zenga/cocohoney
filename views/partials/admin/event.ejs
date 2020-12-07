@@ -17,8 +17,20 @@
             <label>EVENT INFO</label>
             <textarea name="info" id="event-info" rows="5"></textarea>
 
-            <label>TICKET LINK</label>
-            <input type="text" name="link" id="event-link">
+            <label>TICKET PRICE (£)</label>
+            <input type="number" name="price" id="event-price" min="0.01" step="0.01" required>
+
+            <label>POSTER / FLYER</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="event-image-file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="event-image-file">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="image_url" id="event-image-url" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
 
             <input type="submit" value="POST">
         </form>
@@ -43,10 +55,22 @@
             <label>EVENT INFO</label>
             <textarea name="info" id="event-info-edit" rows="5"></textarea>
 
-            <label>TICKET LINK</label>
-            <input type="text" name="link" id="event-link-edit">
+            <label>TICKET PRICE (£)</label>
+            <input type="number" name="price" id="event-price-edit" min="0.01" step="0.01">
 
-            <input type="submit" value="SAVE">
+            <label>POSTER / FLYER</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="event-image-file-edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="event-image-file-edit">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="image_url" id="event-image-url-edit" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="UPDATE">
         </form>
     </div>
 

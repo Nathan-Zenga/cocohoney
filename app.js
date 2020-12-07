@@ -71,6 +71,8 @@ app.use('/account', require('./routes/account'));
 app.use('/report', require('./routes/report'));
 app.use('/wishlist', require('./routes/wishlist'));
 app.use('/events', require('./routes/events'));
+app.use('/events/checkout', require('./routes/events-checkout'));
+app.use('/events/checkout/paypal', require('./routes/events-checkout-paypal'));
 
 app.get("*", (req, res) => {
     const html = `<h1>PAGE ${res.statusCode === 404 ? "IN CONSTRUCTION" : "NOT FOUND"}</h1>`;
