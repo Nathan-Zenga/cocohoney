@@ -29,6 +29,14 @@
                         <div class="modal-body">
                             <form class="payment-form" method="post" style="text-align: left">
                                 <input type="hidden" name="event_id" value="<%= event._id %>">
+
+                                <label>QUANTITY</label>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <input type="number" name="quantity" min="1" max="<%= event.stock_qty %>" value="1" required>
+                                    </div>
+                                </div>
+
                                 <%_ const firstname = user && !is_admin ? user.firstname : "";
                                     const lastname = user && !is_admin ? user.lastname : "";
                                     const email = user && !is_admin ? user.email : ""; _%>

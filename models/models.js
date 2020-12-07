@@ -161,5 +161,6 @@ module.exports.Event = model('Event', Schema({
     date: { type: Date, required: true },
     info: String,
     price: { type: Number, required: true, set: n => parseFloat(n) * 100 },
+    stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] },
     image: { p_id: String, url: String }
 }));

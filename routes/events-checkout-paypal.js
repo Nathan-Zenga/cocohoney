@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { event_id, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
+    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -22,6 +22,8 @@ router.post("/create-payment", async (req, res) => {
 
     try { var event = await Event.findById(event_id) } catch(err) { return res.status(400).send(err.message) }
     if (!event) return res.status(404).send("Invalid / expired ticketv or the event has passed");
+    if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
+    if (quantity > event.stock_qty) return res.status(400).send("Quantity specified is over the limit");
 
     paypal.payment.create({
         intent: "sale",
@@ -35,7 +37,7 @@ router.post("/create-payment", async (req, res) => {
                 items: [{
                     name: event.name,
                     price: (event.price / 100).toFixed(2),
-                    quantity: 1,
+                    quantity: parseInt(quantity),
                     currency: "GBP",
                     description: event.info || undefined
                 }],
@@ -67,7 +69,7 @@ router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
     const { transaction, event_id } = req.session;
     const event = await Event.findById(event_id);
-    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info, qty = 1;
+    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
 
     paypal.payment.execute(paymentId, {
         payer_id: PayerID,
@@ -80,6 +82,7 @@ router.get("/complete", async (req, res) => {
         });
 
         const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
+        const { quantity: qty } = payment.transactions[0].item_list.items[0];
         const { email } = payment.payer.payer_info;
 
         const order = new Order({

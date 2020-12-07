@@ -5,7 +5,7 @@ const MailTransporter = require('../modules/mail-transporter');
 const production = process.env.NODE_ENV === "production";
 
 router.post("/session/create", async (req, res) => {
-    const { event_id, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
+    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -16,6 +16,8 @@ router.post("/session/create", async (req, res) => {
     try {
         const event = await Event.findById(event_id);
         if (!event) return res.status(404).send("Invalid / expired ticketv or the event has passed");
+        if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
+        if (quantity > event.stock_qty) return res.status(400).send("Quantity specified is over the limit");
 
         const customer = await Stripe.customers.create({
             name: `${firstname} ${lastname}`,
@@ -37,7 +39,7 @@ router.post("/session/create", async (req, res) => {
                     currency: "gbp"
                 },
                 description: event.info || undefined,
-                quantity: 1
+                quantity: parseInt(quantity)
             }],
             mode: "payment",
             success_url: location_origin + "/events/checkout/session/complete",
@@ -53,11 +55,10 @@ router.post("/session/create", async (req, res) => {
 router.get("/session/complete", async (req, res) => {
     const { event_id, checkout_session } = req.session;
     const event = await Event.findById(event_id);
-    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info, qty = 1;
+    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
 
     try {
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
-        const { customer } = session;
 
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
@@ -65,6 +66,8 @@ router.get("/session/complete", async (req, res) => {
             error: "The checkout session is invalid, expired or already completed"
         });
 
+        const { customer } = session;
+        const { quantity: qty } = session.line_items.data[0];
         const order = new Order({
             customer_name: customer.name,
             customer_email: customer.email,

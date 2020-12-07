@@ -10,8 +10,8 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/post', isAuthed, async (req, res) => {
-    const { title, date, info, price, image_url, image_file } = req.body;
-    const event = new Event({ title, date, info, price });
+    const { title, date, info, price, stock_qty, image_url, image_file } = req.body;
+    const event = new Event({ title, date, info, price, stock_qty });
     try {
         if (!image_url && !image_file) { await event.save(); return res.send("Event saved and posted") }
         const public_id = `cocohoney/event/flyer/${event.name}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
@@ -22,13 +22,14 @@ router.post('/post', isAuthed, async (req, res) => {
 });
 
 router.post('/edit', isAuthed, (req, res) => {
-    const { id, title, date, info, price, image_url, image_file } = req.body;
+    const { id, title, date, info, price, stock_qty, image_url, image_file } = req.body;
     Event.findById(id, (err, event) => {
         if (err) return res.status(500).send(err.message);
         if (title) event.title = title;
         if (date) event.date = date;
         if (info) event.info = info;
         if (price) event.price = price;
+        if (stock_qty) event.stock_qty = stock_qty;
 
         event.save((err, saved) => {
             if (err) return res.status(500).send(err.message);

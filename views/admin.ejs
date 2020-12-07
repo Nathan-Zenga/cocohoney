@@ -168,6 +168,7 @@
                 $form.find("#event-date-edit").val(result.date ? new Date(result.date).toISOString().slice(0, 10) : "");
                 $form.find("#event-info-edit").val(result.info);
                 $form.find("#event-price-edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
+                $form.find("#event-stock-qty-edit").val(result.stock_qty);
             });
         });
 
