@@ -99,22 +99,21 @@ router.get("/complete", async (req, res) => {
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email }).sendMail({
-            subject: "Payment Successful - Cocohoney Cosmetics",
+            subject: "Ticket Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${recipient_name},\n\n` +
-            "Thank you for shopping with us! We are happy to confirm your ticket payment was successful.\n\n" +
+            `Thank you for signing up to participate on our "${event.title}" event on ${event.date}! ` +
+            "We are happy to confirm your ticket payment was successful.\n\n" +
             `((Click here to view order summary))[${res.locals.location_origin}/order/${order.id}]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
             "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) console.error(err), res.status(500);
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
-                subject: "Purchase Report: You Got Paid!",
-                message: "You've received a new purchase from a new customer.\n\n" +
+                subject: "Purchase Report: Someone bought tickets!",
+                message: "You've received a new purchase from a new customer for a ticket for the " +
+                `${event.title} event on ${event.date}.\n\n` +
                 `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
                 `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-                "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
-                `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n` +
                 "Details of this transaction can also be found on your Paypal account."
             }, err => {
                 if (err) { console.error(err); if (res.statusCode !== 500) res.status(500) }
