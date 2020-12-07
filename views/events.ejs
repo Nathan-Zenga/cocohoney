@@ -24,7 +24,13 @@
                         <span class="event-date"><%= event.date.toDateString().slice(4) %></span>
                     </p>
                     <button type="button" class="submit" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" style="margin-top: 1em; margin-bottom: 2em">BUY TICKETS</button>
-                    <p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p>
+                    <div class="event-info-wrapper">
+                        <div><p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p></div>
+                    </div>
+                    <div class="event-info-toggle">
+                        <span class="expand">See more</span>
+                        <span class="collapse">See less</span>
+                    </div>
 
                     <div id="event-checkout-modal-<%= i %>" class="modal fade in" role="dialog">
                         <div class="modal-icons">
@@ -138,6 +144,12 @@
                 btnControl.finish();
                 alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
+        });
+
+        var initial_max_height = $(".event-info-wrapper").css("max-height");
+        $(".event-info-toggle").click(function() {
+            var height = !$(".event-info-wrapper").hasClass("expanded") ? parseFloat($(".event-info-wrapper > div").css("height")) + 10 : initial_max_height;
+            $(this).prev(".event-info-wrapper").toggleClass("expanded").css("max-height", height);
         });
     </script>
 <%- include ('partials/footer') -%>

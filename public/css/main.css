@@ -88,6 +88,10 @@ main {
     min-height: 70vh;
 }
 
+main *::-webkit-scrollbar-thumb {
+    background-color: rgba(240, 230, 140, .5);
+}
+
 section {
     position: relative;
     margin: 30px 0;
@@ -1889,6 +1893,29 @@ input.product-quantity:disabled {
     max-width: 100%;
     max-height: 400px;
     border-radius: 10px;
+}
+
+.event-info-wrapper {
+    padding: 0 10px;
+    margin-bottom: 2em;
+    max-height: 230px;
+    overflow: auto;
+    transition: .5s max-height;
+}
+
+.event-info-wrapper + .event-info-toggle span {
+    display: none;
+    border-bottom: 1px solid white;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.event-info-wrapper:not(.expanded) + .event-info-toggle span.expand {
+    display: inline;
+}
+
+.event-info-wrapper.expanded + .event-info-toggle span.collapse {
+    display: inline;
 }
 
 .event-info p {
