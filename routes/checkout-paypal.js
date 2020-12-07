@@ -91,7 +91,6 @@ router.post("/create-payment", async (req, res) => {
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
     const { cart, current_dc_doc, transaction, shipping_method } = req.session;
-    const { user } = res.locals;
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
 
@@ -113,8 +112,8 @@ router.get("/complete", async (req, res) => {
         }).join("\n");
 
         const order = new Order({
-            customer_name: user ? `${user.firstname} ${user.lastname}` : recipient_name,
-            customer_email: user ? user.email : email,
+            customer_name: recipient_name,
+            customer_email: email,
             shipping_method: shipping_method.name,
             destination: { line1, line2, city, country: country_code, postal_code, state },
             cart
