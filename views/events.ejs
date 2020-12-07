@@ -18,7 +18,11 @@
                     <img class="event-image" src="<%- event.image.url %>" alt="">
                 </div>
                 <div class="col-sm-6<%= i % 2 === 0 ? ' col-sm-pull-6' : '' %>">
-                    <h2>£<%= (event.price / 100).toFixed(2) %></h2>
+                    <p class="event-key-info">
+                        <span class="event-price">£<%= (event.price / 100).toFixed(2) %></span>
+                        <span>&bull;</span>
+                        <span class="event-date"><%= event.date.toDateString().slice(4) %></span>
+                    </p>
                     <button type="button" class="submit" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" style="margin-top: 1em; margin-bottom: 2em">BUY TICKETS</button>
                     <p><%- event.info.replace(/\r?\n/g, "</p><p>") %></p>
 

@@ -1895,6 +1895,14 @@ input.product-quantity:disabled {
     padding-bottom: 1em;
 }
 
+.event-key-info > span {
+    font-weight: 600;
+}
+
+.event-key-info > span:not(:last-child) {
+    margin-right: 10px;
+}
+
 @media (min-width: 768px) {
     .event-title-row {
         padding-bottom: 20px;
