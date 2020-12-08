@@ -210,7 +210,7 @@ router.post('/discount_code/add', (req, res) => {
             Discount_code.findOne({ code }, (err, dc) => {
                 if (err) return res.status(500).send(err.message);
                 if (dc) return res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
-                new Discount_code({ code, percentage: 10, expiry_date: new Date(Date.now() + 31556952000) }).save(err => {
+                Discount_code.create({ code, percentage: 10, expiry_date: new Date(Date.now() + 31556952000) }, err => {
                     if (err) return res.status(500).send(err.message);
                     res.send(`New discount code saved and added for ${amb.firstname} ${amb.lastname}`);
                 });

@@ -5,7 +5,7 @@ const { Banner_slide, Overview_image } = require('../models/models');
 const { forEachOf, each } = require('async');
 
 router.post('/banner/add', isAuthed, (req, res) => {
-    new Banner_slide({ text: req.body.text }).save(err => res.send("Banner text saved"));
+    Banner_slide.create({ text: req.body.text }, err => res.send("Banner text saved"));
 });
 
 router.post('/banner/edit', isAuthed, (req, res) => {

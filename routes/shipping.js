@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
 
 router.post('/new', isAuthed, (req, res) => {
     const { name, fee, info } = req.body;
-    new Shipping_method({ name, fee, info }).save(err => res.send("Shipping method saved"));
+    Shipping_method.create({ name, fee, info }, err => res.send("Shipping method saved"));
 });
 
 router.post('/edit', isAuthed, (req, res) => {

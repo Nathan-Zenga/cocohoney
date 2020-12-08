@@ -56,7 +56,7 @@ router.post('/login', (req, res) => {
             Admin.deleteMany({ email: "temp" }, err => {
                 const password = crypto.randomBytes(20).toString("hex");
                 const token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
-                new Admin({ email: "temp", password, token_expiry_date }).save((err, doc) => {
+                Admin.create({ email: "temp", password, token_expiry_date }, (err, doc) => {
                     new MailTransporter({ req, res }, { email }).sendMail({
                         subject: "Admin Account Activation",
                         message: "You're receiving this email because an admin account needs setting up. " +
@@ -130,7 +130,7 @@ router.post("/search", isAuthed, (req, res) => {
 
 router.post('/discount_code/add', isAuthed, (req, res) => {
     const { code, percentage, expiry_date } = req.body;
-    new Discount_code({ code, percentage, expiry_date }).save(err => {
+    Discount_code.create({ code, percentage, expiry_date }, err => {
         if (err) return res.status(500).send(err.message);
         res.send("Discount code added");
     })
@@ -211,7 +211,7 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
 
 router.post('/faqs/add', isAuthed, (req, res) => {
     const { question, answer } = req.body;
-    new FAQ({ question, answer }).save(err => res.send("FAQ saved"));
+    FAQ.create({ question, answer }, err => res.send("FAQ saved"));
 });
 
 router.post('/faqs/edit', isAuthed, (req, res) => {

@@ -41,7 +41,7 @@ passport.use("local-register-admin", new Strategy({ passReqToCallback: true }, a
         if (!applicant) return done(null, null, { message: "Cannot activate account: expired / invalid token" });
         if (existing) return done(null, null, { message: "An admin is already registered" });
         const hash = await bcrypt.hash(password, 10);
-        const user = await new Admin({ email, password: hash }).save();
+        const user = await Admin.create({ email, password: hash });
         done(null, user);
     } catch (err) { done(err) }
 }));
