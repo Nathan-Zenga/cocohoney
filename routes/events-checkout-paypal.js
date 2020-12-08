@@ -69,64 +69,74 @@ router.post("/create-payment", async (req, res) => {
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
     const { transaction, event_id } = req.session;
-    const event = await Event.findById(event_id);
-    const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
 
-    paypal.payment.execute(paymentId, {
-        payer_id: PayerID,
-        transactions: [{ amount: transaction.amount }]
-    }, (err, payment) => {
-        if (err) return res.status(err.httpStatusCode).render('checkout-error', {
-            title: "Payment Error",
-            pagename: "checkout-error",
-            error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
-        });
+    try {
+        const event = await Event.findById(event_id);
+        const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
 
-        const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
-        const { quantity: qty } = payment.transactions[0].item_list.items[0];
-        const { email } = payment.payer.payer_info;
-
-        const order = new Order({
-            customer_name: recipient_name,
-            customer_email: email,
-            destination: { line1, line2, city, country: country_code, postal_code, state },
-            cart: [{ id, name, price, image, info, qty }]
-        });
-
-        if (production) {
-            event.stock_qty -= qty;
-            if (event.stock_qty < 0) event.stock_qty = 0;
-            event.save();
-            order.save();
-        };
-
-        req.session.event_id = undefined;
-        req.session.transaction = undefined;
-
-        const transporter = new MailTransporter({ req, res });
-        transporter.setRecipient({ email }).sendMail({
-            subject: "Ticket Payment Successful - Cocohoney Cosmetics",
-            message: `Hi ${recipient_name},\n\n` +
-            `Thank you for signing up to participate on our "${event.title}" event on ${event.date}! ` +
-            "We are happy to confirm your ticket payment was successful.\n\n" +
-            `((Click here to view order summary))[${res.locals.location_origin}/order/${order.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-            "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics"
-        }, err => {
-            if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
-                subject: "Purchase Report: Someone bought tickets!",
-                message: "You've received a new purchase from a new customer for a ticket for the " +
-                `${event.title} event on ${event.date}.\n\n` +
-                `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+        paypal.payment.execute(paymentId, {
+            payer_id: PayerID,
+            transactions: [{ amount: transaction.amount }]
+        }, (err, payment) => {
+            if (err) return res.status(err.httpStatusCode).render('checkout-error', {
+                title: "Payment Error",
+                pagename: "checkout-error",
+                error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
+            });
+    
+            const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
+            const { quantity: qty } = payment.transactions[0].item_list.items[0];
+            const { email } = payment.payer.payer_info;
+    
+            const order = new Order({
+                customer_name: recipient_name,
+                customer_email: email,
+                destination: { line1, line2, city, country: country_code, postal_code, state },
+                cart: [{ id, name, price, image, info, qty }]
+            });
+    
+            if (production) {
+                event.stock_qty -= qty;
+                if (event.stock_qty < 0) event.stock_qty = 0;
+                event.save();
+                order.save();
+            };
+    
+            req.session.event_id = undefined;
+            req.session.transaction = undefined;
+    
+            const transporter = new MailTransporter({ req, res });
+            transporter.setRecipient({ email }).sendMail({
+                subject: "Ticket Payment Successful - Cocohoney Cosmetics",
+                message: `Hi ${recipient_name},\n\n` +
+                `Thank you for signing up to participate on our "${event.title}" event on ${event.date}! ` +
+                "We are happy to confirm your ticket payment was successful.\n\n" +
+                `((Click here to view order summary))[${res.locals.location_origin}/order/${order.id}]\n` +
                 `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-                "Details of this transaction can also be found on your Paypal account."
+                "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics"
             }, err => {
-                if (err) { console.error(err); if (res.statusCode !== 500) res.status(500) }
-                res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
+                if (err) console.error(err), res.status(500);
+                transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+                    subject: "Purchase Report: Someone bought tickets!",
+                    message: "You've received a new purchase from a new customer for a ticket for the " +
+                    `${event.title} event on ${event.date}.\n\n` +
+                    `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
+                    "Details of this transaction can also be found on your Paypal account."
+                }, err => {
+                    if (err) { console.error(err); if (res.statusCode !== 500) res.status(500) }
+                    res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
+                });
             });
         });
-    });
+    } catch(err) {
+        console.error(err.message || err);
+        res.status(500).render('checkout-error', {
+            title: "Payment Error",
+            pagename: "checkout-error",
+            error: err.message
+        })
+    }
 });
 
 module.exports = router;

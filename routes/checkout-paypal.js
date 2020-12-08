@@ -94,92 +94,101 @@ router.get("/complete", async (req, res) => {
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
 
-    paypal.payment.execute(paymentId, {
-        payer_id: PayerID,
-        transactions: [{ amount: transaction.amount }]
-    }, (err, payment) => {
-        if (err) return res.status(err.httpStatusCode).render('checkout-error', {
-            title: "Payment Error",
-            pagename: "checkout-error",
-            error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
-        });
-
-        const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
-        const { email } = payment.payer.payer_info;
-        const purchase_summary = payment.transactions[0].item_list.items.map(item => {
-            const description = item.description ? `(${item.description}) ` : "";
-            return `${item.quantity} X ${item.name} ${description}- £${item.price}`
-        }).join("\n");
-
-        const order = new Order({
-            customer_name: recipient_name,
-            customer_email: email,
-            shipping_method: shipping_method.name,
-            destination: { line1, line2, city, country: country_code, postal_code, state },
-            cart
-        });
-
-        if (production) cart.forEach(item => {
-            if (item.deal) {
-                item.items.forEach(itm => {
-                    const product = products.find(p => p.id == itm.id);
+    try {
+        paypal.payment.execute(paymentId, {
+            payer_id: PayerID,
+            transactions: [{ amount: transaction.amount }]
+        }, (err, payment) => {
+            if (err) return res.status(err.httpStatusCode).render('checkout-error', {
+                title: "Payment Error",
+                pagename: "checkout-error",
+                error: `${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n") || err.response.message}`
+            });
+    
+            const { recipient_name, line1, line2, city, country_code, state, postal_code } = payment.transactions[0].item_list.shipping_address;
+            const { email } = payment.payer.payer_info;
+            const purchase_summary = payment.transactions[0].item_list.items.map(item => {
+                const description = item.description ? `(${item.description}) ` : "";
+                return `${item.quantity} X ${item.name} ${description}- £${item.price}`
+            }).join("\n");
+    
+            const order = new Order({
+                customer_name: recipient_name,
+                customer_email: email,
+                shipping_method: shipping_method.name,
+                destination: { line1, line2, city, country: country_code, postal_code, state },
+                cart
+            });
+    
+            if (production) cart.forEach(item => {
+                if (item.deal) {
+                    item.items.forEach(itm => {
+                        const product = products.find(p => p.id == itm.id);
+                        if (product) {
+                            product.stock_qty -= itm.qty;
+                            if (product.stock_qty < 0) product.stock_qty = 0;
+                            product.save();
+                        }
+                    })
+                } else {
+                    const product = products.find(p => p.id == item.id);
                     if (product) {
-                        product.stock_qty -= itm.qty;
+                        product.stock_qty -= item.qty;
                         if (product.stock_qty < 0) product.stock_qty = 0;
                         product.save();
                     }
-                })
-            } else {
-                const product = products.find(p => p.id == item.id);
-                if (product) {
-                    product.stock_qty -= item.qty;
-                    if (product.stock_qty < 0) product.stock_qty = 0;
-                    product.save();
                 }
+            });
+    
+            req.session.cart = [];
+            req.session.transaction = undefined;
+            if (dc_doc) {
+                order.discounted = true;
+                dc_doc.orders_applied.push(order.id);
+                if (production) dc_doc.save();
+                req.session.current_dc_doc = undefined;
             }
-        });
-
-        req.session.cart = [];
-        req.session.transaction = undefined;
-        if (dc_doc) {
-            order.discounted = true;
-            dc_doc.orders_applied.push(order.id);
-            if (production) dc_doc.save();
-            req.session.current_dc_doc = undefined;
-        }
-
-        if (production) order.save();
-
-        const transporter = new MailTransporter({ req, res });
-        transporter.setRecipient({ email }).sendMail({
-            subject: "Payment Successful - Cocohoney Cosmetics",
-            message: `Hi ${recipient_name},\n\n` +
-            "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
-            `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
-            `((Click here for further details))[${res.locals.location_origin}/order/${order.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-            (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
-            "A tracking number / reference will be sent to you via email as soon as possible. " +
-            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
-            "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
-        }, err => {
-            if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
-                subject: "Purchase Report: You Got Paid!",
-                message: "You've received a new purchase from a new customer.\n\n" +
-                `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+    
+            if (production) order.save();
+    
+            const transporter = new MailTransporter({ req, res });
+            transporter.setRecipient({ email }).sendMail({
+                subject: "Payment Successful - Cocohoney Cosmetics",
+                message: `Hi ${recipient_name},\n\n` +
+                "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
+                `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
+                `((Click here for further details))[${res.locals.location_origin}/order/${order.id}]\n` +
                 `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
                 (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
-                "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
-                `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n` +
-                "Details of this transaction can also be found on your Paypal account"
+                "A tracking number / reference will be sent to you via email as soon as possible. " +
+                "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
+                "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
             }, err => {
-                if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
-                res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
+                if (err) console.error(err), res.status(500);
+                transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+                    subject: "Purchase Report: You Got Paid!",
+                    message: "You've received a new purchase from a new customer.\n\n" +
+                    `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
+                    (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
+                    "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
+                    `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
+                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n` +
+                    "Details of this transaction can also be found on your Paypal account"
+                }, err => {
+                    if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
+                    res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
+                });
             });
         });
-    });
+    } catch(err) {
+        console.error(err.message || err);
+        res.status(500).render('checkout-error', {
+            title: "Payment Error",
+            pagename: "checkout-error",
+            error: err.message
+        })
+    }
 });
 
 module.exports = router;
