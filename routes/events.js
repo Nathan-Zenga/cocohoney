@@ -14,7 +14,7 @@ router.post('/post', isAuthed, async (req, res) => {
     const event = new Event({ title, date, info, price, stock_qty });
     try {
         if (!image_url && !image_file) { await event.save(); return res.send("Event saved and posted") }
-        const public_id = `cocohoney/event/flyer/${event.name}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/event/flyer/${event.title}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = cloud.uploader.upload(image_url || image_file, { public_id });
         event.image = { p_id: result.public_id, url: result.secure_url };
         await event.save(); res.send("Event saved and posted");
@@ -25,6 +25,9 @@ router.post('/edit', isAuthed, (req, res) => {
     const { id, title, date, info, price, stock_qty, image_url, image_file } = req.body;
     Event.findById(id, (err, event) => {
         if (err) return res.status(500).send(err.message);
+        if (!event) return res.status(404).send("Event not found");
+        const p_id_prev = event.image.p_id;
+
         if (title) event.title = title;
         if (date) event.date = date;
         if (info) event.info = info;
@@ -34,11 +37,13 @@ router.post('/edit', isAuthed, (req, res) => {
         event.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             if (!image_url && !image_file) return res.send("Event details updated");
-            const public_id = `cocohoney/event/flyer/${saved.name}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
-            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                if (err) return res.status(err.http_code).send(err.message);
-                saved.image = { p_id: result.public_id, url: result.secure_url };
-                saved.save(() => { res.send("Event details updated") });
+            const public_id = `cocohoney/event/flyer/${saved.title}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+            cloud.api.delete_resources([p_id_prev], () => {
+                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
+                    if (err) return res.status(err.http_code).send(err.message);
+                    saved.image = { p_id: result.public_id, url: result.secure_url };
+                    saved.save(() => { res.send("Event details updated") });
+                });
             });
         });
     });

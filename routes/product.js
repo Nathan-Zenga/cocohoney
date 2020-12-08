@@ -50,7 +50,7 @@ router.post('/stock/edit', isAuthed, (req, res) => {
     Product.findById(id, (err, product) => {
         if (err) return res.status(500).send(err.message || "Error occurred");
         if (!product) return res.status(404).send("Product not found");
-        const p_id_prev = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
+        const p_id_prev = product.image.p_id;
 
         if (name)                     product.name = name;
         if (price)                    product.price = price;
