@@ -121,6 +121,7 @@
                 var id = this.value;
                 var result = (docs || []).filter(function(item) { return id == item._id })[0] || {};
                 $form.find(".clear-uploads").click();
+                if (!Object.keys(result).length) return $form.get(0).reset();
 
                 $form.find("#pre_release_edit").prop("checked", result.pre_release);
                 $form.find("#product_name_edit").val(result.name);
@@ -166,6 +167,8 @@
 
                 $form.find("#event-title-edit").val(result.title);
                 $form.find("#event-date-edit").val(result.date ? new Date(result.date).toISOString().slice(0, 10) : "");
+                $form.find("#event-hour-edit").val(result.date ? new Date(result.date).getHours() : "");
+                $form.find("#event-minute-edit").val(result.date ? new Date(result.date).getMinutes() : "");
                 $form.find("#event-info-edit").val(result.info);
                 $form.find("#event-price-edit").val(result.price ? (parseFloat(result.price) / 100).toFixed(2) : "");
                 $form.find("#event-stock-qty-edit").val(result.stock_qty);

@@ -662,6 +662,10 @@ input, textarea, select, button {
     border-radius: 5px;
 }
 
+input.inline {
+    width: auto;
+}
+
 input[type=text],
 input[type=password],
 input[type=number],

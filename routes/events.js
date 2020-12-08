@@ -10,8 +10,10 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/post', isAuthed, async (req, res) => {
-    const { title, date, info, price, stock_qty, image_url, image_file } = req.body;
-    const event = new Event({ title, date, info, price, stock_qty });
+    const { title, date, hour, minute, info, price, stock_qty, image_url, image_file } = req.body;
+    const datetime = new Date(date);
+    datetime.setHours(!isNaN(parseInt(hour)) ? hour : 0, !isNaN(parseInt(minute)) ? minute : 0);
+    const event = new Event({ title, date: datetime, info, price, stock_qty });
     try {
         if (!image_url && !image_file) { await event.save(); return res.send("Event saved and posted") }
         const public_id = `cocohoney/event/flyer/${event.title}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
@@ -22,17 +24,21 @@ router.post('/post', isAuthed, async (req, res) => {
 });
 
 router.post('/edit', isAuthed, (req, res) => {
-    const { id, title, date, info, price, stock_qty, image_url, image_file } = req.body;
+    const { id, title, date, hour, minute, info, price, stock_qty, image_url, image_file } = req.body;
     Event.findById(id, (err, event) => {
         if (err) return res.status(500).send(err.message);
         if (!event) return res.status(404).send("Event not found");
         const p_id_prev = event.image.p_id;
+        const date2 = new Date(date || 0);
 
         if (title) event.title = title;
-        if (date) event.date = date;
+        if (date) { event.date.setDate(date2.getDate()); event.date.setMonth(date2.getMonth()); event.date.setFullYear(date2.getFullYear()) }
+        if (hour) event.date.setHours(!isNaN(parseInt(hour)) ? hour : event.date.getHours());
+        if (minute) event.date.setMinutes(!isNaN(parseInt(minute)) ? minute : event.date.getMinutes());
         if (info) event.info = info;
         if (price) event.price = price;
         if (stock_qty) event.stock_qty = stock_qty;
+        if (date || minute || hour) event.markModified("date");
 
         event.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
