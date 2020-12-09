@@ -21,12 +21,14 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.get('/mail/form', isAuthed, async (req, res) => {
-    const customers = await Member.find().sort({ firstname: 1 }).exec();
+    const members = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const title = "Admin - Compose Mail";
     const pagename = "admin-mail-form";
-    const members = [...ambassadors, ...customers];
-    res.render('admin-mail-form', { title, pagename, members })
+    const recipients = [...ambassadors, ...members, ...customers];
+    res.render('admin-mail-form', { title, pagename, recipients })
 });
 
 router.get('/ambassador/account', isAuthed, async (req, res, next) => {
@@ -166,8 +168,7 @@ router.post('/mail/send', isAuthed, async (req, res) => {
     const ambassador = await Ambassador.findOne({ email });
     const transporter = new MailTransporter({ req, res });
 
-    if (!member && !ambassador) return res.status(404).send("Recipient not found or specified");
-    transporter.setRecipient(member || ambassador);
+    transporter.setRecipient(member || ambassador || { email });
     transporter.sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send(`Email sent`);
@@ -178,7 +179,9 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
     const members = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const everyone = [...ambassadors, ...members];
+    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
+    const everyone = [...ambassadors, ...members, ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email }))];
 
     if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
@@ -188,7 +191,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
             const transporter = new MailTransporter({ req, res });
             transporter.setRecipient(recipient);
             transporter.sendMail({ subject, message }, err => {
-                if (err) return console.log(err.message || err), console.log(`Not sent for ${recipient.firstname} ${recipient.lastname} onwards`);
+                if (err) return console.log(err.message || err), console.log(`Not sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
                 console.log("Email sent");
             });
         }, i * 2000);

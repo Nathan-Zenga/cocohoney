@@ -88,7 +88,7 @@ main {
     min-height: 70vh;
 }
 
-main *::-webkit-scrollbar-thumb {
+div::-webkit-scrollbar-thumb {
     background-color: rgba(240, 230, 140, .5);
 }
 
