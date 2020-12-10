@@ -6,12 +6,54 @@
             <div id="stats">
                 <div class="row">
                     <div class="col-sm-<%= reviews.length ? '4' : '12' %>">
-                        <a href="/reviews/new">
-                            <button id="review-submission-link-btn" type="button">WRITE A REVIEW</button>
-                        </a>
+                        <button id="review-submission-link-btn" class="submit" type="button" data-toggle="modal" data-target="#review-form-modal">WRITE A REVIEW</button>
                         <p style="text-align: center; margin-bottom: 2em">
                             <%= reviews.length %> REVIEW<%= reviews.length !== 1 ? "S" : "" %>
                         </p>
+                        <div id="review-form-modal" class="modal fade in" role="dialog">
+                            <div class="modal-icons">
+                                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" action="/reviews/submit" id="new-review-form">
+                                    <fieldset>
+                                        <legend>WRITE A REVIEW</legend>
+
+                                        <%_ if (!user) { _%>
+                                        <label>YOUR NAME</label>
+                                        <input type="text" name="author_name" required>
+
+                                        <%_ } _%>
+                                        <label>HEADLINE <span>(OPTIONAL)</span></label>
+                                        <input type="text" name="headline">
+
+                                        <label>RATING</label>
+                                        <fieldset class="star-rating">
+                                            <%_ for(i = 1; i <= 5; i++) { _%>
+                                            <div class="col-xs-1 star">★<input type="radio" name="rating" value="<%= i %>" required></div>
+                                            <%_ } _%>
+                                        </fieldset>
+
+                                        <label>YOUR COMMENT</label>
+                                        <textarea name="commentry" rows="10" required></textarea>
+
+                                        <label>PHOTOS <span>(OPTIONAL)</span></label>
+                                        <fieldset class="file-upload-container">
+                                            <div class="row">
+                                                <div class="col-sm-6 col-xs-9"><input type="file" id="review_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
+                                                <input type="hidden" name="image_file">
+                                                <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="review_image_file">CLEAR</button></div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12"><input type="url" name="image_url" id="review_image_url" placeholder="Or enter the image URL"></div>
+                                            </div>
+                                        </fieldset>
+
+                                        <input type="submit" value="SUBMIT">
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <%_ if (reviews.length) { _%>
                     <div class="col-sm-8">
@@ -93,6 +135,27 @@
             </div>
         </div>
         <script>
+            $(".star-rating input").change(function(e) {
+                $(".star").each(function(i) {
+                    $(this).css("color", i < e.target.value ? "rgb(240, 230, 140)" : "");
+                });
+            });
+
+            $("#new-review-form").submit(function(e) {
+                e.preventDefault();
+                var btnController = new submitBtnController(this);
+                $.post(this.action, $(this).serializeArray(), function(result) {
+                    alert(result);
+                    $(".star").css("color", "");
+                    $(".clear-uploads").click();
+                    location.reload();
+                }).fail(function(err) {
+                    alert(err.responseText);
+                }).always(function() {
+                    btnController.finish();
+                });
+            });
+
             $(".images img").click(function() {
                 var img = $(this).attr("src");
                 $("#image-lg-modal .img").css("background-image", "url(" + img + ")");

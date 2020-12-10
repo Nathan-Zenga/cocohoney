@@ -8,19 +8,16 @@ router.get('/', async (req, res) => {
     res.render('customer-reviews', { title: "Reviews", pagename: "customer-reviews", reviews });
 });
 
-router.get('/new', (req, res) => {
-    res.render('customer-review-form', { title: "New Review", pagename: "customer-review-form" })
-});
-
 router.post('/submit', (req, res) => {
     const { author_name, headline, rating, commentry, image_file, image_url } = req.body;
     const name = req.user ? `${req.user.firstname} ${req.user.lastname}` : author_name;
     const review = new Review({ author_name: name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
-    if (!image_urls.length && !image_files.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
+    const images = [...image_files, ...image_urls ];
+    if (!images.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
 
-    forEachOf([...image_files, ...image_urls ], (image, i, cb) => {
+    forEachOf(images, (image, i, cb) => {
         const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image, { public_id }, (err, result) => {
             if (err) return cb(err);

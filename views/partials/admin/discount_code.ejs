@@ -85,7 +85,12 @@
                         <th scope="row"><a href="/shop/orders?discount_code=<%= dc.code %>"><%= dc.code %></a></th>
                         <td id="percentage-<%= i %>"><%= dc.percentage %>%</td>
                         <td id="used-code-<%= i %>"><%= dc.orders_applied.length %></td>
-                        <td id="expiry-date-<%= i %>"><%= dc.expiry_date.toLocaleDateString() %></td>
+                        <td id="expiry-date-<%= i %>">
+                            <%_ var day = dc.expiry_date.getDate(); _%>
+                            <%_ var month = dc.expiry_date.getMonth() + 1; _%>
+                            <%_ var year = dc.expiry_date.getFullYear(); _%>
+                            <%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %>
+                        </td>
                     </tr>
                     <%_ }) _%>
                 </tbody>

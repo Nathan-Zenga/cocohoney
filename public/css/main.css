@@ -640,6 +640,10 @@ form legend + .note {
     margin-bottom: 3em;
 }
 
+form legend + .note a {
+    border-bottom: 1px solid white;
+}
+
 form.minimal {
     border-radius: 0;
     background-color: transparent;
@@ -771,6 +775,14 @@ label {
 label span {
     font-size: .8em;
     opacity: .7;
+}
+
+label span.margin {
+    margin-left: 5px;
+}
+
+label span a {
+    border-bottom: 1px solid white;
 }
 
 label .dropdown-arrow {
