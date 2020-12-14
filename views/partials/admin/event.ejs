@@ -20,6 +20,7 @@
                     <div class="col-sm-6">
                         <input type="number" class="inline" name="hour" id="event-hour" min="0" max="23" value="23" required> <b>:</b>
                         <input type="number" class="inline" name="minute" id="event-minute" min="0" max="59" value="59" required>
+                        <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
                     </div>
                 </div>
             </fieldset>
@@ -71,6 +72,7 @@
                     <div class="col-sm-6">
                         <input type="number" class="inline" name="hour" id="event-hour-edit" min="0" max="23" value="23" required> <b>:</b>
                         <input type="number" class="inline" name="minute" id="event-minute-edit" min="0" max="59" value="59" required>
+                        <input type="checkbox" name="ttbc" id="event-time-tbc-edit" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
                     </div>
                 </div>
             </fieldset>
@@ -117,3 +119,7 @@
         <%_ } _%>
     </div>
 </div>
+
+<script>
+    $("input[name=ttbc]").change(function() { $(this).parent().find("input[type=number]").attr("disabled", this.checked) })
+</script>

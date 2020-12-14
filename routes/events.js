@@ -10,29 +10,29 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/post', isAuthed, async (req, res) => {
-    const { title, date, hour, minute, info, price, stock_qty, image_url, image_file } = req.body;
-    const datetime = new Date(date);
-    datetime.setHours(!isNaN(parseInt(hour)) ? hour : 0, !isNaN(parseInt(minute)) ? minute : 0);
-    const event = new Event({ title, date: datetime, info, price, stock_qty });
+    const { title, date, hour, minute, info, ttbc, price, stock_qty, image_url, image_file } = req.body;
+    const d = new Date(date); d.setHours(!isNaN(parseInt(hour)) ? hour : 0, !isNaN(parseInt(minute)) ? minute : 0);
+    const event = new Event({ title, date: d, ttbc: !!ttbc, info, price, stock_qty });
     try {
         if (!image_url && !image_file) { await event.save(); return res.send("Event saved and posted") }
         const public_id = `cocohoney/event/flyer/${event.title}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
-        const result = cloud.uploader.upload(image_url || image_file, { public_id });
+        const result = await cloud.uploader.upload(image_url || image_file, { public_id });
         event.image = { p_id: result.public_id, url: result.secure_url };
         await event.save(); res.send("Event saved and posted");
     } catch(err) { res.status(err.http_code || 400).send(err.message) }
 });
 
-router.post('/edit', isAuthed, (req, res) => {
-    const { id, title, date, hour, minute, info, price, stock_qty, image_url, image_file } = req.body;
-    Event.findById(id, (err, event) => {
-        if (err) return res.status(500).send(err.message);
+router.post('/edit', isAuthed, async (req, res) => {
+    const { id, title, date, hour, minute, ttbc, info, price, stock_qty, image_url, image_file } = req.body;
+    try {
+        const event = await Event.findById(id);
         if (!event) return res.status(404).send("Event not found");
         const p_id_prev = event.image.p_id;
-        const date2 = new Date(date || 0);
+        const d = new Date(date || 0);
+        event.ttbc = !!ttbc;
 
         if (title) event.title = title;
-        if (date) { event.date.setDate(date2.getDate()); event.date.setMonth(date2.getMonth()); event.date.setFullYear(date2.getFullYear()) }
+        if (date) { event.date.setDate(d.getDate()); event.date.setMonth(d.getMonth()); event.date.setFullYear(d.getFullYear()) }
         if (hour) event.date.setHours(!isNaN(parseInt(hour)) ? hour : event.date.getHours());
         if (minute) event.date.setMinutes(!isNaN(parseInt(minute)) ? minute : event.date.getMinutes());
         if (info) event.info = info;
@@ -40,19 +40,14 @@ router.post('/edit', isAuthed, (req, res) => {
         if (stock_qty) event.stock_qty = stock_qty;
         if (date || minute || hour) event.markModified("date");
 
-        event.save((err, saved) => {
-            if (err) return res.status(500).send(err.message);
-            if (!image_url && !image_file) return res.send("Event details updated");
-            const public_id = `cocohoney/event/flyer/${saved.title}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
-            cloud.api.delete_resources([p_id_prev], () => {
-                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(err.http_code).send(err.message);
-                    saved.image = { p_id: result.public_id, url: result.secure_url };
-                    saved.save(() => { res.send("Event details updated") });
-                });
-            });
-        });
-    });
+        const saved = await event.save();
+        if (!image_url && !image_file) return res.send("Event details updated");
+        await cloud.api.delete_resources([p_id_prev]);
+        const public_id = `cocohoney/event/flyer/${saved.title}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const result = await cloud.uploader.upload(image_url || image_file, { public_id });
+        saved.image = { p_id: result.public_id, url: result.secure_url };
+        saved.save(() => { res.send("Event details updated") });
+    } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });
 
 router.post('/remove', isAuthed, (req, res) => {

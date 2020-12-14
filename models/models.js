@@ -159,6 +159,7 @@ module.exports.Wishlist = model('Wishlist', Schema({
 module.exports.Event = model('Event', Schema({
     title: { type: String, required: true },
     date: { type: Date, required: true },
+    ttbc: { type: Boolean, value: false },
     info: String,
     price: { type: Number, required: true, set: n => parseFloat(n) * 100 },
     stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] },
