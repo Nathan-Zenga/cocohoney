@@ -1,13 +1,13 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require('../modules/country-list');
-const { Subscription_plan, Subscriber } = require('../models/models');
+const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
-const production = process.env.NODE_ENV === "production";
 
 router.get("/", async (req, res) => {
     const subscription_plans = await Subscription_plan.find().sort({ interval: 1, interval_count: 1 }).exec();
-    res.render('subscription', { title: "Subscriptions", pagename: "subscription", subscription_plans, countries })
+    const { info } = (await Subscription_page.find())[0];
+    res.render('subscription', { title: "Subscriptions", pagename: "subscription", info, subscription_plans, countries })
 });
 
 router.post("/setup", async (req, res) => {
@@ -74,10 +74,10 @@ router.get("/complete", async (req, res) => {
         const product = await Stripe.products.retrieve(subscription.items.data[0].price.product);
         const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
-        new Subscriber({
+        await Subscriber.create({
             customer: { member_id: (res.locals.user || {})._id, name: customer.name, email: customer.email },
             sub_id: subscription.id
-        }).save();
+        });
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email: customer.email }).sendMail({

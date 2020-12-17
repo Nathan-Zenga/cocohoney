@@ -68,13 +68,13 @@ module.exports.Overview_image = model('Overview_image', new Schema({
 }));
 
 module.exports.Shipping_method = model('Shipping_method', new Schema({
-    name: String,
-    info: String,
+    name: { type: String, required: true },
+    info: { type: String, required: true },
     fee: { type: Number, set: n => parseFloat(n) * 100 }
 }));
 
 module.exports.Shipping_page = model('Shipping_page', new Schema({
-    info: String
+    info: { type: String, default: "" }
 }), 'shipping_page');
 
 module.exports.Discount_code = model('Discount_code', new Schema({
@@ -219,6 +219,10 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
 
     return schema;
 })());
+
+module.exports.Subscription_page = model('Subscription_page', Schema({
+    info: { type: String, default: "" }
+}), 'subscription_page');
 
 module.exports.Subscriber = model('Subscriber', Schema({
     customer: {

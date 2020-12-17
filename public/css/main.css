@@ -2403,6 +2403,26 @@ img[data-target='#image-lg-modal'] {
 
 #subscription-page #summary {
     text-align: center;
+}
+
+#subscription-page p {
+    margin-bottom: 0;
+    padding-bottom: 10px;
+}
+
+#subscription-page #summary-body {
+    padding: 0 30px;
+}
+
+#subscription-page #summary-expand {
+    display: inline-block;
+    padding: 10px;
+    border-bottom: 1px solid white;
+}
+
+#subscription-page #summary-body-expanded {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 0 30px;
 }
 

@@ -2,13 +2,27 @@
     <section>
         <div class="container section-label">
             <div class="label-bg"></div>
-            <div class="label-text"><h2>COCOHONEY MONTHLY LASHES</h2></div>
+            <div class="label-text"><h2>MONTHLY LASHES</h2></div>
         </div>
     </section>
     <section id="summary">
-        <p>Get four pairs of lashes every month for as little as <b>£10</b> a month.</p>
-        <p>For the first three months we will ensure you have been sent the full Cocohoney Eyelash Collection.</p>
-        <p>Every month in areas, you will be given a free additional gift within your Cocohoney package.</p>
+        <div id="summary-body">
+            <%_ const overflow_length = info.length > info.slice(0, 300).length;
+            const overflow_lines = info.split(/\r?\n/g).length > 3;
+            const ellipses = overflow_length || overflow_lines ? "..." : ""; _%>
+            <p><%- info.split(/\r?\n/g).slice(0, 3).join("\n").slice(0, 300).replace(/\r?\n/g, "</p><p>") + ellipses %></p>
+        </div>
+        <%_ if (overflow_length || overflow_lines) { _%>
+        <a id="summary-expand" data-toggle="modal" data-target="#summary-modal">SEE MORE</a>
+        <div id="summary-modal" class="modal fade" role="dialog">
+            <div class="modal-icons">
+                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="summary-body-expanded"><p><%- info.replace(/\r?\n/g, "</p><p>") %></p></div>
+            </div>
+        </div>
+        <%_ } _%>
     </section>
     <section>
         <div class="container">

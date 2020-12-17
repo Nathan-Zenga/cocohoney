@@ -1,30 +1,29 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
-const { Subscription_plan, Subscriber } = require('../models/models');
+const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
 
-router.post("/add", (req, res) => {
-    const { interval, interval_count, price, info } = req.body;
-    const sub = new Subscription_plan({ interval, interval_count, price, info });
-    sub.save(err => {
-        if (err) return res.status(500).send(err.message);
-        res.send("Subscription plan saved");
-    });
+router.post("/add", async (req, res) => {
+    try {
+        const { interval, interval_count, price, info } = req.body;
+        const existing = await Subscription_plan.findOne({ interval, interval_count });
+        const sub = new Subscription_plan({ interval, interval_count, price, info });
+        if (existing) return res.status(400).send("Subscription plan already exists");
+        await sub.save(); res.send("Subscription plan saved");
+    } catch(err) { res.status(500).send(err.message) }
 });
 
-router.post("/edit", (req, res) => {
-    const { id, interval, interval_count, price, info } = req.body;
-    Subscription_plan.findById(id, (err, sub) => {
-        if (err) return res.status(500).send(err.message);
-        if (interval)       sub.interval = interval;
+router.post("/edit", async (req, res) => {
+    try {
+        const { id, interval, interval_count, price, info } = req.body;
+        const sub = await Subscription_plan.findById(id);
+        if (!sub) return res.status(404).send("Subscription plan not found");
+        if (interval) sub.interval = interval;
         if (interval_count) sub.interval_count = interval_count;
-        if (price)          sub.price = price;
-        if (info)           sub.info = info;
-        sub.save(err => {
-            if (err) return res.status(500).send(err.message);
-            res.send("Subscription plan details updated");
-        });
-    });
+        if (price) sub.price = price;
+        if (info) sub.info = info;
+        await sub.save(); res.send("Subscription plan details updated");
+    } catch(err) { res.status(500).send(err.message) }
 });
 
 router.post("/remove", (req, res) => {
@@ -59,6 +58,12 @@ router.post("/cancel", async (req, res) => {
             res.send("Subscription cancelled");
         });
     } catch (err) { res.status(err.statusCode || 500).send(err.message || err) }
+});
+
+router.post("/page/info", async (req, res) => {
+    const page = (await Subscription_page.find())[0] || new Subscription_page();
+    page.info = req.body.info;
+    page.save(() => res.send("Page summary info updated"));
 });
 
 module.exports = router;

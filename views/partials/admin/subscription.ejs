@@ -2,6 +2,7 @@
     <li class="active"><a data-toggle="pill" href="#new-subscription">NEW</a></li>
     <li><a data-toggle="pill" href="#edit-subscription">EDIT</a></li>
     <li><a data-toggle="pill" href="#remove-subscription">REMOVE</a></li>
+    <li><a data-toggle="pill" href="#subscription-page-info">PAGE INFO</a></li>
     <li><a data-toggle="pill" href="#subscription-list">LIST</a></li>
 </ul>
 
@@ -79,7 +80,7 @@
     <div id="remove-subscription" class="remove-form-tab tab-pane fade">
         <%_ if (subscription_plans.length) { _%>
         <form action="/subscription/remove" method="post">
-            <label>DELETE SUBSCRIPTION PLAN(S)</label><br><br>
+            <label>DELETE SUBSCRIPTION PLAN(S)</label>
             <%_ subscription_plans.forEach((plan, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="plan<%= i %>" value="<%= plan._id %>"><span><%= plan.name %> Plan</span>
@@ -91,6 +92,14 @@
         <%_ } else { _%>
         <p class="no-removable-items-label"><b>NO SUBSCRIPTION PLANS TO REMOVE</b></p>
         <%_ } _%>
+    </div>
+
+    <div id="subscription-page-info" class="tab-pane fade">
+        <form action="/subscription/page/info">
+            <label>PAGE INFO</label>
+            <textarea name="info" id="sub_page_info" rows="10"><%- (subscription_page[0] || {}).info %></textarea>
+            <input type="submit" value="UPDATE">
+        </form>
     </div>
 
     <style>#subscription-list td { width: 33.333% }</style>

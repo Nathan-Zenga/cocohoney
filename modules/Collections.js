@@ -1,4 +1,4 @@
-const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box, Overview_image, Lookbook_media, Ambassador, Order, Highlights_post, Shipping_page, Event, Info, Sale, Subscription_plan } = require('../models/models');
+const { Member, Product, Banner_slide, Discount_code, FAQ, Shipping_method, Box, Overview_image, Lookbook_media, Ambassador, Order, Highlights_post, Shipping_page, Event, Info, Sale, Subscription_plan, Subscription_page } = require('../models/models');
 
 /**
  * Getting all documents from all collections
@@ -24,5 +24,6 @@ module.exports = async cb => {
     docs.info = await Info.find();
     docs.sale_docs = await Sale.find();
     docs.subscription_plans = await Subscription_plan.find();
+    docs.subscription_page = await Subscription_page.find();
     cb(docs);
 };
