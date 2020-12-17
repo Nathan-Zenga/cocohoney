@@ -150,7 +150,7 @@
     <div id="remove-product" class="remove-form-tab tab-pane fade">
         <%_ if (products.length) { _%>
         <form action="/product/stock/remove" method="post">
-            <label>DELETE PRODUCT(S) FROM STOCK</label><br><br>
+            <label>DELETE PRODUCT(S) FROM STOCK</label>
             <%_ products.forEach((item, i) => {
                 var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
                 var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");

@@ -59,7 +59,7 @@
     <div id="remove-shipping-method" class="remove-form-tab tab-pane fade">
         <%_ if (shipping_methods.length) { _%>
         <form action="/shipping/remove" method="post">
-            <label>DELETE SHIPPING METHOD(S)</label><br><br>
+            <label>DELETE SHIPPING METHOD(S)</label>
             <%_ shipping_methods.forEach((method, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="method<%= i %>" value="<%= method._id %>"><span><%= method.name %></span>

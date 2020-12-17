@@ -770,6 +770,7 @@ button + button {
 
 label {
     font-weight: 300;
+    margin-bottom: 10px;
 }
 
 label span {
@@ -790,7 +791,7 @@ label .dropdown-arrow {
 }
 
 .input-checkbox {
-    margin-bottom: 1em;
+    margin-bottom: 10px;
 }
 
 .input-checkbox img,

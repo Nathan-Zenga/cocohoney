@@ -16,7 +16,7 @@
             <label>MAX NUMBER OF ITEMS</label>
             <input type="number" name="max_items" id="box_max_items" min="1" required>
 
-            <label>ITEMS TO INCLUDE</label><br>
+            <label>ITEMS TO INCLUDE</label>
             <%_ const categories = [...new Set(products.map(p => p.category))]; _%>
             <ul class="nav nav-pills">
                 <%_ categories.forEach((c, i) => {
@@ -88,7 +88,7 @@
             <label>MAX NUMBER OF ITEMS</label>
             <input type="number" name="max_items" id="box_max_items_edit" min="1">
 
-            <label>ITEMS TO INCLUDE</label><br>
+            <label>ITEMS TO INCLUDE</label>
             <ul class="nav nav-pills">
                 <%_ categories.forEach((c, i) => {
                     const c_name = c.charAt(0).toUpperCase() + c.slice(1); _%>
@@ -143,7 +143,7 @@
     <div id="remove-box" class="remove-form-tab tab-pane fade">
         <%_ if (boxes.length) { _%>
         <form action="/deal/box/remove" method="post">
-            <label>DELETE BOX(S)</label><br><br>
+            <label>DELETE BOX(S)</label>
             <%_ boxes.forEach((box, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="box<%= i %>" value="<%= box._id %>"><span><%= box.name %></span>

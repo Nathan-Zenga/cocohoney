@@ -33,7 +33,7 @@
     <div id="remove-banner" class="remove-form-tab tab-pane fade">
         <%_ if (banner_slides.length) { _%>
         <form action="/site/content/banner/remove" method="post">
-            <label>DELETE SLIDE(S) FROM BANNER</label><br><br>
+            <label>DELETE SLIDE(S) FROM BANNER</label>
             <%_ banner_slides.forEach((slide, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="slide<%= i %>" value="<%= slide._id %>"><span><%= slide.text %></span>

@@ -40,7 +40,7 @@
     <div id="remove-faq" class="remove-form-tab tab-pane fade">
         <%_ if (faqs.length) { _%>
         <form action="/admin/faqs/remove" method="post">
-            <label>DELETE FAQs</label><br><br>
+            <label>DELETE FAQs</label>
             <%_ faqs.forEach((faq, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="faq<%= i %>" value="<%= faq._id %>"><span><%= faq.question %></span><br>

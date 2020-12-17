@@ -16,7 +16,7 @@
     <div id="new-lookbook-img" class="new-form-tab tab-pane fade in active">
         <form method="post" class="container-fluid" action="/lookbook/gallery/add" style="padding: 30px">
             <%_ var suffix = Date.now(); _%>
-            <label>UPLOAD LOOKBOOK IMAGE</label><br><br>
+            <label>UPLOAD LOOKBOOK IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
                     <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
@@ -41,7 +41,7 @@
     <div id="new-tutorial-video" class="new-form-tab tab-pane fade">
         <form method="post" class="container-fluid" action="/lookbook/tutorial/add" style="padding: 30px">
             <%_ var suffix = Date.now()+1; _%>
-            <label>UPLOAD TUTORIAL VIDEO</label><br><br>
+            <label>UPLOAD TUTORIAL VIDEO</label>
             <fieldset class="file-upload-container">
                 <div class="row">
                     <div class="col-sm-6 col-xs-9"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".mp4,.mov,.wav" data-fieldname="video_file" multiple></div>
@@ -66,7 +66,7 @@
     <div id="remove-lookbook-media" class="remove-form-tab tab-pane fade">
         <%_ if (lookbook_media.length) { _%>
         <form action="/lookbook/remove" method="post">
-            <label>REMOVE IMAGES / VIDEOS</label><br><br>
+            <label>REMOVE IMAGES / VIDEOS</label>
             <%_ lookbook_media.forEach((item, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="id" value="<%= item._id %>">

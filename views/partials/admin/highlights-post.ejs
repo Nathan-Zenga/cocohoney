@@ -101,7 +101,7 @@
     <div id="remove-highlights-post" class="remove-form-tab tab-pane fade">
         <%_ if (highlights_posts.length) { _%>
         <form action="/highlights-post/remove" method="post">
-            <label>DELETE HIGHLIGHTS POSTS(S)</label><br><br>
+            <label>DELETE HIGHLIGHTS POSTS(S)</label>
             <%_ highlights_posts.forEach((item, i) => { _%>
             <div class="input-checkbox">
                 <input type="checkbox" name="post<%= i %>" value="<%= item._id %>"> <span><%= item.title %></span>
