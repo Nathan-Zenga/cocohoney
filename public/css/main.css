@@ -2453,7 +2453,7 @@ img[data-target='#image-lg-modal'] {
 
 #subscription-options .subscription-opt .info {
     margin: 1.5em 0 1em;
-    max-height: 5em;
+    height: 5em;
     overflow: auto;
 }
 
