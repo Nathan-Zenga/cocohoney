@@ -19,7 +19,7 @@ module.exports = async cb => {
     docs.lookbook_media = await Lookbook_media.find();
     docs.orders = await Order.find().sort({ tracking_ref: 1, created_at: -1 }).exec();
     docs.highlights_posts = await Highlights_post.find();
-    docs.shipping_page_info = await Shipping_page.find();
+    docs.shipping_page = await Shipping_page.find();
     docs.events = await Event.find().sort({ date: -1 }).exec();
     docs.info = await Info.find();
     docs.sale_docs = await Sale.find();
