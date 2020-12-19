@@ -19,14 +19,16 @@
                     </div>
                     <%_ } _%>
                     <div class="col-sm-<%= dc_used ? '4 col-sm-pull-4' : 6 %>" id="tracking-ref">
-                        <%_ if (!order.tracking_ref) {
+                        <%_ const event_tkt_present = order.cart.find(item => /^\'(.*?)\' event ticket$/i.test(item.name));
+                            if (!order.tracking_ref) {
                             if (is_admin) { _%>
-                        <a href="/shipping/tracking/ref/send?id=<%- order.id %>">
-                            <button id="link-to-add-btn" type="button">ADD TRACKING NUMBER</button>
+                        <a<%- !event_tkt_present ? ` href="/shipping/tracking/ref/send?id=${order.id}"` : "" %>>
+                            <button id="link-to-add-btn" type="button"<%- event_tkt_present ? ' disabled' : '' %>>ADD TRACKING NUMBER</button>
                         </a>
                         <%_ } else { _%>
-                        <p>Tracking Reference (not applicable for event ticket purchases):</p>
-                        <p><b>PENDING...</b></p>
+                        <p>Tracking Reference:</p>
+                        <p><b>PENDING...</p>
+                        <p><small>(not applicable for event ticket purchases)</small></b></p>
                         <%_ }} else { _%>
                         <p>Tracking Reference:</p>
                         <p><b><%= order.tracking_ref %></b></p>

@@ -46,9 +46,12 @@
                     <a href="/order/<%- order.id %>">
                         <button type="button" style="padding: 6px 10px; font-weight: 400">View details</button>
                     </a>
-                    <%_ if (!order.tracking_ref) { _%>
-                    <a href="/shipping/tracking/ref/send?id=<%= order.id %>">
-                        <button type="button" style="padding: 6px 10px; font-weight: 400">Add Tracking Number</button>
+                    <%_ if (!order.tracking_ref) {
+                        const event_tkt_present = order.cart.find(item => /^\'(.*?)\' event ticket$/i.test(item.name)); _%>
+                    <a<%- !event_tkt_present ? ` href="/shipping/tracking/ref/send?id=${order.id}"` : '' %>>
+                        <button type="button" style="padding: 6px 10px; font-weight: 400"<%- event_tkt_present ? ' disabled' : '' %>>
+                            <%= event_tkt_present ? "Event Ticket Purchase" : "Add Tracking Number" %>
+                        </button>
                     </a>
                     <%_ } _%>
                 </div>
