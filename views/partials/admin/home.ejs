@@ -1,23 +1,12 @@
-<div class="row" style="margin-bottom: 2em">
-    <div class="col-sm-12">
-        <div class="info-label">
-            <i class="fal fa-info-circle info-icon"></i>
-            <b>Click below to receive a report via mail</b>
-        </div>
-        <form id="report-submit-form" action="/report/submit" class="minimal">
-            <button type="submit">SEND AMBASSADOR SALES REPORT</button>
-        </form>
-    </div>
-</div>
-
 <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#ambassadors">AMBASSADORS</a></li>
     <li><a data-toggle="pill" href="#orders">ORDERS</a></li>
+    <li><a data-toggle="pill" href="#amb-sales-report">SALES REPORT</a></li>
 </ul>
 
 <div class="tab-content" style="padding-top: 2em">
     <div id="ambassadors" class="tab-pane fade in active">
-        <div class="info-label">
+        <div class="info-label" style="text-align: center">
             <i class="fal fa-info-circle info-icon"></i>
             <b>Click a name to go to their account page</b>
         </div>
@@ -45,7 +34,7 @@
     </div>
 
     <div id="orders" class="tab-pane fade">
-        <div class="info-label">
+        <div class="info-label" style="text-align: center">
             <i class="fal fa-info-circle info-icon"></i>
             <b>Labelled by customer name</b>
         </div>
@@ -67,4 +56,36 @@
             <% }) %>
         </ul>
     </div>
+    
+    <div id="amb-sales-report" class="tab-pane fade">
+        <form id="report-submit-form" action="/report/submit">
+            <fieldset>
+                <legend>AMBASSADOR SALES REPORT</legend>
+                <div class="row">
+                    <div class="col-xs-6">
+                        <label>MONTH <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                        <select name="month">
+                            <%_ const months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
+                                months.forEach((m, i) => { _%>
+                            <option value="<%= i %>"<%- i === new Date().getMonth() ? ' selected' : '' %>><%= m %></option>
+                            <%_ }) _%>
+                        </select>
+                    </div>
+                    <div class="col-xs-6">
+                        <label>YEAR <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                        <select name="year">
+                            <%_ const current_year = new Date().getFullYear();
+                                const years = [current_year];
+                                for (let y = current_year-1; y >= 2020; y--) years.push(y);
+                                years.forEach(y => { _%>
+                            <option value="<%= y %>"><%= y %></option>
+                            <%_ }) _%>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+            <button type="submit">SEND</button>
+        </form>
+    </div>
+
 </div>
