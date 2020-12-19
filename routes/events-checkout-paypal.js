@@ -92,7 +92,7 @@ router.get("/complete", async (req, res) => {
                 customer_name: recipient_name,
                 customer_email: email,
                 destination: { line1, line2, city, country: country_code, postal_code, state },
-                cart: [{ id, name, price, image, info, qty }]
+                cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }]
             });
     
             if (production) {
