@@ -15,7 +15,9 @@ router.get('/', async (req, res) => {
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
-    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
+    const subs = await Subscriber.find().sort({ "customer.email": 1 }).exec();
+    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email).sort((a, b) => a.customer.name - b.customer.name);
+    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers, ...subscribers.map(s => ({ name: s.customer.name, email: s.customer.email }))];
     const subscriptions_all = await Stripe.subscriptions.list();
     const subscription_products = await Stripe.products.list({ ids: subscriptions_all.data.map(s => s.items.data[0].price.product) });
     const subscription_product_names = subscription_products.data.map(p => p.name.replace(" Lash Subscription", ""));
@@ -89,18 +91,16 @@ router.get("/activate", async (req, res, next) => {
 });
 
 router.post("/activate", async (req, res) => {
-    try {
-        const { token, password, password_confirm } = req.body;
-        const admin = await Admin.findOne({ password: token });
-        if (!admin) return res.status(400).send("Account not found");
-        if (password !== password_confirm) return res.status(400).send("Passwords do not match");
-        admin.email = process.env.CHC_EMAIL;
-        admin.password = await bcrypt.hash(password, 10);
-        admin.token_expiry_date = undefined;
-        await admin.save();
-        await Admin.deleteMany({ email: "temp" });
-        res.send("Account made and you can now log in");
-    } catch (err) { res.status(500).send(err.message) }
+    const { token, password, password_confirm } = req.body;
+    if (password !== password_confirm) return res.status(400).send("Passwords do not match");
+    const admin = await Admin.findOne({ password: token });
+    if (!admin) return res.status(404).send("Cannot activate: admin account does not exist");
+    admin.email = process.env.CHC_EMAIL;
+    admin.password = bcrypt.hashSync(password, 10);
+    admin.token_expiry_date = undefined;
+    try { await admin.save() } catch(err) { return res.status(500).send(err.message) }
+    await Admin.deleteMany({ email: "temp" });
+    res.send("Account made and you can now log in");
 });
 
 router.post("/search", isAuthed, (req, res) => {
@@ -173,11 +173,14 @@ router.post('/mail/send', isAuthed, async (req, res, next) => {
     const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
+    const subs = await Subscriber.find({ mail_sub: true }).sort({ "customer.email": 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
+    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email).sort((a, b) => a.customer.name - b.customer.name);
     const everyone = [
         ...ambassadors.filter(a => !members.find(m => m.email === a.email)),
         ...members,
-        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email, mail_sub: true })) ];
+        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email, mail_sub: cus.mail_sub })),
+        ...subscribers.map(s => ({ name: s.customer.name, email: s.customer.email, mail_sub: s.mail_sub })) ];
 
     if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");

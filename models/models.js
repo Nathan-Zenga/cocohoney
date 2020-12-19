@@ -220,11 +220,11 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
     return schema;
 })());
 
-module.exports.Subscription_page = model('Subscription_page', Schema({
+module.exports.Subscription_page = model('Subscription_page', new Schema({
     info: { type: String, default: "" }
 }), 'subscription_page');
 
-module.exports.Subscriber = model('Subscriber', Schema({
+module.exports.Subscriber = model('Subscriber', new Schema({
     customer: {
         member_id: String,
         name: String,

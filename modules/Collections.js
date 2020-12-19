@@ -23,7 +23,7 @@ module.exports = async cb => {
     docs.events = await Event.find().sort({ date: -1 }).exec();
     docs.info = await Info.find();
     docs.sale_docs = await Sale.find();
-    docs.subscription_plans = await Subscription_plan.find();
+    docs.subscription_plans = await Subscription_plan.find().sort({ price: 1 }).exec();
     docs.subscription_page = await Subscription_page.find();
     cb(docs);
 };
