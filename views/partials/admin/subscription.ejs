@@ -34,6 +34,18 @@
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="sub_info" rows="10"></textarea>
 
+            <label>IMAGE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="plan_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="plan_image_file">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="image_url" id="plan_image_url" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
+
             <input type="submit" value="SAVE">
         </form>
     </div>
@@ -72,6 +84,18 @@
 
             <label>INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="sub_info_edit" rows="10"></textarea>
+
+            <label>IMAGE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="plan_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="plan_image_file_edit">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="image_url" id="plan_image_url_edit" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
 
             <input type="submit" value="UPDATE">
         </form>

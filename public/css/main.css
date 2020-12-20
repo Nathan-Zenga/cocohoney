@@ -2442,13 +2442,23 @@ img[data-target='#image-lg-modal'] {
 }
 
 #subscription-options .subscription-opt .sub-label {
+    position: relative;
     width: 80%;
     padding: 5px;
     background-color: rgb(240, 230, 140);
     color: rgb(124, 76, 76);
     font-weight: 700;
-    margin: -35px auto 2em;
+    margin: -35px auto 0;
     border-radius: 5px;
+    z-index: 5;
+}
+
+#subscription-options .subscription-opt .img {
+    height: 200px;
+    margin: -15px -20px 0;
+    border-radius: 10px 10px 0 0;
+    background-position: center;
+    background-size: cover;
 }
 
 #subscription-options .subscription-opt .info {

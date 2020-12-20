@@ -207,7 +207,8 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
         interval: { type: String, enum: ["day", "month", "week", "year"] },
         interval_count: { type: Number, required: true, min: 1 },
         price: { type: Number, set: n => parseFloat(n) * 100 },
-        info: { type: String, default: "" }
+        info: { type: String, default: "" },
+        image: { p_id: String, url: String }
     });
 
     schema.virtual("name").get((val, vt, doc) => {

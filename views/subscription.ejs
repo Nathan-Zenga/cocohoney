@@ -32,6 +32,7 @@
                     <div class="col-md-3 col-sm-4">
                         <div class="subscription-opt">
                             <p class="sub-label"><%= plan.name %></p>
+                            <div class="img" style="background-image: url(<%- plan.image.url || '/favicon.ico' %>);<%- plan.image.url ? '' : ' opacity: .5' %>"></div>
                             <h3 class="price">£<%= (plan.price / 100).toFixed(2) %></h3>
                             <div class="info">
                                 <p><%- plan.info.replace(/\r?\n/, "<br>") %></p>
