@@ -1,9 +1,19 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
+const countries = require("../modules/country-list");
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-admin');
 const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+
+router.get("/:id", async (req, res, next) => {
+    const subscriber = await Subscriber.findOne({ sub_id: req.params.id });
+    if (!subscriber) return next();
+    const sub = await Stripe.subscriptions.retrieve(subscriber.sub_id, { expand: ["customer", "latest_invoice", "default_payment_method"] });
+    const subscriptions = [sub];
+    const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
+    res.render('subscriber-account', { title: "My Subscription Account", pagename: "account", countries, orders: null, wishlist: null, subscriptions, subscription_products });
+});
 
 router.post("/add", isAuthed, async (req, res) => {
     try {
