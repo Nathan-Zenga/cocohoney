@@ -1,0 +1,33 @@
+<%- include ('partials/header') -%>
+    <div class="form-container">
+        <form method="post" action="/subscription/account/access">
+            <fieldset>
+                <legend>SUBSCRIBER ACCOUNT ACCESS</legend>
+
+                <label>EMAIL</label>
+                <input type="email" name="email" id="email" value="<%- subscriber.customer.email %>" required>
+
+                <label>PASSWORD</label>
+                <input type="password" name="password" id="password" required>
+
+                <input type="hidden" name="sub_id" value="<%= subscriber.sub_id %>" required>
+                <input type="submit" value="SUBMIT">
+            </fieldset>
+        </form>
+    </div>
+    <script>
+        $("form").submit(function(e) {
+            e.preventDefault();
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(href) {
+                location.href = href;
+            }).fail(function(err) {
+                btnController.finish();
+                alert(err.responseText);
+            });
+        });
+        <%_ if (email_alert) { _%>
+        window.onload = function() { alert("Check your email to retrieve your temporary password") }
+        <%_ } _%>
+    </script>
+<%- include ('partials/footer') -%>

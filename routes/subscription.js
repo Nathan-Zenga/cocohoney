@@ -88,7 +88,11 @@ router.get("/complete", async (req, res) => {
             "Click below to view further details about this order:\n\n" +
             `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
             `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>\n\n` +
-            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
+            "Also, please refer to the below link to view AND edit your subscription details (such as delivery address, etc). " +
+            "Please keep note of this link, especially if you have <u>not</u> registered with us as a customer or ambassador before now. " +
+            "Otherwise, if you are registered with us, you can instead view all of your subscriptions (including this one) on your account page.\n\n" +
+            `((VIEW SUBSCRIBER ACCOUNT))[${res.locals.location_origin}/subscription/${subscription.id}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/subscription/${subscription.id})</small>\n\n` +
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) console.error(err), res.status(500);

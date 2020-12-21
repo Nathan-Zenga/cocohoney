@@ -1,5 +1,5 @@
 const { Strategy } = require('passport-local');
-const { Ambassador, Member, Admin } = require('../models/models');
+const { Ambassador, Member, Admin, Subscriber } = require('../models/models');
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 
@@ -17,6 +17,16 @@ passport.use("local-login-customer", new Strategy({ usernameField: "email" }, as
         const user = await Member.findOne({ email });
         const match = await bcrypt.compare(password, user?.password || "");
         if (!user || !match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
+        done(null, user);
+    } catch (err) { done(err) }
+}));
+
+passport.use("local-login-subscriber", new Strategy({ usernameField: "email", passReqToCallback: true }, async (req, email, password, done) => {
+    try {
+        const { sub_id } = req.body;
+        const user = await Subscriber.findOne({ sub_id, "customer.email": email, access_token_expiry_date: { $gte: Date.now() } });
+        const match = await bcrypt.compare(password, (user || {}).access_token || "");
+        if (!user || !match) return done(null, null, { message: "Credentials are invalid, or the password is expired (reload this page to receive a new temporary password via email, if this is case)" });
         done(null, user);
     } catch (err) { done(err) }
 }));
@@ -47,7 +57,7 @@ passport.use("local-register-admin", new Strategy({ passReqToCallback: true }, a
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
     try {
-        const queries = [Ambassador.findById(id), Member.findById(id), Admin.findById(id)];
+        const queries = [Ambassador.findById(id), Member.findById(id), Admin.findById(id), Subscriber.findById(id)];
         const user = (await Promise.all(queries)).find(u => u);
         done(null, user);
     } catch (err) { done(err) }
