@@ -204,7 +204,7 @@ module.exports.MailTest = model('MailTest', (() => {
 
 module.exports.Subscription_plan = model('Subscription_plan', (() => {
     const schema = new Schema({
-        interval: { type: String, enum: ["day", "month", "week", "year"] },
+        interval: { type: String, enum: ["month", "year"] },
         interval_count: { type: Number, required: true, min: 1 },
         price: { type: Number, set: n => parseFloat(n) * 100 },
         info: { type: String, default: "" },
@@ -212,7 +212,7 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
     });
 
     schema.virtual("name").get((val, vt, doc) => {
-        var interval = doc.interval === "day" ? "Daily" : doc.interval + "ly";
+        var interval = doc.interval + "ly";
         var interval_count = doc.interval_count > 1 ? doc.interval_count + "-" : "";
         interval = interval.charAt(0).toUpperCase() + interval.slice(1).toLowerCase();
         return interval_count + interval;
