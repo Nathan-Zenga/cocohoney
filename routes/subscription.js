@@ -15,7 +15,7 @@ router.post("/setup", async (req, res) => {
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
-    const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+    const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
     if (missing_fields.length) return res.status(400).send(`Missing fields: ${missing_fields.join(", ")}`);
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
 
@@ -33,7 +33,8 @@ router.post("/setup", async (req, res) => {
 
         const product = await Stripe.products.create({
             name: subscription_plan.name + " Lash Subscription",
-            description: subscription_plan.info
+            description: subscription_plan.info,
+            images: subscription_plan.image.url ? [subscription_plan.image.url] : undefined
         });
 
         const price = await Stripe.prices.create({
@@ -63,27 +64,36 @@ router.post("/setup", async (req, res) => {
 router.get("/complete", async (req, res) => {
     const { session_id, price_id } = req.session;
     try {
-        const session = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent"] });
-        const { setup_intent: intent, customer: cus_id } = session;
-        const customer = await Stripe.customers.retrieve(cus_id);
+        const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent", "customer"] });
+        const { recurring } = await Stripe.prices.retrieve(price_id);
+        const first_charge_date = new Date();
+        const interval_count = recurring.interval_count * (recurring.interval === "year" ? 12 : 1);
+        first_charge_date.setMonth( first_charge_date.getMonth() + (first_charge_date.getDate() > 3 ? interval_count : 0) );
+        first_charge_date.setDate(3);
+
         const subscription = await Stripe.subscriptions.create({
             customer: customer.id,
-            default_payment_method: intent.payment_method,
-            items: [{ price: price_id }]
+            default_payment_method: setup_intent.payment_method,
+            items: [{ price: price_id }],
+            billing_cycle_anchor: Math.round(first_charge_date.getTime() / 1000)
         });
         const product = await Stripe.products.retrieve(subscription.items.data[0].price.product);
         const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
         await Subscriber.create({
-            customer: { member_id: (res.locals.user || {})._id, name: customer.name, email: customer.email },
+            customer: { member_id: (req.user || {})._id, name: customer.name, email: customer.email },
             sub_id: subscription.id
         });
 
+        req.session.checkout_session = undefined;
+        req.session.price_id = undefined;
+
         const transporter = new MailTransporter({ req, res });
-        transporter.setRecipient({ email: customer.email }).sendMail({
+        transporter.setRecipient(customer).sendMail({
             subject: "Subscription Sign-up & Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${customer.name},\n\n` +
-            "Thank you for signing up to one of our Monthly Lashes Subscriptions! We are happy to confirm your sign-up and payment was successful. " +
+            "Thank you for signing up to one of our Monthly Lashes Subscriptions! " +
+            "We are happy to confirm your sign-up and payment was successful. " +
             `Here is a summery of your order:\n\n${product.name} (£${(product.price / 100).toFixed(2)})\n\n` +
             "Click below to view further details about this order:\n\n" +
             `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
@@ -107,7 +117,10 @@ router.get("/complete", async (req, res) => {
                 res.render('subscription-checkout-success', { title: "Subscription Payment Successful", pagename: "subscription-checkout-success" })
             });
         });
-    } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
+    } catch(err) {
+        console.error(err.message);
+        res.status(err.statusCode || 500).render('checkout-error', { title: "Payment Error", pagename: "checkout-error", error: err.message })
+    };
 });
 
 router.get("/cancel", async (req, res) => {
