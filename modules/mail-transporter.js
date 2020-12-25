@@ -42,7 +42,7 @@ class MailTransporter {
                         tls: { rejectUnauthorized: true }
                     });
                 }).catch(err => {
-                    if (NODE_ENV === "production") return cb(err.message || err);
+                    if (NODE_ENV === "production") return cb(err);
                     this.#user = this.#user || acc.user; this.#pass = this.#pass || acc.pass;
                     cb(null, {
                         host: 'smtp.ethereal.email',
@@ -52,7 +52,7 @@ class MailTransporter {
                     });
                 });
             })
-        }    
+        }
     };
 
     /**
@@ -60,24 +60,27 @@ class MailTransporter {
      * @param {object} mailOpts contents to be applied to compose the email
      * @param {string} mailOpts.subject email subject
      * @param {string} mailOpts.message email message
-     * @param {function} cb callback
+     * @param {function} [cb] callback
+     * @returns {Promise<nodemailer.SentMessageInfo>}
      */
     sendMail(mailOpts, cb) {
-        const { subject, message } = mailOpts;
-        if (!this.#recipient && !this.#recipients.length) return cb("Recipient(s) not set");
-        if (!subject || !message) return cb("Subject and message cannot be empty");
-        this.#getTransportOpts((err, options) => {
-            if (err) return cb(err.message || err);
-            this.#res.render('templates/mail', { message, recipient: this.#recipient }, (err, html) => {
-                if (err) return cb(err.message);
-                nodemailer.createTransport(options).sendMail({
-                    from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
-                    to: this.#recipient ? this.#recipient.email : this.#recipients.map(m => m.email),
-                    subject,
-                    html
-                }, cb);
-            })
-        });
+        return new Promise((resolve, reject) => {
+            const { subject, message } = mailOpts;
+            if (!this.#recipient && !this.#recipients.length) return (cb || reject)(Error("Recipient(s) not set"));
+            if (!subject || !message) return (cb || reject)(Error("Subject and message cannot be empty"));
+            this.#getTransportOpts((err, options) => {
+                if (err) return (cb || reject)(Error(err.message || err));
+                this.#res.render('templates/mail', { message, recipient: this.#recipient }, (err, html) => {
+                    if (err) return (cb || reject)(Error(err.message));
+                    nodemailer.createTransport(options).sendMail({
+                        from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
+                        to: this.#recipient ? this.#recipient.email : this.#recipients.map(m => m.email),
+                        subject,
+                        html
+                    }).then(() => (cb || resolve)()).catch(err => (cb || reject)(err));
+                })
+            });
+        })
     };
 
     /** @param {mongoose.Document} recipient new or existing (registered) recipient */
