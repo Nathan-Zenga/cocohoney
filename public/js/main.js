@@ -56,21 +56,15 @@ $(function() {
 
     $(window).on("load hashchange", function() {
         if (location.hash) {
-            $(".section-dropdown-options select").prop("value", location.hash).trigger("change");
+            var $dropdown_opt = $(".section-dropdown-options select");
+            if ($dropdown_opt.length) return $dropdown_opt.prop("value", location.hash).trigger("change");
+            $(".nav-pills a[href='"+ location.hash +"']").trigger("click")
         }
     });
 
     $(".section-dropdown-options select").change(function() {
-        $(".nav-pills a[href='"+ this.value +"']").get(0).click()
+        $(".nav-pills a[href='"+ this.value +"']").trigger("click")
     });
-
-    window.readDataURLs = function(files, cb) {
-        $.each(files, function(i, file) {
-            var reader = new FileReader();
-            reader.onload = cb;
-            reader.readAsDataURL(file)
-        });
-    };
 
     $(".clear-uploads").click(function(e) {
         e.preventDefault();
@@ -85,15 +79,20 @@ $(function() {
         $container.find("input:hidden").remove();
         if (files && files.length) {
             var $submitInput = $(this).closest("form").find(":submit").attr("disabled", true);
-            readDataURLs(files, function(e) {
-                $("<input type='hidden' name='"+ field +"'>").val(e.target.result).appendTo($container);
-                $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
-                $submitInput.attr("disabled", false);
+            $.each(files, function(i, file) {
+                var reader = new FileReader();
+                var $input = $("<input type='hidden' name='"+ field +"'>").appendTo($container);
+                reader.onload = function(e) {
+                    $input.val(e.target.result);
+                    $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
+                    $submitInput.attr("disabled", false);
+                };
+                reader.readAsDataURL(file)
             });
         }
     });
 
-    ($("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").get(0) || { focus: function() {} }).focus();
+    $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("focus");
 
     if ($(".slider-container").length) {
         var repeat = false;
@@ -106,9 +105,7 @@ $(function() {
         var slideCurrent = -1;
     
         function initBullets() {
-            if (noBullets) {
-                return;
-            }
+            if (noBullets) return;
             var bulletContainer = document.createElement('div');
             bulletContainer.classList.add('bullet-container');
             slide.forEach((elem, i) => {
@@ -125,9 +122,7 @@ $(function() {
         }
     
         function initArrows() {
-            if (noArrows) {
-                return;
-            }
+            if (noArrows) return;
             var leftArrow = document.createElement('a')
             var iLeft = document.createElement('i');
             iLeft.classList.add('fal')
@@ -315,9 +310,7 @@ $(function() {
     
         function goToIndexSlide(index) {
             var sliding = (slideCurrent > index) ? () => slideRight() : () => slideLeft();
-            while (slideCurrent !== index) {
-                sliding();
-            }
+            while (slideCurrent !== index) sliding();
         }
     
         $(document).keydown(function(e) {

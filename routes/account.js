@@ -18,7 +18,7 @@ router.get('/login', (req, res) => {
     res.render('customer-login', { title: "Sign Up / Log In", pagename: "customer-login" })
 });
 
-router.get('/signup', (req, res) => res.redirect("/account/login"));
+router.get('/signup', (req, res) => res.redirect("/account/login#signup"));
 
 router.post('/login', (req, res) => {
     if (req.isAuthenticated()) return res.status(400).send("Please log out first");
