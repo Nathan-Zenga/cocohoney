@@ -64,6 +64,10 @@
                             <a class="link" href="/deal/<%= box.name %>"><%= box.name.toUpperCase() %></a>
                             <%_ }) _%>
                         </div>
+                        <a class="link sub-list-toggle">FACE</a>
+                        <div class="sub-list">
+                            <a class="link" href="/product/highlighters">HIGHLIGHTERS</a>
+                        </div>
                         <a class="link sub-list-toggle">LIPS</a>
                         <div class="sub-list">
                             <%_ const lips_categories = [...new Set(products_all.filter(p => /^lips?/i.test(p.category)).map(p => p.category))];

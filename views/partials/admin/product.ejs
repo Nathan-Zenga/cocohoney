@@ -208,4 +208,18 @@
         var method = isNew ? "show" : "hide";
         $(this).closest("form").find(".new-product-category")[method]().find(":input").attr("disabled", !isNew);
     });
+
+    $("nav a:link").get().forEach(function(e, i, a) {
+        if (e.href.includes("/product/")) {
+            var start = e.href.indexOf("/product/") + "/product/".length;
+            var end = e.href.indexOf("/", start);
+            var href = e.href.slice(start, end);
+            var plural_suffix = /(ss|sh|ch|s|x|z)$/i.test(href) ? "es" : /y$/i.test(href) ? "ies" : "s";
+            var href2 = (plural_suffix === "ies" ? href.replace(/y$/, "ies") : href + plural_suffix).replace(/eses$/i, "es");
+            var $existing = $("#product_category option").filter(function(i, o) { return (o.value || "").includes(href) });
+            var $clone = $("#product_category option:last").clone(true).prop("value", href2).text(href2.charAt(0).toUpperCase() + href2.slice(1));
+            var condition = !$existing.length && href !== (a[i-1] || {}).href;
+            if (condition) { $("#product_category").append($clone); $("#product_category_edit").append($clone.clone(true)) }
+        }
+    });
 </script>
