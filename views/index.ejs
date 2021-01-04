@@ -74,7 +74,7 @@
                             <div class="review-rating"><%- "★ ".repeat(review.rating) %></div>
                             <br>
                             <%_ var commentry = review.commentry.length > 140 ? review.commentry.slice(0, 140).replace(/\r?\n/g, '<br>')+"..." : review.commentry.replace(/\r?\n/g, '<br>') _%>
-                            <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ' <a class="read-more-link" href="/reviews">Read more</a>' : '' %></div>
+                            <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ` <a class="read-more-link" href="/reviews#${review.created_at.getTime()}">Read more</a>` : '' %></div>
                             <br>
                             <div class="review-author-name"><small>- <%= review.author_name %></small> <%- review.author_verified ? '<i class="arrow fal fa-badge-check"></i>' : '' %></div>
                         </div>

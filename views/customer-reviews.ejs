@@ -83,7 +83,7 @@
 
             <div id="reviews">
                 <%_ reviews.forEach(review => { _%>
-                <div class="review">
+                <div class="review" id="<%= review.created_at.getTime() %>">
                     <div class="author-icon">
                         <span><%= review.author_name.split(/[ -]/g).map(name => name.charAt(0)).join("").toUpperCase() %></span>
                     </div>
@@ -106,12 +106,7 @@
                                 <i class="verified-badge fal fa-badge-check"></i>
                                 <%_ } _%>
                             </div>
-                            <div class="col-sm-6 post-date">
-                                <%_ const day = review.created_at.getDate(); _%>
-                                <%_ const month = review.created_at.getMonth() + 1; _%>
-                                <%_ const year = review.created_at.getFullYear(); _%>
-                                <%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %>
-                            </div>
+                            <div class="col-sm-6 post-date"><%= review.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></div>
                         </div>
                     </div>
                     <%_ if (review.images.length) { _%>
@@ -159,7 +154,12 @@
             $(".images img").click(function() {
                 var img = $(this).attr("src");
                 $("#image-lg-modal .img").css("background-image", "url(" + img + ")");
-            })
+            });
+
+            var target = location.hash.replace('#', '');
+            var offsetTop = ($(target ? "#"+target : document.documentElement).offset() || {}).top;
+            location.hash = "";
+            if (target) $('html, body').animate({ scrollTop: offsetTop - 50 });
         </script>
     </section>
 <%- include ('partials/footer') -%>
