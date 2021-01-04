@@ -79,7 +79,6 @@
                     <%_ } _%>
                 </div>
             </div>
-            
 
             <div id="reviews">
                 <%_ reviews.forEach(review => { _%>
@@ -109,18 +108,47 @@
                             <div class="col-sm-6 post-date"><%= review.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></div>
                         </div>
                     </div>
-                    <%_ if (review.images.length) { _%>
-                    <div class="images">
-                        <%_ review.images.forEach(img => { _%>
-                        <img src="<%- img.url %>" alt="<%- img.url %>" data-toggle="modal" data-target="#image-lg-modal">
-                        <%_ }) _%>
+                    <div class="row">
+                        <%_ if (review.images.length) { _%>
+                        <div class="col-sm-4">
+                            <div id="carousel-<% review._id %>" class="carousel slide images" data-ride="carousel" data-interval="5000" data-pause="false">
+                                <div class="carousel-inner">
+                                    <%_ review.images.forEach((img, i) => { _%>
+                                    <div class="item<%- i === 0 ? ' active' : '' %>">
+                                        <img src="<%- img.url %>" alt="<%- img.url %>" data-toggle="modal" data-target="#image-lg-modal">
+                                    </div>
+                                    <%_ }) _%>
+                                </div>
+                                <%_ if (review.images.length > 1) { _%>
+                                <a class="left carousel-control" href="#carousel-<% review._id %>" data-slide="prev">
+                                    <span class="arrow fal fa-chevron-left"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#carousel-<% review._id %>" data-slide="next">
+                                    <span class="arrow fal fa-chevron-right"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                                <%_ } _%>
+                            </div>
+                        </div>
+                        <%_ } _%>
+                        <div class="col-sm-<%= review.images.length ? 8 : 12 %>">
+                            <div class="comment-wrapper">
+                                <div class="comment">
+                                    <p><%- review.commentry.replace(/\r?\n/g, "</p><p>") %></p>
+                                </div>
+                            </div>
+                            <div class="comment-toggle">
+                                <span class="expand">See more</span>
+                                <span class="collapse">See less</span>
+                            </div>
+                        </div>
                     </div>
-                    <%_ } _%>
-                    <div class="comment"><p><%- review.commentry.replace(/\r?\n/g, "</p><p>") %></p></div>
                 </div>
                 <%_ }) _%>
             </div>
         </div>
+
         <div id="image-lg-modal" class="modal fade in" role="dialog">
             <div class="modal-icons">
                 <button type="button" class="close-view" data-dismiss="modal">&times;</button>
@@ -129,6 +157,7 @@
                 <div class="img"></div>
             </div>
         </div>
+
         <script>
             $(".star-rating input").change(function(e) {
                 $(".star").each(function(i) {
@@ -157,9 +186,26 @@
             });
 
             var target = location.hash.replace('#', '');
-            var offsetTop = ($(target ? "#"+target : document.documentElement).offset() || {}).top;
             location.hash = "";
-            if (target) $('html, body').animate({ scrollTop: offsetTop - 50 });
+
+            $(window).on("load resize", function(e) {
+                $(".comment-wrapper").each(function(i, cw) {
+                    var height = parseFloat($(cw).css("height"));
+                    var max_height = parseFloat($(cw).css("max-height"));
+                    var initial_max_height = $(cw).css("max-height");
+                    $(cw).next(".comment-toggle").toggleClass("hide", height < max_height).off("click").click(function() {
+                        var height = !$(cw).hasClass("expanded") ? parseFloat($(cw).find(".comment").css("height")) + 10 : initial_max_height;
+                        $(cw).toggleClass("expanded").css("max-height", height);
+                    });
+                });
+
+                var offsetTop = ($(target ? "#"+target : document.documentElement).offset() || {}).top;
+                if (target && e.type === "load") $('html, body').animate({ scrollTop: offsetTop - 50 });
+            });
+
+            $(".review .images.carousel .carousel-control").click(function () {
+                $(this).closest(".images.carousel").carousel({ interval: false })
+            });
         </script>
     </section>
 <%- include ('partials/footer') -%>
