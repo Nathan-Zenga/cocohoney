@@ -577,7 +577,8 @@ section .media-wrapper .main-media.small video {
 
 .add-to-cart-btn.pre-order {
     font-size: 1em;
-    padding: 0 5px !important;
+    border: 1.5px solid white;
+    padding: 5px 5px 3px!important;
 }
 
 .thumb .add-to-cart, .thumb .add-to-cart-btn {
@@ -1223,9 +1224,7 @@ label .dropdown-arrow {
 #product-view-page .add-to-cart-btn.pre-order {
     width: auto;
     text-align: center;
-    font-size: 1.5em;
-    padding-top: 5px!important;
-    padding-bottom: 5px!important;
+    padding: 10px 10px 8px!important;
 }
 
 @media (max-width: 767px) {
