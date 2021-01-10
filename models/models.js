@@ -125,11 +125,11 @@ module.exports.FAQ = model('FAQ', Schema({
 }));
 
 module.exports.Box = model('Box', Schema({
-    name: String,
+    name: { type: String, required: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
     info: String,
-    max_items: { type: Number, min: 1 },
+    max_items: { type: Number, min: 0, required: true },
     image: { p_id: String, url: String },
     products_inc: [String] // array of product IDs
 }));

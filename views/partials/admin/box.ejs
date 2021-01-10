@@ -14,7 +14,7 @@
             <input type="number" name="price" id="box_price" min="0.01" step="0.01" required>
 
             <label>MAX NUMBER OF ITEMS</label>
-            <input type="number" name="max_items" id="box_max_items" min="1" required>
+            <input type="number" name="max_items" id="box_max_items" min="0" required>
 
             <label>ITEMS TO INCLUDE</label>
             <%_ const categories = [...new Set(products.map(p => p.category))]; _%>
@@ -86,7 +86,7 @@
             <input type="number" name="price" id="box_price_edit" min="0.01" step="0.01">
 
             <label>MAX NUMBER OF ITEMS</label>
-            <input type="number" name="max_items" id="box_max_items_edit" min="1">
+            <input type="number" name="max_items" id="box_max_items_edit" min="0">
 
             <label>ITEMS TO INCLUDE</label>
             <ul class="nav nav-pills">
