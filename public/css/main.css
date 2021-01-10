@@ -1398,30 +1398,34 @@ input.product-quantity:disabled {
 
 #box-deal-page .header {
     background-color: rgba(0, 0, 0, .5);
-    width: 100%;
     margin: 0;
 }
 
-#box-deal-page .header .column {
-    padding-top: 30px;
-    padding-bottom: 30px;
+#box-deal-page .header .img-container {
+    position: relative;
+    height: 400px;
+    margin: 0 -30px;
+}
+
+#box-deal-page .header .img-container .img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#box-deal-page .header .text-container {
+    max-height: 200px;
+    overflow: auto;
 }
 
 #box-deal-page .header .text-container .text-content {
+    padding: 40px 20px;
     text-align: center;
-}
-
-#box-deal-page .header .text-container .text-content h1 {
-    text-transform: uppercase;
-}
-
-#box-deal-page .header .img-container {
-    padding: 0 0 30px 0;
-    margin: 0 -15px;
-}
-
-#box-deal-page .header .img-container img {
-    width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -1429,33 +1433,19 @@ input.product-quantity:disabled {
         left: auto;
     }
 
-    #box-deal-page .header {
-        height: 400px
+    #box-deal-page .header .img-container {
+        margin: 0;
     }
 
-    #box-deal-page .header .container,
-    #box-deal-page .header .column {
-        height: 100%;
+    #box-deal-page .header .img-container .img {
+        left: 0;
+        -ms-transform: translateY(-50%);
+        -webkit-transform: translateY(-50%);
+        transform: translateY(-50%);
     }
 
     #box-deal-page .header .text-container {
-        display: table;
-    }
-
-
-    #box-deal-page .header .text-container .text-content {
-        display: table-cell;
-        vertical-align: middle;
-    }
-
-    #box-deal-page .header .img-container {
-        padding: 0;
-        margin: 0 -15px;
-    }
-
-    #box-deal-page .header .img-container img {
-        width: auto;
-        max-height: 100%;
+        max-height: 400px;
     }
 }
 
