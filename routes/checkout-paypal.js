@@ -23,7 +23,7 @@ router.post("/create-payment", async (req, res) => {
         const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
         if (price_total < 4000) field_check["shipping method"] = shipping_method_id;
         const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
-        const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+        const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
         if (missing_fields.length) throw { stat: 400, msg: `Missing fields: ${missing_fields.join(", ")}` }
         if (!email_pattern.test(email)) throw { stat: 400, msg: "Invalid email format" }
         if (is_ambassador && discount_code) throw { stat: 400, msg: "Discount code cannot be applied as you are an ambassador" }
@@ -57,7 +57,7 @@ router.post("/create-payment", async (req, res) => {
                     price: (item.price / 100).toFixed(2),
                     quantity: item.qty,
                     currency: "GBP",
-                    description: item.deal ? item.items.map(p => `${p.qty}x ${p.name}`).join(", ") : item.info || undefined
+                    description: (item.items || []).map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined
                 })),
                 shipping_address: {
                     recipient_name: `${firstname} ${lastname}`,
