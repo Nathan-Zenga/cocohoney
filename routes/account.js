@@ -69,7 +69,7 @@ router.post('/signup', (req, res) => {
 });
 
 router.post('/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, image_file, image_url } = req.body;
+    const { id, firstname, lastname, email, phone_number, image_file, image_url, mail_sub } = req.body;
     Member.findById(id, (err, member) => {
         if (err) return res.status(500).send(err.message);
         if (!member) return res.status(404).send("Customer not found");
@@ -77,6 +77,7 @@ router.post('/edit', isAuthed, (req, res) => {
         if (lastname)     member.lastname = lastname;
         if (email)        member.email = email;
         if (phone_number) member.phone_number = phone_number;
+                          member.mail_sub = !!mail_sub;
 
         member.save((err, saved) => {
             if (err) return res.status(500).send(err.message);

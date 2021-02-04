@@ -126,7 +126,7 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, country, postcode, image_file, image_url } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, country, postcode, image_file, image_url, mail_sub } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(500).send("Ambassador not found");
@@ -142,6 +142,7 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (city)           amb.address.city = city;
         if (country)        amb.address.country = country;
         if (postcode)       amb.address.postcode = postcode;
+                            amb.mail_sub = !!mail_sub;
 
         amb.save((err, saved) => {
             if (err) return res.status(500).send(err.message);

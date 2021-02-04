@@ -9,7 +9,7 @@
                         <div class="profile-summary">
                             <p class="name"><%- user.firstname %> <%- user.lastname %></p>
                             <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
-                                EDIT PROFILE
+                                <span>SETTINGS</span>
                             </button>
                         </div>
                     </div>
@@ -132,7 +132,7 @@
             <div id="personal-details-settings" class="tab-pane fade in active">
                 <form method="post" action="/account/edit" id="personal-details-edit-form">
                     <label>PROFILE PICTURE</label>
-                    <fieldset class="file-upload-container">
+                    <fieldset class="file-upload-container" style="margin-bottom: 1em">
                         <div class="row">
                             <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                             <input type="hidden" name="image_file">
@@ -169,6 +169,10 @@
 
             <div id="account-settings" class="tab-pane fade">
                 <div class="form-container">
+                    <form class="minimal" method="post" action="/account/edit" id="mail-sub-toggle" style="text-align: center; padding: 0 30px">
+                        <input type="hidden" name="id" value="<%= user._id %>">
+                        <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
+                    </form>
                     <form class="minimal sensitive-form" method="post" action="/account/delete">
                         <input type="hidden" name="id" value="<%- user._id %>">
                         <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
@@ -189,6 +193,19 @@
         }).fail(function(err) {
             btnController.finish();
             alert(err.responseText);
+        });
+    });
+
+    $("#mail-sub-toggle input:checkbox").change(function(e) {
+        var form = $(this).parent("form").get(0);
+        var data = $(form).serializeArray().slice();
+        $(this).attr("disabled", true);
+        $.post(form.action, data, function(result) {
+            alert(result);
+        }).fail(function(err) {
+            alert(err.responseText);
+        }).always(function() {
+            $(e.target).attr("disabled", false);
         });
     });
 
