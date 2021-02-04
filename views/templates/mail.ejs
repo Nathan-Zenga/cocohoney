@@ -21,6 +21,9 @@
                 color: rgb(250, 128, 114);
                 text-align: center;
             }
+            .footer p {
+                font-size: .8em
+            }
             .footer a + a {
                 margin-left: 10px;
             }
@@ -78,7 +81,10 @@
             %>
         </div>
         <div class="footer section">
-            <p style="font-size: .8em;">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
+            <p style="margin-bottom: 1.5em">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
+            <%_ if (recipient && recipient.email) { _%>
+            <p>Don't want to recieve any more emails? <a style="color: inherit" href="/mail/unsubscribe?email=<%- recipient.email %>" target="_blank">Unsubscribe here</a></p>
+            <%_ } _%>
         </div>
     </body>
 </html>

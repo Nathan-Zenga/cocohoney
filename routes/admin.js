@@ -21,9 +21,9 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.get('/mail/form', isAuthed, async (req, res) => {
-    const members = await Member.find().sort({ firstname: 1 }).exec();
-    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
+    const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const title = "Admin - Compose Mail";
     const pagename = "admin-mail-form";
@@ -177,9 +177,9 @@ router.post('/mail/send', isAuthed, async (req, res) => {
 
 router.post('/mail/send/all', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
-    const members = await Member.find().sort({ firstname: 1 }).exec();
-    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
+    const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const everyone = [...ambassadors, ...members, ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email }))];
 
@@ -201,7 +201,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
 
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
-    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const transporter = new MailTransporter({ req, res });
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");

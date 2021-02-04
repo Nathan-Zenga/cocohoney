@@ -27,7 +27,8 @@ module.exports.Member = model('Member', Schema({
     password: { type: String, required: true },
     image: { p_id: String, url: String },
     phone_number: String,
-    password_reset_token: String
+    password_reset_token: String,
+    mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Admin = model('Admin', Schema({
@@ -80,7 +81,8 @@ module.exports.Order = model('Order', Schema({
     customer_email: String,
     shipping_method: String,
     destination: { type: Object, default: {} },
-    tracking_ref: { type: String, default: null }
+    tracking_ref: { type: String, default: null },
+    mail_sub: { type: Boolean, default: false }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
@@ -116,7 +118,8 @@ module.exports.Ambassador = model('Ambassador', Schema({
     verified: { type: Boolean, default: false },
     discount_code: { type: String, default: "null" },
     ambassador: { type: Boolean, default: true },
-    password_reset_token: String
+    password_reset_token: String,
+    mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.FAQ = model('FAQ', Schema({
