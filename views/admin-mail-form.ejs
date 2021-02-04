@@ -12,12 +12,14 @@
                 <legend>NEW EMAIL</legend>
 
                 <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                <select name="email" id="email" required>
+                <select name="email" id="email">
                     <option value="">-</option>
                     <%_ recipients.forEach((r, i) => { _%>
                     <option value="<%= r.customer_email || r.email %>"><%= r.customer_name || r.firstname+" "+r.lastname %></option>
                     <%_ }) _%>
                 </select>
+
+                <input type="email" name="email2" id="email2" placeholder="Or enter email here manually">
 
                 <label>SUBJECT</label>
                 <input type="text" name="subject" id="subject" required>
@@ -45,6 +47,9 @@
         </div>
     </div>
     <script>
+        $("#email").change(function() { $("#email2").val("") });
+        $("#email2").keypress(function() { $("#email").val("") });
+
         $("form").submit(function(e) {
             e.preventDefault();
             var btnController = new submitBtnController(this);
