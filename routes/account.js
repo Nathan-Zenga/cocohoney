@@ -52,7 +52,7 @@ router.post('/signup', (req, res) => {
             member.password = hash;
             member.save((err, saved) => {
                 if (err) return res.status(500).send(err.message);
-                new MailTransporter({ req, res }, saved).sendMail({
+                new MailTransporter({ req, res }, { email: saved.email }).sendMail({
                     subject: `You have successfully signed up with Cocohoney Cosmetics!`,
                     message: `Hi ${saved.firstname} ${saved.lastname},\n\n` +
                     "This is a confirmation email to let you know that your account has been successfully set up\n\n" +
@@ -143,7 +143,7 @@ router.post('/password-reset-request', async (req, res) => {
     if (!member) return res.status(404).send("Cannot find you on our system");
     member.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await member.save();
-    mail_transporter.setRecipient(saved).sendMail({
+    mail_transporter.setRecipient({ email: saved.email }).sendMail({
         subject: "Your Password Reset Token",
         message: "You are receiving this email because you requested to reset your password.\n\n" +
         "Please click the link below to proceed:\n\n" +

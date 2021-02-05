@@ -164,12 +164,11 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
 
 router.post('/mail/send', isAuthed, async (req, res) => {
     const { email, email2, subject, message } = req.body;
-    const member = email ? await Member.findOne({ email }) : null;
-    const ambassador = email ? await Ambassador.findOne({ email }) : null;
-    const registered_email = (member || ambassador || {}).email;
+    const member = email ? await Member.findOne({ email }, { mail_sub: 0 }) : null;
+    const ambassador = email ? await Ambassador.findOne({ email }, { mail_sub: 0 }) : null;
     const transporter = new MailTransporter({ req, res });
 
-    transporter.setRecipient({ email: registered_email || email || email2 });
+    transporter.setRecipient(member || ambassador || { email: email || email2 });
     transporter.sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send(`Email sent`);
