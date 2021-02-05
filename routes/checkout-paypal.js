@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
+    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id, mail_sub } = req.body;
     const { cart, location_origin, is_ambassador } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: p.price,
@@ -84,13 +84,14 @@ router.post("/create-payment", async (req, res) => {
         req.session.current_dc_doc = dc_doc;
         req.session.transaction = payment.transactions[0];
         req.session.shipping_method = shipping_method;
+        req.session.mail_sub = !!mail_sub;
         res.send(payment.links.find(link => link.rel === "approval_url").href);
     });
 });
 
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
-    const { cart, current_dc_doc, transaction, shipping_method } = req.session;
+    const { cart, current_dc_doc, transaction, shipping_method, mail_sub } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
 
@@ -117,7 +118,8 @@ router.get("/complete", async (req, res) => {
                 customer_email: email,
                 shipping_method: shipping_method.name,
                 destination: { line1, line2, city, country: country_code, postal_code, state },
-                cart
+                cart,
+                mail_sub
             });
     
             if (production) cart.forEach(item => {
@@ -142,6 +144,7 @@ router.get("/complete", async (req, res) => {
     
             req.session.cart = [];
             req.session.transaction = undefined;
+            req.session.mail_sub = undefined;
             if (dc_doc) {
                 order.discounted = true;
                 dc_doc.orders_applied.push(order.id);

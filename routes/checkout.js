@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/session/create", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id } = req.body;
+    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id, mail_sub } = req.body;
     const { cart, location_origin, is_ambassador } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: p.price,
@@ -100,12 +100,13 @@ router.post("/session/create", async (req, res) => {
         req.session.checkout_session = session;
         req.session.current_dc_doc = dc_doc;
         req.session.shipping_method = shipping_method;
+        req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, cart, current_dc_doc, shipping_method } = req.session;
+    const { checkout_session, cart, current_dc_doc, shipping_method, mail_sub } = req.session;
     const products = await Product.find();
     const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
     const purchase_summary = cart.map(item => {
@@ -128,7 +129,8 @@ router.get("/session/complete", async (req, res) => {
             customer_email: customer.email,
             shipping_method: shipping_method.name,
             destination: customer.shipping.address,
-            cart
+            cart,
+            mail_sub
         });
 
         if (production) cart.forEach(item => {
@@ -153,6 +155,7 @@ router.get("/session/complete", async (req, res) => {
 
         req.session.cart = [];
         req.session.checkout_session = undefined;
+        req.session.mail_sub = undefined;
         if (dc_doc) {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
@@ -213,6 +216,7 @@ router.get("/cancel", async (req, res) => {
     req.session.checkout_session = undefined;
     req.session.current_dc_doc = undefined;
     req.session.shipping_method = undefined;
+    req.session.mail_sub = undefined;
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 

@@ -53,9 +53,13 @@
                     <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
                 <br>
                 <%_ })} else { _%>
-                <label style="display: block; text-align: center">FREE DELIVERY</label>
+                <label style="display: block; text-align: center">FREE DELIVERY</label><br>
                 <%_ } _%>
-                <br><br>
+                <br>
+                <%_ if (!user || !user.mail_sub) { _%>
+                <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
+                <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
+                <%_ } _%>
             </form>
 
             <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">

@@ -97,6 +97,10 @@
                                         </div>
                                     </div>
                                 </fieldset>
+                                <%_ if (!user || !user.mail_sub) { _%>
+                                <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
+                                <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
+                                <%_ } _%>
                             </form>
 
                             <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">

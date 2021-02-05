@@ -12,7 +12,7 @@ paypal.configure({
 });
 
 router.post("/create-payment", async (req, res) => {
-    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
+    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -62,13 +62,14 @@ router.post("/create-payment", async (req, res) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
         req.session.event_id = event.id;
         req.session.transaction = payment.transactions[0];
+        req.session.mail_sub = !!mail_sub;
         res.send(payment.links.find(link => link.rel === "approval_url").href);
     });
 });
 
 router.get("/complete", async (req, res) => {
     const { paymentId, PayerID } = req.query;
-    const { transaction, event_id } = req.session;
+    const { transaction, event_id, mail_sub } = req.session;
 
     try {
         const event = await Event.findById(event_id);
@@ -92,7 +93,8 @@ router.get("/complete", async (req, res) => {
                 customer_name: recipient_name,
                 customer_email: email,
                 destination: { line1, line2, city, country: country_code, postal_code, state },
-                cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }]
+                cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }],
+                mail_sub
             });
     
             if (production) {
@@ -104,6 +106,7 @@ router.get("/complete", async (req, res) => {
     
             req.session.event_id = undefined;
             req.session.transaction = undefined;
+            req.session.mail_sub = undefined;
     
             const transporter = new MailTransporter({ req, res });
             transporter.setRecipient({ email }).sendMail({

@@ -5,7 +5,7 @@ const MailTransporter = require('../modules/mail-transporter');
 const production = process.env.NODE_ENV === "production";
 
 router.post("/session/create", async (req, res) => {
-    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
+    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -48,12 +48,13 @@ router.post("/session/create", async (req, res) => {
 
         req.session.event_id = event.id;
         req.session.checkout_session = session;
+        req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { event_id, checkout_session } = req.session;
+    const { event_id, checkout_session, mail_sub } = req.session;
 
     try {
         const event = await Event.findById(event_id);
@@ -72,7 +73,8 @@ router.get("/session/complete", async (req, res) => {
             customer_name: customer.name,
             customer_email: customer.email,
             destination: customer.shipping.address,
-            cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }]
+            cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }],
+            mail_sub
         });
 
         if (production) {
@@ -84,6 +86,7 @@ router.get("/session/complete", async (req, res) => {
 
         req.session.event_id = undefined;
         req.session.checkout_session = undefined;
+        req.session.mail_sub = undefined;
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient({ email: customer.email }).sendMail({
@@ -129,6 +132,7 @@ router.get("/cancel", async (req, res) => {
     } catch(err) {}
     req.session.event_id = undefined;
     req.session.checkout_session = undefined;
+    req.session.mail_sub = undefined;
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 
