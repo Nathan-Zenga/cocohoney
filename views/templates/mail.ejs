@@ -22,7 +22,10 @@
                 text-align: center;
             }
             .footer p {
-                font-size: .8em
+                font-size: .8em;
+            }
+            .footer p:not(:last-child) {
+                margin-bottom: 1.5em;
             }
             .footer a + a {
                 margin-left: 10px;
@@ -81,9 +84,10 @@
             %>
         </div>
         <div class="footer section">
-            <p style="margin-bottom: 1.5em">&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
-            <%_ if (recipient && recipient.email) { _%>
-            <p>Don't want to recieve any more emails? <a style="color: inherit" href="/mail/unsubscribe?email=<%- recipient.email %>" target="_blank">Unsubscribe here</a></p>
+            <p>&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
+            <%_ if (recipient && recipient.email && recipient.mail_sub) { _%>
+            <p>You are receiving this email because you are subscribed to special updates (such as promo codes, etc.) from us.</p>
+            <p>If you no longer want to receive any more emails, please <a style="color: inherit" href="/mail/unsubscribe?email=<%- recipient.email %>" target="_blank">unsubscribe here</a>.</p>
             <%_ } _%>
         </div>
     </body>
