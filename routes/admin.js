@@ -21,13 +21,13 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
 router.get('/mail/form', isAuthed, async (req, res) => {
-    const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
-    const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
-    const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
+    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const title = "Admin - Compose Mail";
     const pagename = "admin-mail-form";
-    const recipients = [...ambassadors, ...members, ...customers];
+    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
     res.render('admin-mail-form', { title, pagename, recipients })
 });
 
@@ -182,7 +182,10 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
-    const everyone = [...ambassadors, ...members, ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email }))];
+    const everyone = [
+        ...ambassadors.filter(a => !members.find(m => m.email === a.email)),
+        ...members,
+        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email })) ];
 
     if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
@@ -202,7 +205,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
 
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
-    const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const transporter = new MailTransporter({ req, res });
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
@@ -211,6 +214,18 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
         if (err) return res.status(500).send(err.message || err);
         res.send(`Email${ambassadors.length > 1 ? "s" : ""} sent`);
     });
+});
+
+router.post('/mail/sub-toggle', isAuthed, async (req, res) => {
+    const { email } = req.body;
+    const emails = Array.isArray(email) ? email : [email];
+    await Member.updateMany({}, { $set: { mail_sub: false } });
+    await Member.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
+    await Ambassador.updateMany({}, { $set: { mail_sub: false } });
+    await Ambassador.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
+    await Order.updateMany({}, { $set: { mail_sub: false } });
+    await Order.updateMany({ customer_email: { $in: emails } }, { $set: { mail_sub: true } });
+    res.send("Updated!");
 });
 
 router.post('/faqs/add', isAuthed, (req, res) => {

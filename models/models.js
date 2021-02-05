@@ -82,7 +82,7 @@ module.exports.Order = model('Order', Schema({
     shipping_method: String,
     destination: { type: Object, default: {} },
     tracking_ref: { type: String, default: null },
-    mail_sub: { type: Boolean, default: false }
+    mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Ambassador = model('Ambassador', Schema({
