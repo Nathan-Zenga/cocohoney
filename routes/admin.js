@@ -20,7 +20,8 @@ router.get('/login', (req, res) => {
 
 router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
 
-router.get('/mail/form', isAuthed, async (req, res) => {
+router.get('/mail/form', async (req, res) => {
+    if (!res.locals.is_admin) return res.redirect("/admin/login?redirect_to=" + req.originalUrl);
     const members = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
@@ -49,6 +50,7 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
 });
 
 router.post('/login', (req, res) => {
+    const { redirect_to } = req.query;
     const email = req.session.admin_email;
     req.body.email = email; Object.freeze(req.body);
     passport.authenticate("local-login-admin", (err, user, info) => {
@@ -75,7 +77,7 @@ router.post('/login', (req, res) => {
             req.login(user, err => {
                 if (err) return res.status(500).send(err.message || err);
                 res.locals.cart = req.session.cart = [];
-                res.send("/admin")
+                res.send(Array.isArray(redirect_to) ? redirect_to[0] : redirect_to || "/admin")
             });
         }
     })(req, res);

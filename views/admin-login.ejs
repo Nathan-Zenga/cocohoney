@@ -10,7 +10,7 @@
         $("form").submit(function(e) {
             e.preventDefault();
             var btnController = new submitBtnController(this);
-            $.post(this.action, $(this).serializeArray(), function(result) {
+            $.post(this.action + location.search, $(this).serializeArray(), function(result) {
                 e.target.reset();
                 location.href = result;
             }).fail(function(err) {
