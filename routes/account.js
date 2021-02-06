@@ -155,7 +155,7 @@ router.post('/password-reset', async (req, res) => {
 });
 
 router.post('/subscription/edit', async (req, res) => {
-    const { is_admin, is_ambassador, is_subscriber, is_customer } = res.locals;
+    const { is_admin, is_ambassador, is_subscriber, is_customer, mail_sub } = res.locals;
     if (!is_admin && !is_ambassador && !is_subscriber && !is_customer) return res.sendStatus(401);
     const { subscriber_id: id, name, phone_number, email, line1, line2, city, country, postcode } = req.body;
     const customer = await Stripe.customers.retrieve(id);

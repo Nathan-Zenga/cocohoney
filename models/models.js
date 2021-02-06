@@ -233,5 +233,6 @@ module.exports.Subscriber = model('Subscriber', new Schema({
     },
     sub_id: { type: String, required: true, unique: true },
     access_token: String,
-    access_token_expiry_date: Date
+    access_token_expiry_date: Date,
+    mail_sub: { type: Boolean, default: true }
 }));

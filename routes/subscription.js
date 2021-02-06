@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/setup", async (req, res) => {
-    const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
+    const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -57,12 +57,13 @@ router.post("/setup", async (req, res) => {
 
         req.session.price_id = price.id;
         req.session.session_id = session.id;
+        req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/complete", async (req, res) => {
-    const { session_id, price_id } = req.session;
+    const { session_id, price_id, mail_sub } = req.session;
     try {
         const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent", "customer"] });
         const { recurring } = await Stripe.prices.retrieve(price_id);
@@ -82,11 +83,13 @@ router.get("/complete", async (req, res) => {
 
         await Subscriber.create({
             customer: { member_id: (req.user || {})._id, name: customer.name, email: customer.email },
-            sub_id: subscription.id
+            sub_id: subscription.id,
+            mail_sub
         });
 
         req.session.checkout_session = undefined;
         req.session.price_id = undefined;
+        req.session.mail_sub = undefined;
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient(customer).sendMail({
@@ -135,6 +138,7 @@ router.get("/cancel", async (req, res) => {
     } catch(err) { res.status(err.statusCode || 500); console.error(err.message) }
     req.session.price_id = undefined;
     req.session.session_id = undefined;
+    req.session.mail_sub = undefined;
     res.render('subscription-checkout-cancel', { title: "Payment Cancelled", pagename: "subscription-checkout-cancel" });
 });
 

@@ -159,9 +159,10 @@ router.post('/mail/send', isAuthed, async (req, res, next) => {
     const { email, email2, subject, message } = req.body;
     const member = email ? await Member.findOne({ email }, { mail_sub: 0 }) : null;
     const ambassador = email ? await Ambassador.findOne({ email }, { mail_sub: 0 }) : null;
+    const subscriber = email ? await Subscriber.findOne({ "customer.email": email }, { mail_sub: 0 }) : null;
+    const subscriber_email = subscriber ? subscriber.customer.email : null;
     const transporter = new MailTransporter();
-
-    transporter.setRecipient(member || ambassador || { email: email || email2 });
+    transporter.setRecipient(member || ambassador || subscriber_email || { email: email || email2 });
     transporter.sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message);
         res.send(`Email sent`);
@@ -217,12 +218,16 @@ router.post('/mail/sub-toggle', isAuthed, async (req, res) => {
     const ambassadors = (await Ambassador.find().sort({ firstname: 1 }).exec()).filter(a => !members.find(m => m.email === a.email));
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email);
+    const subs = await Subscriber.find().sort({ "customer.email": 1 }).exec();
+    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email);
     await Member.updateMany({ email: { $in: members.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Member.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
     await Ambassador.updateMany({ email: { $in: ambassadors.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Ambassador.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
     await Order.updateMany({ customer_email: { $in: customers.map(d => d.customer_email) } }, { $set: { mail_sub: false } });
     await Order.updateMany({ customer_email: { $in: emails } }, { $set: { mail_sub: true } });
+    await Subscriber.updateMany({ "customer.email": { $in: subscribers.map(d => d.customer.email) } }, { $set: { mail_sub: false } });
+    await Subscriber.updateMany({ "customer.email": { $in: emails } }, { $set: { mail_sub: true } });
     res.send("Updated!");
 });
 

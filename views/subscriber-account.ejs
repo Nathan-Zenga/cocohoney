@@ -84,6 +84,9 @@
                                         </div>
                                     </fieldset>
 
+                                    <input type="hidden" name="id" value="<%= user._id %>">
+                                    <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
+
                                     <input type="hidden" name="subscriber_id" value="<%= subscription.customer.id %>">
                                     <button type="submit">UPDATE</button>
                                 </form>

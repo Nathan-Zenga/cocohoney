@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const MailTransporter = require('../modules/mail-transporter');
-const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member } = require('../models/models');
+const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member, Subscriber } = require('../models/models');
 const recaptcha = require('../modules/recaptcha');
 const { RECAPTCHA_SITE_KEY, CHC_EMAIL } = process.env;
 
@@ -32,7 +32,8 @@ router.get('/mail/unsubscribe', async (req, res) => {
     const a = await Ambassador.findOne({ email });
     const m = await Member.findOne({ email });
     const c = await Order.findOne({ customer_email: email });
-    const r = a || m || c;
+    const s = await Subscriber.findOne({ "customer.email": email });
+    const r = a || m || c || s;
     if (!email || !r) return res.status(400).render('error', { html: `<h1>UNABLE TO UNSUBSCRIBE</h1><p>The given email ${email ? `(${email}) ` : ""}is invalid or isn't registered on our site</p>` });
     r.mail_sub = false;
     const saved = await r.save();

@@ -101,6 +101,12 @@
                                     </div>
                                 </fieldset>
                                 <br>
+                                <%_ if (!user || !user.mail_sub) { _%>
+                                <div class="input-checkbox">
+                                    <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
+                                    <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
+                                </div>
+                                <%_ } _%>
                                 <button type="submit">
                                     <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>BUY NOW</span></span>
                                 </button>
