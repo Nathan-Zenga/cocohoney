@@ -71,6 +71,8 @@ router.post('/signup', async (req, res) => {
 router.post('/edit', isAuthed, async (req, res) => {
     const { id, firstname, lastname, email, phone_number, image_file, image_url, mail_sub } = req.body;
     try {
+        const subscriber = await Subscriber.findOne({ "customer.member_id": id });
+        if (subscriber) { subscriber.mail_sub = !!mail_sub; await subscriber.save() }
         const member = await Member.findById(id);
         if (!member) return res.status(404).send("Customer not found");
         if (firstname)    member.firstname = firstname;
