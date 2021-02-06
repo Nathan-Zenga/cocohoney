@@ -218,11 +218,15 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
 router.post('/mail/sub-toggle', isAuthed, async (req, res) => {
     const { email } = req.body;
     const emails = Array.isArray(email) ? email : [email];
-    await Member.updateMany({}, { $set: { mail_sub: false } });
+    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const ambassadors = (await Ambassador.find().sort({ firstname: 1 }).exec()).filter(a => !members.find(m => m.email === a.email));
+    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email);
+    await Member.updateMany({ email: { $in: members.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Member.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
-    await Ambassador.updateMany({}, { $set: { mail_sub: false } });
+    await Ambassador.updateMany({ email: { $in: ambassadors.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Ambassador.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
-    await Order.updateMany({}, { $set: { mail_sub: false } });
+    await Order.updateMany({ customer_email: { $in: customers.map(d => d.customer_email) } }, { $set: { mail_sub: false } });
     await Order.updateMany({ customer_email: { $in: emails } }, { $set: { mail_sub: true } });
     res.send("Updated!");
 });
