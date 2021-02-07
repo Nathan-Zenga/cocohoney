@@ -34,12 +34,12 @@ router.get('/mail/unsubscribe', async (req, res) => {
     const { email } = req.query;
     const a = await Ambassador.findOne({ email });
     const m = await Member.findOne({ email });
-    const c = await Order.findOne({ email });
+    const c = await Order.findOne({ customer_email: email });
     const r = a || m || c;
     if (!email || !r) return res.status(404).render('error', { html: `<h1>UNABLE TO UNSUBSCRIBE</h1><p>The given email ${email ? "("+email+") " : ""}is invalid or isn't registered on our site</p>` });
     r.mail_sub = false;
     const saved = await r.save();
-    res.render('mail-unsubscribe-msg', { email: saved.email });
+    res.render('mail-unsubscribe-msg', { email: saved.email || saved.customer_email });
 });
 
 router.post('/contact/mail/send', (req, res) => {
