@@ -37,7 +37,7 @@ router.get('/mail/unsubscribe', async (req, res) => {
     if (!email || !r) return res.status(400).render('error', { html: `<h1>UNABLE TO UNSUBSCRIBE</h1><p>The given email ${email ? `(${email}) ` : ""}is invalid or isn't registered on our site</p>` });
     r.mail_sub = false;
     const saved = await r.save();
-    res.render('mail-unsubscribe-msg', { email: saved.email || saved.customer_email });
+    res.render('mail-unsubscribe-msg', { email: saved.email || saved.customer_email || saved.customer.email });
 });
 
 router.post('/contact/mail/send', recaptcha, async (req, res) => {
