@@ -15,9 +15,10 @@
                             </p><br>
                             <%_ } if (box.info) { _%>
                             <p><%- box.info.replace(/\r?\n/g, "<br>") %></p><br>
-                            <%_ }_%>
+                            <%_ } if (products.length) { _%>
                             <p>Click the images below to choose</p><br>
                             <p><i class="dropdown-arrow fal fa-chevron-down" style="font-size: 3em"></i></p>
+                            <%_ } _%>
                         </div>
                     </div>
                 </div>
