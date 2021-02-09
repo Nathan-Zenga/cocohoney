@@ -10,13 +10,14 @@
             <i class="fal fa-info-circle info-icon"></i>
             <b>Click a name to go to their account page</b>
         </div>
-        <ul style="text-align: left">
-            <% ambassadors.forEach(amb => { %>
-            <li>
-                <a href="/admin/ambassador/account?firstname=<%- amb.firstname %>&lastname=<%- amb.lastname %>">
-                    <%- `${amb.firstname} ${amb.lastname}` %>
-                </a>
-                <div>
+        <div class="admin-list">
+            <%_ ambassadors.forEach(amb => { _%>
+            <div class="row">
+                <div class="col-sm-9 col-xs-6 item">
+                    <%_ var link = `/admin/ambassador/account?firstname=${amb.firstname}&lastname=${amb.lastname}`; _%>
+                    <a href="<%- link %>"><%- `${amb.firstname} ${amb.lastname}` %></a>
+                </div>
+                <div class="col-sm-3 col-xs-6 options">
                     <%_ if (amb.verified === false) { _%>
                     <form class="verify-ambassador-form minimal" method="post" action="/ambassador/register/verify" style="display: inline-block; margin: 5px 5px 5px 0">
                         <input type="hidden" name="token" value="<%- amb.token %>">
@@ -28,9 +29,9 @@
                         <button type="submit" style="padding: 6px 10px">Delete</button>
                     </form>
                 </div>
-            </li>
-            <% }) %>
-        </ul>
+            </div>
+            <%_ }) _%>
+        </div>
     </div>
 
     <div id="orders" class="tab-pane fade">
@@ -38,26 +39,24 @@
             <i class="fal fa-info-circle info-icon"></i>
             <b>Labelled by customer name</b>
         </div>
-        <ul style="text-align: left">
-            <% orders.forEach(order => { %>
-            <li>
-                <%- `${order.customer_name}` %>
-                <div>
-                    <a href="/order/<%- order.id %>">
-                        <button type="button" style="padding: 6px 10px; font-weight: 400">View details</button>
-                    </a>
+        <div class="admin-list">
+            <%_ orders.forEach(order => { _%>
+            <div class="row">
+                <div class="col-<%= order.tracking_ref ? 'xs' : 'sm' %>-6 item"><%- `${order.customer_name}` %></div>
+                <div class="col-<%= order.tracking_ref ? 'xs' : 'sm' %>-6 options">
+                    <a href="/order/<%- order.id %>"><button type="button">View details</button></a>
                     <%_ if (!order.tracking_ref) {
                         const event_tkt_present = order.cart.find(item => /^\'(.*?)\' event ticket$/i.test(item.name)); _%>
                     <a<%- !event_tkt_present ? ` href="/shipping/tracking/ref/send?id=${order.id}"` : '' %>>
-                        <button type="button" style="padding: 6px 10px; font-weight: 400"<%- event_tkt_present ? ' disabled' : '' %>>
+                        <button type="button"<%- event_tkt_present ? ' disabled' : '' %>>
                             <%= event_tkt_present ? "Event Ticket Purchase" : "Add Tracking Number" %>
                         </button>
                     </a>
                     <%_ } _%>
                 </div>
-            </li>
-            <% }) %>
-        </ul>
+            </div>
+            <%_ }) _%>
+        </div>
     </div>
     
     <div id="amb-sales-report" class="tab-pane fade">

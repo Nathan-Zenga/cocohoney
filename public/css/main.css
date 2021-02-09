@@ -1117,6 +1117,29 @@ label .dropdown-arrow {
     font-size: 1em;
 }
 
+#admin-page .admin-list {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+#admin-page .admin-list .row {
+    border-bottom: 1px solid rgba(240, 230, 140, .5);
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
+#admin-page .admin-list .item {
+    margin: 10px 0;
+}
+
+#admin-page .admin-list .options {
+    text-align: right;
+}
+
+#admin-page .admin-list button {
+    margin-bottom: 0;
+}
+
 .info-label .info-icon {
     margin-right: 5px;
     font-size: 1.2em;
