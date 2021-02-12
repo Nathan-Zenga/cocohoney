@@ -135,8 +135,16 @@
                 if (result.error) { btnControl.finish(); alert(result.error.message); }
             }).fail(function(err, status, codeMessage) {
                 btnControl.finish();
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                var fd = (err.responseJSON || {}).qs || "";
+                if (!fd) return alert(codeMessage + (err ? ": " + err.responseText : ""));
+                var c = confirm("You will need to be logged in to sign up.\nWant to proceed? You will be redirected back here and your changes won't be lost.");
+                if (c) location.href = "/account/login?redirect_to=" + location.pathname + "&" + fd;
             });
+        });
+
+        location.search.slice(1).split("&").map(function(e) { return e.split("=") }).forEach(function(a) {
+            $("#subscription-options :input[name='"+ a[0] +"']").not("[type=checkbox], [type=radio]").val(decodeURIComponent(a[1]));
+            $("#subscription-options :input").filter("[type=checkbox], [type=radio][value='"+ a[1] +"']").prop("checked", !!a[1]);
         });
     </script>
 <%- include ('partials/footer') -%>

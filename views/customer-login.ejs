@@ -11,7 +11,7 @@
                     <fieldset>
                         <legend>LOG IN</legend>
                         <span class="note">
-                            Trying to log in as an ambassador? <a href="/ambassador/account/login">Click here</a>
+                            Trying to log in as an ambassador? <a class="note-link" href="/ambassador/account/login">Click here</a>
                         </span>
 
                         <label>EMAIL</label>
@@ -31,7 +31,7 @@
                     <fieldset>
                         <legend>SIGN UP</legend>
                         <span class="note">
-                            Want to sign up as an ambassador instead? <a href="/ambassador/register">Click here</a>
+                            Want to sign up as an ambassador instead? <a class="note-link" href="/ambassador/register">Click here</a>
                         </span>
 
                         <fieldset>
@@ -66,6 +66,13 @@
         </div>
     </div>
     <script>
+        $(".note-link").each(function() {
+            var href = $(this).attr("href");
+            var $form = $(this).closest("form");
+            $(this).attr("href", href + location.pathname + location.search);
+            !location.search || $form.append($("<input>").attr({ type: "hidden", name: "qs", value: location.search.slice(1) }));
+        });
+
         $("form").submit(function(e) {
             e.preventDefault();
             var btnController = new submitBtnController(this);

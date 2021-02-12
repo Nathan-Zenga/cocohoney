@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
+const { parse } = require('querystring');
 const isAuthed = require('../modules/auth-check-ambassador');
 const countries = require("../modules/country-list");
 const send_verification_email = require("../modules/send-ambassador-verification-email");
@@ -102,7 +103,9 @@ router.post('/account/login', (req, res) => {
         req.login(user, err => {
             if (err) return res.status(500).send(err.message);
             res.locals.cart = req.session.cart = [];
-            res.send("/ambassador/account");
+            const query = parse(req.body.qs || "");
+            req.body.qs = (req.body.qs || "").replace(/redirect_to\=(.*?)\&/gi, "");
+            res.send(req.body.qs ? `${query.redirect_to}?${req.body.qs}` : "/ambassador/account");
         });
     })(req, res);
 });

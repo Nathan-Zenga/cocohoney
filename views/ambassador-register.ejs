@@ -4,7 +4,7 @@
             <fieldset>
                 <legend>AMBASSADOR REGISTER</legend>
 
-                <span class="note">Already have an account? <a href="/ambassador/account/login">Log in here</a></span>
+                <span class="note">Already have an account? <a class="note-link" href="/ambassador/account/login">Log in here</a></span>
 
                 <label>PROFILE PICTURE <span>(OPTIONAL)</span></label>
                 <fieldset class="file-upload-container">
@@ -78,6 +78,11 @@
         </form>
     </div>
     <script>
+        var href = $(".note-link").attr("href");
+        var $form = $(".note-link").closest("form");
+        $(".note-link").attr("href", href + location.pathname + location.search);
+        !location.search || $form.append($("<input>").attr({ type: "hidden", name: "qs", value: location.search.slice(1) }));
+
         $("form").submit(function(e) {
             e.preventDefault();
             var btnController = new submitBtnController(this);

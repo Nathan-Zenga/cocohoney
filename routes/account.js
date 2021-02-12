@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const crypto = require('crypto');
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
+const { parse } = require('querystring');
 const countries = require("../modules/country-list");
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
@@ -36,7 +37,9 @@ router.post('/login', (req, res) => {
         req.login(user, err => {
             if (err) return res.status(500).send(err.message);
             res.locals.cart = req.session.cart = [];
-            res.send("/account");
+            const query = parse(req.body.qs || "");
+            req.body.qs = (req.body.qs || "").replace(/redirect_to\=(.*?)\&/gi, "");
+            res.send(req.body.qs ? `${query.redirect_to}?${req.body.qs}` : "/account");
         });
     })(req, res);
 });

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
+const { stringify } = require('querystring');
 const countries = require('../modules/country-list');
 const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
@@ -11,6 +12,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/setup", async (req, res) => {
+    if (!req.user) return res.status(401).send({ qs: stringify(req.body) });
     const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
