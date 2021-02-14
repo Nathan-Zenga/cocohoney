@@ -56,7 +56,7 @@
                             <%_ if (is_admin) { _%>
                             <a href="/admin">ADMIN</a>
                             <%_ } else {
-                                const acc_href = is_ambassador ? '/ambassador/account' : is_subscriber ? `/subscription/${user.sub_id}` : '/account'; _%>
+                                const acc_href = is_ambassador ? '/ambassador/account' : '/account'; _%>
                             <a href="<%= acc_href %>">PROFILE</a>
                             <%_ } _%>
                         </div>

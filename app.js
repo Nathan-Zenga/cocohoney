@@ -49,7 +49,6 @@ app.use(async (req, res, next) => { // global variables
     res.locals.is_admin = req.user?.role === "admin";
     res.locals.is_ambassador = req.user?.role === "ambassador";
     res.locals.is_customer = req.user?.role === "member";
-    res.locals.is_subscriber = req.user?.sub_id;
     res.locals.location_origin = MailTransporter.location_origin = `${req.protocol}://${req.headers.host}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = !GET && res.locals.boxes_all ? res.locals.boxes_all : await Box.find();

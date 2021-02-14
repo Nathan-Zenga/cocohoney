@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
 router.post("/setup", async (req, res) => {
     if (!req.user) return res.status(401).send({ qs: stringify(req.body) });
-    const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
+    const { plan: id, firstname, lastname, email, address_l1, address_l2, city, country, postcode } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -59,13 +59,12 @@ router.post("/setup", async (req, res) => {
 
         req.session.price_id = price.id;
         req.session.session_id = session.id;
-        req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/complete", async (req, res) => {
-    const { session_id, price_id, mail_sub } = req.session;
+    const { session_id, price_id } = req.session;
     try {
         const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent", "customer"] });
         const { recurring } = await Stripe.prices.retrieve(price_id);
@@ -85,13 +84,11 @@ router.get("/complete", async (req, res) => {
 
         await Subscriber.create({
             customer: { member_id: (req.user || {})._id, name: customer.name, email: customer.email },
-            sub_id: subscription.id,
-            mail_sub
+            sub_id: subscription.id
         });
 
         req.session.checkout_session = undefined;
         req.session.price_id = undefined;
-        req.session.mail_sub = undefined;
 
         const transporter = new MailTransporter({ req, res });
         transporter.setRecipient(customer).sendMail({
@@ -103,11 +100,7 @@ router.get("/complete", async (req, res) => {
             "Click below to view further details about this order:\n\n" +
             `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
             `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>\n\n` +
-            "Also, please refer to the below link to view AND edit your subscription details (such as delivery address, etc). " +
-            "Please keep note of this link, especially if you have <u>not</u> registered with us as a customer or ambassador before now. " +
-            "Otherwise, if you are registered with us, you can instead view all of your subscriptions (including this one) on your account page.\n\n" +
-            `((VIEW SUBSCRIBER ACCOUNT))[${res.locals.location_origin}/subscription/${subscription.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/subscription/${subscription.id})</small>\n\n` +
+            "Please note that you can view AND edit all of your subscriptions details on your account when you are logged in.\n\n" +
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) console.error(err), res.status(500);
@@ -140,7 +133,6 @@ router.get("/cancel", async (req, res) => {
     } catch(err) { res.status(err.statusCode || 500); console.error(err.message) }
     req.session.price_id = undefined;
     req.session.session_id = undefined;
-    req.session.mail_sub = undefined;
     res.render('subscription-checkout-cancel', { title: "Payment Cancelled", pagename: "subscription-checkout-cancel" });
 });
 

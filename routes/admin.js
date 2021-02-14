@@ -15,9 +15,7 @@ router.get('/', async (req, res) => {
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
-    const subs = await Subscriber.find().sort({ "customer.email": 1 }).exec();
-    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email).sort((a, b) => a.customer.name - b.customer.name);
-    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers, ...subscribers.map(s => ({ name: s.customer.name, email: s.customer.email }))];
+    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
     const subscriptions_all = await Stripe.subscriptions.list();
     const subscription_products = await Stripe.products.list({ ids: subscriptions_all.data.map(s => s.items.data[0].price.product) });
     const subscription_product_names = subscription_products.data.map(p => p.name.replace(" Lash Subscription", ""));
@@ -159,10 +157,8 @@ router.post('/mail/send', isAuthed, async (req, res, next) => {
     const { email, email2, subject, message } = req.body;
     const member = email ? await Member.findOne({ email }, { mail_sub: 0 }) : null;
     const ambassador = email ? await Ambassador.findOne({ email }, { mail_sub: 0 }) : null;
-    const subscriber = email ? await Subscriber.findOne({ "customer.email": email }, { mail_sub: 0 }) : null;
-    const subscriber_email = subscriber ? subscriber.customer.email : null;
     const transporter = new MailTransporter();
-    transporter.setRecipient(member || ambassador || subscriber_email || { email: email || email2 });
+    transporter.setRecipient(member || ambassador || { email: email || email2 });
     transporter.sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message);
         res.send(`Email sent`);
@@ -174,14 +170,11 @@ router.post('/mail/send', isAuthed, async (req, res, next) => {
     const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
-    const subs = await Subscriber.find({ mail_sub: true }).sort({ "customer.email": 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
-    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email).sort((a, b) => a.customer.name - b.customer.name);
     const everyone = [
         ...ambassadors.filter(a => !members.find(m => m.email === a.email)),
         ...members,
-        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email, mail_sub: cus.mail_sub })),
-        ...subscribers.map(s => ({ name: s.customer.name, email: s.customer.email, mail_sub: s.mail_sub })) ];
+        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email, mail_sub: cus.mail_sub })) ];
 
     if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
@@ -218,16 +211,12 @@ router.post('/mail/sub-toggle', isAuthed, async (req, res) => {
     const ambassadors = (await Ambassador.find().sort({ firstname: 1 }).exec()).filter(a => !members.find(m => m.email === a.email));
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
     const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email);
-    const subs = await Subscriber.find().sort({ "customer.email": 1 }).exec();
-    const subscribers = subs.filter((s, i, a) => ![...ambassadors, ...members].find(m => m.email === s.customer.email) && s.customer.email !== a[i+1]?.customer.email);
     await Member.updateMany({ email: { $in: members.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Member.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
     await Ambassador.updateMany({ email: { $in: ambassadors.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Ambassador.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
     await Order.updateMany({ customer_email: { $in: customers.map(d => d.customer_email) } }, { $set: { mail_sub: false } });
     await Order.updateMany({ customer_email: { $in: emails } }, { $set: { mail_sub: true } });
-    await Subscriber.updateMany({ "customer.email": { $in: subscribers.map(d => d.customer.email) } }, { $set: { mail_sub: false } });
-    await Subscriber.updateMany({ "customer.email": { $in: emails } }, { $set: { mail_sub: true } });
     res.send("Updated!");
 });
 

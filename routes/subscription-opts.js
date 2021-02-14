@@ -1,53 +1,9 @@
 const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
-const countries = require("../modules/country-list");
-const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-admin');
-const passport = require('../config/passport');
 const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
-
-router.get("/account/access/:id", async (req, res, next) => {
-    const subscriber = await Subscriber.findOne({ sub_id: req.params.id });
-    if (!subscriber) return next();
-    if (subscriber.access_token) return res.render('subscriber-account-access', { title: "Subscription Account Access", pagename: "account-access", subscriber, email_alert: false });
-    const password = Math.floor(1000000000 + Math.random() * 9000000000).toString();
-    subscriber.access_token = bcrypt.hashSync(password, 10);
-    subscriber.access_token_expiry_date = new Date(Date.now() + (1000 * 60 * 60));
-    const transporter = new MailTransporter({ req, res }, subscriber.customer);
-    const subject = "Subscriber Profile Account - Access Token";
-    const message = "Please copy and paste the below password to view your subscription profile and details. " +
-    `The password is only valid for one hour.\n\n<b style="font-size: 1.5em">${password}</b>`;
-    try { await subscriber.save() } catch(err) { return res.status(500).send(err.message) }
-    transporter.sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message);
-        if (process.env.NODE_ENV !== "production") console.log(password);
-        res.render('subscriber-account-access', { title: "Subscription Account Access", pagename: "account-access", subscriber, email_alert: true });
-    })
-});
-
-router.get("/:id", async (req, res, next) => {
-    if (req.isUnauthenticated() || !req.user.sub_id) return res.status(401).redirect(`/subscription/account/access/${req.params.id}`);
-    const subscriber = await Subscriber.findOne({ sub_id: req.params.id });
-    if (!subscriber) return next();
-    const sub = await Stripe.subscriptions.retrieve(subscriber.sub_id, { expand: ["customer", "latest_invoice", "default_payment_method"] });
-    const subscriptions = [sub];
-    const subscription_products = await Stripe.products.list({ ids: subscriptions.map(s => s.items.data[0].price.product) });
-    res.render('subscriber-account', { title: "My Subscription Account", pagename: "account", countries, orders: null, wishlist: null, subscriptions, subscription_products });
-});
-
-router.post("/account/access", async (req, res) => {
-    if (req.isAuthenticated()) return res.status(401).send("Please log out of your current account first.\nOr check if your subscription details are present on your current account.");
-    passport.authenticate("local-login-subscriber", (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
-        if (!user) return res.status(400).send(info.message);
-        req.login(user, err => {
-            if (err) return res.status(500).send(err.message || err);
-            res.send(`/subscription/${user.sub_id}`);
-        });
-    })(req, res);
-});
 
 router.post("/add", isAuthed, async (req, res) => {
     try {

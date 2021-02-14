@@ -119,8 +119,6 @@ router.get('/account/logout', (req, res) => {
 
 router.post('/account/edit', isAuthed, async (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, state, country, postcode, image_file, image_url, mail_sub } = req.body;
-    const subscriber = await Subscriber.findOne({ "customer.member_id": id });
-    if (subscriber) { subscriber.mail_sub = !!mail_sub; await subscriber.save() }
     try {
         const amb = await Ambassador.findById(id);
         if (!amb) return res.status(500).send("Ambassador not found");

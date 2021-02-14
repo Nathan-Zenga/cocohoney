@@ -74,8 +74,6 @@ router.post('/signup', async (req, res) => {
 router.post('/edit', isAuthed, async (req, res) => {
     const { id, firstname, lastname, email, phone_number, image_file, image_url, mail_sub } = req.body;
     try {
-        const subscriber = await Subscriber.findOne({ "customer.member_id": id });
-        if (subscriber) { subscriber.mail_sub = !!mail_sub; await subscriber.save() }
         const member = await Member.findById(id);
         if (!member) return res.status(404).send("Customer not found");
         if (firstname)    member.firstname = firstname;
@@ -160,8 +158,8 @@ router.post('/password-reset', async (req, res) => {
 });
 
 router.post('/subscription/edit', async (req, res) => {
-    const { is_admin, is_ambassador, is_subscriber, is_customer, mail_sub } = res.locals;
-    if (!is_admin && !is_ambassador && !is_subscriber && !is_customer) return res.sendStatus(401);
+    const { is_admin, is_ambassador, is_customer } = res.locals;
+    if (!is_admin && !is_ambassador && !is_customer) return res.sendStatus(401);
     const { subscriber_id: id, name, phone_number, email, line1, line2, city, country, postcode } = req.body;
     const customer = await Stripe.customers.retrieve(id);
     const params = { shipping: { address: {} } };
