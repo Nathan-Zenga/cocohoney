@@ -20,7 +20,7 @@
     <script>
         var href = $(".note-link").attr("href");
         var $form = $(".note-link").closest("form");
-        $(".note-link").attr("href", href + location.pathname + location.search);
+        $(".note-link").attr("href", href + location.search);
         !location.search || $form.append($("<input>").attr({ type: "hidden", name: "qs", value: location.search.slice(1) }));
 
         $("form").submit(function(e) {
