@@ -6,59 +6,136 @@
 
 <div class="tab-content" style="padding-top: 2em">
     <div id="ambassadors" class="tab-pane fade in active">
-        <div class="info-label" style="text-align: center">
+        <div class="info-label">
             <i class="fal fa-info-circle info-icon"></i>
-            <b>Click a name to go to their account page</b>
+            <b>Click on an ambassador for more details</b>
         </div>
-        <div class="admin-list">
-            <%_ ambassadors.forEach(amb => { _%>
-            <div class="row">
-                <div class="col-sm-9 col-xs-6 item">
-                    <%_ var link = `/admin/ambassador/account?firstname=${amb.firstname}&lastname=${amb.lastname}`; _%>
-                    <a href="<%- link %>"><%- `${amb.firstname} ${amb.lastname}` %></a>
-                </div>
-                <div class="col-sm-3 col-xs-6 options">
-                    <%_ if (amb.verified === false) { _%>
-                    <form class="verify-ambassador-form minimal" method="post" action="/ambassador/register/verify" style="display: inline-block; margin: 5px 5px 5px 0">
-                        <input type="hidden" name="token" value="<%- amb.token %>">
-                        <button type="submit" style="padding: 6px 10px">Verify</button>
-                    </form>
-                    <%_ } _%>
-                    <form class="delete-ambassador-form minimal" method="post" action="/ambassador/delete" style="display: inline-block; margin: 5px 0">
-                        <input type="hidden" name="id" value="<%- amb._id %>">
-                        <button type="submit" style="padding: 6px 10px">Delete</button>
-                    </form>
+        <%_ const ambassadors_layout_renderer = ambassadors => {
+            ambassadors.forEach(amb => {
+                const random_id = Math.round(Math.random() * 10000000);
+                const link = `/admin/ambassador/account?firstname=${amb.firstname}&lastname=${amb.lastname}`;
+                const { orders_applied: sold } = discount_codes.find(dc => dc.code === amb.discount_code) || {}; _%>
+        <a class="list-item" data-toggle="modal" data-target="#ambassador-modal-<%= random_id %>">
+            <%= `${amb.firstname} ${amb.lastname}` %>
+            <br><small><%= sold ? sold.length : 0 %> order<%= sold && /0|[2-999]|\d{2,}/.test(sold.length) ? "s" : "" %> sold</small>
+        </a>
+
+        <div id="ambassador-modal-<%= random_id %>" class="modal fade in" role="dialog">
+            <div class="modal-icons">
+                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2><%= `${amb.firstname} ${amb.lastname}` %></h2>
+                <p><%= amb.email %></p>
+                <p>Discount code: <%= amb.discount_code %></p>
+                <p><a href="<%= link %>" target="_blank" style="text-decoration: underline">View profile</a></p>
+                <%_ const orders_sold = orders.filter(o => (sold || []).includes(o.id)); _%>
+                <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
+                <div class="customer-orders container">
+                    <div class="row">
+                        <%_ orders_sold.forEach(order => { _%>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="customer-order">
+                                <p class="order_id"><%= order.id %></p>
+                                <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
+                                <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
+                                <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
+                                <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
+                            </div>
+                        </div>
+                        <%_ }) _%>
+                    </div>
                 </div>
             </div>
-            <%_ }) _%>
+        </div>
+        <%_ })} _%>
+        <div class="admin-list" id="ambassadors-list">
+            <%_ const ambs_verified = ambassadors.filter(amb => amb.verified === true);
+                const ambs_unverified = ambassadors.filter(amb => amb.verified === false);
+                if (ambs_unverified.length) { _%>
+            <div id="untracked-orders">
+                <div class="info-label"><b>Unverified</b></div>
+                <%- ambassadors_layout_renderer(ambs_unverified) %>
+            </div>
+            <div class="info-label"><b>Verified</b></div>
+            <%_ } _%>
+            <%- ambassadors_layout_renderer(ambs_verified) %>
         </div>
     </div>
 
     <div id="orders" class="tab-pane fade">
-        <div class="info-label" style="text-align: center">
+        <div class="info-label">
             <i class="fal fa-info-circle info-icon"></i>
-            <b>Labelled by customer name</b>
+            <b>Click on an order for more details</b>
         </div>
-        <div class="admin-list">
-            <%_ orders.forEach(order => { _%>
-            <div class="row">
-                <div class="col-<%= order.tracking_ref ? 'xs' : 'sm' %>-6 item"><%- `${order.customer_name}` %></div>
-                <div class="col-<%= order.tracking_ref ? 'xs' : 'sm' %>-6 options">
-                    <a href="/order/<%- order.id %>"><button type="button">View details</button></a>
-                    <%_ if (!order.tracking_ref) {
-                        const event_tkt_present = order.cart.find(item => /^\'(.*?)\' event ticket$/i.test(item.name)); _%>
-                    <a<%- !event_tkt_present ? ` href="/shipping/tracking/ref/send?id=${order.id}"` : '' %>>
-                        <button type="button"<%- event_tkt_present ? ' disabled' : '' %>>
-                            <%= event_tkt_present ? "Event Ticket Purchase" : "Add Tracking Number" %>
-                        </button>
-                    </a>
-                    <%_ } _%>
+        <%_ const orders_layout_renderer = orders => {
+            const emails_set = [...new Set(orders.map(o => o.customer_email.toLowerCase()))];
+            emails_set.forEach(email => {
+                const random_id = Math.round(Math.random() * 10000000);
+                const { customer_name, customer_email } = orders.find(o => email === o.customer_email.toLowerCase());
+                const customer_orders = orders.filter(o => email === o.customer_email.toLowerCase()); _%>
+        <a class="list-item" data-toggle="modal" data-target="#customer-orders-modal-<%= random_id %>">
+            <%= customer_name %>
+            <br><small><%= customer_orders.length %> order<%= /0|[2-999]|\d{2,}/.test(customer_orders.length) ? "s" : "" %></small>
+            <%_ if (customer_orders.find(o => o.discounted)) {
+                if (customer_orders.length === 1) { _%>
+            <br><small>(Discount code used in this order)</small>
+            <%_ } else {
+                const order_count = customer_orders.filter(o => o.discounted).length; _%>
+            <br><small>(Discount code used in <%= order_count %> order<%= /0|[2-999]|\d{2,}/.test(order_count) ? "s" : "" %>)</small>
+            <%_ }} _%>
+        </a>
+
+        <div id="customer-orders-modal-<%= random_id %>" class="modal fade in" role="dialog">
+            <div class="modal-icons">
+                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h2><%= customer_name %></h2>
+                <p><%= customer_email %></p>
+                <div class="info-label"><b>ORDERS</b></div>
+                <div class="customer-orders container">
+                    <div class="row">
+                        <%_ customer_orders.forEach(order => { _%>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="customer-order">
+                                <p class="order_id"><%= order.id %></p>
+                                <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
+                                <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
+                                <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
+                                <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
+                                <%_ if (!order.tracking_ref) { _%>
+                                <p><a class="link" href="/shipping/tracking/ref/send?id=<%= order.id %>" target="_blank">Add tracking number</a></p>
+                                <%_ } _%>
+                            </div>
+                        </div>
+                        <%_ }) _%>
+                    </div>
                 </div>
             </div>
-            <%_ }) _%>
+        </div>
+        <%_ })} _%>
+        <div class="admin-list" id="orders-list">
+            <%_ const order_untracked = orders.filter(o => !o.tracking_ref).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+                const discounted_orders = orders.filter(o => o.tracking_ref && o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+                const other_orders = orders.filter(o => o.tracking_ref && !o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
+                if (order_untracked.length) { _%>
+            <div id="untracked-orders">
+                <div class="info-label"><b>Untracked Orders</b> (<%= order_untracked.length %>)</div>
+                <%- orders_layout_renderer(order_untracked) %>
+            </div>
+            <%_ } if (discounted_orders.length) { _%>
+            <div id="discounted-orders">
+                <div class="info-label"><b>Discounted Orders</b> (<%= discounted_orders.length %>)</div>
+                <%- orders_layout_renderer(discounted_orders) %>
+            </div>
+            <%_ } if ([...order_untracked, ...discounted_orders].length) { _%>
+            <div class="info-label"><b>Other Orders</b> (<%= other_orders.length %>)</div>
+            <%_ } _%>
+            <%- orders_layout_renderer(other_orders) %>
         </div>
     </div>
-    
+
     <div id="amb-sales-report" class="tab-pane fade">
         <form id="report-submit-form" action="/report/submit">
             <fieldset>
@@ -89,5 +166,4 @@
             <button type="submit">SEND</button>
         </form>
     </div>
-
 </div>

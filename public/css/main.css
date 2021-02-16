@@ -1113,36 +1113,75 @@ label .dropdown-arrow {
     margin-bottom: 2em;
 }
 
-#admin-page .info-label {
-    font-size: 1em;
-}
-
-#admin-page .admin-list {
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-#admin-page .admin-list .row {
-    border-bottom: 1px solid rgba(240, 230, 140, .5);
-    padding-top: .5em;
-    padding-bottom: .5em;
-}
-
-#admin-page .admin-list .item {
-    margin: 10px 0;
-}
-
-#admin-page .admin-list .options {
-    text-align: right;
-}
-
-#admin-page .admin-list button {
-    margin-bottom: 0;
-}
-
 .info-label .info-icon {
     margin-right: 5px;
     font-size: 1.2em;
+}
+
+#admin-page .info-label {
+    font-size: 1em;
+    text-align: center;
+}
+
+#admin-page .admin-list {
+    text-align: center;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+#admin-page .admin-list .list-item {
+    display: inline-block;
+    padding: 15px;
+    background-color: rgb(0, 0, 0, .5);
+    border-radius: 7px;
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+}
+
+#admin-page .admin-list .list-item small {
+    opacity: .5;
+}
+
+#admin-page .admin-list .customer-orders {
+    margin-top: 2em;
+}
+
+#admin-page .admin-list .customer-orders .customer-order {
+    padding: 20px;
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 7px;
+    margin-bottom: 20px;
+}
+
+#admin-page .admin-list .customer-orders .customer-order p:last-child {
+    margin-bottom: 0;
+}
+
+#admin-page .admin-list .customer-orders .customer-order .order_id {
+    border-bottom: 1px solid white;
+    padding-bottom: 10px;
+}
+
+#admin-page .admin-list .customer-orders .customer-order small {
+    opacity: .5;
+}
+
+#admin-page .admin-list .customer-orders .customer-order a.link {
+    font-size: .85em;
+    border-bottom: 1px solid white;
+}
+
+#admin-page #untracked-orders,
+#admin-page #discounted-orders {
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid rgb(240, 230, 140);
+}
+
+#admin-page .admin-list .modal .info-label {
+    padding: 10px;
+    background-color: rgba(0, 0, 0, .15);
 }
 
 .tab-content {
