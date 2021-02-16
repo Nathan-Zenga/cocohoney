@@ -186,7 +186,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     const everyone = [
         ...ambassadors.filter(a => !members.find(m => m.email === a.email)),
         ...members,
-        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email })) ];
+        ...customers.map(cus => ({ name: cus.customer_name, email: cus.customer_email, mail_sub: true })) ];
 
     if (!subject || !message) return res.status(400).send("Subject and message cannot be empty");
     if (!everyone.length) return res.status(404).send("No recipients to send this email to");
