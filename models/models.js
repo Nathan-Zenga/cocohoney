@@ -212,9 +212,8 @@ module.exports.Subscription_plan = model('Subscription_plan', (() => {
     });
 
     schema.virtual("name").get((val, vt, doc) => {
-        var interval = doc.interval + "ly";
-        var interval_count = doc.interval_count > 1 ? doc.interval_count + "-" : "";
-        interval = interval.charAt(0).toUpperCase() + interval.slice(1).toLowerCase();
+        const interval = doc.interval.charAt(0).toUpperCase() + doc.interval.slice(1).toLowerCase();
+        const interval_count = doc.interval_count > 1 ? doc.interval_count + "-" : "";
         return interval_count + interval;
     });
 

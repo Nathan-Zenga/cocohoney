@@ -395,6 +395,10 @@ footer #copyright {
     }
 }
 
+.section-label {
+    margin-top: 60px;
+}
+
 .section-label > * {
     position: relative;
 }
