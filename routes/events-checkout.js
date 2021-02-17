@@ -74,6 +74,7 @@ router.get("/session/complete", async (req, res) => {
             customer_email: customer.email,
             destination: customer.shipping.address,
             cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }],
+            tracking_ref: "N/A",
             mail_sub
         });
 

@@ -94,6 +94,7 @@ router.get("/complete", async (req, res) => {
                 customer_email: email,
                 destination: { line1, line2, city, country: country_code, postal_code, state },
                 cart: [{ id, name: `'${name}' Event Ticket`, price, image, info, qty }],
+                tracking_ref: "N/A",
                 mail_sub
             });
     
