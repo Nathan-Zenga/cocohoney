@@ -67,20 +67,23 @@ router.get("/complete", async (req, res) => {
     const { session_id, price_id } = req.session;
     try {
         const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent", "customer"] });
-        const { recurring } = await Stripe.prices.retrieve(price_id);
+        const { product, recurring } = await Stripe.prices.retrieve(price_id, { expand: ["product"] });
         const first_charge_date = new Date();
+        const backdate = new Date();
         const interval_count = recurring.interval_count * (recurring.interval === "year" ? 12 : 1);
-        first_charge_date.setMonth( first_charge_date.getMonth() + (first_charge_date.getDate() > 3 ? interval_count : 0) );
-        first_charge_date.setDate(3);
+        first_charge_date.setMonth(first_charge_date.getMonth() + (first_charge_date.getDate() > 3 ? interval_count : 0), 3);
+        first_charge_date.setHours(0, 0, 0, 0);
+        backdate.setMonth(backdate.getMonth() - (backdate.getDate() <= 3 ? interval_count : 0), 3);
+        backdate.setHours(0, 0, 0, 0);
 
         const subscription = await Stripe.subscriptions.create({
             customer: customer.id,
             default_payment_method: setup_intent.payment_method,
             items: [{ price: price_id }],
-            billing_cycle_anchor: Math.round(first_charge_date.getTime() / 1000)
+            billing_cycle_anchor: Math.round(first_charge_date.getTime() / 1000),
+            backdate_start_date: Math.round(backdate.getTime() / 1000)
         });
-        const product = await Stripe.products.retrieve(subscription.items.data[0].price.product);
-        const invoice = await Stripe.invoices.retrieve(subscription.latest_invoice);
+        const { hosted_invoice_url } = await Stripe.invoices.retrieve(subscription.latest_invoice);
 
         await Subscriber.create({
             customer: { member_id: (req.user || {})._id, name: customer.name, email: customer.email },
@@ -97,9 +100,8 @@ router.get("/complete", async (req, res) => {
             "Thank you for signing up to one of our Monthly Lashes Subscriptions! " +
             "We are happy to confirm your sign-up and payment was successful. " +
             `Here is a summery of your order:\n\n${product.name} (£${(product.price / 100).toFixed(2)})\n\n` +
-            "Click below to view further details about this order:\n\n" +
-            `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>\n\n` +
+            `Click below to view further details about this order:\n\n((INVOICE SUMMARY))[${hosted_invoice_url}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${hosted_invoice_url})</small>\n\n` +
             "Please note that you can view AND edit all of your subscriptions details on your account when you are logged in.\n\n" +
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
@@ -107,9 +109,8 @@ router.get("/complete", async (req, res) => {
             transporter.setRecipient({ email: req.session.admin_email }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer.\n\n" +
-                "<b>View the order summary below:</b>\n" +
-                `((INVOICE SUMMARY))[${invoice.hosted_invoice_url}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${invoice.hosted_invoice_url})</small>`
+                `<b>View the order summary below:</b>\n((INVOICE SUMMARY))[${hosted_invoice_url}]\n` +
+                `<small>(Copy the URL if the above link is not working - ${hosted_invoice_url})</small>`
             }, err => {
                 if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
                 res.render('subscription-checkout-success', { title: "Subscription Payment Successful", pagename: "subscription-checkout-success" })
