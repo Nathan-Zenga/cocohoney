@@ -1184,6 +1184,15 @@ label .dropdown-arrow {
     background-color: rgba(0, 0, 0, .15);
 }
 
+#admin-page .admin-list .modal .opt {
+    display: inline-block;
+    margin: 5px 5px 5px 0;
+}
+
+#admin-page .admin-list .modal .opt [type=submit] {
+    padding: 6px 10px;
+}
+
 .tab-content {
     padding-top: 2em;
     padding-bottom: 2em;

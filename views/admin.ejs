@@ -215,13 +215,12 @@
 
         $(".delete-ambassador-form").off("submit").submit(function(e) {
             e.preventDefault();
-            var form = this;
             var confirmation = confirm("Are you sure you want to delete this ambassador?");
             if (confirmation) {
-                var btnController = new submitBtnController(form);
-                $.post(form.action, $(form).serializeArray(), function(result) {
-                    alert(result);
-                    $(form).closest("li").slideUp(function() { $(this).remove() });
+                var btnController = new submitBtnController(this);
+                $.post(this.action, $(this).serializeArray(), function(result) {
+                    var confirmation2 = confirm(result + "\nReload to see changes?");
+                    if (confirmation2) location.reload();
                 }).fail(function(err, status, codeMessage) {
                     alert(codeMessage + (err ? ": " + err.responseText : ""));
                 }).always(function() {
@@ -232,13 +231,12 @@
 
         $(".verify-ambassador-form").off("submit").submit(function(e) {
             e.preventDefault();
-            var form = this;
             var confirmation = confirm("Verify this ambassador?");
             if (confirmation) {
-                var btnController = new submitBtnController(form);
-                $.post(form.action, $(form).serializeArray(), function(result) {
-                    alert(result);
-                    $(form).slideUp(function() { $(this).remove() });
+                var btnController = new submitBtnController(this);
+                $.post(this.action, $(this).serializeArray(), function(result) {
+                    var confirmation2 = confirm(result + "\nReload to see changes?");
+                    if (confirmation2) location.reload();
                 }).fail(function(err, status, codeMessage) {
                     alert(codeMessage + (err ? ": " + err.responseText : ""));
                 }).always(function() {

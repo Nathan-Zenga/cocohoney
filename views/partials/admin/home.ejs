@@ -29,6 +29,18 @@
                 <p><%= amb.email %></p>
                 <p>Discount code: <%= amb.discount_code %></p>
                 <p><a href="<%= link %>" target="_blank" style="text-decoration: underline">View profile</a></p>
+
+                <%_ if (amb.verified === false) { _%>
+                <form class="verify-ambassador-form minimal opt" method="post" action="/ambassador/register/verify">
+                    <input type="hidden" name="token" value="<%- amb.token %>">
+                    <button type="submit">Verify</button>
+                </form>
+                <%_ } _%>
+                <form class="delete-ambassador-form minimal opt" method="post" action="/ambassador/delete">
+                    <input type="hidden" name="id" value="<%- amb._id %>">
+                    <button type="submit">Delete</button>
+                </form>
+
                 <%_ const orders_sold = orders.filter(o => (sold || []).includes(o.id)); _%>
                 <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
                 <div class="customer-orders container">
