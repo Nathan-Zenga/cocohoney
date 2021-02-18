@@ -1193,6 +1193,11 @@ label .dropdown-arrow {
     padding: 6px 10px;
 }
 
+#admin-page .admin-list .letter-category {
+    padding: 10px 0;
+    margin: 0 0 5px;
+}
+
 .tab-content {
     padding-top: 2em;
     padding-bottom: 2em;
