@@ -264,6 +264,8 @@ router.post('/sale/toggle', isAuthed, async (req, res) => {
     const sale = docs.length ? docs[0] : new Sale();
     const ids = (Array.isArray(id) ? id : [id]).filter(e => e);
     const percentages = (Array.isArray(percentage) ? percentage : [percentage]).filter(e => e);
+    if (percentages.find(p => isNaN(parseInt(p)))) return res.status(400).send("Percentage is invalid");
+    if (percentages.find(p => parseInt(p) <= 0)) return res.status(400).send("Percentage cannot be less than or equal to 0");
     if (ids.length !== percentages.length && !sitewide) return res.status(400).send("Uneven number of selected items and specified percentages");
 
     sale.active = false;
