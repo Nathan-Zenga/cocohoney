@@ -122,8 +122,11 @@
         </form>
     </div>
 
-    <style>#subscription-list td { width: 33.333% }</style>
     <div id="subscription-list" class="list-tab tab-pane fade">
+        <div class="info-label">
+            <i class="fal fa-info-circle info-icon"></i>
+            <b><i class="fal fa-search"></i> = Click to view details</b>
+        </div>
         <%_ if (!subscription_plans.length) { _%>
         <p class="no-removable-items-label"><b>NO SUBSCRIPTION PLANS TO LIST</b></p>
         <%_ } else { _%>
@@ -141,7 +144,46 @@
                     <tr>
                         <th scope="row"><%= plan.name %> Plan</th>
                         <td id="sub-price-<%= i %>">£<%= (plan.price / 100).toFixed(2) %></td>
-                        <td id="subscriber-count-<%= i %>"><%= subscription_product_names.filter(n => n === plan.name).length %></td>
+                        <td id="subscriber-count-<%= i %>">
+                            <%_ const filter = n => RegExp(`^${plan.name.replace("-", "\\-")}`).test(n); _%>
+                            <span class="value">
+                                <%= subscription_products.data.map(p => p.name).filter(filter).length %>
+                            </span>
+                            <a data-toggle="modal" data-target="#plan-subscribers-modal-<%= i %>">
+                                <i class="fal fa-search modal-toggler"></i>
+                            </a>
+
+                            <div id="plan-subscribers-modal-<%= i %>" class="modal fade in" role="dialog">
+                                <div class="modal-icons">
+                                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="container">
+                                        <h1 class="modal-title"><%= plan.name %> Subscription Members</h1>
+                                        <div class="row">
+                                            <%_ const products = subscription_products.data.filter(s => RegExp(`^${plan.name}`).test(s.name));
+                                                const subs = subscriptions_all.data.filter(s => s.items.data.find(itm => products.map(p => p.id).includes(itm.price.product)));
+                                                if (!subs.length) { _%>
+                                            <h2>No members</h2>
+                                            <%_ } subs.forEach(sub => { _%>
+                                            <div class="col-md-4 col-sm-6">
+                                                <div class="subscriber-details">
+                                                    <p><b><%- sub.customer.name; %></b></p>
+                                                    <p><%- sub.customer.email; %></p>
+                                                    <p><%- sub.customer.shipping.address.line1; %></p>
+                                                    <%- sub.customer.shipping.address.line2 ? `<p>${sub.customer.shipping.address.line2}</p>` : ""; %>
+                                                    <p><%- sub.customer.shipping.address.city +", "+ sub.customer.shipping.address.country; %></p>
+                                                    <p><%- sub.customer.shipping.address.postal_code; %></p>
+                                                    <p><small>Date joined: <%- new Date(sub.created * 1000).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }); %></small></p>
+                                                    <p><small style="opacity: .5"><a href="<%- sub.latest_invoice.hosted_invoice_url %>">View latest invoice</a></small></p>
+                                                </div>
+                                            </div>
+                                            <%_ }) _%>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     <%_ }) _%>
                 </tbody>

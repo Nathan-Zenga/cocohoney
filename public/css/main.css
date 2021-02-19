@@ -1420,6 +1420,45 @@ label .dropdown-arrow {
     text-overflow: ellipsis;
 }
 
+#admin-page #subscription-list td {
+    width: 33.333%
+}
+
+#admin-page #subscription-list [id*=subscriber-count-] .value {
+    display: inline-block;
+    width: 20px;
+}
+
+#admin-page #subscription-list .modal-toggler {
+    padding: 0 15px;
+    opacity: .5;
+}
+
+#admin-page #subscription-list .modal .modal-body {
+    text-align: center;
+    color: white;
+}
+
+#admin-page #subscription-list .modal .modal-title {
+    font-size: 2em;
+    margin-bottom: 1em;
+}
+
+#admin-page #subscription-list .modal .subscriber-details {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, .5);
+    border-radius: 7px;
+    margin-bottom: 15px;
+}
+
+#admin-page #subscription-list .modal .subscriber-details p:last-child {
+    margin-bottom: 0;
+}
+
+#admin-page #subscription-list .modal .subscriber-details a {
+    border-bottom: 1px solid white;
+}
+
 .info-bubble {
     position: fixed;
     display: none;
