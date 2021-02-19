@@ -78,11 +78,15 @@
                                 <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
                                 <fieldset>
                                     <div class="row">
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
                                             <label for="city">CITY</label>
                                             <input type="text" name="city" required>
                                         </div>
-                                        <div class="col-sm-4">
+                                        <div class="col-sm-6">
+                                            <label for="state">STATE <span>/ REGION / PROVINCE</span></label>
+                                            <input type="text" name="state" placeholder="(OPTIONAL)">
+                                        </div>
+                                        <div class="col-sm-6">
                                             <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                                             <select name="country" required>
                                                 <option value="">-</option>
@@ -91,8 +95,8 @@
                                                 <%_ } _%>
                                             </select>
                                         </div>
-                                        <div class="col-sm-4">
-                                            <label for="postcode">POST / ZIP CODE</label>
+                                        <div class="col-sm-6">
+                                            <label for="postcode">POST <span>/ ZIP CODE</span></label>
                                             <input type="text" name="postcode" required>
                                         </div>
                                     </div>

@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.post("/session/create", async (req, res) => {
-    const { firstname, lastname, email, address_l1, address_l2, city, country, postcode, discount_code, shipping_method_id, mail_sub } = req.body;
+    const { firstname, lastname, email, address_l1, address_l2, city, state, country, postcode, discount_code, shipping_method_id, mail_sub } = req.body;
     const { cart, location_origin, is_ambassador } = Object.assign(req.session, res.locals);
     const price_total = cart.map(p => ({
         price: p.price,
@@ -52,7 +52,7 @@ router.post("/session/create", async (req, res) => {
             email,
             shipping: {
                 name: `${firstname} ${lastname}`,
-                address: { line1: address_l1, line2: address_l2, city, country, postal_code: postcode }
+                address: { line1: address_l1, line2: address_l2, city, state, country, postal_code: postcode }
             }
         });
 

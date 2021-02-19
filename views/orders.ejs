@@ -53,8 +53,8 @@
                             <%= order.destination.line1 %><br>
                             <%- order.destination.line2 ? order.destination.line2 + "<br>": "" %>
                             <%= order.destination.city %><br>
-                            <%= order.destination.country == "GB" ? "UK" : order.destination.country %><br>
                             <%- order.destination.state ? order.destination.state + "<br>": "" %>
+                            <%= order.destination.country == "GB" ? "UK" : order.destination.country %><br>
                             <%= order.destination.postal_code || order.destination.postcode || "" %>
                         </p>
                     </div>

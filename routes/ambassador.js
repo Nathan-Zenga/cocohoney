@@ -16,9 +16,9 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
     if (req.isAuthenticated()) return res.status(400).send("Please log out first");
-    const { firstname, lastname, email, phone_number, line1, line2, city, country, postcode, instagram, image_file, image_url } = req.body;
+    const { firstname, lastname, email, phone_number, line1, line2, city, state, country, postcode, instagram, image_file, image_url } = req.body;
     const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
-    ambassador.address = { line1, line2, city, country, postcode };
+    ambassador.address = { line1, line2, city, state, country, postcode };
     ambassador.save((err, saved) => {
         if (err) return res.status(400).send(err.message);
 
@@ -126,7 +126,7 @@ router.get('/account/logout', (req, res) => {
 });
 
 router.post('/account/edit', isAuthed, (req, res) => {
-    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, country, postcode, image_file, image_url, mail_sub } = req.body;
+    const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, state, country, postcode, image_file, image_url, mail_sub } = req.body;
     Ambassador.findById(id, (err, amb) => {
         if (err) return res.status(500).send(err.message);
         if (!amb) return res.status(500).send("Ambassador not found");
@@ -141,6 +141,7 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (line2)          amb.address.line2 = line2;
         if (city)           amb.address.city = city;
         if (country)        amb.address.country = country;
+        if (state)          amb.address.state = state;
         if (postcode)       amb.address.postcode = postcode;
                             amb.mail_sub = !!mail_sub;
 

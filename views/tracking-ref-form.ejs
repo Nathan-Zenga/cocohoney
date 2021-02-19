@@ -24,8 +24,8 @@
                             destination += order.destination.line1 + "\n";
                             destination += (order.destination.line2 ? order.destination.line2 + "\n" : "");
                             destination += order.destination.city + "\n";
-                            destination += order.destination.country == "GB" ? "UK\n" : order.destination.country + "\n";
                             destination += order.destination.state ? order.destination.state + "\n" : "";
+                            destination += order.destination.country == "GB" ? "UK\n" : order.destination.country + "\n";
                             destination += order.destination.postal_code || order.destination.postcode || "";
                         _%>
                         <textarea rows="10" disabled><%- destination %></textarea>

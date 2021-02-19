@@ -95,6 +95,7 @@ module.exports.Ambassador = model('Ambassador', Schema({
         line2: { type: String, default: "" },
         city: { type: String, default: "" },
         country: { type: String, default: "" },
+        state: { type: String, default: "" },
         postcode: { type: String, default: "" }
     },
     instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },

@@ -5,7 +5,7 @@ const MailTransporter = require('../modules/mail-transporter');
 const production = process.env.NODE_ENV === "production";
 
 router.post("/session/create", async (req, res) => {
-    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, country, postcode, mail_sub } = req.body;
+    const { event_id, quantity, firstname, lastname, email, address_l1, address_l2, city, state, country, postcode, mail_sub } = req.body;
     const { location_origin } = res.locals;
     const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
     const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
@@ -25,7 +25,7 @@ router.post("/session/create", async (req, res) => {
             email,
             shipping: {
                 name: `${firstname} ${lastname}`,
-                address: { line1: address_l1, line2: address_l2, city, country, postal_code: postcode }
+                address: { line1: address_l1, line2: address_l2, city, country, state, postal_code: postcode }
             }
         });
 

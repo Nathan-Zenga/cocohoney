@@ -144,6 +144,9 @@
                                 <p><%- amb.address.line1 %></p>
                                 <p><%- amb.address.line2 %></p>
                                 <p><%- amb.address.city %>, <%- amb.address.country %></p>
+                                <%_ if (amb.address.state) { _%>
+                                <p><%- amb.address.state %></p>
+                                <%_ } _%>
                                 <p><%- amb.address.postcode %></p><br>
 
                                 <p><b>PHONE NUMBER</b></p>
@@ -224,11 +227,15 @@
 
                     <fieldset>
                         <div class="row">
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
                                 <label for="city">CITY</label>
                                 <input type="text" name="city" value="<%- amb.address.city %>">
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-6">
+                                <label for="state">STATE <span>/ REGION / PROVINCE</span></label>
+                                <input type="text" name="state" placeholder="(OPTIONAL)">
+                            </div>
+                            <div class="col-sm-6">
                                 <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                                 <select name="country">
                                     <option value="">-</option>
@@ -238,8 +245,8 @@
                                     <%_ } _%>
                                 </select>
                             </div>
-                            <div class="col-sm-4">
-                                <label for="postcode">POST CODE</label>
+                            <div class="col-sm-6">
+                                <label for="postcode">POST <span>/ ZIP CODE</span></label>
                                 <input type="text" name="postcode" value="<%- amb.address.postcode %>">
                             </div>
                         </div>
