@@ -1,6 +1,7 @@
 @import url('https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css');
 @import url('https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css');
 @import url('https://fonts.googleapis.com/css2?family=Spartan:wght@300;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html, body {
     background-color: black;
@@ -9,6 +10,10 @@ html, body {
     font-weight: 100;
     font-family: Spartan, Arial, sans-serif;
     font-feature-settings: 'liga' 0;
+}
+
+body {
+    top: 0!important;
 }
 
 h1, h2 {
@@ -107,3 +112,81 @@ a:hover {
     width: 100%;
     height: 2px;
 }
+
+/* OVERRIDE GOOGLE TRANSLATE WIDGET CSS BEGIN */
+#google_translator {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.goog-te-gadget {
+    font-family: inherit!important;
+}
+
+.goog-te-gadget-simple {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    padding: 8px !important;
+    border-radius: 4px !important;
+    font-size: 1em !important;
+    line-height: 2rem !important;
+    display: inline-block;
+    cursor: pointer;
+    zoom: 1;
+}
+
+.goog-te-menu2 {
+    max-width: 100%;
+}
+
+.goog-te-menu-value {
+    color: #fff !important;
+}
+
+.goog-te-menu-value:before {
+    font-family: "Material Icons";
+    content: "\E927";
+    margin-right: 16px;
+    font-size: 2rem;
+    vertical-align: -10px;
+}
+
+.goog-te-menu-value span:nth-child(5) {
+    display: none;
+}
+
+.goog-te-menu-value span:nth-child(3) {
+    border: none !important;
+    font-family: "Material Icons";
+}
+.goog-te-menu-value span:nth-child(3):after {
+    font-family: "Material Icons";
+    content: "\E5C5";
+    font-size: 1.5rem;
+    vertical-align: -6px;
+}
+
+.goog-te-gadget-icon {
+    background-image: url(https://placehold.it/32) !important;
+    background-position: 0px 0px;
+    height: 32px !important;
+    width: 32px !important;
+    margin-right: 8px !important;
+    display: none;
+}
+
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+#goog-gt-tt {
+    display: none!important;
+}
+
+.goog-text-highlight {
+    background-color: transparent!important;
+    -webkit-box-shadow: none!important;
+    -moz-box-shadow: none!important;
+    box-shadow: none!important;
+}
+/* OVERRIDE GOOGLE TRANSLATE WIDGET CSS END */

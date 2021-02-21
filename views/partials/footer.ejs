@@ -31,6 +31,75 @@
             </div>
         </div>
     </footer>
+    <script type="text/javascript">
+        function translatorInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translator');
+        }
+
+        $('#google_translator').on("click", function () {
+            // Change font family and color
+            $("iframe").contents().find(".goog-te-menu2-item div, .goog-te-menu2-item:link div, .goog-te-menu2-item:visited div, .goog-te-menu2-item:active div, .goog-te-menu2 *")
+            .css({
+                'color': '#544F4B',
+                'font-family': 'Spartan, sans-serif',
+                'display': 'block',
+            }).end().find(".indicator, .goog-te-menu2-colpad").css({
+                'display': 'none'
+            });
+
+            // Change menu's padding
+            $("iframe").contents().find('.goog-te-menu2-item-selected').css ('display', 'none');
+
+            // Change menu's padding
+            $("iframe").contents().find('.goog-te-menu2').css ({
+                'padding': '0px',
+                'overflow': 'auto'
+            });
+
+            // Change the padding of the languages
+            $("iframe").contents().find('.goog-te-menu2-item div').css('padding', '20px');
+
+            // Change the width of the languages
+            $("iframe").contents().find('.goog-te-menu2-item').css('width', '100%');
+            $("iframe").contents().find('td').css('width', '100%');
+
+            // Change hover effects
+            $("iframe").contents().find(".goog-te-menu2-item div").hover(function () {
+                $(this).css('background-color', 'green').find('span.text').css('color', 'white');
+            }, function () {
+                $(this).css('background-color', 'white').find('span.text').css('color', '#544F4B');
+            });
+
+            // Change Google's default blue border
+            $("iframe").contents().find('.goog-te-menu2').css('border', 'none');
+
+            // Change the iframe's box shadow
+            $(".goog-te-menu-frame").css('box-shadow', '0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.3)');
+
+            // Change the iframe's size and position?
+            var $gtgs = $(this).find(".goog-te-gadget-simple");
+            $(".goog-te-menu-frame").css({
+                position: "absolute",
+                'height': '250px',
+                'width': '50%',
+                'max-width': '500px',
+                'left': $gtgs.offset().left + ($gtgs.width() / 2),
+                'top': $gtgs.offset().top,
+                'transform': 'translate(-50%, -100%)'
+            });
+
+            // Change iframes's size
+            $("iframe").contents().find('.goog-te-menu2').css({
+                'height': '100%',
+                'width': '100%'
+            });
+        });
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=translatorInit"></script>
     <%_ if (production && location_origin === "https://cocohoneycosmetics.com" && !/admin/gi.test(url) && !is_admin) { _%>
     <!-- Default Statcounter code for Cocohoney Cosmetics
     website https://cocohoneycosmetics.com -->
