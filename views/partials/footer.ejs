@@ -26,6 +26,10 @@
                     </div>
                 </div>
             </div>
+            <select name="" id="google_translator_custom">
+                <option value="">Select language</option>
+            </select>
+            <div id="google_translator"></div>
             <div id="copyright">
                 <span>&copy; <%= new Date().getFullYear() %> COCOHONEY COSMETICS LTD.</span>
             </div>
@@ -34,70 +38,38 @@
     <script type="text/javascript">
         function translatorInit() {
             new google.translate.TranslateElement({
-                pageLanguage: 'en',
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
             }, 'google_translator');
         }
 
-        $('#google_translator').on("click", function () {
-            // Change font family and color
-            $("iframe").contents().find(".goog-te-menu2-item div, .goog-te-menu2-item:link div, .goog-te-menu2-item:visited div, .goog-te-menu2-item:active div, .goog-te-menu2 *")
-            .css({
-                'color': '#544F4B',
-                'font-family': 'Spartan, sans-serif',
-                'display': 'block',
-            }).end().find(".indicator, .goog-te-menu2-colpad").css({
-                'display': 'none'
-            });
-
-            // Change menu's padding
-            $("iframe").contents().find('.goog-te-menu2-item-selected').css ('display', 'none');
-
-            // Change menu's padding
-            $("iframe").contents().find('.goog-te-menu2').css ({
-                'padding': '0px',
-                'overflow': 'auto'
-            });
-
-            // Change the padding of the languages
-            $("iframe").contents().find('.goog-te-menu2-item div').css('padding', '20px');
-
-            // Change the width of the languages
-            $("iframe").contents().find('.goog-te-menu2-item').css('width', '100%');
-            $("iframe").contents().find('td').css('width', '100%');
-
-            // Change hover effects
-            $("iframe").contents().find(".goog-te-menu2-item div").hover(function () {
-                $(this).css('background-color', 'green').find('span.text').css('color', 'white');
-            }, function () {
-                $(this).css('background-color', 'white').find('span.text').css('color', '#544F4B');
-            });
-
-            // Change Google's default blue border
-            $("iframe").contents().find('.goog-te-menu2').css('border', 'none');
-
-            // Change the iframe's box shadow
-            $(".goog-te-menu-frame").css('box-shadow', '0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.3)');
-
-            // Change the iframe's size and position?
-            var $gtgs = $(this).find(".goog-te-gadget-simple");
-            $(".goog-te-menu-frame").css({
-                position: "absolute",
-                'height': '250px',
-                'width': '50%',
-                'max-width': '500px',
-                'left': $gtgs.offset().left + ($gtgs.width() / 2),
-                'top': $gtgs.offset().top,
-                'transform': 'translate(-50%, -100%)'
-            });
-
-            // Change iframes's size
-            $("iframe").contents().find('.goog-te-menu2').css({
-                'height': '100%',
-                'width': '100%'
-            });
+        var langauges = ["English", "Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Azerbaijani", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan", "Cebuano", "Chichewa", "Chinese (Simplified)", "Chinese (Traditional)", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "Esperanto", "Estonian", "Filipino", "Finnish", "French", "Frisian", "Galician", "Georgian", "German", "Greek", "Gujarati", "Haitian Creole", "Hausa", "Hawaiian", "Hebrew", "Hindi", "Hmong", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Irish", "Italian", "Japanese", "Javanese", "Kannada", "Kazakh", "Khmer", "Kinyarwanda", "Korean", "Kurdish (Kurmanji)", "Kyrgyz", "Lao", "Latin", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", "Mongolian", "Myanmar (Burmese)", "Nepali", "Norwegian", "Odia (Oriya)", "Pashto", "Persian", "Polish", "Punjabi", "Romanian", "Russian", "Samoan", "Scots Gaelic", "Serbian", "Sesotho", "Shona", "Sindhi", "Sinhala", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili", "Swedish", "Tajik", "Tamil", "Tatar", "Telugu", "Thai", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu", "English", "Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Azerbaijani", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan", "Cebuano", "Chichewa", "Chinese (Simplified)", "Chinese (Traditional)", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "Esperanto", "Estonian", "Filipino", "Finnish", "French", "Frisian", "Galician", "Georgian", "German", "Greek", "Gujarati", "Haitian Creole", "Hausa", "Hawaiian", "Hebrew", "Hindi", "Hmong", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Irish", "Italian", "Japanese", "Javanese", "Kannada", "Kazakh", "Khmer", "Kinyarwanda", "Korean", "Kurdish (Kurmanji)", "Kyrgyz", "Lao", "Latin", "Latvian", "Lithuanian", "Luxembourgish", "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", "Mongolian", "Myanmar (Burmese)", "Nepali", "Norwegian", "Odia (Oriya)", "Pashto", "Persian", "Polish", "Punjabi", "Romanian", "Russian", "Samoan", "Scots Gaelic", "Serbian", "Sesotho", "Shona", "Sindhi", "Sinhala", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili", "Swedish", "Tajik", "Tamil", "Tatar", "Telugu", "Thai", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu"];
+        var html = langauges.map(function(e) { return '<option value="'+ e +'">'+ e +'</option>' });
+        $('#google_translator_custom').append(html).change(function(ev) {
+            $("iframe").contents().find(".goog-te-menu2-item > div").filter(function(i,e) {
+                return $(e).find(".text").text() === ev.target.value
+            }).click()
         });
+
+//        var observer = new MutationObserver(function(mutationsList, observer) {
+//            console.log(observer);
+//            // Use traditional 'for loops' for IE 11
+//            for(var mutation of mutationsList) {
+//                if (mutation.type === 'childList') {
+//                    console.log('A child node has been added or removed.');
+//                }
+//                else if (mutation.type === 'attributes') {
+//                    console.log('The ' + mutation.attributeName + ' attribute was modified.');
+//                }
+//            }
+//        });
+//        var targetNode = $('#google_translator_custom option').get(0);
+
+//        Start observing the target node for configured mutations
+//        observer.observe(targetNode, { attributes: true, childList: true, subtree: true });
+
+//        Later, you can stop observing
+//        observer.disconnect();
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=translatorInit"></script>
     <%_ if (production && location_origin === "https://cocohoneycosmetics.com" && !/admin/gi.test(url) && !is_admin) { _%>
