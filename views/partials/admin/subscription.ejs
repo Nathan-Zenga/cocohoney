@@ -172,7 +172,7 @@
                                                     <p><%- sub.customer.email; %></p>
                                                     <p><%- sub.customer.shipping.address.line1; %></p>
                                                     <%- sub.customer.shipping.address.line2 ? `<p>${sub.customer.shipping.address.line2}</p>` : ""; %>
-                                                    <p><%- sub.customer.shipping.address.city +", "+ sub.customer.shipping.address.country; %></p>
+                                                    <p><%- sub.customer.shipping.address.city +", "+ (sub.customer.shipping.address.state ? `${sub.customer.shipping.address.state}, ` : "") + sub.customer.shipping.address.country; %></p>
                                                     <p><%- sub.customer.shipping.address.postal_code; %></p>
                                                     <p><small>Date joined: <%- new Date(sub.created * 1000).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }); %></small></p>
                                                     <p><small style="opacity: .5"><a href="<%- sub.latest_invoice.hosted_invoice_url %>">View latest invoice</a></small></p>
