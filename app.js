@@ -7,8 +7,9 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { CHCDB, NODE_ENV } = process.env;
+const { CHCDB, NODE_ENV, PORT } = process.env;
 const { Banner_slide, Sale, Product, Box } = require("./models/models");
+const port = PORT || 2020;
 const production = NODE_ENV === "production";
 
 mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
@@ -35,6 +36,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(async (req, res, next) => { // global variables
+    const GET = req.method === "GET";
+    const sale_doc = GET ? (await Sale.find())[0] : null;
     req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.production = production;
     res.locals.url = req.originalUrl;
@@ -42,14 +45,13 @@ app.use(async (req, res, next) => { // global variables
     res.locals.is_admin = (req.user || {}).admin;
     res.locals.is_ambassador = (req.user || {}).ambassador;
     res.locals.is_customer = req.user && !res.locals.is_ambassador && !res.locals.is_admin;
-    res.locals.location_origin = production ? `https://${req.hostname}` : "http://localhost:2020";
-    res.locals.products_all = await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
-    res.locals.boxes_all = await Box.find();
-    res.locals.banner_slides = await Banner_slide.find().sort({ _id: -1 }).exec();
-    const sale_doc = (await Sale.find())[0] || {};
-    res.locals.sale = sale_doc.active || false;
-    res.locals.sale_percentage = sale_doc.percentage || false;
-    res.locals.sale_sitewide = (res.locals.sale && sale_doc.sitewide) || false;
+    res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${port}`;
+    res.locals.products_all = !GET ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
+    res.locals.boxes_all = !GET ? res.locals.boxes_all : await Box.find();
+    res.locals.banner_slides = !GET ? res.locals.banner_slides : await Banner_slide.find().sort({ _id: -1 }).exec();
+    res.locals.sale = !sale_doc ? res.locals.sale : sale_doc.active || false;
+    res.locals.sale_percentage = !sale_doc ? res.locals.sale_percentage : sale_doc.percentage || false;
+    res.locals.sale_sitewide = !sale_doc ? res.locals.sale_sitewide : (res.locals.sale && sale_doc.sitewide) || false;
     res.locals.cart = req.session.cart = req.session.cart || [];
     next();
 });
@@ -79,9 +81,6 @@ app.get("*", (req, res) => {
     res.status(404).render('error', { title: "Error 404", pagename: "error", html });
 });
 
-app.post("*", (req, res) => {
-    res.status(400).send("Sorry, your request currently cannot be processed");
-});
+app.post("*", (req, res) => res.status(400).send("Sorry, your request currently cannot be processed"));
 
-const port = process.env.PORT || 2020;
 app.listen(port, () => { console.log(`Server started${production ? "" : " on port " + port}`) });
