@@ -393,10 +393,10 @@ section .media-wrapper .main-media.small video {
 .section-label .label-bg {
     position: absolute;
     top: -40px;
-    width: 380px;
+    width: 450px;
     height: 120px;
     background-position: 0 center;
-    background-size: auto 140%;
+    background-size: 100% 130%;
     background-repeat: no-repeat;
     background-image: url("https://res.cloudinary.com/natzen/image/upload/v1598991355/cocohoney/site-content/gold-brush-stroke.png");
     -webkit-filter: brightness(2) grayscale(0.6);
@@ -1196,6 +1196,36 @@ label .dropdown-arrow {
 #admin-page .admin-list .letter-category {
     padding: 10px 0;
     margin: 0 0 5px;
+}
+
+#admin-page #overview-image form .img {
+    position: relative;
+    padding-top: 100%;
+    background-position: center;
+    background-color: rgba(0, 0, 0, .25);
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-bottom: 30px;
+}
+
+#admin-page #overview-image form input[type=checkbox],
+#admin-page #overview-image form input[type=number] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    margin: 10px;
+}
+
+#admin-page #overview-image form input[type=number] {
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 2px solid rgb(124, 76, 76);
+    background-color: white;
+    color: black;
 }
 
 .tab-content {

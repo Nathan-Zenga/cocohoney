@@ -66,23 +66,31 @@ router.post('/overview-images/edit', isAuthed, (req, res) => {
     })
 });
 
-router.post('/overview-images/remove', isAuthed, (req, res) => {
-    const ids = Object.values(req.body);
-    if (!ids.length) return res.status(400).send("Nothing selected");
-    Overview_image.find({_id : { $in: ids }}, (err, images) => {
+router.post('/overview-images/reorder', isAuthed, (req, res) => {
+    const ids = (Array.isArray(req.body.id) ? req.body.id : [req.body.id]).filter(e => e);
+    forEachOf(ids, (_id, position, cb) => {
+        Overview_image.findOneAndUpdate({ _id }, { $set: { position } }, err => { cb() })
+    }, err => {
         if (err) return res.status(500).send(err.message);
-        if (!images.length) return res.status(404).send("No images found");
-        each(images, (item, cb) => {
-            Overview_image.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err || "Image(s) not found");
-                cloud.api.delete_resources([item.p_id], () => cb());
-            })
-        }, err => {
-            if (!err) return res.send("Image"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-            let is404 = err.message === "Image(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Product(s) not found");
+        res.send("Overview images successfully reordered");
+    })
+});
+
+router.post('/overview-images/remove', isAuthed, async (req, res) => {
+    const ids = (Array.isArray(req.body.id) ? req.body.id : [req.body.id]).filter(e => e);
+    if (!ids.length) return res.status(400).send("Nothing selected");
+    const images = await Overview_image.find({_id : { $in: ids }});
+    if (!images.length) return res.status(404).send("No images found");
+    each(images, (item, cb) => {
+        Overview_image.deleteOne({ _id : item.id }, (err, result) => {
+            if (err || !result.deletedCount) return cb(err || "Image(s) not found");
+            cloud.api.delete_resources([item.p_id], () => cb());
         })
-    });
+    }, err => {
+        if (!err) return res.send("Image"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
+        let is404 = err.message === "Image(s) not found";
+        res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Product(s) not found");
+    })
 });
 
 module.exports = router;

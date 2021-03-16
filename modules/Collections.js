@@ -15,7 +15,7 @@ module.exports = async cb => {
     docs.faqs = await FAQ.find();
     docs.shipping_methods = await Shipping_method.find().sort({ fee: 1 }).exec();
     docs.boxes = await Box.find();
-    docs.overview_images = await Overview_image.find();
+    docs.overview_images = await Overview_image.find().sort({ position: 1 }).exec();
     docs.lookbook_media = await Lookbook_media.find();
     docs.orders = await Order.find().sort({ tracking_ref: 1, created_at: -1 }).exec();
     docs.highlights_posts = await Highlights_post.find();

@@ -1,6 +1,7 @@
 <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#new-overview-img">UPLOAD</a></li>
     <li><a data-toggle="pill" href="#edit-overview-img">EDIT</a></li>
+    <li><a data-toggle="pill" href="#reorder-overview-img">REORDER</a></li>
     <li><a data-toggle="pill" href="#remove-overview-img">REMOVE</a></li>
 </ul>
 
@@ -49,16 +50,41 @@
         </form>
     </div>
 
+    <div id="reorder-overview-img" class="tab-pane fade">
+        <%_ if (overview_images.length) { _%>
+        <form action="/site/content/overview-images/reorder" method="post">
+            <label>REORDER IMAGES <span>- Edit the number of one or more images to reorder</span></label>
+            <div class="row">
+                <%_ overview_images.forEach((img, i, arr) => { _%>
+                <div class="col-sm-6 img-wrapper">
+                    <div class="img" style="background-image: url('<%= img.url %>')">
+                        <input type="hidden" name="id" value="<%= img.id %>">
+                        <input type="number" min="1" max="<%= arr.length %>" value="<%= i+1 %>">
+                    </div>
+                </div>
+                <%_ }) _%>
+            </div>
+            <br>
+            <input type="submit" value="REORDER">
+        </form>
+        <%_ } else { _%>
+        <p class="no-removable-items-label"><b>NO IMAGES TO REORDER</b></p>
+        <%_ } _%>
+    </div>
+
     <div id="remove-overview-img" class="remove-form-tab tab-pane fade">
         <%_ if (overview_images.length) { _%>
         <form action="/site/content/overview-images/remove" method="post">
-            <label>DELETE IMAGES</label>
-            <%_ overview_images.forEach((img, i) => { _%>
-            <div class="input-checkbox">
-                <input type="checkbox" name="id" value="<%= img._id %>">
-                <img src="<%= img.url %>" alt="<%= img.url %>">
+            <label>DELETE IMAGES <span>- Tick one or more images to delete</span></label>
+            <div class="row">
+                <%_ overview_images.forEach((img, i) => { _%>
+                <div class="col-sm-6 img-wrapper">
+                    <div class="img" style="background-image: url('<%= img.url %>')">
+                        <input type="checkbox" name="id" value="<%= img.id %>">
+                    </div>
+                </div>
+                <%_ }) _%>
             </div>
-            <%_ }) _%>
             <br>
             <input type="submit" value="REMOVE">
         </form>
@@ -67,3 +93,19 @@
         <%_ } _%>
     </div>
 </div>
+
+<script>
+    var timeout;
+    $("#reorder-overview-img form .img input[type=number]").on("input", function() {
+        var num = parseInt(($(this).val() || "").trim());
+        if (!num || num < 1 || num > $("#reorder-overview-img form .img").length) return false;
+        var $img = $(this).closest(".img");
+        var $wrapper = $img.closest(".img-wrapper");
+        var method = num - 1 <= $(".img").index($img) ? "insertBefore" : "insertAfter";
+        if (!timeout) timeout = setTimeout(function() {
+            $wrapper.clone(true).hide()[method]($("#reorder-overview-img form .img-wrapper").eq(num - 1)).show(400).end().end().hide(200, function() { $(this).remove() });
+            $("#reorder-overview-img form .img").not($img).each(function(i) { $(this).find("input[type=number]").val(i+1) });
+            timeout = null;
+        }, 500);
+    });
+</script>
