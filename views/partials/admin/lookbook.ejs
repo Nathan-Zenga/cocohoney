@@ -1,16 +1,9 @@
 <ul class="nav nav-pills">
     <li class="active"><a data-toggle="pill" href="#new-lookbook-img">NEW IMAGE</a></li>
     <li><a data-toggle="pill" href="#new-tutorial-video">NEW TUTORIAL VIDEO</a></li>
+    <li><a data-toggle="pill" href="#reorder-lookbook-media">REORDER</a></li>
     <li><a data-toggle="pill" href="#remove-lookbook-media">REMOVE</a></li>
 </ul>
-
-<style>
-    #new-lookbook-media .file-upload-container {
-        border: 1.5px solid rgba(255, 255, 255, .5);
-        padding: 20px 15px;
-        border-radius: 10px;
-    }
-</style>
 
 <div class="tab-content" style="padding-top: 10px;">
     <div id="new-lookbook-img" class="new-form-tab tab-pane fade in active">
@@ -63,6 +56,28 @@
         </form>
     </div>
 
+    <div id="reorder-lookbook-media" class="tab-pane media-mgmt-pane fade">
+        <%_ if (lookbook_media.length) { _%>
+        <form action="/lookbook/reorder" method="post">
+            <label>REORDER IMAGES / VIDEOS <span>- Edit the position number of one or more images to reorder</span></label>
+            <div class="row">
+                <%_ lookbook_media.forEach((img, i, arr) => { _%>
+                <div class="col-sm-6 img-wrapper">
+                    <div class="img" style="background-image: url('<%= img.url %>')">
+                        <input type="hidden" name="id" value="<%= img._id %>">
+                        <input type="number" min="1" max="<%= arr.length %>" value="<%= i+1 %>">
+                    </div>
+                </div>
+                <%_ }) _%>
+            </div>
+            <br>
+            <input type="submit" value="REORDER">
+        </form>
+        <%_ } else { _%>
+        <p class="no-removable-items-label"><b>NO IMAGES TO REORDER</b></p>
+        <%_ } _%>
+    </div>
+
     <div id="remove-lookbook-media" class="remove-form-tab media-mgmt-pane tab-pane fade">
         <%_ if (lookbook_media.length) { _%>
         <form action="/lookbook/remove" method="post">
@@ -88,3 +103,19 @@
         <%_ } _%>
     </div>
 </div>
+
+<script>
+    var timeout;
+    $("#reorder-lookbook-media form .img input[type=number]").on("input", function() {
+        var num = parseInt(($(this).val() || "").trim());
+        if (!num || num < 1 || num > $("#reorder-lookbook-media form .img").length) return false;
+        var $img = $(this).closest(".img");
+        var $wrapper = $img.closest(".img-wrapper");
+        var method = num - 1 <= $(".img").index($img) ? "insertBefore" : "insertAfter";
+        if (!timeout) timeout = setTimeout(function() {
+            $wrapper.clone(true).hide()[method]($("#reorder-lookbook-media form .img-wrapper").eq(num - 1)).show(400).end().end().hide(200, function() { $(this).remove() });
+            $("#reorder-lookbook-media form .img").not($img).each(function(i) { $(this).find("input[type=number]").val(i+1) });
+            timeout = null;
+        }, 500);
+    });
+</script>

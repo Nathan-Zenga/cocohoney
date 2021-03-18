@@ -65,6 +65,16 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
     })
 });
 
+router.post('/reorder', isAuthed, (req, res) => {
+    const ids = (Array.isArray(req.body.id) ? req.body.id : [req.body.id]).filter(e => e);
+    forEachOf(ids, (_id, position, cb) => {
+        Lookbook_media.findOneAndUpdate({ _id }, { $set: { position } }, err => { cb() })
+    }, err => {
+        if (err) return res.status(500).send(err.message);
+        res.send("Lookbook images / videos successfully reordered");
+    })
+});
+
 router.post('/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
     const plural = ids.length > 1 ? "s" : "";

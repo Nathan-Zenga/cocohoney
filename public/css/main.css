@@ -1273,6 +1273,12 @@ label .dropdown-arrow {
     margin-bottom: 4em;
 }
 
+#new-lookbook-media .file-upload-container {
+    border: 1.5px solid rgba(255, 255, 255, .5);
+    padding: 20px 15px;
+    border-radius: 10px;
+}
+
 .no-removable-items-label {
     text-align: center;
     margin-top: 2em;
