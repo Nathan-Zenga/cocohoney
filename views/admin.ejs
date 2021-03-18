@@ -216,41 +216,40 @@
         $(".delete-ambassador-form").off("submit").submit(function(e) {
             e.preventDefault();
             var confirmation = confirm("Are you sure you want to delete this ambassador?");
-            if (confirmation) {
-                var btnController = new submitBtnController(this);
-                $.post(this.action, $(this).serializeArray(), function(result) {
-                    var confirmation2 = confirm(result + "\nReload to see changes?");
-                    if (confirmation2) location.reload();
-                }).fail(function(err, status, codeMessage) {
-                    alert(codeMessage + (err ? ": " + err.responseText : ""));
-                }).always(function() {
-                    btnController.finish();
-                });
-            }
+            if (!confirmation) return false;
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                var confirmation2 = confirm(result + "\nReload to see changes?");
+                if (confirmation2) location.reload();
+            }).fail(function(err, status, codeMessage) {
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            }).always(function() {
+                btnController.finish();
+            });
         });
 
         $(".verify-ambassador-form").off("submit").submit(function(e) {
             e.preventDefault();
             var confirmation = confirm("Verify this ambassador?");
-            if (confirmation) {
-                var btnController = new submitBtnController(this);
-                $.post(this.action, $(this).serializeArray(), function(result) {
-                    var confirmation2 = confirm(result + "\nReload to see changes?");
-                    if (confirmation2) location.reload();
-                }).fail(function(err, status, codeMessage) {
-                    alert(codeMessage + (err ? ": " + err.responseText : ""));
-                }).always(function() {
-                    btnController.finish();
-                });
-            }
+            if (!confirmation) return false;
+            var btnController = new submitBtnController(this);
+            $.post(this.action, $(this).serializeArray(), function(result) {
+                var confirmation2 = confirm(result + "\nReload to see changes?");
+                if (confirmation2) location.reload();
+            }).fail(function(err, status, codeMessage) {
+                alert(codeMessage + (err ? ": " + err.responseText : ""));
+            }).always(function() {
+                btnController.finish();
+            });
         });
 
         $(".remove-form-tab form").off("submit").submit(function(e) {
             e.preventDefault();
             var form = this;
             var data = $(form).serializeArray();
+            var confirmation = confirm("Are you sure you want to delete "+ (data.length > 1 ? "these" : "this") +"?");
+            if (!confirmation) return false;
             var btnController = new submitBtnController(form);
-
             $.post(form.action, data, function(result) {
                 showMessage(result);
                 $(form).find(":input:checked, :input:checked + span, :input:checked + span + br").slideUp(function() {
