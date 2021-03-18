@@ -63,22 +63,23 @@
         </form>
     </div>
 
-    <div id="remove-lookbook-media" class="remove-form-tab tab-pane fade">
+    <div id="remove-lookbook-media" class="remove-form-tab media-mgmt-pane tab-pane fade">
         <%_ if (lookbook_media.length) { _%>
         <form action="/lookbook/remove" method="post">
-            <label>REMOVE IMAGES / VIDEOS</label>
-            <%_ lookbook_media.forEach((item, i) => { _%>
-            <div class="input-checkbox">
-                <input type="checkbox" name="id" value="<%= item._id %>">
-                <%_ if (item.media_type === "image") { _%>
-                <img src="<%= item.url %>" alt="<%= item.url %>">
-                <%_ } else { _%>
-                <div class="bg-underlay bg-body">
-                    <video playsinline autoplay muted loop><source src="<%= image.url %>"></video>
+            <label>DELETE IMAGES / VIDEOS <span>- Tick one or more images to delete</span></label>
+            <div class="row">
+                <%_ lookbook_media.forEach((img, i, arr) => {
+                    const style = img.media_type === "image" ? `background-image: url('${img.url}')` : ""; _%>
+                <div class="col-sm-6 img-wrapper">
+                    <div class="img" style="<%- style %>">
+                        <%_ if (img.media_type === "video") { _%>
+                        <video playsinline autoplay muted loop><source src="<%= img.url %>"></video>
+                        <%_ } _%>
+                        <input type="checkbox" name="id" value="<%= img._id %>">
+                    </div>
                 </div>
-                <%_ } _%>
+                <%_ }) _%>
             </div>
-            <%_ }) _%>
             <br>
             <input type="submit" value="REMOVE">
         </form>

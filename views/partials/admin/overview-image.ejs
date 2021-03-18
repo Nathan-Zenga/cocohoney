@@ -50,15 +50,15 @@
         </form>
     </div>
 
-    <div id="reorder-overview-img" class="tab-pane fade">
+    <div id="reorder-overview-img" class="tab-pane media-mgmt-pane fade">
         <%_ if (overview_images.length) { _%>
         <form action="/site/content/overview-images/reorder" method="post">
-            <label>REORDER IMAGES <span>- Edit the number of one or more images to reorder</span></label>
+            <label>REORDER IMAGES <span>- Edit the position number of one or more images to reorder</span></label>
             <div class="row">
                 <%_ overview_images.forEach((img, i, arr) => { _%>
                 <div class="col-sm-6 img-wrapper">
                     <div class="img" style="background-image: url('<%= img.url %>')">
-                        <input type="hidden" name="id" value="<%= img.id %>">
+                        <input type="hidden" name="id" value="<%= img._id %>">
                         <input type="number" min="1" max="<%= arr.length %>" value="<%= i+1 %>">
                     </div>
                 </div>
@@ -72,7 +72,7 @@
         <%_ } _%>
     </div>
 
-    <div id="remove-overview-img" class="remove-form-tab tab-pane fade">
+    <div id="remove-overview-img" class="remove-form-tab media-mgmt-pane tab-pane fade">
         <%_ if (overview_images.length) { _%>
         <form action="/site/content/overview-images/remove" method="post">
             <label>DELETE IMAGES <span>- Tick one or more images to delete</span></label>
@@ -80,7 +80,7 @@
                 <%_ overview_images.forEach((img, i) => { _%>
                 <div class="col-sm-6 img-wrapper">
                     <div class="img" style="background-image: url('<%= img.url %>')">
-                        <input type="checkbox" name="id" value="<%= img.id %>">
+                        <input type="checkbox" name="id" value="<%= img._id %>">
                     </div>
                 </div>
                 <%_ }) _%>

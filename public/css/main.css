@@ -1198,7 +1198,7 @@ label .dropdown-arrow {
     margin: 0 0 5px;
 }
 
-#admin-page #overview-image form .img {
+#admin-page .media-mgmt-pane form .img {
     position: relative;
     padding-top: 100%;
     background-position: center;
@@ -1208,8 +1208,19 @@ label .dropdown-arrow {
     margin-bottom: 30px;
 }
 
-#admin-page #overview-image form input[type=checkbox],
-#admin-page #overview-image form input[type=number] {
+#admin-page .media-mgmt-pane form .img video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: 100%;
+    max-height: 100%;
+    -ms-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#admin-page .media-mgmt-pane form input[type=checkbox],
+#admin-page .media-mgmt-pane form input[type=number] {
     position: absolute;
     top: 0;
     left: 0;
@@ -1218,7 +1229,7 @@ label .dropdown-arrow {
     margin: 10px;
 }
 
-#admin-page #overview-image form input[type=number] {
+#admin-page .media-mgmt-pane form input[type=number] {
     text-align: center;
     width: 40px;
     height: 40px;
