@@ -1,0 +1,44 @@
+<ul class="nav nav-pills">
+    <li class="active"><a data-toggle="pill" href="#about-page-text">INFO TEXT</a></li>
+    <li><a data-toggle="pill" href="#about-page-image">PAGE IMAGE</a></li>
+    <li><a data-toggle="pill" href="#about-page-image-remove">REMOVE PAGE IMAGE</a></li>
+</ul>
+
+<div class="tab-content" style="padding-top: 10px;">
+    <div id="about-page-text" class="tab-pane fade in active">
+        <form method="post" action="/about/text/edit">
+            <label>"ABOUT US" TEXT</label>
+            <textarea name="main_text" id="main-text" rows="10"><%- info[0].main_text %></textarea>
+
+            <label>"MEET OUR CEO" TEXT</label>
+            <textarea name="founder_text" id="founder-text" rows="10"><%- info[0].founder_text %></textarea>
+
+            <input type="submit" value="UPDATE">
+        </form>
+    </div>
+
+    <div id="about-page-image" class="tab-pane fade">
+        <form method="post" action="/about/image/upload">
+            <label>PAGE IMAGE</label>
+            <fieldset class="file-upload-container">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-9"><input type="file" id="about_page_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <input type="hidden" name="image_file">
+                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="about_page_image_file">CLEAR</button></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12"><input type="url" name="image_url" id="about_page_image_url" placeholder="Or enter the image URL"></div>
+                </div>
+            </fieldset>
+
+            <input type="submit" value="UPLOAD">
+        </form>
+    </div>
+
+    <div id="about-page-image-remove" class="remove-form-tab tab-pane fade" style="margin-top: 10px">
+        <form class="minimal" method="post" action="/about/image/remove">
+            <label class="sr-only">REMOVE PAGE IMAGE</label>
+            <input class="btn-danger" type="submit" value="REMOVE PAGE IMAGE" style="margin-bottom: 0">
+        </form>
+    </div>
+</div>

@@ -169,3 +169,9 @@ module.exports.Event = model('Event', Schema({
     stock_qty: { type: Number, min: [0, "No negative values allowed for stock quantity"] },
     image: { p_id: String, url: String }
 }));
+
+module.exports.Info = model('Info', Schema({
+    main_text: String,
+    founder_text: String,
+    image: { p_id: String, url: String }
+}), 'info');

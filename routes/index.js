@@ -9,10 +9,6 @@ router.get('/', async (req, res) => {
     res.render('index', { title: null, pagename: "home", overview_images, reviews, highlights })
 });
 
-router.get('/about', (req, res) => {
-    res.render('about', { title: "About", pagename: "about" })
-});
-
 router.get('/contact', (req, res) => {
     res.render('contact', { title: "Contact Us", pagename: "contact" })
 });

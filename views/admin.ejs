@@ -4,6 +4,7 @@
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
                 <option value="#home">HOME</option>
+                <option value="#about">ABOUT</option>
                 <option value="#highlights">HIGHLIGHTS POSTS</option>
                 <option value="#sale">SALE</option>
                 <option value="#event">EVENTS</option>
@@ -21,6 +22,7 @@
         <div class="nav-pills-container dt-view-md">
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#home">HOME</a></li>
+                <li><a data-toggle="pill" href="#about">ABOUT</a></li>
                 <li><a data-toggle="pill" href="#highlights">HIGHLIGHTS POSTS</a></li>
                 <li><a data-toggle="pill" href="#sale">SALE</a></li>
                 <li><a data-toggle="pill" href="#event">EVENTS</a></li>
@@ -38,6 +40,10 @@
         <div class="tab-content container">
             <div id="home" class="tab-pane fade in active">
             <%- include ('partials/admin/home') -%>
+            </div>
+
+            <div id="about" class="tab-pane fade">
+            <%- include ('partials/admin/about') -%>
             </div>
 
             <div id="highlights" class="tab-pane fade">

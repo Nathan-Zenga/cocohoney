@@ -2,22 +2,16 @@
     <section class="section-padding">
         <div class="textbody">
             <h1>About Us</h1>
-            <p><span style="color: salmon">Cocohoney Cosmetics</span> is a luxury, cruelty free cosmetics brand that aims to capture the
-            beauty within every one of our customers. We pride ourselves in the quality of our products
-            and events in which we use to motivate women and allow them to feel and gain more
-            confidence within themselves.</p>
+            <br>
+            <p><%- info.main_text.replace(/cocohoney( cosmetics)?|honey adeleye/gi, m => `<span>${m}</span>`).replace(/\r?\n/g, "</p><p>").replace(/<p><\/p>/g, "") %></p>
             <br>
             <h1>Meet The CEO</h1>
-            <div class="info-img"><img src="https://res.cloudinary.com/natzen/image/upload/v1598992487/cocohoney/site-content/pages/about/founder.jpg"></div>
-            <p>I began Cocohoney Cosmetics with the idea that the energy I bring fourth to my friends and
-            family was something I wanted to spread. I want every woman regardless of your shape,
-            size or colour to feel alive and beautiful when they wear my products or attend one of my
-            events. Although we are a cosmetics brand, it's about how you feel when you wear our
-            products but more importantly what you feel within!</p>
-            <p>I hope my brand touches you in one way or another. Whether you feel like a goddess
-            wearing our products or if the vibe touches you and makes you feel confident within
-            yourself! This is all I could ever ask for!</p>
-            <p><span style="color: salmon">- Honey Adeleye</span></p>
+            <%_ if (info.image.url) { _%>
+            <div class="info-img"><img src="<%= info.image.url %>"></div>
+            <%_ } else { _%>
+            <br>
+            <%_ } _%>
+            <p><%- info.founder_text.replace(/cocohoney( cosmetics)?|honey adeleye/gi, m => `<span>${m}</span>`).replace(/\r?\n/g, "</p><p>").replace(/<p><\/p>/g, "") %></p>
         </div>
     </section>
 <%- include ('partials/footer') -%>

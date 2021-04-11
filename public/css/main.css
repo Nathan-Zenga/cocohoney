@@ -604,6 +604,10 @@ section .media-wrapper .main-media.small video {
     margin-left: 5px;
 }
 
+#about-page p span {
+    color: salmon;
+}
+
 #about-page .info-img {
     max-width: 400px;
     text-align: center;
