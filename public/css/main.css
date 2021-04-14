@@ -19,12 +19,45 @@ header .inner-header {
     padding-bottom: 30px;
 }
 
-header .link-icon {
-    font-size: 1.5em;
+header .links-section > .link {
+    font-size: 2em;
 }
 
-header .link-icon:not(:first-child) {
+header .links-section > .link:not(:first-child) {
     margin-left: 10px;
+}
+
+@media (min-width: 768px) {
+    header .links-section > .link {
+        font-size: 1.5em;
+    }
+}
+
+header .links-section #link-context-menu {
+    position: absolute;
+    display: none;
+    top: 120%;
+    right: 50px;
+    min-width: 175px;
+    background-color: rgba(0, 0, 0, .7);
+    padding: 15px;
+    border-radius: 10px 0 10px 10px;
+    z-index: 10;
+}
+
+header .links-section #link-context-menu .link {
+    display: block;
+    font-size: 1em;
+}
+
+header .links-section #link-context-menu .link:not(:last-child) {
+    margin-bottom: 1em;
+}
+
+@media (min-width: 768px) {
+    header .links-section #link-context-menu {
+        right: 40px;
+    }
 }
 
 .header-content-section:nth-child(2) {

@@ -81,7 +81,7 @@
                         </div>
                         <a class="link" href="/events">EVENTS</a>
                         <%_ if (!user) { _%>
-                        <a class="link" href="/ambassador/account/login">AMBASSADOR LOG IN</a>
+                        <a class="link" href="/ambassador/account/login">AMBASSADOR LOGIN</a>
                         <%_ } _%>
                     </nav>
                 </div>
@@ -94,8 +94,12 @@
                     <%_ } _%>
                     <a href="/<%= is_admin ? 'admin' : 'account' %>/logout">LOGOUT</a>
                     <%_ } else { _%>
-                    <a class="link-icon fal fa-user-circle" href="/account/login"></a>
-                    <a class="link-icon fab fa-instagram" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
+                    <a class="link fal fa-user-circle" id="context-menu-link"></a>
+                    <a class="link fab fa-instagram" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
+                    <div id="link-context-menu">
+                        <a class="link" href="/account/login">Customer Login</a>
+                        <a class="link" href="/ambassador/account/login">Ambassador Login</a>
+                    </div>
                     <%_ } _%>
                 </div>
             </div>

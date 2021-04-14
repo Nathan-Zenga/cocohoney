@@ -48,7 +48,7 @@
                 <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
                 <div class="customer-orders container">
                     <div class="row">
-                        <%_ orders_sold.forEach(order => { _%>
+                        <%_ orders_sold.sort((a, b) => b.created_at - a.created_at).forEach(order => { _%>
                         <div class="col-md-4 col-sm-6">
                             <div class="customer-order">
                                 <p class="order_id"><%= order.id %></p>

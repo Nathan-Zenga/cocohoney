@@ -15,6 +15,13 @@ $(function() {
         this.submitBtn[this.method](this.originalVal).attr("disabled", false);
     };
 
+    $("#context-menu-link").click(function() { $("#link-context-menu").stop().fadeToggle(300) });
+
+    $(window).click(function() {
+        if ($("#link-context-menu:hover, #context-menu-link:hover").length) return;
+        $("#link-context-menu").fadeOut()
+    });
+
     $("#nav-toggle").click(function() { $("nav").fadeIn() });
 
     $("#nav-close-icon").click(function() { $("nav").fadeOut() });
