@@ -27,22 +27,22 @@ class MailTransporter {
          * @param {function} cb callback
          */
         this.#getTransportOpts = cb => {
-            nodemailer.createTestAccount((err, acc) => {
-                oauth2Client.getAccessToken().then(response => {
-                    cb(null, {
-                        service: 'gmail', /* port: 465, secure: true, */
-                        auth: {
-                            type: "OAuth2",
-                            user: this.#req.session.admin_email,
-                            clientId: OAUTH_CLIENT_ID,
-                            clientSecret: OAUTH_CLIENT_SECRET,
-                            refreshToken: OAUTH_REFRESH_TOKEN,
-                            accessToken: response.token
-                        },
-                        tls: { rejectUnauthorized: true }
-                    });
-                }).catch(err => {
-                    if (NODE_ENV === "production") return cb(err);
+            oauth2Client.getAccessToken().then(response => {
+                cb(null, {
+                    service: 'gmail', /* port: 465, secure: true, */
+                    auth: {
+                        type: "OAuth2",
+                        user: this.#req.session.admin_email,
+                        clientId: OAUTH_CLIENT_ID,
+                        clientSecret: OAUTH_CLIENT_SECRET,
+                        refreshToken: OAUTH_REFRESH_TOKEN,
+                        accessToken: response.token
+                    },
+                    tls: { rejectUnauthorized: true }
+                });
+            }).catch(err => {
+                if (NODE_ENV === "production") return cb(err);
+                nodemailer.createTestAccount((err, acc) => {
                     this.#user = this.#user || acc.user; this.#pass = this.#pass || acc.pass;
                     cb(null, {
                         host: 'smtp.ethereal.email',
@@ -51,7 +51,7 @@ class MailTransporter {
                         auth: { user: this.#user, pass: this.#pass }
                     });
                 });
-            })
+            });
         }
     };
 
@@ -73,7 +73,7 @@ class MailTransporter {
                 this.#res.render('templates/mail', { message, recipient: this.#recipient }, (err, html) => {
                     if (err) return (cb || reject)(Error(err.message));
                     nodemailer.createTransport(options).sendMail({
-                        from: { name: "Cocohoney Cosmetics", email: this.#req.session.admin_email },
+                        from: { name: "Cocohoney Cosmetics", address: this.#req.session.admin_email },
                         to: this.#recipient ? this.#recipient.email : this.#recipients.map(m => m.email),
                         subject,
                         html

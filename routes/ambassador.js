@@ -14,40 +14,32 @@ router.get('/register', (req, res) => {
     res.render('ambassador-register', { title: "Ambassador Registration", pagename: "ambassador-register", countries })
 });
 
-router.post('/register', (req, res) => {
-    if (req.isAuthenticated()) return res.status(400).send("Please log out first");
-    const { firstname, lastname, email, phone_number, line1, line2, city, state, country, postcode, instagram, image_file, image_url } = req.body;
-    const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
-    ambassador.address = { line1, line2, city, state, country, postcode };
-    ambassador.save((err, saved) => {
-        if (err) return res.status(400).send(err.message);
+router.post('/register', async (req, res) => {
+    try {
+        if (req.isAuthenticated()) return res.status(400).send("Please log out first");
+        const { firstname, lastname, email, phone_number, line1, line2, city, state, country, postcode, instagram, image_file, image_url } = req.body;
+        const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
+        ambassador.address = { line1, line2, city, state, country, postcode };
+        ambassador.token = crypto.randomBytes(20).toString("hex");
+        const public_id = `cocohoney/ambassador/profile-img/${ambassador.firstname}-${ambassador.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
+        if (result) ambassador.image = { p_id: result.public_id, url: result.secure_url };
+        const saved = await ambassador.save();
+        const mail_transporter = new MailTransporter({ req, res });
+        const subject = `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`;
+        const message = "The following candidate wants to sign up as an ambassador.\n\n" +
+            `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
+            "Please click the link below to verify them:\n" +
+            `((VERIFY))[${res.locals.location_origin}/ambassador/register/verify?token=${saved.token}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/register/verify?token=${saved.token})</small>\n\n` +
+            "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
+            `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id})</small>\n\n`;
 
-        const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
-        cloud.uploader.upload(image_url || image_file || "", { public_id }, (err, result) => {
-            if (err && (image_file || image_url)) return res.status(err.http_code).send(err.message);
-            if (result) saved.image = { p_id: result.public_id, url: result.secure_url };
-            saved.token = crypto.randomBytes(20).toString("hex");
-            saved.save((err, amb) => {
-                if (err) return res.status(500).send(err.message);
-                const mail_transporter = new MailTransporter({ req, res });
-                const subject = `Account verification: ${amb.firstname} ${amb.lastname} wants to be an Ambassador`;
-                const message = "The following candidate wants to sign up as an ambassador.\n\n" +
-                    `${amb.firstname} ${amb.lastname} (${amb.email})\n\n` +
-                    "Please click the link below to verify them:\n" +
-                    `((VERIFY))[${res.locals.location_origin}/ambassador/register/verify?token=${amb.token}]\n` +
-                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/register/verify?token=${amb.token})</small>\n\n` +
-                    "Click below to add a discount code to their account <b><u>after verifying them</u></b>:\n\n" +
-                    `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id}]\n` +
-                    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${amb._id})</small>\n\n`;
-
-                mail_transporter.setRecipient({ email: req.session.admin_email });
-                mail_transporter.sendMail({ subject, message }, err => {
-                    if (err) return res.status(500).send(err.message || err);
-                    res.send("Registered. Submitted to administration for verification")
-                });
-            });
-        });
-    });
+        mail_transporter.setRecipient({ email: req.session.admin_email });
+        await mail_transporter.sendMail({ subject, message });
+        res.send("Registered. Submitted to administration for verification")
+    } catch (err) { return res.status(err.http_code || 500).send(err.message || err) }
 });
 
 router.get('/register/verify', send_verification_email);
