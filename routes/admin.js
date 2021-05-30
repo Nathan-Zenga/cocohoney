@@ -85,31 +85,26 @@ router.post('/login', (req, res) => {
 
 router.get("/activate", async (req, res, next) => {
     const { token } = req.query;
-    Admin.findOne({ password: token, token_expiry_date: { $gte: Date.now() } }, (err, admin) => {
-        if (err) return res.status(500).send(err.message);
-        if (!admin) return next();
-        res.render('admin-activate', {
-            title: "Admin Account Activation",
-            pagename: "admin-activate",
-            token: admin.password
-        })
-    });
+    const admin = await Admin.findOne({ password: token, token_expiry_date: { $gte: Date.now() } });
+    if (!admin) return next();
+    const title = "Admin Account Activation";
+    const pagename = "admin-activate";
+    res.render('admin-activate', { title, pagename, token });
 });
 
 router.post("/activate", async (req, res) => {
-    const { token, password, password_confirm } = req.body;
-    if (password !== password_confirm) return res.status(400).send("Passwords do not match");
-    const admin = await Admin.findOne({ password: token });
-    admin.email = req.session.admin_email;
-    admin.password = bcrypt.hashSync(password, 10);
-    admin.token_expiry_date = undefined;
-    admin.save(err => {
-        if (err) return res.status(500).send(err.message);
-        Admin.deleteMany({ email: "temp" }, err => {
-            if (err) return res.status(500).send(err.message);
-            res.send("Account made and you can now log in");
-        });
-    });
+    try {
+        const { token, password, password_confirm } = req.body;
+        const admin = await Admin.findOne({ password: token });
+        if (!admin) return res.status(400).send("Account not found");
+        if (password !== password_confirm) return res.status(400).send("Passwords do not match");
+        admin.email = req.session.admin_email;
+        admin.password = await bcrypt.hash(password, 10);
+        admin.token_expiry_date = undefined;
+        await admin.save();
+        await Admin.deleteMany({ email: "temp" });
+        res.send("Account made and you can now log in");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 router.post("/search", isAuthed, (req, res) => {
@@ -141,18 +136,16 @@ router.post('/discount_code/add', isAuthed, (req, res) => {
     })
 });
 
-router.post('/discount_code/edit', isAuthed, (req, res) => {
+router.post('/discount_code/edit', isAuthed, async (req, res) => {
     const { id, code, percentage, expiry_date } = req.body;
-    Discount_code.findById(id, (err, discount_code) => {
-        if (err || !code) return res.status(err ? 500 : 404).send(err ? err.message : "Discount code not found");
-        if (code) discount_code.code = code;
-        if (percentage) discount_code.percentage = percentage;
-        if (expiry_date) discount_code.expiry_date = expiry_date;
-        discount_code.save(err => {
-            if (err) return res.status(500).send(err.message);
-            res.send("Discount code details saved");
-        })
-    });
+    try {
+        const dc = await Discount_code.findById(id);
+        if (!code) return res.status(404).send("Discount code not found");
+        if (code) dc.code = code;
+        if (percentage) dc.percentage = percentage;
+        if (expiry_date) dc.expiry_date = expiry_date;
+        await dc.save(); res.send("Discount code details saved");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 router.post('/discount_code/remove', isAuthed, (req, res) => {

@@ -83,24 +83,38 @@
             <div id="reviews">
                 <%_ reviews.forEach(review => { _%>
                 <div class="review" id="<%= review.created_at.getTime() %>">
-                    <div class="author-icon">
-                        <span><%= review.author_name.split(/[ -]/g).map(name => name.charAt(0)).join("").toUpperCase() %></span>
-                    </div>
                     <div class="header">
+                        <div class="row">
+                            <div class="col-xs-<%= is_admin ? 6 : 12 %>">
+                                <div class="header-icon author-icon">
+                                    <span><%= review.author_name.split(/[ -]/g).map(name => name.charAt(0)).join("").toUpperCase() %></span>
+                                </div>
+                            </div>
+                            <%_ if (is_admin) { _%>
+                            <div class="col-xs-6">
+                                <div class="header-icon review-delete-form-container">
+                                    <form action="/reviews/delete" class="minimal review-delete-form">
+                                        <input type="hidden" name="id" value="<%= review.id %>">
+                                        <button class="submit">
+                                            <a class="fal fa-trash-alt" href="/reviews/delete"></a>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <%_ } _%>
+                        </div>
                         <div class="row">
                             <div class="col-sm-8 headline">
                                 <h2 class="title"><%= review.headline %></h2>
                             </div>
                             <div class="col-sm-4 rating">
-                                <%_ for(i = 1; i <= review.rating; i++) { _%>
-                                <span>★</span>
-                                <%_ } _%>
+                                <%- "<span>★</span> ".repeat(review.rating) %>
                                 <span style="font-size: .8em; opacity: .5">(<%= review.rating %>)</span>
                             </div>
                         </div>
                         <div class="row author-details">
                             <div class="col-sm-6 author-name">
-                                <%= review.author_name %>
+                                <span><%= review.author_name %></span>
                                 <%_ if (review.author_verified) { _%>
                                 <i class="verified-badge fal fa-badge-check"></i>
                                 <%_ } _%>
@@ -206,6 +220,20 @@
             $(".review .images.carousel .carousel-control").click(function () {
                 $(this).closest(".images.carousel").carousel({ interval: false })
             });
+
+            <%_ if (is_admin) { _%>
+            $(".review-delete-form").click(function(e) {
+                e.preventDefault();
+                var confirmation = confirm("Delete review post?");
+                if (!confirmation) return false;
+                $.post(this.action, $(this).serializeArray(), function(res) {
+                    alert(res);
+                    $(e.target).closest(".review").slideUp(function() { $(this).remove() });
+                }).fail(function(err) {
+                    alert(err.responseText);
+                })
+            })
+            <%_ } _%>
         </script>
     </section>
 <%- include ('partials/footer') -%>

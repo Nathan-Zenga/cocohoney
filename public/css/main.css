@@ -1650,7 +1650,7 @@ input.product-quantity:disabled {
     margin-bottom: 100px;
 }
 
-#customer-reviews-page .review .author-icon {
+#customer-reviews-page .review .header-icon {
     display: table;
     width: 80px;
     height: 80px;
@@ -1659,10 +1659,22 @@ input.product-quantity:disabled {
     background-color: rgb(80, 48, 48);
 }
 
-#customer-reviews-page .review .author-icon span {
+#customer-reviews-page .review .header-icon > * {
     display: table-cell;
     vertical-align: middle;
     text-align: center;
+}
+
+#customer-reviews-page .review .review-delete-form-container {
+    margin: -60px 0 1em auto;
+}
+
+#customer-reviews-page .review .review-delete-form button.submit {
+    background-color: transparent;
+    padding: 0 10px;
+    margin-bottom: 0;
+    color: inherit;
+    font-size: 1.2em;
 }
 
 #customer-reviews-page .review .header {

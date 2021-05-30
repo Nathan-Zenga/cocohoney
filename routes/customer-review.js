@@ -30,39 +30,29 @@ router.post('/submit', (req, res) => {
     })
 });
 
-router.post('/update', (req, res) => {
+router.post('/update', async (req, res) => {
     if (req.isUnauthenticated()) return res.sendStatus(401);
     const { id, author_name, headline, rating, commentry } = req.body;
-    Review.findById(id, (err, review) => {
+    try {
+        const review = await Review.findById(id);
         if (author_name) review.author_name = author_name;
         if (headline) review.headline = headline;
         if (rating) review.rating = rating;
         if (commentry) review.commentry = commentry;
-        review.save(err => {
-            if (err) return res.status(400).send(err.message);
-            res.send("Review submitted");
-        })
-    })
+        await review.save(); res.send("Review submitted");
+    } catch (err) { res.status(400).send(err.message) }
 });
 
-router.post('/delete', (req, res) => {
-    if (!res.locals.user) return res.sendStatus(401);
-    const ids = Object.values(req.body);
-    if (!ids.length) return res.status(400).send("Nothing selected");
-    Review.find({_id : { $in: ids }}, (err, reviews) => {
-        if (err) return res.status(500).send(err.message);
-        if (!reviews.length) return res.status(404).send("No reviews found");
-        each(reviews, (item, cb) => {
-            Review.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err ? err.message : "Product(s) not found");
-                cloud.api.delete_resources_by_prefix(item.id, () => cb());
-            })
-        }, err => {
-            if (!err) return res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-            let is404 = err.message === "Product(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Product(s) not found");
-        })
-    });
+router.post('/delete', async (req, res) => {
+    if (!res.locals.is_admin) return res.sendStatus(401);
+    const { id } = req.body;
+    try {
+        const review = await Review.findById(id);
+        if (!review) return res.status(404).send("Review not found");
+        await cloud.api.delete_resources_by_prefix(review.id);
+        await Review.findByIdAndDelete(id);
+        res.send("Review deleted");
+    } catch (err) { res.status(400).send(err.message) }
 });
 
 module.exports = router;
