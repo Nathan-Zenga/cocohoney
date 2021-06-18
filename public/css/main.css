@@ -86,7 +86,6 @@ nav a.link {
     display: block;
     margin: 0 auto 1.5em;
     text-align: center;
-    max-width: 50%;
 }
 
 nav .sub-list {
@@ -1894,6 +1893,20 @@ input.product-quantity:disabled {
 #account-page #order-sales-counter small {
     color: inherit;
     font-weight: 300;
+}
+
+#account-page #amb-dc-form {
+    text-align: left;
+}
+
+#account-page #amb-dc-form input[type=text] {
+    padding: 3px;
+    border-bottom: 1px solid;
+    border-radius: 0;
+}
+
+#account-page #amb-dc-form input[type=submit] {
+    padding: 4px 16px 3px;
 }
 
 @media (min-width: 768px) {

@@ -174,9 +174,8 @@
 
         <script>
             $(".star-rating input").change(function(e) {
-                $(".star").each(function(i) {
-                    $(this).css("color", i < e.target.value ? "rgb(240, 230, 140)" : "");
-                });
+                var n = parseInt(this.value) + 1;
+                $(".star").css("color", "").filter(":not(:nth-child(1n+"+ n +"))").css("color", "rgb(240, 230, 140)");
             });
 
             $("#new-review-form").submit(function(e) {

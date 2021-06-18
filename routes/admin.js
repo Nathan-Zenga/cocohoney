@@ -190,7 +190,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
             const transporter = new MailTransporter({ req, res });
             transporter.setRecipient(recipient);
             transporter.sendMail({ subject, message }, err => {
-                if (err) return console.log(err.message || err), console.log(`Not sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
+                if (err) return console.error(`${err.message || err}\nNot sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
                 console.log("Email sent");
             });
         }, i * 2000);

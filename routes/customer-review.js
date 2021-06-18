@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const { each, forEachOf } = require('async');
+const { forEachOf } = require('async');
 const { Review } = require('../models/models');
 
 router.get('/', async (req, res) => {

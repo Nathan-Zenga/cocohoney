@@ -197,6 +197,7 @@
     });
 
     $("#mail-sub-toggle input:checkbox").change(function(e) {
+        e.preventDefault();
         var form = $(this).parent("form").get(0);
         var data = $(form).serializeArray().slice();
         $(this).attr("disabled", true);

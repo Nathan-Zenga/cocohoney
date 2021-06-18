@@ -45,38 +45,28 @@ router.post('/register', async (req, res) => {
 router.get('/register/verify', send_verification_email);
 router.post('/register/verify', send_verification_email);
 
-router.get('/register/activate', (req, res, next) => {
+router.get('/register/activate', async (req, res, next) => {
     const { token } = req.query;
-    Ambassador.findOne({ token }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (!amb) return next();
-        res.render('ambassador-activate', {
-            title: "Ambassador Account Activation",
-            pagename: "ambassador-activate",
-            id: amb.id
-        })
-    });
+    const amb = await Ambassador.findOne({ token });
+    if (!amb) return next();
+    const title = "Ambassador Account Activation";
+    const pagename = "ambassador-activate";
+    res.render('ambassador-activate', { title, pagename, id: amb.id })
 });
 
-router.post('/register/activate', (req, res) => {
+router.post('/register/activate', async (req, res) => {
     if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     const { id, password, password_confirm, sort_code, account_number } = req.body;
     if (password !== password_confirm) return res.status(400).send("Password confirm does not match");
-    Ambassador.findById(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
-        if (!amb) return res.status(404).send("Invalid entry: account not found");
-        bcrypt.hash(password, 10, (err, hash) => {
-            if (err) return res.status(500).send(err.message);
-            amb.password = hash;
-            amb.sort_code = sort_code;
-            amb.account_number = account_number;
-            amb.token = undefined;
-            amb.save(err => {
-                if (err) return res.status(500).send(err.message);
-                res.send("Your account is now activated!\nYou can now log in.")
-            });
-        });
-    });
+    try {
+        const amb = await Ambassador.findById(id);
+        if (!amb) return res.status(404).send("Invalid entry - account not found");
+        amb.password = await bcrypt.hash(password, 10);
+        amb.sort_code = sort_code;
+        amb.account_number = account_number;
+        amb.token = undefined;
+        await amb.save(); res.send("Your account is now activated!\nYou can now log in.")
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 router.get('/account/login', (req, res) => {
@@ -117,10 +107,10 @@ router.get('/account/logout', (req, res) => {
     res.redirect("/");
 });
 
-router.post('/account/edit', isAuthed, (req, res) => {
+router.post('/account/edit', isAuthed, async (req, res) => {
     const { id, firstname, lastname, email, phone_number, instagram, sort_code, account_number, line1, line2, city, state, country, postcode, image_file, image_url, mail_sub } = req.body;
-    Ambassador.findById(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const amb = await Ambassador.findById(id);
         if (!amb) return res.status(500).send("Ambassador not found");
         if (firstname)      amb.firstname = firstname;
         if (lastname)       amb.lastname = lastname;
@@ -137,19 +127,12 @@ router.post('/account/edit', isAuthed, (req, res) => {
         if (postcode)       amb.address.postcode = postcode;
                             amb.mail_sub = !!mail_sub;
 
-        amb.save((err, saved) => {
-            if (err) return res.status(500).send(err.message);
-            if (!image_file && !image_url) return res.send("Account details updated");
-            const public_id = `cocohoney/ambassador/profile-img/${saved.firstname}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
-            cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                if (err) return res.status(err.http_code).send(err.message);
-                saved.image = { p_id: result.public_id, url: result.secure_url };
-                saved.save(() => {
-                    res.send("Account details updated");
-                });
-            });
-        });
-    });
+        const public_id = `cocohoney/ambassador/profile-img/${amb.firstname}-${amb.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const result = image_url || image_file ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
+        if (result) await cloud.api.delete_resources([amb.public_id]).catch(err => console.error(err.message));
+        if (result) amb.image = { p_id: result.public_id, url: result.secure_url };
+        await amb.save(); res.send("Account details updated");
+    } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 
 router.post('/delete', async (req, res) => {
@@ -178,76 +161,63 @@ router.post('/delete', async (req, res) => {
     } catch (err) { res.status(err.statusCode || 500).send(err.message) }
 });
 
-router.get('/discount_code/add', (req, res) => {
+router.get('/discount_code/add', async (req, res) => {
     const { id, src } = req.query;
     if (!id || src !== "email") return res.status(400).send("Invalid entry");
-    Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+
+    try {
+        const amb = await Ambassador.findOne({ _id: id, verified: true });
         if (!amb) return res.status(404).send("Account not found or isn't verified");
         if (amb.discount_code !== "null") return res.status(400).send("Account already has a discount code");
-        res.render('ambassador-discount-code-add', {
-            title: "Add Ambassador Discount Code",
-            pagename: "ambassador-discount-code-add",
-            id: amb.id
-        })
-    });
+        const title = "Add Ambassador Discount Code";
+        const pagename = "ambassador-discount-code-add";
+        res.render('ambassador-discount-code-add', { title, pagename, id: amb.id })
+    } catch (err) { res.status(500).send(err.message) }
 });
 
-router.post('/discount_code/add', (req, res) => {
+router.post('/discount_code/add', async (req, res) => {
     const { id, code } = req.body;
-    Ambassador.findOne({ _id: id, verified: true }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const amb = await Ambassador.findOne({ _id: id, verified: true });
         if (!amb) return res.status(404).send("Account not found or isn't verified");
         amb.discount_code = code;
-        amb.save(err => {
-            if (err) return res.status(500).send(err.message);
-            Discount_code.findOne({ code }, (err, dc) => {
-                if (err) return res.status(500).send(err.message);
-                if (dc) return res.send(`Discount code added for ${amb.firstname} ${amb.lastname}`);
-                Discount_code.create({ code, percentage: 10, expiry_date: new Date(Date.now() + 31556952000) }, err => {
-                    if (err) return res.status(500).send(err.message);
-                    res.send(`New discount code saved and added for ${amb.firstname} ${amb.lastname}`);
-                });
-            });
-        })
-    });
+        await amb.save();
+        const dc = await Discount_code.findOne({ code });
+        if (!dc) await Discount_code.create({ code, percentage: 10, expiry_date: new Date(Date.now() + 31556952000) });
+        res.send(`New discount code saved and added for ${amb.firstname} ${amb.lastname}`);
+    } catch (err) { res.status(500).send(err.message) }
 });
 
-router.post('/discount_code/edit', (req, res) => {
+router.post('/discount_code/edit', async (req, res) => {
     const { id, code } = req.body;
-    Ambassador.findById(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    if (!code) return res.status(400).send("No valid discount code provided");
+    try {
+        const amb = await Ambassador.findById(id);
         if (!amb) return res.status(404).send("Account not found");
-        if (code) amb.discount_code = code;
-        amb.save(err => {
-            if (err) return res.status(500).send(err.message);
-            if (!code) return res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
-            Discount_code.findOne({ code }, (err, dc) => {
-                if (dc) { dc.code = code; dc.save() }
-                res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
-            })
-        });
-    });
+        const dc = await Discount_code.findOne({ code });
+        if (!dc) return res.status(404).send("The given discount code doesn't exist");
+
+        amb.discount_code = code; await amb.save();
+        dc.code = code; await dc.save();
+        res.send(`Discount code updated for ${amb.firstname} ${amb.lastname}`);
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 router.get('/password-reset-request', (req, res) => {
-    res.render('password-reset-request-ambassador', {
-        title: "Password Reset Request",
-        pagename: "password-reset"
-    });
+    const title = "Password Reset Request";
+    const pagename = "password-reset";
+    res.render('password-reset-request-ambassador', { title, pagename });
 });
 
-router.get('/password-reset', (req, res) => {
+router.get('/password-reset', async (req, res) => {
     const { token } = req.query;
-    Ambassador.findOne({ password_reset_token: token }, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const amb = await Ambassador.findOne({ password_reset_token: token });
+        const title = "Password Reset";
+        const pagename = "password-reset";
         if (!amb) return res.status(400).send("Invalid password reset token");
-        res.render('password-reset-ambassador', {
-            title: "Password Reset",
-            pagename: "password-reset",
-            id: amb.id
-        });
-    })
+        res.render('password-reset-ambassador', { title, pagename, id: amb.id });
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 router.post('/password-reset-request', async (req, res) => {
@@ -269,22 +239,16 @@ router.post('/password-reset-request', async (req, res) => {
     });
 });
 
-router.post('/password-reset', (req, res) => {
+router.post('/password-reset', async (req, res) => {
     const { password, password_confirm, id } = req.body;
     if (password !== password_confirm) return res.status(400).send("Passwords do not match");
-    Ambassador.findById(id, (err, amb) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const amb = await Ambassador.findById(id);
         if (!amb) return res.status(404).send("Cannot find you on our system");
-        bcrypt.hash(password, 10, (err, hash) => {
-            if (err) return res.status(500).send(err.message);
-            amb.password = hash;
-            amb.password_reset_token = undefined;
-            amb.save(err => {
-                if (err) return res.status(500).send(err.message);
-                res.send("Password has been reset!\n\n You can now log in");
-            })
-        })
-    })
+        amb.password = await bcrypt.hash(password, 10);
+        amb.password_reset_token = undefined;
+        await amb.save(); res.send("Password has been reset!\n\n You can now log in");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

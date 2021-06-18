@@ -15,8 +15,23 @@
                                 <i class="fab fa-instagram" style="font-size: 1.5em"></i>
                             </a>
                             <br><br>
+                            <%_ if (is_admin) { _%>
+                            <form id="amb-dc-form" class="minimal" method="post" action="/ambassador/discount_code/edit">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label for="code">Edit discount code <span><i class="fal fa-info-circle" style="margin-left: 10px"></i> case sensitive</span></label>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <input id="amb_id" type="hidden" name="id" value="<%- amb._id %>">
+                                        <input id="amb_dc" type="text" name="code" value="<%- amb.discount_code %>">
+                                    </div>
+                                    <div class="col-xs-4">
+                                        <input type="submit" value="Update">
+                                    </div>
+                                </div>
+                            </form>
+                            <%_ } else { _%>
                             <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
-                            <%_ if (!is_admin) { _%>
                             <br>
                             <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
                                 <span>SETTINGS</span>
@@ -106,8 +121,8 @@
                                                 <div class="product-name"><p><%= product.name %></p></div>
                                                 <div class="product-price"><p>£<%- (product.price_amb / 100).toFixed(2) %></p></div>
                                                 <div class="cart-options">
-                                                    <%_ if (product.stock_qty > 0) { _%>
                                                     <form class="add-to-cart minimal">
+                                                        <%_ if (product.stock_qty > 0) { _%>
                                                         <div class="quantity-wrapper">
                                                             <button type="button" class="quantity-control-btn" data-step="-1">-</button>
                                                             <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
@@ -118,12 +133,12 @@
                                                         <button formaction="/shop/cart/add" class="add-to-cart-btn pre-order">PRE-ORDER</button>
                                                         <%_ } else { _%>
                                                         <button formaction="/shop/cart/add" class="add-to-cart-btn"><i class="fal fa-cart-arrow-down"></i></button>
+                                                        <%_ }
+                                                        } else { _%>
+                                                        <div class="sold-out-label">SOLD OUT</div>
                                                         <%_ } _%>
                                                         <button formaction="/wishlist/remove" class="add-to-cart-btn wishlist-remove"><i class="fal fa-trash-alt"></i></button>
                                                     </form>
-                                                    <%_ } else { _%>
-                                                    <div class="sold-out-label">SOLD OUT</div>
-                                                    <%_ } _%>
                                                 </div>
                                             </div>
                                         </div>
@@ -272,8 +287,22 @@
         </div>
     </div>
 </div>
+<%_ } _%>
 
 <script>
+<%_ if (is_admin) { _%>
+    $("#amb-dc-form").off("submit").submit(function(e) {
+        e.preventDefault();
+        var btnController = new submitBtnController(this, "Updating");
+        $.post(this.action, $(this).serializeArray(), function(result) {
+            alert(result);
+        }).fail(function(err) {
+            alert(err.responseText);
+        }).always(function() {
+            btnController.finish();
+        });
+    });
+<%_ } else { _%>
     $("#personal-details-edit-form").submit(function(e) {
         e.preventDefault();
         var btnController = new submitBtnController(this);
@@ -287,6 +316,7 @@
     });
 
     $("#mail-sub-toggle input:checkbox").change(function(e) {
+        e.preventDefault();
         var form = $(this).parent("form").get(0);
         var data = $(form).serializeArray().slice();
         $(this).attr("disabled", true);
@@ -313,6 +343,6 @@
             });
         }
     });
-</script>
 <%_ } _%>
+</script>
 <%- include ('partials/footer') -%>
