@@ -40,7 +40,7 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
     if (!ambassador) return next();
     const discount_code = await Discount_code.findOne({ code: ambassador.discount_code });
     const { orders_applied } = discount_code || {};
-    const orders = await Order.find({ _id: { $in: orders_applied || [] } });
+    const orders = await Order.find({ _id: { $in: orders_applied || [] } }).sort({ created_at: -1 }).exec();
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: ambassador.id });
     const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
