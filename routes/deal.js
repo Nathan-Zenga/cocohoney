@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const { each } = require('async');
 const isAuthed = require('../modules/auth-check-admin');
 const { Box, Product } = require('../models/models');
 
@@ -71,10 +70,10 @@ router.post('/box/add', isAuthed, (req, res) => {
     });
 });
 
-router.post('/box/edit', isAuthed, (req, res) => {
+router.post('/box/edit', isAuthed, async (req, res) => {
     const { id, name, price, info, image_file, image_url, max_items, box_item } = req.body;
-    Box.findById(id, (err, box) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const box = await Box.findById(id);
         if (!box) return res.status(404).send("Box deal not found");
         const p_id_prev = ("cocohoney/product/box_deals/" + box.name).replace(/[ ?&#\\%<>]/g, "_");
 
@@ -84,38 +83,27 @@ router.post('/box/edit', isAuthed, (req, res) => {
         if (max_items) box.max_items = max_items;
                        box.products_inc = box_item ? Array.isArray(box_item) ? box_item : [box_item] : [];
 
-        box.save((err, saved) => {
-            if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
-            if (!image_url && !image_file) return res.send("Box details updated successfully");
-            const public_id = ("cocohoney/product/box_deals/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
-            cloud.api.delete_resources([p_id_prev], () => {
-                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(err.http_code).send(err.message);
-                    saved.image = { p_id: result.public_id, url: result.secure_url };
-                    saved.save(() => { res.send("Box details updated successfully") });
-                });
-            });
-        });
-    });
+        const saved = await box.save();
+        if (!image_url && !image_file) return res.send("Box details updated successfully");
+        const public_id = ("cocohoney/product/box_deals/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
+        await cloud.api.delete_resources([p_id_prev]);
+        await cloud.uploader.upload(image_url || image_file, { public_id });
+        saved.image = { p_id: result.public_id, url: result.secure_url };
+        await saved.save(); res.send("Box details updated successfully");
+    } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 
-router.post('/box/remove', isAuthed, (req, res) => {
+router.post('/box/remove', isAuthed, async (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Box.find({_id : { $in: ids }}, (err, boxes) => {
-        if (err) return res.status(500).send(err.message);
-        if (!boxes.length) return res.status(400).send("No boxes found");
-        each(boxes, (item, cb) => {
-            Box.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err || "Box(s) not found");
-                cloud.api.delete_resources([item.image.p_id], () => cb());
-            })
-        }, err => {
-            if (!err) return res.send("Box"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-            let is404 = err.message === "Box(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Box(s) not found");
-        })
-    });
+    try {
+        const boxes = await Box.find({_id : { $in: ids }});
+        if (!boxes.length) return res.status(404).send("No box deal found");
+        if (ids.length > boxes.length) return res.status(404).send("One or more box deals not found");
+        await Promise.allSettled(boxes.map(b => cloud.api.delete_resources([b.image.p_id])));
+        await Box.deleteMany({ _id: { $in: boxes.map(b => b.id) } });
+        res.send("Box deal"+ (ids.length > 1 ? "s" : "") +" deleted successfully");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

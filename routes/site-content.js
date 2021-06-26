@@ -2,7 +2,7 @@ const router = require('express').Router();
 const cloud = require('cloudinary').v2;
 const isAuthed = require('../modules/auth-check-admin');
 const { Banner_slide, Overview_image } = require('../models/models');
-const { forEachOf, each } = require('async');
+const { forEachOf } = require('async');
 
 router.post('/banner/add', isAuthed, (req, res) => {
     Banner_slide.create({ text: req.body.text }, err => res.send("Banner text saved"));
@@ -40,7 +40,7 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
             overview_img.p_id = result.public_id;
             overview_img.url = result.secure_url;
             overview_img.position = arr.length + (i+1);
-            overview_img.save(err => { if (err) return cb(err); cb() });
+            overview_img.save().then(_ => cb()).catch(err => cb(err));
         });
     }, err => {
         if (err) return res.status(err.http_code || 500).send(err.message);
@@ -48,22 +48,17 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
     })
 });
 
-router.post('/overview-images/edit', isAuthed, (req, res) => {
+router.post('/overview-images/edit', isAuthed, async (req, res) => {
     const { id, image_file, image_url } = req.body;
     if (!image_file && !image_url) return res.status(400).send("No image uploaded");
-    Overview_image.findById(id, (err, image) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const image = await Overview_image.findById(id);
         if (!image) return res.status(404).send("Image not found");
-        cloud.uploader.upload(image_url || image_file, { public_id: image.p_id, resource_type: "image" }, (err, result) => {
-            if (err) return res.status(err.http_code).send(err.message);
-            image.p_id = result.public_id;
-            image.url = result.secure_url;
-            image.save(() => {
-                if (err) return res.status(500).send(err.message);
-                res.send("Overview image updated / replaced successfully")
-            });
-        });
-    })
+        const result = await cloud.uploader.upload(image_url || image_file, { public_id: image.p_id, resource_type: "image" });
+        image.p_id = result.public_id;
+        image.url = result.secure_url;
+        await image.save(); res.send("Overview image updated / replaced successfully")
+    } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 
 router.post('/overview-images/reorder', isAuthed, (req, res) => {
@@ -79,18 +74,14 @@ router.post('/overview-images/reorder', isAuthed, (req, res) => {
 router.post('/overview-images/remove', isAuthed, async (req, res) => {
     const ids = (Array.isArray(req.body.id) ? req.body.id : [req.body.id]).filter(e => e);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    const images = await Overview_image.find({_id : { $in: ids }});
-    if (!images.length) return res.status(404).send("No images found");
-    each(images, (item, cb) => {
-        Overview_image.deleteOne({ _id : item.id }, (err, result) => {
-            if (err || !result.deletedCount) return cb(err || "Image(s) not found");
-            cloud.api.delete_resources([item.p_id], () => cb());
-        })
-    }, err => {
-        if (!err) return res.send("Image"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-        let is404 = err.message === "Image(s) not found";
-        res.status(!is404 ? 500 : 404).send(!is404 ? "Error occurred" : "Product(s) not found");
-    })
+    try {
+        const images = await Overview_image.find({_id : { $in: ids }});
+        if (!images.length) return res.status(404).send("No images found");
+        if (ids.length > images.length) return res.status(404).send("One or more images not found");
+        await Promise.allSettled(images.map(img => cloud.api.delete_resources([img.p_id])));
+        await Overview_image.deleteMany({ _id: { $in: images.map(img => img.id) } });
+        res.send("Image"+ (ids.length > 1 ? "s" : "") +" deleted successfully");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

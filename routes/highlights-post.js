@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const { each } = require('async');
 const isAuthed = require('../modules/auth-check-admin');
 const { Highlights_post } = require('../models/models');
 
@@ -49,26 +48,18 @@ router.post('/edit', isAuthed, async (req, res) => {
     } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });
 
-router.post('/remove', isAuthed, (req, res) => {
+router.post('/remove', isAuthed, async (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Highlights_post.find({_id : { $in: ids }}, (err, posts) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const posts = await Highlights_post.find({_id: { $in: ids }});
         if (!posts.length) return res.status(404).send("No posts found");
-        each(posts, (post, cb) => {
-            Highlights_post.findByIdAndDelete(post.id, err => {
-                if (err) return cb(err);
-                const opts_lg = { resource_type: post.media_lg.media_type };
-                const opts_sm = post.media_sm ? { resource_type: post.media_sm.media_type } : {};
-                cloud.api.delete_resources([post.media_lg.p_id], opts_lg, () => {
-                    cloud.api.delete_resources([(post.media_sm || {}).p_id], opts_sm, () => cb());
-                })
-            })
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            res.send(`Highlights post${ids.length > 1 ? "s" : ""} deleted successfully`);
-        })
-    });
+        if (ids.length > posts.length) return res.status(404).send("One or more posts not found");
+        await Promise.allSettled(posts.map(p => cloud.api.delete_resources([p.media_lg.p_id], { resource_type: p.media_lg.media_type })));
+        await Promise.allSettled(posts.map(p => cloud.api.delete_resources([(p.media_sm || {}).p_id], p.media_sm ? { resource_type: p.media_sm.media_type } : {})));
+        await Highlights_post.deleteMany({ _id: { $in: posts.map(p => p.id) } });
+        res.send(`Highlights post${ids.length > 1 ? "s" : ""} deleted successfully`);
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const { each } = require('async');
 const isAuthed = require('../modules/auth-check-admin');
 const { Product } = require('../models/models');
 
@@ -45,10 +44,10 @@ router.post('/stock/add', isAuthed, (req, res) => {
     });
 });
 
-router.post('/stock/edit', isAuthed, (req, res) => {
+router.post('/stock/edit', isAuthed, async (req, res) => {
     const { id, name, price, price_amb, category, category_new, product_collection, stock_qty, info, image_file, image_url, pre_release } = req.body;
-    Product.findById(id, (err, product) => {
-        if (err) return res.status(500).send(err.message || "Error occurred");
+    try {
+        const product = await Product.findById(id);
         if (!product) return res.status(404).send("Product not found");
         const p_id_prev = product.image.p_id;
 
@@ -61,38 +60,27 @@ router.post('/stock/edit', isAuthed, (req, res) => {
         if (stock_qty)                product.stock_qty = stock_qty;
                                       product.pre_release = !!pre_release;
 
-        product.save((err, saved) => {
-            if (err) return res.status(500).send(err.message || "Error occurred whilst saving product");
-            if (!image_url && !image_file) return res.send("Product details updated successfully");
-            const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
-            cloud.api.delete_resources([p_id_prev], () => {
-                cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-                    if (err) return res.status(err.http_code).send(err.message);
-                    saved.image = { p_id: result.public_id, url: result.secure_url };
-                    saved.save(() => { res.send("Product details updated successfully") });
-                });
-            });
-        });
-    })
+        const saved = await product.save();
+        if (!image_url && !image_file) return res.send("Product details updated successfully");
+        const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
+        await cloud.api.delete_resources([p_id_prev]);
+        await cloud.uploader.upload(image_url || image_file, { public_id });
+        saved.image = { p_id: result.public_id, url: result.secure_url };
+        await saved.save(); res.send("Product details updated successfully");
+    } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 
-router.post('/stock/remove', isAuthed, (req, res) => {
+router.post('/stock/remove', isAuthed, async (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Product.find({_id : { $in: ids }}, (err, products) => {
-        if (err) return res.status(500).send(err.message);
+    try {
+        const products = await Product.find({_id : { $in: ids }});
         if (!products.length) return res.status(404).send("No products found");
-        each(products, (item, cb) => {
-            Product.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err || "Product(s) not found");
-                cloud.api.delete_resources([item.image.p_id], () => cb());
-            })
-        }, err => {
-            if (!err) return res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
-            let is404 = err === "Product(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? err.message : "Product(s) not found");
-        })
-    });
+        if (ids.length > products.length) return res.status(404).send("One or more products not found");
+        await Promise.allSettled(products.map(p => cloud.api.delete_resources([p.image.p_id])));
+        await Product.deleteMany({ _id: { $in: products.map(p => p.id) } });
+        res.send("Product"+ (ids.length > 1 ? "s" : "") +" deleted from stock successfully");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

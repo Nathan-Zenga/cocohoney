@@ -50,23 +50,17 @@ router.post('/edit', isAuthed, async (req, res) => {
     } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });
 
-router.post('/remove', isAuthed, (req, res) => {
+router.post('/remove', isAuthed, async (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    Event.find({_id : { $in: ids }}, (err, events) => {
-        if (err) return res.status(500).send(err.message);
-        if (!events.length) return res.status(404).send("No events found");
-        each(events, (item, cb) => {
-            Event.deleteOne({ _id : item.id }, (err, result) => {
-                if (err || !result.deletedCount) return cb(err || "Event(s) not found");
-                cloud.api.delete_resources([item.image.p_id], () => cb());
-            })
-        }, err => {
-            if (!err) return res.send("Event"+ (ids.length > 1 ? "s" : "") +" deleted successfully");
-            let is404 = err === "Event(s) not found";
-            res.status(!is404 ? 500 : 404).send(!is404 ? err.message : "Event(s) not found");
-        })
-    });
+    try {
+        const events = await Event.find({_id : { $in: ids }});
+        if (!events.length) return res.status(404).send("No event post found");
+        if (ids.length > events.length) return res.status(404).send("One or more event posts not found");
+        await Promise.allSettled(events.map(e => cloud.api.delete_resources([e.image.p_id])));
+        await Event.deleteMany({ _id: { $in: events.map(e => e.id) } });
+        res.send("Event post"+ (ids.length > 1 ? "s" : "") +" deleted successfully");
+    } catch (err) { res.status(500).send(err.message) }
 });
 
 module.exports = router;

@@ -7,8 +7,7 @@ passport.use("local-login-ambassador", new Strategy({ usernameField: "email" }, 
     try {
         const user = await Ambassador.findOne({ email });
         const match = await bcrypt.compare(password, (user || {}).password || "");
-        if (!user) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
-        if (!match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
+        if (!user || !match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
         done(null, user);
     } catch (err) { done(err) }
 }));
@@ -17,8 +16,7 @@ passport.use("local-login-customer", new Strategy({ usernameField: "email" }, as
     try {
         const user = await Member.findOne({ email });
         const match = await bcrypt.compare(password, (user || {}).password || "");
-        if (!user) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
-        if (!match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
+        if (!user || !match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
         done(null, user);
     } catch (err) { done(err) }
 }));

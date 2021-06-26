@@ -205,13 +205,11 @@ router.get("/session/complete", async (req, res) => {
 
 router.get("/cancel", async (req, res) => {
     const { checkout_session } = req.session;
-    try {
-        if (checkout_session) {
-            const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer", "payment_intent"] });
-            const { customer, payment_intent: pi } = session;
-            if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
-            if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
-        }
+    if (checkout_session) try {
+        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer", "payment_intent"] });
+        const { customer, payment_intent: pi } = session;
+        if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
+        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
     } catch(err) {}
     req.session.checkout_session = undefined;
     req.session.current_dc_doc = undefined;
