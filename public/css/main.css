@@ -836,6 +836,15 @@ label .dropdown-arrow {
     height: 70px
 }
 
+.g-recaptcha {
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    padding-bottom: 2em;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
 #cart-icon {
     position: fixed;
     display: block;

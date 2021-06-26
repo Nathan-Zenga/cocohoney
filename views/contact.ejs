@@ -23,10 +23,15 @@
                 <label>MESSAGE</label>
                 <textarea name="message" rows="10" required></textarea>
 
+                <fieldset>
+                    <div class="g-recaptcha" data-sitekey="<%= recaptcha_site_key %>"></div>
+                </fieldset>
+
                 <input type="submit" value="SEND">
             </fieldset>
         </form>
     </div>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         $("form").submit(function(e) {
             e.preventDefault();
@@ -38,6 +43,7 @@
                 alert(err.responseText);
             }).always(function() {
                 btnController.finish();
+                grecaptcha.reset();
             });
         });
     </script>

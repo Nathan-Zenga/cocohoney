@@ -1,6 +1,9 @@
 const router = require('express').Router();
+const { default: axios } = require('axios');
+const { stringify } = require('querystring');
 const MailTransporter = require('../modules/mail-transporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member } = require('../models/models');
+const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY } = process.env;
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
@@ -10,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/contact', (req, res) => {
-    res.render('contact', { title: "Contact Us", pagename: "contact" })
+    res.render('contact', { title: "Contact Us", pagename: "contact", recaptcha_site_key: RECAPTCHA_SITE_KEY })
 });
 
 router.get('/faq', (req, res) => {
@@ -38,8 +41,15 @@ router.get('/mail/unsubscribe', async (req, res) => {
     res.render('mail-unsubscribe-msg', { email: saved.email || saved.customer_email });
 });
 
-router.post('/contact/mail/send', (req, res) => {
-    const { firstname, lastname, email, message } = req.body;
+router.post('/contact/mail/send', async (req, res) => {
+    const { firstname, lastname, email, message, "g-recaptcha-response": captcha } = req.body;
+    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot. Please tick the CAPTCHA box.");
+
+    const query = stringify({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
+    const verifyURL = `https://google.com/recaptcha/api/siteverify?${query}`;
+    const { data: result } = await axios.get(verifyURL).catch(e => e);
+    if (!result.success) return res.status(400).send("Failed CAPTCHA verification");
+
     const transporter = new MailTransporter({ req, res }, { email: req.session.admin_email });
     const subject = "New message / enquiry";
     const msg = `New message from <b>${firstname} ${lastname} (${email})</b>:\n\n${message}`;
