@@ -4,7 +4,7 @@
             <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
             <select>
                 <option value="#home">HOME</option>
-                <option value="#about">ABOUT</option>
+                <option value="#about">ABOUT PAGE</option>
                 <option value="#highlights">HIGHLIGHTS POSTS</option>
                 <option value="#sale">SALE</option>
                 <option value="#event">EVENTS</option>
@@ -22,7 +22,7 @@
         <div class="nav-pills-container dt-view-md">
             <ul class="nav nav-pills">
                 <li class="active"><a data-toggle="pill" href="#home">HOME</a></li>
-                <li><a data-toggle="pill" href="#about">ABOUT</a></li>
+                <li><a data-toggle="pill" href="#about">ABOUT PAGE</a></li>
                 <li><a data-toggle="pill" href="#highlights">HIGHLIGHTS POSTS</a></li>
                 <li><a data-toggle="pill" href="#sale">SALE</a></li>
                 <li><a data-toggle="pill" href="#event">EVENTS</a></li>
@@ -128,6 +128,7 @@
                 var id = this.value;
                 var result = (docs || []).filter(function(item) { return id == item._id })[0] || {};
                 $form.find(".clear-uploads").click();
+                $form.find(".img-preview").removeClass("show").empty();
                 if (!Object.keys(result).length) return $form.get(0).reset();
 
                 $form.find("#pre_release_edit").prop("checked", result.pre_release);
@@ -158,19 +159,19 @@
                 $form.find("#box_info_edit").val(result.info);
                 $form.find(".box_item_all").prop("checked", false);
                 $form.find(".box_item_edit").prop("checked", false).each(function() {
-                    var checked = (result.products_inc || []).includes($(this).prop("value"));
-                    $(this).prop("checked", checked)
+                    var checked = (result.products_inc || []).includes(this.value);
+                    this.checked = checked;
                 });
 
                 $form.find("#overview_image_url_edit").val(result.url);
-                $form.find(".img-preview").toggleClass("show", !!result.url).empty().append(result.url ? $("<img src='" + result.url + "'>") : "");
+                $form.find(".img-preview").toggleClass("show", !!result.url).append(result.url ? $("<img src='" + result.url + "'>") : "");
 
                 $form.find("#highlights_post_title_edit").val(result.title);
                 $form.find("#highlights_post_text_body_edit").val(result.text_body);
-                $form.find("#highlights_post_link_edit").val(result.link);
-                $form.find(".img-preview:first-child").toggleClass("show", !!result.media_lg).empty().append(result.media_lg ? $("<img src='" + result.media_lg.url + "'>") : "");
-                var media_sm = result.media_sm ? $(/(.jpe?g|.png)$/i.test(result.media_sm.url) ? "<img src='" + result.media_sm.url + "'>" : "<video playsinline autoplay muted loop><source src='"+ result.media_sm.url +"'></source></video>") : "";
-                $form.find(".img-preview:last-child").toggleClass("show", !!result.media_sm).empty().append(media_sm);
+                $form.find("#highlights_post_link_edit").val((result.link.charAt(0) === "/" ? location.origin : "") + result.link);
+                $form.find(".img-preview:first-child").toggleClass("show", !!result.media_lg).append(result.media_lg ? $("<img src='" + result.media_lg.url + "'>") : "");
+                var media_sm = result.media_sm ? $(result.media_sm.media_type === "image" ? "<img src='" + result.media_sm.url + "'>" : "<video playsinline autoplay muted loop><source src='"+ result.media_sm.url +"'></source></video>") : "";
+                $form.find(".img-preview:last-child").toggleClass("show", !!result.media_sm).append(media_sm);
 
                 $form.find("#event-title-edit").val(result.title);
                 $form.find("#event-date-edit").val(result.date ? new Date(result.date).toISOString().slice(0, 10) : "");
