@@ -144,17 +144,14 @@ section {
     text-align: center
 }
 
-.bg-underlay {
+#page-bg-underlay {
+    position: fixed;
     width: 100%;
     height: 100%;
     overflow: hidden;
 }
 
-.bg-underlay.bg-body {
-    position: fixed;
-}
-
-.bg-underlay.bg-body:before {
+#page-bg-underlay:before {
     position: absolute;
     display: table;
     content: " ";
@@ -165,7 +162,7 @@ section {
     z-index: 5;
 }
 
-.bg-underlay video, .bg-underlay > div {
+#page-bg-underlay video, #page-bg-underlay > div {
     position: absolute;
     left: 50%;
     height: inherit;

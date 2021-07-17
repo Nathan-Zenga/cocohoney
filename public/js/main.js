@@ -55,18 +55,20 @@ $(function() {
         })
     });
 
-    $(window).on("load", function() {
-        $(".image-highlight").delay(700).each(function(i) {
+    $(window).on("load hashchange", function(e) {
+        if (e.type === "load") $(".image-highlight").delay(700).each(function(i) {
             $(this).delay(i * 1000).fadeIn(2000);
-        })
-    });
+        });
 
-    $(window).on("load hashchange", function() {
         if (location.hash) {
             var $dropdown_opt = $(".section-dropdown-options select");
             if ($dropdown_opt.length) return $dropdown_opt.prop("value", location.hash).trigger("change");
             $(".nav-pills a[href='"+ location.hash +"']").trigger("click")
         }
+    }).on("touchstart", function() {
+        var $video = $("#page-bg-underlay video").get(0);
+        var playing = $video.currentTime > 0 && !$video.paused && !$video.ended && $video.readyState > 2;
+        if (!playing) $video.play();
     });
 
     $(".section-dropdown-options select").change(function() {
