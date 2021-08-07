@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const { Order, Event } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+const checkout_cancel = require('../modules/checkout-cancel');
 const production = process.env.NODE_ENV === "production";
 
 router.post("/session/create", async (req, res) => {
@@ -121,17 +122,7 @@ router.get("/session/complete", async (req, res) => {
     }
 });
 
-router.get("/cancel", async (req, res) => {
-    const { checkout_session } = req.session;
-    if (checkout_session) try {
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer", "payment_intent"] });
-        const { customer, payment_intent: pi } = session;
-        if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
-        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
-    } catch(err) {}
-    req.session.event_id = undefined;
-    req.session.checkout_session = undefined;
-    req.session.mail_sub = undefined;
+router.get("/cancel", checkout_cancel, (req, res) => {
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 

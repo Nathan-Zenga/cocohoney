@@ -3,17 +3,17 @@ const Stripe = new (require('stripe').Stripe)(process.env.STRIPE_SK);
 const countries = require("../modules/country-list");
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+const checkout_cancel = require('../modules/checkout-cancel');
 const production = process.env.NODE_ENV === "production";
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     const { cart } = req.session;
     if (!cart.length) return res.redirect(req.get("referrer"));
     const price_total = cart.map(p => ({ price: p.price, quantity: p.qty })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
     const free_delivery = price_total >= 4000;
     const query = free_delivery ? { name: "Free Delivery" } : {};
-    Shipping_method.find(query).sort({ fee: 1 }).exec((err, shipping_methods) => {
-        res.render('checkout', { title: "Checkout", pagename: "checkout", countries, shipping_methods })
-    })
+    const shipping_methods = await Shipping_method.find(query).sort({ fee: 1 }).exec();
+    res.render('checkout', { title: "Checkout", pagename: "checkout", countries, shipping_methods })
 });
 
 router.post("/session/create", async (req, res) => {
@@ -195,26 +195,12 @@ router.get("/session/complete", async (req, res) => {
         });
     } catch(err) {
         console.error(err.message || err);
-        res.status(500).render('checkout-error', {
-            title: "Payment Error",
-            pagename: "checkout-error",
-            error: err.message
-        })
+        const pagename = "checkout-error";
+        res.status(500).render(pagename, { title: "Payment Error", pagename, error: err.message })
     }
 });
 
-router.get("/cancel", async (req, res) => {
-    const { checkout_session } = req.session;
-    if (checkout_session) try {
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer", "payment_intent"] });
-        const { customer, payment_intent: pi } = session;
-        if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
-        if (pi.status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
-    } catch(err) {}
-    req.session.checkout_session = undefined;
-    req.session.current_dc_doc = undefined;
-    req.session.shipping_method = undefined;
-    req.session.mail_sub = undefined;
+router.get("/cancel", checkout_cancel, (req, res) => {
     res.render('checkout-cancel', { title: "Payment Cancelled", pagename: "checkout-cancel" });
 });
 

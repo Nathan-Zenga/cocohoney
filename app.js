@@ -9,6 +9,7 @@ const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
 const { CHCDB, NODE_ENV, PORT } = process.env;
 const { Banner_slide, Sale, Product, Box } = require("./models/models");
+const checkout_cancel = require('./modules/checkout-cancel');
 const port = PORT || 2020;
 const production = NODE_ENV === "production";
 
@@ -52,8 +53,9 @@ app.use(async (req, res, next) => { // global variables
     res.locals.sale = !sale_doc ? res.locals.sale : sale_doc.active || false;
     res.locals.sale_percentage = !sale_doc ? res.locals.sale_percentage : sale_doc.percentage || false;
     res.locals.sale_sitewide = !sale_doc ? res.locals.sale_sitewide : (res.locals.sale && sale_doc.sitewide) || false;
-    res.locals.cart = req.session.cart = req.session.cart || [];
-    next();
+    res.locals.cart = req.session.cart = Array.isArray(req.session.cart) ? req.session.cart : [];
+    if (!req.session.checkout_session || /^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return next();
+    checkout_cancel(req, res, next);
 });
 
 app.use('/', require('./routes/index'));
