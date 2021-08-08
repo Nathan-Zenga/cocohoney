@@ -13,6 +13,7 @@ const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
 const visitor = require('./modules/visitor-info');
+const sub_setup_cancel = require('./modules/subscription-setup-cancel');
 const production = NODE_ENV === "production";
 var timeout = null;
 
@@ -71,8 +72,9 @@ app.use(async (req, res, next) => { // global variables
         }, sale_ended ? 0 : time_left)
     }
 
-    if (!req.session.checkout_session || /^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return next();
-    checkout_cancel(req, res, next);
+    if (req.session.setup_session && !/^\/shop\/subscription\/(cancel|complete)$/.test(req.originalUrl)) return sub_setup_cancel(req, res, next);
+    if (req.session.checkout_session && !/^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return checkout_cancel(req, res, next);
+    next();
 });
 
 app.use('/', require('./routes/index'));

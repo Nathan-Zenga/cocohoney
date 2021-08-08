@@ -13,5 +13,5 @@ module.exports = async (req, res, next) => {
     req.session.current_dc_doc = undefined;
     req.session.shipping_method = undefined;
     req.session.mail_sub = undefined;
-    return next();
+    next();
 }

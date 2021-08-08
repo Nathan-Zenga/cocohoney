@@ -4,6 +4,7 @@ const { stringify } = require('querystring');
 const countries = require('../modules/country-list');
 const { Subscription_plan, Subscriber, Subscription_page } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
+const sub_setup_cancel = require('../modules/subscription-setup-cancel');
 
 router.get("/", async (req, res) => {
     const subscription_plans = await Subscription_plan.find().sort({ interval: 1, interval_count: 1 }).exec();
@@ -58,19 +59,20 @@ router.post("/setup", async (req, res) => {
         });
 
         req.session.price_id = price.id;
-        req.session.session_id = session.id;
+        req.session.setup_session = session;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/complete", async (req, res) => {
-    const { session_id, price_id } = req.session;
+    const { setup_session, price_id } = req.session;
     try {
-        const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["setup_intent", "customer"] });
+        const { setup_intent, customer } = await Stripe.checkout.sessions.retrieve(setup_session.id, { expand: ["setup_intent", "customer"] });
         const { product, recurring } = await Stripe.prices.retrieve(price_id, { expand: ["product"] });
         const first_charge_date = new Date();
         const backdate = new Date();
         const interval_count = recurring.interval_count * (recurring.interval === "year" ? 12 : 1);
+        // charge on 3rd day of the month, before cut-off date (5th)
         first_charge_date.setMonth(first_charge_date.getMonth() + (first_charge_date.getDate() > 3 ? interval_count : 0), 3);
         first_charge_date.setHours(0, 0, 0, 0);
         backdate.setMonth(backdate.getMonth() - (backdate.getDate() <= 3 ? interval_count : 0), 3);
@@ -90,7 +92,7 @@ router.get("/complete", async (req, res) => {
             sub_id: subscription.id
         });
 
-        req.session.checkout_session = undefined;
+        req.session.setup_session = undefined;
         req.session.price_id = undefined;
 
         const transporter = new MailTransporter({ req, res });
@@ -122,18 +124,7 @@ router.get("/complete", async (req, res) => {
     };
 });
 
-router.get("/cancel", async (req, res) => {
-    const { session_id, price_id } = req.session;
-    try {
-        const session = await Stripe.checkout.sessions.retrieve(session_id, { expand: ["customer", "payment_intent"] });
-        const { customer, payment_intent: pi } = session;
-        if (session.payment_status != "paid") await Stripe.customers.del((customer || {}).id);
-        if ((pi || {}).status != "succeeded") await Stripe.paymentIntents.cancel(pi.id, { cancellation_reason: "requested_by_customer" });
-        const price = await Stripe.prices.update(price_id, { active: false });
-        await Stripe.products.del(price.product);
-    } catch(err) { res.status(err.statusCode || 500); console.error(err.message) }
-    req.session.price_id = undefined;
-    req.session.session_id = undefined;
+router.get("/cancel", sub_setup_cancel, async (req, res) => {
     res.render('subscription-checkout-cancel', { title: "Payment Cancelled", pagename: "subscription-checkout-cancel" });
 });
 
