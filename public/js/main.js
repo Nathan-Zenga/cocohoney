@@ -60,11 +60,10 @@ $(function() {
             $(this).delay(i * 1000).fadeIn(2000);
         });
 
-        if (location.hash) {
-            var $dropdown_opt = $(".section-dropdown-options select");
-            if ($dropdown_opt.length) return $dropdown_opt.prop("value", location.hash).trigger("change");
-            $(".nav-pills a[href='"+ location.hash +"']").trigger("click")
-        }
+        if (!location.hash) return;
+        var $dropdown_opt = $(".section-dropdown-options select");
+        if ($dropdown_opt.length) return $dropdown_opt.prop("value", location.hash).trigger("change");
+        $(".nav-pills a[href='"+ location.hash +"']").trigger("click")
     }).on("touchstart", function() {
         var $video = $("#page-bg-underlay video").get(0);
         var playing = $video.currentTime > 0 && !$video.paused && !$video.ended && $video.readyState > 2;
@@ -82,23 +81,29 @@ $(function() {
 
     $(".file-upload-container :file").change(function() {
         var files = this.files;
-        var field = this.dataset.fieldname;
+        var fieldname = this.dataset.fieldname;
         var $container = $(this).closest(".file-upload-container");
         var $image_url = $container.find("input[type=url]").attr("disabled", false).val("");
         $container.find("input:hidden").remove();
-        if (files && files.length) {
-            var $submitInput = $(this).closest("form").find(":submit").attr("disabled", true);
-            $.each(files, function(i, file) {
-                var reader = new FileReader();
-                var $input = $("<input type='hidden' name='"+ field +"'>").appendTo($container);
-                reader.onload = function(e) {
-                    $input.val(e.target.result);
-                    $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
-                    $submitInput.attr("disabled", false);
-                };
-                reader.readAsDataURL(file)
-            });
-        }
+        if (!files || !files.length) return;
+        var $submitInput = $(this).closest("form").find(":submit").attr("disabled", true);
+        async.each(files, function(file, cb) {
+            var reader = new FileReader();
+            var $input = $("<input type='hidden' name='"+ fieldname +"'>").appendTo($container);
+            reader.onerror = function() { cb((files.length > 1 ? "One or more images" : "Image") + " not found/valid") };
+            reader.onload = function(e) {
+                var media = e.target.result.includes("image") ? new Image() : document.createElement("video");
+                media.onload = function() { $input.val(e.target.result); cb() };
+                media.oncanplay = media.onload;
+                media.onerror = reader.onerror;
+                media.src = e.target.result;
+            };
+            reader.readAsDataURL(file)
+        }, function(err) {
+            if (err) return alert(err.message || err);
+            $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
+            $submitInput.attr("disabled", false);
+        });
     });
 
     $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("focus");
@@ -138,18 +143,14 @@ $(function() {
             iLeft.classList.add('fa-angle-left')
             leftArrow.classList.add('slider-nav', 'slider-left')
             leftArrow.appendChild(iLeft)
-            leftArrow.addEventListener('click', () => {
-                slideLeft();
-            })
+            leftArrow.addEventListener('click', () => { slideLeft() })
             var rightArrow = document.createElement('a')
             var iRight = document.createElement('i');
             iRight.classList.add('fal')
             iRight.classList.add('fa-angle-right')
             rightArrow.classList.add('slider-nav', 'slider-right')
             rightArrow.appendChild(iRight)
-            rightArrow.addEventListener('click', () => {
-                slideRight();
-            })
+            rightArrow.addEventListener('click', () => { slideRight() })
             container.appendChild(leftArrow);
             container.appendChild(rightArrow);
         }
@@ -157,18 +158,14 @@ $(function() {
         function slideInitial() {
             initBullets();
             initArrows();
-            setTimeout(function() {
-                slideRight();
-            }, 500);
+            setTimeout(function() { slideRight() }, 500);
         }
     
         function updateBullet() {
             if (!noBullets) {
                 document.querySelector('.bullet-container').querySelectorAll('.bullet').forEach((elem, i) => {
                     elem.classList.remove('active');
-                    if (i === slideCurrent) {
-                        elem.classList.add('active');
-                    }
+                    if (i === slideCurrent) elem.classList.add('active');
                 })
             }
             checkRepeat();
