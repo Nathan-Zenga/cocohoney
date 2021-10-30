@@ -14,19 +14,21 @@ router.post('/submit', (req, res) => {
     const review = new Review({ author_name: name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
-    const images = [...image_files, ...image_urls ];
+    const images = [...image_files, ...image_urls];
+    const saved_p_ids = [];
     if (!images.length) return review.save(err => res.status(err ? 500 : 200).send(err ? err.message : "Review submitted"));
 
     forEachOf(images, (image, i, cb) => {
         const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
         cloud.uploader.upload(image, { public_id }, (err, result) => {
             if (err) return cb(err);
+            saved_p_ids.push(result.public_id);
             review.images.push({ p_id: result.public_id, url: result.secure_url });
             cb();
         });
     }, err => {
-        if (err) return res.status(err.http_code || 500).send(err.message);
-        review.save(() => res.send("Review submitted"));
+        if (!err) return review.save(() => res.send("Review submitted"));
+        cloud.api.delete_resources(saved_p_ids, () => res.status(err.http_code || 500).send(err.message));
     })
 });
 
@@ -45,12 +47,11 @@ router.post('/update', async (req, res) => {
 
 router.post('/delete', async (req, res) => {
     if (!res.locals.is_admin) return res.sendStatus(401);
-    const { id } = req.body;
     try {
-        const review = await Review.findById(id);
+        const review = await Review.findById(req.body.id);
         if (!review) return res.status(404).send("Review not found");
         await cloud.api.delete_resources_by_prefix(review.id);
-        await Review.findByIdAndDelete(id);
+        await Review.findByIdAndDelete(review.id);
         res.send("Review deleted");
     } catch (err) { res.status(400).send(err.message) }
 });
