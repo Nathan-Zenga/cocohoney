@@ -64,7 +64,7 @@ router.post('/stock/edit', isAuthed, async (req, res) => {
         if (!image_url && !image_file) return res.send("Product details updated successfully");
         const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
         await cloud.api.delete_resources([p_id_prev]);
-        await cloud.uploader.upload(image_url || image_file, { public_id });
+        const result = await cloud.uploader.upload(image_url || image_file, { public_id });
         saved.image = { p_id: result.public_id, url: result.secure_url };
         await saved.save(); res.send("Product details updated successfully");
     } catch (err) { res.status(err.http_code || 500).send(err.message) }

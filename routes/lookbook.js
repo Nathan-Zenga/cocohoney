@@ -55,7 +55,7 @@ router.post('/tutorial/add', isAuthed, (req, res) => {
             new_media.media_type = resource_type;
             new_media.orientation = width > height ? "landscape" : width < height ? "portrait" : "square";
             new_media.tutorial = true;
-            new_media.save(err => { if (err) return cb(err); cb() });
+            new_media.save(err => { err ? cb(err) : cb() });
         });
     }, err => {
         if (err) return res.status(err.http_code || 500).send(err.message);

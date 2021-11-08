@@ -18,6 +18,8 @@ router.post('/register', async (req, res) => {
     try {
         if (req.isAuthenticated()) return res.status(400).send("Please log out first");
         const { firstname, lastname, email, phone_number, line1, line2, city, state, country, postcode, instagram, image_file, image_url } = req.body;
+        const existing = await Ambassador.findOne({ email });
+        if (existing) return res.status(400).send("This email is already registered");
         const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
         ambassador.address = { line1, line2, city, state, country, postcode };
         ambassador.token = crypto.randomBytes(20).toString("hex");
