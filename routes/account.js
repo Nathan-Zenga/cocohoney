@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const cloud = require('cloudinary').v2;
+const crypto = require('crypto');
 const isAuthed = require('../modules/auth-check-customer');
 const MailTransporter = require('../modules/mail-transporter');
 const { Member, Order, Wishlist, Product } = require('../models/models');
