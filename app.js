@@ -13,8 +13,7 @@ const checkout_cancel = require('./modules/checkout-cancel');
 const port = PORT || 2020;
 const production = NODE_ENV === "production";
 
-mongoose.connect(CHCDB, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false });
-mongoose.connection.once('open', () => { console.log("Connected to DB") });
+mongoose.connect(CHCDB).then(() => { console.log("Connected to DB") });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

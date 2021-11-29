@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const { default: axios } = require('axios');
-const { stringify } = require('querystring');
 const MailTransporter = require('../modules/mail-transporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member } = require('../models/models');
 const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY } = process.env;
@@ -45,8 +44,8 @@ router.post('/contact/mail/send', async (req, res) => {
     const { firstname, lastname, email, message, "g-recaptcha-response": captcha } = req.body;
     if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot. Please tick the CAPTCHA box.");
 
-    const query = stringify({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
-    const verifyURL = `https://google.com/recaptcha/api/siteverify?${query}`;
+    const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
+    const verifyURL = `https://google.com/recaptcha/api/siteverify?${params.toString()}`;
     const { data: result } = await axios.get(verifyURL).catch(e => e);
     if (!result.success) return res.status(400).send("Failed CAPTCHA verification");
 

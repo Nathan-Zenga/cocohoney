@@ -53,25 +53,22 @@ router.post('/login', (req, res) => {
     const { redirect_to } = req.query;
     const email = req.session.admin_email;
     req.body.email = email; Object.freeze(req.body);
-    passport.authenticate("local-login-admin", (err, user, info) => {
+    passport.authenticate("local-login-admin", async (err, user, info) => {
         if (err) return res.status(500).send(err.message || err);
         if (!user) return res.status(400).send(info.message);
         if (user === "to_activate") {
-            Admin.deleteMany({ email: "temp" }, err => {
-                const password = crypto.randomBytes(20).toString("hex");
-                const token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
-                Admin.create({ email: "temp", password, token_expiry_date }, (err, doc) => {
-                    new MailTransporter({ req, res }, { email }).sendMail({
-                        subject: "Admin Account Activation",
-                        message: "You're receiving this email because an admin account needs setting up. " +
-                            "Please click the link below to activate the account, as this will only be " +
-                            "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
-                            `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`
-                    }, err => {
-                        if (err) return res.status(500).send(err.message || err);
-                        res.status(400).send(info.message);
-                    });
-                })
+            await Admin.deleteMany({ email: "temp" });
+            const password = crypto.randomBytes(20).toString("hex");
+            const token_expiry_date = new Date(Date.now() + (1000 * 60 * 60 * 2));
+            const doc = await Admin.create({ email: "temp", password, token_expiry_date });
+            const subject = "Admin Account Activation";
+            const message = "You're receiving this email because an admin account needs setting up. " +
+                "Please click the link below to activate the account, as this will only be " +
+                "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
+                `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`;
+            new MailTransporter({ req, res }, { email }).sendMail({ subject, message }, err => {
+                if (err) return res.status(500).send(err.message || err);
+                res.status(400).send(info.message);
             });
         } else {
             req.login(user, err => {

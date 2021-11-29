@@ -49,6 +49,10 @@
                                             </div>
                                         </fieldset>
 
+                                        <fieldset>
+                                            <div class="g-recaptcha" data-sitekey="<%= recaptcha_site_key %>"></div>
+                                        </fieldset>
+
                                         <input type="submit" value="SUBMIT">
                                     </fieldset>
                                 </form>
@@ -172,6 +176,7 @@
             </div>
         </div>
 
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script>
             $(".star-rating input").change(function(e) {
                 var n = parseInt(this.value) + 1;

@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const mongoose = require('mongoose');
+const { Document: Doc } = require('mongoose');
 const e = require('express');
 const { OAuth2 } = require("googleapis").google.auth;
 const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV } = process.env;
@@ -12,7 +12,7 @@ class MailTransporter {
      * @param {object} routerParams route handler parameters, containing request and response objects
      * @param {e.Request} routerParams.req request object
      * @param {e.Response} routerParams.res response object
-     * @param {(mongoose.Document | mongoose.Document[])} recipient new or existing (registered) recipient(s)
+     * @param {(Doc | Doc[])} recipient new or existing (registered) recipient(s)
      */
     constructor(routerParams, recipient) {
         this.#req = routerParams.req;
@@ -83,14 +83,14 @@ class MailTransporter {
         })
     };
 
-    /** @param {mongoose.Document} recipient new or existing (registered) recipient */
+    /** @param {Doc} recipient new or existing (registered) recipient */
     setRecipient(recipient) {
         this.#recipients = [];
         this.#recipient = recipient;
         return this
     };
 
-    /** @param {mongoose.Document[]} recipients new or existing (registered) recipients */
+    /** @param {Doc[]} recipients new or existing (registered) recipients */
     setRecipients(recipients) {
         this.#recipient = null;
         this.#recipients = recipients;

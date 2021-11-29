@@ -21,7 +21,8 @@ router.post('/banner/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     Banner_slide.deleteMany({_id : { $in: ids }}, (err, result) => {
-        if (err || !result.deletedCount) return res.status(err ? 500 : 404).send(err || "Banner text(s) not found");
+        if (err) return res.status(500).send(err.message);
+        if (!result.deletedCount) return res.status(404).send("Banner text(s) not found");
         res.send("Banner text"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
 });
