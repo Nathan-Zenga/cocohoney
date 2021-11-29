@@ -42,7 +42,7 @@ router.get('/mail/unsubscribe', async (req, res) => {
 
 router.post('/contact/mail/send', async (req, res) => {
     const { firstname, lastname, email, message, "g-recaptcha-response": captcha } = req.body;
-    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot. Please tick the CAPTCHA box.");
+    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot.\nPlease tick the box to proceed.");
 
     const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
     const verifyURL = `https://google.com/recaptcha/api/siteverify?${params.toString()}`;

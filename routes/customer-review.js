@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
 
 router.post('/submit', async (req, res) => {
     const { author_name, headline, rating, commentry, image_file, image_url, "g-recaptcha-response": captcha } = req.body;
+    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot.\nPlease tick the box to proceed.");
     const name = req.user ? `${req.user.firstname} ${req.user.lastname}` : author_name;
     const review = new Review({ author_name: name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
