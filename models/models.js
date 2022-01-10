@@ -10,8 +10,8 @@ module.exports.Sale = model('Sale', Schema({
 module.exports.Product = model('Product', Schema({
     name: { type: String, index: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
-    price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
-    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
+    price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : null },
+    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : null },
     image: { p_id: String, url: String },
     category: { type: String, set: v => v.toLowerCase().replace(/ /g, "_") },
     info: { type: String, default: "" },
@@ -131,7 +131,7 @@ module.exports.FAQ = model('FAQ', Schema({
 module.exports.Box = model('Box', Schema({
     name: { type: String, required: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
-    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : n },
+    price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : null },
     info: String,
     max_items: { type: Number, min: 0, required: true },
     image: { p_id: String, url: String },
