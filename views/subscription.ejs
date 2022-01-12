@@ -35,7 +35,7 @@
                             <div class="img" style="background-image: url(<%- plan.image.url || '/favicon.ico' %>);<%- plan.image.url ? '' : ' opacity: .5' %>"></div>
                             <h3 class="price">£<%= (plan.price / 100).toFixed(2) %></h3>
                             <div class="info">
-                                <p><%- plan.info.replace(/\r?\n/, "<br>") %></p>
+                                <p><%- plan.info.replace(/\r?\n/, "</p><p>") %></p>
                             </div>
                             <input class="select-radio-opt" type="radio" name="plan" value="<%= plan._id %>" required>
                             <button class="select-btn" type="button">
@@ -120,6 +120,7 @@
 
         $(".select-btn").click(function() {
             $(this).prev(".select-radio-opt").prop("checked", true);
+            $("button[data-target='#customer-details-modal']").attr("disabled", !$(".select-radio-opt").is(":checked"));
         });
 
         $("#subscription-options").submit(function(e) {
@@ -143,5 +144,7 @@
             $("#subscription-options :input[name='"+ a[0] +"']").not("[type=checkbox], [type=radio]").val(decodeURIComponent(a[1]));
             $("#subscription-options :input").filter("[type=checkbox], [type=radio][value='"+ a[1] +"']").prop("checked", !!a[1]);
         });
+
+        $("button[data-target='#customer-details-modal']").attr("disabled", !$(".select-radio-opt").is(":checked"));
     </script>
 <%- include ('partials/footer') -%>
