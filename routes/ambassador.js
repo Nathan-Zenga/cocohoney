@@ -131,7 +131,7 @@ router.post('/account/edit', isAuthed, async (req, res) => {
 
         const public_id = `cocohoney/ambassador/profile-img/${amb.firstname}-${amb.id}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = image_url || image_file ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
-        if (result) await cloud.api.delete_resources([amb.public_id]).catch(err => console.error(err.message));
+        if (result) await cloud.api.delete_resources([amb.image.p_id]).catch(err => console.error(err.message));
         if (result) amb.image = { p_id: result.public_id, url: result.secure_url };
         await amb.save(); res.send("Account details updated");
     } catch (err) { res.status(err.http_code || 500).send(err.message) }

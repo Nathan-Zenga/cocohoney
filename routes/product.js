@@ -36,7 +36,7 @@ router.post('/stock/add', isAuthed, (req, res) => {
     product.category = category_new || category;
     if (!image_url && !image_file) return product.save(() => res.send("Product saved in stock"));
 
-    const public_id = ("cocohoney/product/stock/" + product.name).replace(/[ ?&#\\%<>]/g, "_");
+    const public_id = `cocohoney/product/stock/${product.name}`.replace(/[ ?&#\\%<>]/g, "_");
     cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
         if (err) return res.status(err.http_code).send(err.message);
         product.image = { p_id: result.public_id, url: result.secure_url };
@@ -62,7 +62,7 @@ router.post('/stock/edit', isAuthed, async (req, res) => {
 
         const saved = await product.save();
         if (!image_url && !image_file) return res.send("Product details updated successfully");
-        const public_id = ("cocohoney/product/stock/" + saved.name).replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/product/stock/${saved.name}`.replace(/[ ?&#\\%<>]/g, "_");
         await cloud.api.delete_resources([p_id_prev]);
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
         saved.image = { p_id: result.public_id, url: result.secure_url };

@@ -1,13 +1,13 @@
 const { model, Schema } = require('mongoose');
 Schema.Types.String.set('trim', true);
 
-module.exports.Sale = model('Sale', Schema({
+module.exports.Sale = model('Sale', new Schema({
     active: Boolean,
     sitewide: Boolean,
     percentage: { type: Number, min: 1, max: 100 }
 }));
 
-module.exports.Product = model('Product', Schema({
+module.exports.Product = model('Product', new Schema({
     name: { type: String, index: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_amb: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : null },
@@ -20,7 +20,7 @@ module.exports.Product = model('Product', Schema({
     pre_release: { type: Boolean, default: false }
 }));
 
-module.exports.Member = model('Member', Schema({
+module.exports.Member = model('Member', new Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -31,14 +31,14 @@ module.exports.Member = model('Member', Schema({
     mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.Admin = model('Admin', Schema({
+module.exports.Admin = model('Admin', new Schema({
     email: { type: String, index: true, required: true },
     password: { type: String, required: true },
     admin: { type: Boolean, default: true },
     token_expiry_date: Date
 }));
 
-module.exports.Lookbook_media = model('Lookbook_media', Schema({
+module.exports.Lookbook_media = model('Lookbook_media', new Schema({
     p_id: String,
     url: String,
     orientation: String,
@@ -47,34 +47,34 @@ module.exports.Lookbook_media = model('Lookbook_media', Schema({
     tutorial: { type: Boolean, default: false }
 }));
 
-module.exports.Banner_slide = model('Banner_slide', Schema({
+module.exports.Banner_slide = model('Banner_slide', new Schema({
     text: String
 }));
 
-module.exports.Overview_image = model('Overview_image', Schema({
+module.exports.Overview_image = model('Overview_image', new Schema({
     p_id: String,
     url: String,
     position: Number
 }));
 
-module.exports.Shipping_method = model('Shipping_method', Schema({
+module.exports.Shipping_method = model('Shipping_method', new Schema({
     name: String,
     info: String,
     fee: { type: Number, set: n => parseFloat(n) * 100 }
 }));
 
-module.exports.Shipping_page = model('Shipping_page', Schema({
+module.exports.Shipping_page = model('Shipping_page', new Schema({
     info: String
 }), 'shipping_page');
 
-module.exports.Discount_code = model('Discount_code', Schema({
+module.exports.Discount_code = model('Discount_code', new Schema({
     code: { type: String, required: true },
     percentage: { type: Number, min: 1, max: 100 },
     orders_applied: [String], // array of order IDs
     expiry_date: { type: Date, required: true }
 }));
 
-module.exports.Order = model('Order', Schema({
+module.exports.Order = model('Order', new Schema({
     cart: Array,
     discounted: { type: Boolean, default: false },
     customer_name: String,
@@ -85,7 +85,7 @@ module.exports.Order = model('Order', Schema({
     mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.Ambassador = model('Ambassador', Schema({
+module.exports.Ambassador = model('Ambassador', new Schema({
     firstname: { type: String, required: true },
     lastname: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -123,12 +123,12 @@ module.exports.Ambassador = model('Ambassador', Schema({
     mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.FAQ = model('FAQ', Schema({
+module.exports.FAQ = model('FAQ', new Schema({
     question: String,
     answer: String
 }));
 
-module.exports.Box = model('Box', Schema({
+module.exports.Box = model('Box', new Schema({
     name: { type: String, required: true },
     price: { type: Number, set: n => parseFloat(n) * 100 },
     price_sale: { type: Number, default: null, set: n => n ? parseFloat(n) * 100 : null },
@@ -138,7 +138,7 @@ module.exports.Box = model('Box', Schema({
     products_inc: [String] // array of product IDs
 }));
 
-module.exports.Review = model('Review', Schema({
+module.exports.Review = model('Review', new Schema({
     headline: String,
     commentry: { type: String, required: true },
     author_name: { type: String, required: true },
@@ -147,7 +147,7 @@ module.exports.Review = model('Review', Schema({
     images: [{ p_id: String, url: String }]
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.Highlights_post = model('Highlights_post', Schema({
+module.exports.Highlights_post = model('Highlights_post', new Schema({
     media_lg: { p_id: String, url: String, media_type: String },
     media_sm: { p_id: String, url: String, media_type: String },
     title: String,
@@ -155,12 +155,12 @@ module.exports.Highlights_post = model('Highlights_post', Schema({
     link: String
 }));
 
-module.exports.Wishlist = model('Wishlist', Schema({
+module.exports.Wishlist = model('Wishlist', new Schema({
     customer_id: { type: String, required: true, index: true, unique: true },
     items: [String] // array of product IDs
 }), 'wishlist');
 
-module.exports.Event = model('Event', Schema({
+module.exports.Event = model('Event', new Schema({
     title: { type: String, required: true },
     date: { type: Date, required: true },
     ttbc: { type: Boolean, value: false },
@@ -170,7 +170,7 @@ module.exports.Event = model('Event', Schema({
     image: { p_id: String, url: String }
 }));
 
-module.exports.Info = model('Info', Schema({
+module.exports.Info = model('Info', new Schema({
     main_text: String,
     founder_text: String,
     image: { p_id: String, url: String }

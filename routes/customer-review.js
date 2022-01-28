@@ -58,7 +58,7 @@ router.post('/delete', async (req, res) => {
     try {
         const review = await Review.findById(req.body.id);
         if (!review) return res.status(404).send("Review not found");
-        await cloud.api.delete_resources_by_prefix(review.id);
+        await cloud.api.delete_resources_by_prefix(`cocohoney/reviews/images/${review.id}`);
         await Review.findByIdAndDelete(review.id);
         res.send("Review deleted");
     } catch (err) { res.status(err.http_code || 400).send(err.message) }
