@@ -1163,6 +1163,9 @@ label .dropdown-arrow {
 #admin-page .info-label {
     font-size: 1em;
     text-align: center;
+    background-color: rgba(0, 0, 0, .15);
+    padding: 20px 10px;
+    border-radius: 7px;
 }
 
 #admin-page .admin-list {
@@ -1214,16 +1217,9 @@ label .dropdown-arrow {
     border-bottom: 1px solid white;
 }
 
-#admin-page #untracked-orders,
-#admin-page #discounted-orders {
-    margin-bottom: 2em;
-    padding-bottom: 1em;
-    border-bottom: 1px solid rgb(240, 230, 140);
-}
-
 #admin-page .admin-list .modal .info-label {
     padding: 10px;
-    background-color: rgba(0, 0, 0, .15);
+    border-radius: 0;
 }
 
 #admin-page .admin-list .modal .opt {

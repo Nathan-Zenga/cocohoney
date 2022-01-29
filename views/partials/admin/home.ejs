@@ -68,13 +68,23 @@
             <%_ const ambs_verified = ambassadors.filter(amb => amb.verified === true);
                 const ambs_unverified = ambassadors.filter(amb => amb.verified === false);
                 if (ambs_unverified.length) { _%>
-            <div id="untracked-orders">
-                <div class="info-label"><b>Unverified</b></div>
-                <%- ambassadors_layout_renderer(ambs_unverified) %>
-            </div>
-            <div class="info-label"><b>Verified</b></div>
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#verified-ambassadors">VERIFIED</a></li>
+                <li><a data-toggle="pill" href="#unverified-ambassadors">NOT VERIFIED</a></li>
+            </ul>
             <%_ } _%>
-            <%- ambassadors_layout_renderer(ambs_verified, true) %>
+
+            <div class="tab-content" style="padding-top: <%- ambs_unverified.length ? '1em' : '0' %>">
+                <div id="verified-ambassadors" class="tab-pane fade in active">
+                    <%- ambs_verified.length ? ambassadors_layout_renderer(ambs_verified, true) : "<p><b>NO REGISTERED AMBASSADORS</b></p>" %>
+                </div>
+
+                <%_ if (ambs_unverified.length) { _%>
+                <div id="unverified-ambassadors" class="tab-pane fade">
+                    <%- ambassadors_layout_renderer(ambs_unverified, true) %>
+                </div>
+                <%_ } _%>
+            </div>
         </div>
     </div>
 
@@ -126,21 +136,27 @@
         <div class="admin-list" id="orders-list">
             <%_ const order_untracked = orders.filter(o => !o.tracking_ref).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
                 const discounted_orders = orders.filter(o => o.tracking_ref && o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-                const other_orders = orders.filter(o => o.tracking_ref && !o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
-                if (order_untracked.length) { _%>
-            <div id="untracked-orders">
-                <div class="info-label"><b>Untracked Orders</b> (<%= order_untracked.length %>)</div>
-                <%- orders_layout_renderer(order_untracked) %>
+                const other_orders = orders.filter(o => o.tracking_ref && !o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime()); _%>
+
+            <ul class="nav nav-pills">
+                <li class="active"><a data-toggle="pill" href="#untracked-orders">UNTRACKED (<%= order_untracked.length %>)</a></li>
+                <li><a data-toggle="pill" href="#discounted-orders">DISCOUNTED (<%= discounted_orders.length %>)</a></li>
+                <li><a data-toggle="pill" href="#normal-orders">OTHERS (<%= other_orders.length %>)</a></li>
+            </ul>
+
+            <div class="tab-content" style="padding-top: 1em">
+                <div id="untracked-orders" class="tab-pane fade in active">
+                    <%- order_untracked.length ? orders_layout_renderer(order_untracked) : "<p><b>NO UNTRACKED ORDERS</b></p>" %>
+                </div>
+
+                <div id="discounted-orders" class="tab-pane fade">
+                    <%- discounted_orders.length ? orders_layout_renderer(discounted_orders) : "<p><b>NO DISCOUNTED ORDERS</b></p>" %>
+                </div>
+
+                <div id="normal-orders" class="tab-pane fade">
+                    <%- other_orders.length ? orders_layout_renderer(other_orders) : "<p><b>NO ORDERS</b></p>" %>
+                </div>
             </div>
-            <%_ } if (discounted_orders.length) { _%>
-            <div id="discounted-orders">
-                <div class="info-label"><b>Discounted Orders</b> (<%= discounted_orders.length %>)</div>
-                <%- orders_layout_renderer(discounted_orders) %>
-            </div>
-            <%_ } if ([...order_untracked, ...discounted_orders].length) { _%>
-            <div class="info-label"><b>Other Orders</b> (<%= other_orders.length %>)</div>
-            <%_ } _%>
-            <%- orders_layout_renderer(other_orders) %>
         </div>
     </div>
 
