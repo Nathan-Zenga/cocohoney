@@ -20,8 +20,8 @@ router.post("/create-payment", async (req, res) => {
     if (missing_fields.length) return res.status(400).send(`Missing fields: ${missing_fields.join(", ")}`);
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
 
-    try { var event = await Event.findOne({ _id: event_id, stock_qty: { $gte: 1 }, date: { $gte: Date.now() } }) }
-    catch(err) { return res.status(400).send(err.message) }
+    const event = await Event.findOne({ _id: event_id, stock_qty: { $gte: 1 }, date: { $gte: Date.now() } }).catch(e => null);
+    const price_total = event.price * quantity;
     if (!event) return res.status(404).send("Ticket invalid or no longer available to buy");
     if (isNaN(parseInt(quantity))) return res.status(400).send("Quantity specified is not a number");
     if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
@@ -54,10 +54,10 @@ router.post("/create-payment", async (req, res) => {
             },
             amount: {
                 currency: "GBP",
-                total: (event.price / 100).toFixed(2),
-                details: { subtotal: (event.price / 100).toFixed(2) }
+                total: (price_total / 100).toFixed(2),
+                details: { subtotal: (price_total / 100).toFixed(2) }
             },
-            description: `Event Tickets for ${event.title} (£${(event.price / 100).toFixed(2)}) on ${event.date.toDateString()}`
+            description: `Event tickets for '${event.title}' on ${event.date.toDateString()}`
         }]
     }, (err, payment) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);

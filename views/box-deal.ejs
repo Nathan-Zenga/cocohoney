@@ -86,8 +86,9 @@
     <script>
         $(window).on("load scroll resize", function() {
             var windowOffsetBottom = window.pageYOffset + window.innerHeight;
-            var footerOffsetTop = $("footer").offset().top - parseFloat($("footer").css("margin-top"));
-            var bottom = windowOffsetBottom >= footerOffsetTop + parseFloat($("footer").css("margin-top")) ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
+            var footerMarginTop = parseFloat($("footer").css("margin-top"));
+            var footerOffsetTop = $("footer").offset().top - footerMarginTop;
+            var bottom = windowOffsetBottom >= footerOffsetTop + footerMarginTop ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
             $("#submit-btn").css("bottom", bottom);
         });
 

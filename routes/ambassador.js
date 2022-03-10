@@ -138,9 +138,8 @@ router.post('/account/edit', isAuthed, async (req, res) => {
 });
 
 router.post('/delete', async (req, res) => {
-    const { id } = req.body;
     try {
-        const amb = await Ambassador.findById(id);
+        const amb = await Ambassador.findById(req.body.id);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: amb.id });
         await cloud.api.delete_resources([(amb.image || {}).p_id || "blank"]);
@@ -212,9 +211,8 @@ router.get('/password-reset-request', (req, res) => {
 });
 
 router.get('/password-reset', async (req, res) => {
-    const { token } = req.query;
     try {
-        const amb = await Ambassador.findOne({ password_reset_token: token });
+        const amb = await Ambassador.findOne({ password_reset_token: req.query.token });
         const title = "Password Reset";
         const pagename = "password-reset";
         if (!amb) return res.status(400).send("Invalid password reset token");
@@ -223,19 +221,17 @@ router.get('/password-reset', async (req, res) => {
 });
 
 router.post('/password-reset-request', async (req, res) => {
-    const { email } = req.body;
-    const ambassador = await Ambassador.findOne({ email });
+    const ambassador = await Ambassador.findOne({ email: req.body.email });
     const mail_transporter = new MailTransporter({ req, res });
     if (!ambassador) return res.status(404).send("Cannot find you on our system");
     ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await ambassador.save();
-    mail_transporter.setRecipient({ email: saved.email }).sendMail({
-        subject: "Your Password Reset Token",
-        message: "You are receiving this email because you requested to reset your password.\n\n" +
-        "Please click the link below to proceed:\n\n" +
-        `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
-        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`
-    }, err => {
+    const subject = "Your Password Reset Token";
+    const message = "You are receiving this email because you requested to reset your password.\n\n" +
+    "Please click the link below to proceed:\n\n" +
+    `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
+    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`;
+    mail_transporter.setRecipient({ email: saved.email }).sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message || err);
         res.send("An email has been sent your email to reset your password");
     });

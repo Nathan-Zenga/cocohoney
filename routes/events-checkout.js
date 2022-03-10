@@ -82,8 +82,8 @@ router.get("/session/complete", async (req, res) => {
         if (production) {
             event.stock_qty -= qty;
             if (event.stock_qty < 0) event.stock_qty = 0;
-            event.save();
-            order.save();
+            await event.save();
+            await order.save();
         };
 
         req.session.event_id = undefined;
