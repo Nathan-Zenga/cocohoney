@@ -1,11 +1,11 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
-const { each, forEachOf } = require('async');
 const Collections = require('../modules/Collections');
 const isAuthed = require('../modules/auth-check-admin');
 const MailTransporter = require('../modules/mail-transporter');
-const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Sale, Box, Wishlist } = require('../models/models');
+const sale_toggle = require('../modules/sale_toggle');
+const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Wishlist } = require('../models/models');
 const passport = require('../config/passport');
 
 router.get('/', (req, res) => {
@@ -250,50 +250,8 @@ router.post('/faqs/remove', isAuthed, (req, res) => {
 });
 
 router.post('/sale/toggle', isAuthed, async (req, res) => {
-    const { sale_on, sitewide, id, percentage } = req.body;
-    const docs = await Sale.find();
-    const sale = docs.length ? docs[0] : new Sale();
-    const ids = (Array.isArray(id) ? id : [id]).filter(e => e);
-    const percentages = (Array.isArray(percentage) ? percentage : [percentage]).filter(e => e);
-    if (percentages.find(p => isNaN(parseInt(p)))) return res.status(400).send("Percentage is invalid");
-    if (percentages.find(p => parseInt(p) <= 0)) return res.status(400).send("Percentage cannot be less than or equal to 0");
-    if (ids.length !== percentages.length && !sitewide) return res.status(400).send("Uneven number of selected items and specified percentages");
-
-    sale.active = false;
-    sale.sitewide = false;
-    sale.percentage = undefined;
-    await Product.updateMany({}, { $set: { price_sale: undefined } });
-    await Box.updateMany({}, { $set: { price_sale: undefined } });
-    if (!sale_on) return sale.save(err => res.send("Sale period now turned off"));
-
-    sale.active = true;
-    const products = await Product.find();
-    const boxes = await Box.find();
-
-    if (sitewide) {
-        sale.sitewide = true;
-        sale.percentage = percentage;
-        each([...products, ...boxes], (item, cb) => {
-            const sale_discount = (parseInt(percentage) / 100) * item.price;
-            item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
-            item.save(err => cb());
-        }, err => sale.save(err => res.send("Sale period now started site wide")));
-
-    } else {
-        forEachOf(ids, (product_id, i, cb) => {
-            const product = products.find(p => p.id == product_id);
-            const box = boxes.find(p => p.id == product_id);
-            const item = product || box;
-            const percent = parseInt(percentages[i]);
-            if (!item) return cb();
-            const sale_discount = (percent / 100) * item.price;
-            item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
-            item.save(err => err ? cb(err) : cb());
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            sale.save(err => res.send("Sale period now started for the selected products"));
-        })
-    }
+    const { status, response } = await sale_toggle(req);
+    res.status(status || 200).send(response);
 });
 
 module.exports = router;

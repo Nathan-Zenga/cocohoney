@@ -39,11 +39,10 @@ router.post("/cart/remove", (req, res) => {
 });
 
 router.post("/cart/increment", (req, res) => {
-    const { id, increment } = req.body;
-    const cartItemIndex = req.session.cart.findIndex(item => item.id === id);
+    const cartItemIndex = req.session.cart.findIndex(item => item.id === req.body.id);
     const currentItem = req.session.cart[cartItemIndex];
     if (!currentItem) return res.status(404).send("Item not found, or the cart is empty");
-    const newQuantity = currentItem.qty + parseInt(increment);
+    const newQuantity = currentItem.qty + parseInt(req.body.increment);
     if (newQuantity < 1) return res.status(400).send("Minimum item quantity limit reached");
     if (newQuantity > currentItem.stock_qty) return res.status(400).send("Maximum item quantity limit reached");
     currentItem.qty = newQuantity;

@@ -21,6 +21,24 @@
             <input id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0"> % off
         </div>
     </div>
+    <fieldset class="row">
+        <label class="col-xs-12">
+            END OF SALE DATE & TIME <span class="margin">(24-HOUR FORMAT)</span>
+        </label>
+        <div class="col-xs-6">
+            <%_
+                var sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
+                var offset = sale_datetime.getTimezoneOffset();
+                var sale_date = new Date(sale_datetime.getTime() - (offset * 60 * 1000));
+                sale_date = sale_date.toISOString().split('T')[0];
+            _%>
+            <input type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" required>
+        </div>
+        <div class="col-xs-6">
+            <input type="number" class="inline" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" required> <b>:</b>
+            <input type="number" class="inline" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" required>
+        </div>
+    </fieldset>
     <div class="row">
         <div class="col-xs-12">
             <%_ products.forEach((item, i) => {

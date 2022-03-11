@@ -20,8 +20,7 @@ router.get('/faq', (req, res) => {
 });
 
 router.get('/order/:id', async (req, res, next) => {
-    const { id } = req.params;
-    const order = await Order.findById(id);
+    const order = await Order.findById(req.params.id).catch(e => null);
     if (!order) return next();
     const shipping_method = await Shipping_method.findOne({ name: order.shipping_method });
     const dc_used = await Discount_code.findOne({ orders_applied: { $all: [order.id] } });

@@ -2,9 +2,10 @@ const { model, Schema } = require('mongoose');
 Schema.Types.String.set('trim', true);
 
 module.exports.Sale = model('Sale', new Schema({
-    active: Boolean,
-    sitewide: Boolean,
-    percentage: { type: Number, min: 1, max: 100 }
+    active: { type: Boolean, default: false },
+    sitewide: { type: Boolean, default: false },
+    percentage: { type: Number, min: 1, max: 100 },
+    end_datetime: { type: Date, default: Date.now() }
 }));
 
 module.exports.Product = model('Product', new Schema({

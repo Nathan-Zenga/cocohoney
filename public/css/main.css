@@ -2023,6 +2023,10 @@ input.product-quantity:disabled {
     background-color: white;
 }
 
+.switch input:disabled + .slider {
+    background-color: rgb(160, 160, 160);
+}
+
 /* Rounded sliders */
 .switch .slider.round {
     border-radius: 34px;
