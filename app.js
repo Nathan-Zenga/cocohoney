@@ -60,7 +60,7 @@ app.use(async (req, res, next) => { // global variables
         const time_left = sale_doc.end_datetime.getTime() - Date.now();
         const sale_ended = time_left < 0;
         timeout = setTimeout(async () => {
-            await sale_toggle(req)
+            await sale_toggle(req);
             clearTimeout(timeout);
             timeout = null;
         }, sale_ended ? 0 : time_left)

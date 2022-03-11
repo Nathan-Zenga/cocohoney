@@ -22,6 +22,7 @@ module.exports = async req => {
     sale.active = true;
     const products = await Product.find();
     const boxes = await Box.find();
+    const result = {};
 
     const datetime = new Date(end_date);
     datetime.setHours(end_hour, end_minute, 0, 0);
@@ -37,7 +38,7 @@ module.exports = async req => {
                 item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
                 item.save(err => cb());
             });
-            return { response: "Sale period now started site wide" };
+            result.response = "Sale period now started site wide";
 
         } else {
             await forEachOf(ids, (product_id, i, cb) => {
@@ -49,9 +50,9 @@ module.exports = async req => {
                 const sale_discount = (percent / 100) * item.price;
                 item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
                 item.save(err => err ? cb(err) : cb());
-            })
-            await sale.save();
-            return { response: "Sale period now started for the selected products" };
+            });
+            result.response = "Sale period now started for the selected products";
         }
+        await sale.save(); return result;
     } catch(err) { return { status: 500, response: err.message } }
 }
