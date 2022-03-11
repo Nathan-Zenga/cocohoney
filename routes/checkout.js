@@ -185,7 +185,7 @@ router.get("/session/complete", async (req, res) => {
             });
         });
     } catch(err) {
-        console.error(err.message || err);
+        console.error(err.message);
         const pagename = "checkout-error";
         res.status(500).render(pagename, { title: "Payment Error", pagename, error: err.message })
     }

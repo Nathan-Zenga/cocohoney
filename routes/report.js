@@ -28,7 +28,7 @@ router.post("/submit", async (req, res) => {
             message: "Below is a summary of each ambassador's current total sales this month:\n\n" +
             `- ${ summary.join("\n\n- ") }`
         }, err => {
-            if (err) return res.status(500).send(err.message || err);
+            if (err) return res.status(500).send(err.message);
             res.send("Ambassador Sales Report emailed to you successfully");
         })
     })

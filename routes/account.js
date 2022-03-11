@@ -24,10 +24,10 @@ router.get('/signup', (req, res) => res.redirect("/account/login#signup"));
 router.post('/login', (req, res) => {
     if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     passport.authenticate("local-login-customer", (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         if (!user) return res.status(400).send(info.message);
         req.login(user, err => {
-            if (err) return res.status(500).send(err.message || err);
+            if (err) return res.status(500).send(err.message);
             res.locals.cart = req.session.cart = [];
             res.send("/account");
         });
@@ -97,7 +97,7 @@ router.post('/delete', isAuthed, async (req, res) => {
             res.locals.cart = req.session.cart = [];
         }
         res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-    } catch (err) { res.status(err.statusCode || 500).send(err.message || err) }
+    } catch (err) { res.status(err.statusCode || 500).send(err.message) }
 });
 
 router.get('/password-reset-request', (req, res) => {
@@ -128,7 +128,7 @@ router.post('/password-reset-request', async (req, res) => {
     `((RESET PASSWORD))[${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}]\n` +
     `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token})</small>`;
     mail_transporter.setRecipient({ email: saved.email }).sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         res.send("An email has been sent your email to reset your password");
     });
 });

@@ -41,7 +41,7 @@ router.post('/register', async (req, res) => {
         mail_transporter.setRecipient({ email: req.session.admin_email });
         await mail_transporter.sendMail({ subject, message });
         res.send("Registered. Submitted to administration for verification")
-    } catch (err) { return res.status(err.http_code || 500).send(err.message || err) }
+    } catch (err) { return res.status(err.http_code || 500).send(err.message) }
 });
 
 router.get('/register/verify', send_verification_email);
@@ -93,10 +93,10 @@ router.get('/account', async (req, res) => {
 router.post('/account/login', (req, res) => {
     if (req.isAuthenticated()) return res.status(400).send("Please log out first");
     passport.authenticate("local-login-ambassador", (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         if (!user) return res.status(400).send(info.message);
         req.login(user, err => {
-            if (err) return res.status(500).send(err.message || err);
+            if (err) return res.status(500).send(err.message);
             res.locals.cart = req.session.cart = [];
             res.send("/ambassador/account");
         });
@@ -152,7 +152,7 @@ router.post('/delete', async (req, res) => {
             message: `Hi ${amb.firstname},\n\nYour account is now successfully deleted.\n` +
             "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
         }, err => {
-            if (err) return res.status(500).send(err.message || err);
+            if (err) return res.status(500).send(err.message);
             if (req.user && req.user._id == amb.id) {
                 req.logout();
                 res.locals.cart = req.session.cart = [];
@@ -232,7 +232,7 @@ router.post('/password-reset-request', async (req, res) => {
     `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
     `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`;
     mail_transporter.setRecipient({ email: saved.email }).sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         res.send("An email has been sent your email to reset your password");
     });
 });

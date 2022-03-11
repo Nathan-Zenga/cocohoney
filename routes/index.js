@@ -52,7 +52,7 @@ router.post('/contact/mail/send', async (req, res) => {
     const subject = "New message / enquiry";
     const msg = `New message from <b>${firstname} ${lastname} (${email})</b>:\n\n${message}`;
     transporter.sendMail({ subject, message: msg }, err => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         res.send("Email sent");
     });
 });

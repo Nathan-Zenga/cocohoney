@@ -19,27 +19,23 @@ router.post("/create-payment", async (req, res) => {
         quantity: p.qty
     })).reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
-    try {
-        const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
-        if (price_total < 4000) field_check["shipping method"] = shipping_method_id;
-        const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
-        const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
-        if (missing_fields.length) throw { stat: 400, msg: `Missing fields: ${missing_fields.join(", ")}` }
-        if (!email_pattern.test(email)) throw { stat: 400, msg: "Invalid email format" }
-        if (is_ambassador && discount_code) throw { stat: 400, msg: "Discount code cannot be applied as you are an ambassador" }
+    const field_check = { firstname, lastname, email, "address line 1": address_l1, city, country, "post / zip code": postcode };
+    if (price_total < 4000) field_check["shipping method"] = shipping_method_id;
+    const missing_fields = Object.keys(field_check).filter(k => !field_check[k]);
+    const email_pattern = /^(?:[a-z0-9!#$%&'*+=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/i;
+    if (missing_fields.length) return res.status(400).send(`Missing fields: ${missing_fields.join(", ")}`);
+    if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
+    if (is_ambassador && discount_code) return res.status(400).send("Discount code cannot be applied as you are an ambassador");
 
-        var dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
-        var shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id);
-        const non_sale_item_present = cart.filter(item => !item.sale_item).length;
-        if (!dc_doc && discount_code) throw { stat: 404, msg: "Discount code invalid or expired" }
-        if (dc_doc && !non_sale_item_present) throw { stat: 400, msg: "Discount code cannot be applied as all your cart items are on sale" }
-        if (!shipping_method) throw { stat: 404, msg: "Invalid shipping fee chosen" }
+    const dc_doc = await Discount_code.findOne({ code: discount_code, expiry_date: { $gte: Date.now() } });
+    const shipping_method = price_total >= 4000 ? { name: "Free Delivery", fee: 0 } : await Shipping_method.findById(shipping_method_id).catch(e => null);
+    const non_sale_item_present = cart.filter(item => !item.sale_item).length;
+    if (!dc_doc && discount_code) return res.status(404).send("Discount code invalid or expired");
+    if (dc_doc && !non_sale_item_present) return res.status(400).send("Discount code cannot be applied as all your cart items are on sale");
+    if (!shipping_method) return res.status(404).send("Invalid shipping fee chosen");
 
-        const outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
-        if (outside_range) throw { stat: 403, msg: "Shipping method not available for your country" }
-    } catch (err) {
-        return res.status(err.stat || 500).send(err.msg || err.message);
-    };
+    const outside_range = !/GB|IE/i.test(country) && !/worldwide/i.test(shipping_method.name) && shipping_method.fee != 0;
+    if (outside_range) return res.status(403).send("Shipping method not available for your country");
 
     const discount_rate = dc_doc ? (dc_doc.percentage / 100) * price_total : 0;
 
@@ -186,7 +182,7 @@ router.get("/complete", async (req, res) => {
             });
         });
     } catch(err) {
-        console.error(err.message || err);
+        console.error(err.message);
         res.status(500).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",

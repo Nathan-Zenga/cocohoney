@@ -69,9 +69,9 @@ class MailTransporter {
             if (!this.#recipient && !this.#recipients.length) return (cb || reject)(Error("Recipient(s) not set"));
             if (!subject || !message) return (cb || reject)(Error("Subject and message cannot be empty"));
             this.#getTransportOpts((err, options) => {
-                if (err) return (cb || reject)(Error(err.message || err));
+                if (err) return (cb || reject)(err);
                 this.#res.render('templates/mail', { message, recipient: this.#recipient }, (err, html) => {
-                    if (err) return (cb || reject)(Error(err.message));
+                    if (err) return (cb || reject)(err);
                     nodemailer.createTransport(options).sendMail({
                         from: { name: "Cocohoney Cosmetics", address: this.#req.session.admin_email },
                         to: this.#recipient ? this.#recipient.email : this.#recipients.map(m => m.email),

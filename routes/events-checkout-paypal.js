@@ -21,8 +21,8 @@ router.post("/create-payment", async (req, res) => {
     if (!email_pattern.test(email)) return res.status(400).send("Invalid email format");
 
     const event = await Event.findOne({ _id: event_id, stock_qty: { $gte: 1 }, date: { $gte: Date.now() } }).catch(e => null);
-    const price_total = event.price * quantity;
     if (!event) return res.status(404).send("Ticket invalid or no longer available to buy");
+    const price_total = event.price * quantity;
     if (isNaN(parseInt(quantity))) return res.status(400).send("Quantity specified is not a number");
     if (quantity < 1) return res.status(400).send("Quantity specified is below the limit");
     if (quantity > event.stock_qty) return res.status(400).send("Quantity specified is over the limit");
@@ -135,7 +135,7 @@ router.get("/complete", async (req, res) => {
             });
         });
     } catch(err) {
-        console.error(err.message || err);
+        console.error(err.message);
         res.status(500).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",

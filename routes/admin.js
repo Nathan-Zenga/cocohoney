@@ -54,7 +54,7 @@ router.post('/login', (req, res) => {
     const email = req.session.admin_email;
     req.body.email = email; Object.freeze(req.body);
     passport.authenticate("local-login-admin", async (err, user, info) => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         if (!user) return res.status(400).send(info.message);
         if (user === "to_activate") {
             await Admin.deleteMany({ email: "temp" });
@@ -67,12 +67,12 @@ router.post('/login', (req, res) => {
                 "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
                 `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`;
             new MailTransporter({ req, res }, { email }).sendMail({ subject, message }, err => {
-                if (err) return res.status(500).send(err.message || err);
+                if (err) return res.status(500).send(err.message);
                 res.status(400).send(info.message);
             });
         } else {
             req.login(user, err => {
-                if (err) return res.status(500).send(err.message || err);
+                if (err) return res.status(500).send(err.message);
                 res.locals.cart = req.session.cart = [];
                 res.send(Array.isArray(redirect_to) ? redirect_to[0] : redirect_to || "/admin")
             });
@@ -163,7 +163,7 @@ router.post('/mail/send', isAuthed, async (req, res) => {
 
     transporter.setRecipient(member || ambassador || { email: email || email2 });
     transporter.sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         res.send(`Email sent`);
     });
 });
@@ -187,7 +187,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
             const transporter = new MailTransporter({ req, res });
             transporter.setRecipient(recipient);
             transporter.sendMail({ subject, message }, err => {
-                if (err) return console.error(`${err.message || err}\nNot sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
+                if (err) return console.error(`${err.message}\nNot sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
                 console.log("Email sent");
             });
         }, i * 2000);
@@ -203,7 +203,7 @@ router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
     transporter.setRecipients(ambassadors);
     transporter.sendMail({ subject, message }, err => {
-        if (err) return res.status(500).send(err.message || err);
+        if (err) return res.status(500).send(err.message);
         res.send(`Email${ambassadors.length > 1 ? "s" : ""} sent`);
     });
 });

@@ -82,7 +82,7 @@ router.post("/tracking/ref/send", (req, res) => {
                 "You can use this to track your order via Royal Mail (https://www3.royalmail.com/track-your-item#/). " +
                 "Again, thank you for shopping with us at Cocohoney Cosmetics!"
             }, err => {
-                if (err) return res.status(500).send(err.message || err);
+                if (err) return res.status(500).send(err.message);
                 res.send(`Tracking number sent to ${order.customer_name} via email`);
             })
         })
