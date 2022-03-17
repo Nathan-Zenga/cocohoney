@@ -7,10 +7,11 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { CHCDB, NODE_ENV, PORT } = process.env;
+const { CHCDB, NODE_ENV, PORT, TEST_EMAIL } = process.env;
 const { Banner_slide, Sale, Product, Box } = require("./models/models");
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
+const MailTransporter = require('./modules/mail-transporter');
 const port = PORT || 2020;
 const production = NODE_ENV === "production";
 var timeout = null;
@@ -40,7 +41,6 @@ app.use(passport.session());
 app.use(async (req, res, next) => { // global variables
     const GET = req.method === "GET";
     const sale_doc = GET ? (await Sale.find())[0] : null;
-    req.session.admin_email = "cocohoneycosmetics@gmail.com";
     res.locals.production = production;
     res.locals.url = req.originalUrl;
     res.locals.user = req.user || null;
@@ -98,4 +98,10 @@ app.get("*", (req, res) => {
 
 app.post("*", (req, res) => res.status(400).send("Sorry, your request currently cannot be processed"));
 
-app.listen(port, () => { console.log(`Server started${production ? "" : " on port " + port}`) });
+app.listen(port, async () => {
+    console.log(`Server started${production ? "" : " on port " + port}`);
+
+    if (production) try {
+        await new MailTransporter({ email: TEST_EMAIL }).sendMail({ subject: "Re: test email", message: "Test email" });
+    } catch (err) { console.error(err.message) }
+});

@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { default: axios } = require('axios');
 const MailTransporter = require('../modules/mail-transporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member } = require('../models/models');
-const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY } = process.env;
+const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY, CHC_EMAIL } = process.env;
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
@@ -48,7 +48,7 @@ router.post('/contact/mail/send', async (req, res) => {
     const { data: result } = await axios.get(verifyURL).catch(e => e);
     if (!result.success) return res.status(400).send("Failed CAPTCHA verification");
 
-    const transporter = new MailTransporter({ req, res }, { email: req.session.admin_email });
+    const transporter = new MailTransporter({ email: CHC_EMAIL });
     const subject = "New message / enquiry";
     const msg = `New message from <b>${firstname} ${lastname} (${email})</b>:\n\n${message}`;
     transporter.sendMail({ subject, message: msg }, err => {

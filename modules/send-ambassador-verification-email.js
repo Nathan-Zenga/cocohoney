@@ -5,7 +5,7 @@ module.exports = async (req, res) => {
     const { token } = req.method === "POST" ? req.body : req.query;
     const amb = await Ambassador.findOne({ token });
     if (!amb) return res.status(404).send("Invalid entry");
-    new MailTransporter({ req, res }, { email: amb.email }).sendMail({
+    new MailTransporter({ email: amb.email }).sendMail({
         subject: "Your account is now verified.",
         message: "Hello,\n\n Your account has been verified and confirmed by " +
         "the administrator of Cocohoney Cosmetics.\n\n" +

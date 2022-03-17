@@ -56,7 +56,7 @@ router.post('/signup', async (req, res) => {
             `((LOGIN))[${res.locals.location_origin}/account/login]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/login)</small>\n\n` +
             "Thank you for signing up with Cocohoney Cosmetics!";
-        await new MailTransporter({ req, res }, { email: saved.email }).sendMail({ subject, message });
+        await new MailTransporter({ email: saved.email }).sendMail({ subject, message });
         res.send("You have successfully signed up and can now log in");
     } catch (err) { res.status(500).send(err.message) }
 });
@@ -90,7 +90,7 @@ router.post('/delete', isAuthed, async (req, res) => {
         const subject = "Your account is now deleted";
         const message = `Hi ${member.firstname},\n\n` +
         "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics";
-        await new MailTransporter({ req, res }, { email: member.email }).sendMail({ subject, message });
+        await new MailTransporter({ email: member.email }).sendMail({ subject, message });
 
         if (req.user && req.user._id == member.id) {
             req.logout();
@@ -118,7 +118,7 @@ router.get('/password-reset', async (req, res) => {
 router.post('/password-reset-request', async (req, res) => {
     const { email } = req.body;
     const member = await Member.findOne({ email });
-    const mail_transporter = new MailTransporter({ req, res });
+    const mail_transporter = new MailTransporter();
     if (!member) return res.status(404).send("Cannot find you on our system");
     member.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await member.save();

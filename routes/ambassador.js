@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
         const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) ambassador.image = { p_id: result.public_id, url: result.secure_url };
         const saved = await ambassador.save();
-        const mail_transporter = new MailTransporter({ req, res });
+        const mail_transporter = new MailTransporter();
         const subject = `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`;
         const message = "The following candidate wants to sign up as an ambassador.\n\n" +
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
@@ -38,7 +38,7 @@ router.post('/register', async (req, res) => {
             `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id}]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id})</small>\n\n`;
 
-        mail_transporter.setRecipient({ email: req.session.admin_email });
+        mail_transporter.setRecipient({ email: process.env.CHC_EMAIL });
         await mail_transporter.sendMail({ subject, message });
         res.send("Registered. Submitted to administration for verification")
     } catch (err) { return res.status(err.http_code || 500).send(err.message) }
@@ -147,7 +147,7 @@ router.post('/delete', async (req, res) => {
         await Ambassador.findByIdAndDelete(amb.id);
 
         if (res.locals.is_admin) return res.send("The account is now successfully deleted.");
-        new MailTransporter({ req, res }, { email: amb.email }).sendMail({
+        new MailTransporter({ email: amb.email }).sendMail({
             subject: "Your account is now deleted",
             message: `Hi ${amb.firstname},\n\nYour account is now successfully deleted.\n` +
             "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
@@ -222,7 +222,7 @@ router.get('/password-reset', async (req, res) => {
 
 router.post('/password-reset-request', async (req, res) => {
     const ambassador = await Ambassador.findOne({ email: req.body.email });
-    const mail_transporter = new MailTransporter({ req, res });
+    const mail_transporter = new MailTransporter();
     if (!ambassador) return res.status(404).send("Cannot find you on our system");
     ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await ambassador.save();

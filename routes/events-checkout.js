@@ -90,7 +90,7 @@ router.get("/session/complete", async (req, res) => {
         req.session.checkout_session = undefined;
         req.session.mail_sub = undefined;
 
-        const transporter = new MailTransporter({ req, res });
+        const transporter = new MailTransporter();
         transporter.setRecipient({ email: customer.email }).sendMail({
             subject: "Ticket Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${customer.name},\n\n` +
@@ -101,7 +101,7 @@ router.get("/session/complete", async (req, res) => {
             "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({
                 subject: "Purchase Report: Someone bought tickets!",
                 message: "You've received a new purchase from a new customer for a ticket for the " +
                 `${event.title} event on ${event.date}.\n\n` +

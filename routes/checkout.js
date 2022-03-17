@@ -156,7 +156,7 @@ router.get("/session/complete", async (req, res) => {
 
         if (production) await order.save();
 
-        const transporter = new MailTransporter({ req, res });
+        const transporter = new MailTransporter();
         transporter.setRecipient({ email: customer.email }).sendMail({
             subject: "Payment Successful - Cocohoney Cosmetics",
             message: `Hi ${customer.name},\n\n` +
@@ -170,7 +170,7 @@ router.get("/session/complete", async (req, res) => {
             "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
         }, err => {
             if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({
                 subject: "Purchase Report: You Got Paid!",
                 message: "You've received a new purchase from a new customer.\n\n" +
                 `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +

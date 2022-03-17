@@ -72,7 +72,7 @@ router.post("/tracking/ref/send", (req, res) => {
         order.save((err, saved) => {
             if (err) return res.status(500).send(err.message);
             const { customer_name, customer_email, tracking_ref } = saved;
-            const transporter = new MailTransporter({ req, res });
+            const transporter = new MailTransporter();
 
             transporter.setRecipient({ email: customer_email }).sendMail({
                 subject: `Your tracking number - ${tracking_ref}`,

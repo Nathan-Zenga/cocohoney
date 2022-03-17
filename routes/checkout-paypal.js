@@ -2,7 +2,7 @@ const router = require('express').Router();
 const paypal = require('paypal-rest-sdk');
 const MailTransporter = require('../modules/mail-transporter');
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
-const { NODE_ENV, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = process.env;
+const { NODE_ENV, PAYPAL_CLIENT_ID, PAYPAL_SECRET, CHC_EMAIL } = process.env;
 const production = NODE_ENV === "production";
 
 paypal.configure({
@@ -151,7 +151,7 @@ router.get("/complete", async (req, res) => {
     
             if (production) order.save();
     
-            const transporter = new MailTransporter({ req, res });
+            const transporter = new MailTransporter();
             transporter.setRecipient({ email }).sendMail({
                 subject: "Payment Successful - Cocohoney Cosmetics",
                 message: `Hi ${recipient_name},\n\n` +
@@ -165,7 +165,7 @@ router.get("/complete", async (req, res) => {
                 "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
             }, err => {
                 if (err) console.error(err), res.status(500);
-                transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+                transporter.setRecipient({ email: CHC_EMAIL }).sendMail({
                     subject: "Purchase Report: You Got Paid!",
                     message: "You've received a new purchase from a new customer.\n\n" +
                     `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +

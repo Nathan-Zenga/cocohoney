@@ -21,9 +21,9 @@ router.post("/submit", async (req, res) => {
     }, err => {
         if (err) return res.status(500).send(err.message);
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const mail_transporter = new MailTransporter({ req, res });
+        const mail_transporter = new MailTransporter();
         const summary = items.map(item => `<b>${item.ambassador}</b> (${item.code}):\n\t${item.total_sales} order${item.total_sales > 1 ? "s" : ""} sold`);
-        mail_transporter.setRecipient({ email: req.session.admin_email }).sendMail({
+        mail_transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({
             subject: `Ambassador Sales Report - ${ months[parseInt(month)] } ${ year }`,
             message: "Below is a summary of each ambassador's current total sales this month:\n\n" +
             `- ${ summary.join("\n\n- ") }`

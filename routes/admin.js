@@ -51,7 +51,7 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
 
 router.post('/login', (req, res) => {
     const { redirect_to } = req.query;
-    const email = req.session.admin_email;
+    const email = process.env.CHC_EMAIL;
     req.body.email = email; Object.freeze(req.body);
     passport.authenticate("local-login-admin", async (err, user, info) => {
         if (err) return res.status(500).send(err.message);
@@ -66,7 +66,7 @@ router.post('/login', (req, res) => {
                 "Please click the link below to activate the account, as this will only be " +
                 "<u>available for the next 2 hours</u> from the time of this email received:\n\n" +
                 `${res.locals.location_origin}/admin/activate?token=${doc.password}\n\n`;
-            new MailTransporter({ req, res }, { email }).sendMail({ subject, message }, err => {
+            new MailTransporter({ email }).sendMail({ subject, message }, err => {
                 if (err) return res.status(500).send(err.message);
                 res.status(400).send(info.message);
             });
@@ -95,7 +95,7 @@ router.post("/activate", async (req, res) => {
         const admin = await Admin.findOne({ password: token });
         if (!admin) return res.status(400).send("Account not found");
         if (password !== password_confirm) return res.status(400).send("Passwords do not match");
-        admin.email = req.session.admin_email;
+        admin.email = process.env.CHC_EMAIL;
         admin.password = await bcrypt.hash(password, 10);
         admin.token_expiry_date = undefined;
         await admin.save();
@@ -159,7 +159,7 @@ router.post('/mail/send', isAuthed, async (req, res) => {
     const { email, email2, subject, message } = req.body;
     const member = email ? await Member.findOne({ email }, { mail_sub: 0 }) : null;
     const ambassador = email ? await Ambassador.findOne({ email }, { mail_sub: 0 }) : null;
-    const transporter = new MailTransporter({ req, res });
+    const transporter = new MailTransporter();
 
     transporter.setRecipient(member || ambassador || { email: email || email2 });
     transporter.sendMail({ subject, message }, err => {
@@ -184,7 +184,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     for (let i = 0; i < everyone.length; i++) {
         setTimeout(() => {
             const recipient = everyone[i];
-            const transporter = new MailTransporter({ req, res });
+            const transporter = new MailTransporter();
             transporter.setRecipient(recipient);
             transporter.sendMail({ subject, message }, err => {
                 if (err) return console.error(`${err.message}\nNot sent for ${recipient.name || recipient.firstname +" "+ recipient.lastname} onwards`);
@@ -198,7 +198,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
 router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
     const { subject, message } = req.body;
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const transporter = new MailTransporter({ req, res });
+    const transporter = new MailTransporter();
 
     if (!ambassadors.length) return res.status(404).send("No ambassadors to send this email to");
     transporter.setRecipients(ambassadors);
