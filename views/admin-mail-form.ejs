@@ -7,41 +7,43 @@
         </ul>
         <div class="tab-content container">
             <div id="mail-form-tab" class="tab-pane fade in active">
-                <form method="post" id="mail-form" action="/admin/mail/send">
-                    <fieldset>
-                        <legend>NEW EMAIL</legend>
+                <div class="form">
+                    <form class="minimal" method="post" id="mail-form" action="/admin/mail/send">
+                        <fieldset>
+                            <legend>NEW EMAIL</legend>
 
-                        <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                        <select name="email" id="email">
-                            <option value="">-</option>
-                            <%_ recipients.forEach((r, i) => { _%>
-                            <option value="<%= r.customer_email || r.email %>"><%= r.customer_name || r.firstname+" "+r.lastname %></option>
-                            <%_ }) _%>
-                        </select>
+                            <label>EMAIL <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                            <select name="email" id="email">
+                                <option value="">-</option>
+                                <%_ recipients.forEach((r, i) => { _%>
+                                <option value="<%= r.customer_email || r.email %>"><%= r.customer_name || r.firstname+" "+r.lastname %></option>
+                                <%_ }) _%>
+                            </select>
 
-                        <input type="email" name="email2" id="email2" placeholder="Or enter email here manually">
+                            <input type="email" name="email2" id="email2" placeholder="Or enter email here manually">
 
-                        <label>SUBJECT</label>
-                        <input type="text" name="subject" id="subject" required>
+                            <label>SUBJECT</label>
+                            <input type="text" name="subject" id="subject" required>
 
-                        <label>MESSAGE</label>
-                        <textarea name="message" id="message" rows="10" required></textarea>
+                            <label>MESSAGE</label>
+                            <textarea name="message" id="message" rows="10" required></textarea>
 
-                        <input type="submit" value="SEND">
-                    </fieldset>
-                </form>
+                            <input type="submit" value="SEND">
+                        </fieldset>
+                    </form>
 
-                <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0 0">
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <form class="minimal" action="/admin/mail/send/all">
-                                <button type="submit">SEND TO EVERYONE</button>
-                            </form>
-                        </div>
-                        <div class="col-sm-6">
-                            <form class="minimal" action="/admin/mail/send/ambassadors">
-                                <button type="submit">SEND TO AMBASSADORS</button>
-                            </form>
+                    <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 0">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <form class="minimal" action="/admin/mail/send/all">
+                                    <button type="submit" style="margin-left: 0">SEND TO EVERYONE</button>
+                                </form>
+                            </div>
+                            <div class="col-sm-6">
+                                <form class="minimal" action="/admin/mail/send/ambassadors">
+                                    <button type="submit" style="margin-right: 0">SEND TO AMBASSADORS</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
