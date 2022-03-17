@@ -1,6 +1,6 @@
 const path = require('path');
 const nodemailer = require('nodemailer');
-const ejs = require('ejs');
+const { renderFile } = require('ejs');
 const { Document: Doc } = require('mongoose');
 const { OAuth2 } = (require("googleapis")).google.auth;
 const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV, CHC_EMAIL } = process.env;
@@ -66,7 +66,7 @@ class MailTransporter {
             this.#getTransportOpts((err, options) => {
                 if (err) return (cb || reject)(err);
                 const template = path.join(__dirname, '../views/templates/mail.ejs');
-                ejs.renderFile(template, { message, recipient: this.#recipient }, (err, html) => {
+                renderFile(template, { message, recipient: this.#recipient }, (err, html) => {
                     if (err) return (cb || reject)(err);
                     nodemailer.createTransport(options).sendMail({
                         from: { name: "Cocohoney Cosmetics", address: CHC_EMAIL },

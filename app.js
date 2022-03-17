@@ -56,12 +56,16 @@ app.use(async (req, res, next) => { // global variables
     res.locals.sale_sitewide = !sale_doc ? res.locals.sale_sitewide : (res.locals.sale && sale_doc.sitewide) || false;
     res.locals.cart = req.session.cart = Array.isArray(req.session.cart) ? req.session.cart : [];
 
-    if (sale_doc && sale_doc.active && !timeout) {
+    const sale_period = sale_doc && sale_doc.active;
+    const end_datetime_updated = sale_period && req.session.current_end_datetime && req.session.current_end_datetime.getTime() !== sale_doc.end_datetime.getTime();
+    if (end_datetime_updated) { clearTimeout(timeout); timeout = null }
+    if (sale_period && !timeout) {
         const time_left = sale_doc.end_datetime.getTime() - Date.now();
         const sale_ended = time_left < 0;
         timeout = setTimeout(async () => {
             await sale_toggle(req);
             clearTimeout(timeout);
+            req.session.current_end_datetime = sale_doc.end_datetime;
             timeout = null;
         }, sale_ended ? 0 : time_left)
     }
