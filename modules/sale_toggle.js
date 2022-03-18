@@ -10,6 +10,7 @@ module.exports = async req => {
     if (percentages.find(p => isNaN(parseInt(p)))) return { status: 400, response: "Percentage is invalid" };
     if (percentages.find(p => parseInt(p) <= 0)) return { status: 400, response: "Percentage cannot be less than or equal to 0" };
     if (ids.length !== percentages.length && !sitewide) return { status: 400, response: "Uneven number of selected items and specified percentages" };
+    if (!ids.length && !sitewide && sale_on) return { status: 400, response: "Please select items to put on sale" };
 
     sale.active = false;
     sale.sitewide = false;
