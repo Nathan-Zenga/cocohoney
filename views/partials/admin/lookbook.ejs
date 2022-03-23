@@ -107,14 +107,15 @@
 <script>
     var timeout;
     $("#reorder-lookbook-media form .img input[type=number]").on("input", function() {
-        var num = parseInt(($(this).val() || "").trim());
-        if (!num || num < 1 || num > $("#reorder-lookbook-media form .img").length) return false;
+        var num = parseInt(this.value.trim());
+        var $form = $(this).closest("form");
+        if (isNaN(num) || num < 1 || num > $form.find(".img").length) return false;
         var $img = $(this).closest(".img");
         var $wrapper = $img.closest(".img-wrapper");
-        var method = num - 1 <= $(".img").index($img) ? "insertBefore" : "insertAfter";
+        var method = num - 1 <= $form.find(".img").index($img) ? "insertBefore" : "insertAfter";
         if (!timeout) timeout = setTimeout(function() {
-            $wrapper.clone(true).hide()[method]($("#reorder-lookbook-media form .img-wrapper").eq(num - 1)).show(400).end().end().hide(200, function() { $(this).remove() });
-            $("#reorder-lookbook-media form .img").not($img).each(function(i) { $(this).find("input[type=number]").val(i+1) });
+            $wrapper.clone(true).hide()[method]($form.find(".img-wrapper").eq(num - 1)).show(400).end().end().hide(200, function() { $(this).remove() });
+            $form.find(".img").not($img).each(function(i) { $(this).find("input[type=number]").val(i+1) });
             timeout = null;
         }, 500);
     });
