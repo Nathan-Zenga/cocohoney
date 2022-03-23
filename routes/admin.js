@@ -25,7 +25,7 @@ router.get('/mail/form', async (req, res) => {
     const members = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
-    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const title = "Admin - Compose Mail";
     const pagename = "admin-mail-form";
     const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
@@ -43,7 +43,7 @@ router.get('/ambassador/account', isAuthed, async (req, res, next) => {
     const orders = await Order.find({ _id: { $in: orders_applied || [] } }).sort({ created_at: -1 }).exec();
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: ambassador.id });
-    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
+    const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
     const docs = { ambassador, discount_code, orders, products, wishlist: wishlist_items };
     const opts = { title: "My Account | Ambassador", pagename: "account", ...docs };
     res.render('ambassador-account', opts);
@@ -173,7 +173,7 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
     const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const orders = await Order.find({ mail_sub: true }).sort({ customer_email: 1 }).exec();
-    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email).sort((a, b) => a.customer_name - b.customer_name);
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
     const everyone = [
         ...ambassadors.filter(a => !members.find(m => m.email === a.email)),
         ...members,
@@ -214,7 +214,7 @@ router.post('/mail/sub-toggle', isAuthed, async (req, res) => {
     const members = await Member.find().sort({ firstname: 1 }).exec();
     const ambassadors = (await Ambassador.find().sort({ firstname: 1 }).exec()).filter(a => !members.find(m => m.email === a.email));
     const orders = await Order.find().sort({ customer_email: 1 }).exec();
-    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== (a[i+1] || {}).customer_email);
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email);
     await Member.updateMany({ email: { $in: members.map(d => d.email) } }, { $set: { mail_sub: false } });
     await Member.updateMany({ email: { $in: emails } }, { $set: { mail_sub: true } });
     await Ambassador.updateMany({ email: { $in: ambassadors.map(d => d.email) } }, { $set: { mail_sub: false } });

@@ -60,7 +60,7 @@ router.post('/remove', isAuthed, async (req, res) => {
         if (!posts.length) return res.status(404).send("No posts found");
         if (ids.length > posts.length) return res.status(404).send("One or more posts not found");
         await Promise.allSettled(posts.map(p => cloud.api.delete_resources([p.media_lg.p_id], { resource_type: p.media_lg.media_type })));
-        await Promise.allSettled(posts.map(p => cloud.api.delete_resources([(p.media_sm || {}).p_id], p.media_sm ? { resource_type: p.media_sm.media_type } : {})));
+        await Promise.allSettled(posts.map(p => cloud.api.delete_resources([p.media_sm?.p_id], p.media_sm ? { resource_type: p.media_sm.media_type } : {})));
         await Highlights_post.deleteMany({ _id: { $in: posts.map(p => p.id) } });
         res.send(`Highlights post${ids.length > 1 ? "s" : ""} deleted successfully`);
     } catch (err) { res.status(500).send(err.message) }

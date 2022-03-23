@@ -44,8 +44,8 @@ app.use(async (req, res, next) => { // global variables
     res.locals.production = production;
     res.locals.url = req.originalUrl;
     res.locals.user = req.user || null;
-    res.locals.is_admin = (req.user || {}).admin;
-    res.locals.is_ambassador = (req.user || {}).ambassador;
+    res.locals.is_admin = req.user?.admin;
+    res.locals.is_ambassador = req.user?.ambassador;
     res.locals.is_customer = req.user && !res.locals.is_ambassador && !res.locals.is_admin;
     res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${port}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
@@ -56,10 +56,9 @@ app.use(async (req, res, next) => { // global variables
     res.locals.sale_sitewide = !sale_doc ? res.locals.sale_sitewide : (res.locals.sale && sale_doc.sitewide) || false;
     res.locals.cart = req.session.cart = Array.isArray(req.session.cart) ? req.session.cart : [];
 
-    const sale_period = sale_doc && sale_doc.active;
-    const end_datetime_updated = sale_period && req.session.current_end_datetime !== sale_doc.end_datetime.getTime();
+    const end_datetime_updated = sale_doc?.active && req.session.current_end_datetime !== sale_doc.end_datetime.getTime();
     if (end_datetime_updated) { clearTimeout(timeout); timeout = null }
-    if (sale_period && !timeout) {
+    if (sale_doc?.active && !timeout) {
         const time_left = sale_doc.end_datetime.getTime() - Date.now();
         const sale_ended = time_left < 0;
         req.session.current_end_datetime = sale_doc.end_datetime.getTime();

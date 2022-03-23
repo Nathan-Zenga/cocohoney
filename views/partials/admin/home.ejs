@@ -44,7 +44,7 @@
                     <button type="submit">Delete</button>
                 </form>
 
-                <%_ const orders_sold = orders.filter(o => (sold || []).includes(o.id)); _%>
+                <%_ const orders_sold = orders.filter(o => sold?.includes(o.id)); _%>
                 <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
                 <div class="customer-orders container">
                     <div class="row">

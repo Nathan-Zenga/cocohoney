@@ -6,7 +6,7 @@ const passport = require('passport');
 passport.use("local-login-ambassador", new Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
         const user = await Ambassador.findOne({ email });
-        const match = await bcrypt.compare(password, (user || {}).password || "");
+        const match = await bcrypt.compare(password, user?.password || "");
         if (!user || !match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
         done(null, user);
     } catch (err) { done(err) }
@@ -15,7 +15,7 @@ passport.use("local-login-ambassador", new Strategy({ usernameField: "email" }, 
 passport.use("local-login-customer", new Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
         const user = await Member.findOne({ email });
-        const match = await bcrypt.compare(password, (user || {}).password || "");
+        const match = await bcrypt.compare(password, user?.password || "");
         if (!user || !match) return done(null, null, { message: "Credentials are invalid, or this account is not registered" });
         done(null, user);
     } catch (err) { done(err) }
@@ -24,7 +24,7 @@ passport.use("local-login-customer", new Strategy({ usernameField: "email" }, as
 passport.use("local-login-admin", new Strategy({ usernameField: "email" }, async (email, password, done) => {
     try {
         const user = await Admin.findOne({ email });
-        const match = await bcrypt.compare(password, (user || {}).password || "");
+        const match = await bcrypt.compare(password, user?.password || "");
         if (!user) return done(null, "to_activate", { message: "Verification email sent" });
         if (!match) return done(null, null, { message: "Invalid password" });
         done(null, user);

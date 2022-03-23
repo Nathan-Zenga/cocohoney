@@ -71,7 +71,7 @@ router.post("/session/create", async (req, res) => {
                     unit_amount: parseInt(item.price),
                     currency: "gbp"
                 },
-                description: (item.items || []).map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined,
+                description: item.items?.map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined,
                 quantity: item.qty
             })).concat([{
                 price_data: {

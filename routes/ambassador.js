@@ -84,7 +84,7 @@ router.get('/account', async (req, res) => {
     const orders = await Order.find({ _id: { $in: orders_applied || [] } });
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: user._id });
-    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
+    const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
     const docs = { ambassador: null, discount_code, orders, products, wishlist: wishlist_items };
     const opts = { title: "My Account | Ambassador", pagename: "account", countries, ...docs };
     res.render('ambassador-account', opts);
@@ -142,7 +142,7 @@ router.post('/delete', async (req, res) => {
         const amb = await Ambassador.findById(req.body.id);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: amb.id });
-        await cloud.api.delete_resources([(amb.image || {}).p_id || "blank"]);
+        await cloud.api.delete_resources([amb.image?.p_id || "blank"]);
         await Discount_code.findOneAndDelete({ code: amb.discount_code });
         await Ambassador.findByIdAndDelete(amb.id);
 

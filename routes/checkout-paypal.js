@@ -53,7 +53,7 @@ router.post("/create-payment", async (req, res) => {
                     price: (item.price / 100).toFixed(2),
                     quantity: item.qty,
                     currency: "GBP",
-                    description: (item.items || []).map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined
+                    description: item.items?.map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined
                 })),
                 shipping_address: {
                     recipient_name: `${firstname} ${lastname}`,

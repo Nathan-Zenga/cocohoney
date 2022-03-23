@@ -10,7 +10,7 @@ const passport = require('../config/passport');
 router.get('/', isAuthed, async (req, res) => {
     const orders = await Order.find({ customer_email: req.user.email }).sort({ created_at: -1 }).exec();
     const wishlist = await Wishlist.findOne({ customer_id: req.user._id });
-    const wishlist_items = await Product.find({ _id: { $in: (wishlist || {}).items || [] } });
+    const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
     res.render('customer-account', { title: "My Account", pagename: "account", orders, wishlist: wishlist_items });
 });
 
@@ -85,7 +85,7 @@ router.post('/delete', isAuthed, async (req, res) => {
         const member = await Member.findById(id);
         if (!member) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: member.id });
-        await cloud.api.delete_resources([(member.image || {}).p_id || "blank"]);
+        await cloud.api.delete_resources([member.image?.p_id || "blank"]);
         await Member.findByIdAndDelete(member.id);
         const subject = "Your account is now deleted";
         const message = `Hi ${member.firstname},\n\n` +
