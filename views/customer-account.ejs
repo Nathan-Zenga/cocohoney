@@ -143,7 +143,7 @@
                                     </div>
                                     <input type="hidden" name="image_file">
                                     <div class="input-group-append">
-                                        <button class="clear-uploads" type="button" data-id="profile_picture_file">CLEAR</button>
+                                        <button class="clear-uploads btn" type="button" data-id="profile_picture_file">CLEAR</button>
                                     </div>
                                 </div>
                                 <input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL">
@@ -175,9 +175,19 @@
 
                     <div id="account-settings" class="tab-pane fade">
                         <div class="form-container">
-                            <form class="minimal" method="post" action="/account/edit" id="mail-sub-toggle" style="text-align: center; padding: 0 30px">
+                            <form class="minimal mail-sub-toggle-form" method="post" action="/account/edit" id="mail-sub-toggle">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="mail_sub_check" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>>
+                                        </div>
+                                    </div>
+                                    <label for="mail_sub_check" class="form-control">
+                                        <b>Check to recieve emails</b><br>
+                                        <small>(for updates, promotions etc.)</small>
+                                    </label>
+                                </div>
                                 <input type="hidden" name="id" value="<%= user._id %>">
-                                <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
                             </form>
 
                             <form class="minimal sensitive-form" method="post" action="/account/delete">
@@ -207,7 +217,7 @@
 
     $("#mail-sub-toggle input:checkbox").change(function(e) {
         e.preventDefault();
-        var form = $(this).parent("form").get(0);
+        var form = $(this).closest("form").get(0);
         var data = $(form).serializeArray().slice();
         $(this).attr("disabled", true);
         $.post(form.action, data, function(result) {

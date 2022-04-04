@@ -615,7 +615,6 @@ section .media-wrapper .main-media.small video {
     display: inline-block;
     width: 230px;
     max-width: 500px;
-    margin-bottom: 0;
     margin-right: 50px;
 }
 
@@ -1431,6 +1430,8 @@ label .dropdown-arrow {
 .file-upload-container .clear-uploads {
     padding: 2.75px 12px 2.75px 10px;
     margin: 0;
+    background-color: rgb(240, 230, 140);
+    color: rgb(124, 76, 76);
 }
 
 #new-lookbook-media .file-upload-container {
@@ -2013,7 +2014,7 @@ input.product-quantity:disabled {
 }
 
 #account-page #settings-button {
-    padding: 10px;
+    padding: 10px 10px 8px;
     font-weight: 300;
     font-size: .8em;
     border: 1px solid white;
@@ -2045,6 +2046,20 @@ input.product-quantity:disabled {
 
 #account-page .invoice-link {
     border-bottom: 1px solid white;
+}
+
+#account-page .mail-sub-toggle-form {
+    max-width: 350px;
+    text-align: center;
+    padding: 0 30px;
+}
+
+#account-page .mail-sub-toggle-form label {
+    height: auto;
+}
+
+#account-page .mail-sub-toggle-form input[type=checkbox] {
+    margin: 0;
 }
 
 @media (min-width: 576px) {

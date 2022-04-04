@@ -105,14 +105,14 @@ module.exports.Ambassador = model('Ambassador', new Schema({
         type: String,
         validate: {
             validator: v => /^\d{2}-\d{2}-\d{2}$/.test(v),
-            message: props => `Sort code is not valid or in the right format (e.g. 22-03-15)`
+            message: () => `Sort code is not valid or in the right format (e.g. 22-03-15)`
         }
     },
     account_number: {
         type: String,
         validate: {
             validator: v => /^[0-9]*$/.test(v),
-            message: props => `No letters, special characters or spaces allowed for the account number`
+            message: () => `No letters, special characters or spaces allowed for the account number`
         }
     },
     image: { p_id: String, url: String },
