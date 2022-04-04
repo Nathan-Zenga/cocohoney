@@ -17,10 +17,10 @@
             <div id="highlights-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="false">
                 <div class="carousel-inner" style="overflow: initial;">
                     <%_ highlights.forEach((slide, i) => { _%>
-                    <div class="item<%- i === 0 ? ' active' : '' %>">
+                    <div class="carousel-item<%- i === 0 ? ' active' : '' %>">
                         <div class="content-layer container">
                             <div class="row carousel-item-row">
-                                <div class="col-sm-5 media-wrapper">
+                                <div class="col-sm-5 float-left media-wrapper">
                                     <div class="main-media-large-wrapper" style="background-image: url('<%- slide.media_lg.url %>')">
                                         <img class="main-media large" src="<%- slide.media_lg.url %>" alt="<%- slide.media_lg.url.slice(slide.media_lg.url.lastIndexOf('/') + 1) %>">
                                     </div>
@@ -35,7 +35,7 @@
                                         <%_ }} _%>
                                     </div>
                                 </div>
-                                <div class="col-sm-7 text-wrapper">
+                                <div class="col-sm-7 float-left text-wrapper">
                                     <div class="text">
                                         <h1><%- slide.title %></h1>
                                         <p><a <%- slide.link ? `href="${slide.link}"` : '' %>><%- slide.text_body.replace(/\r?\n/g, "</p><p>") %></a></p>
@@ -66,7 +66,7 @@
             <div id="reviews-carousel" class="carousel slide" data-ride="carousel" data-interval="4000" data-pause="false">
                 <div class="carousel-inner">
                     <%_ reviews.forEach((review, i) => { _%>
-                    <div class="review item <%= i == 0 ? 'active' : '' %>">
+                    <div class="review carousel-item <%= i == 0 ? 'active' : '' %>">
                         <div class="container" style="max-width: 900px">
                             <%_ if (review.headline) { _%>
                             <div class="review-headline"><%- review.headline %></div>

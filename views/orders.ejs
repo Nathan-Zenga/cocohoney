@@ -4,7 +4,7 @@
             <div class="order">
                 <h1>ORDER <span># <%- order.id %></span></h1>
                 <div class="row" id="header-summary">
-                    <div class="col-sm-<%= dc_used ? '4 col-xs-6' : 6 %>">
+                    <div class="col-sm-<%= dc_used ? '4 col-6' : 6 %> float-left order-sm-1">
                         <p>Date of purchase</p>
                         <%_ const day = order.created_at.getDate(); _%>
                         <%_ const month = order.created_at.getMonth() + 1; _%>
@@ -13,12 +13,12 @@
                         <p><b><%- order_date %></b></p>
                     </div>
                     <%_ if (dc_used) { _%>
-                    <div class="col-sm-4 col-xs-6 col-sm-push-4">
+                    <div class="col-sm-4 col-6 float-left order-sm-3 float-left">
                         <p>Discount code</p>
                         <p><b><%= dc_used.code %></b><br><%= dc_used.percentage %>% off</p>
                     </div>
                     <%_ } _%>
-                    <div class="col-sm-<%= dc_used ? '4 col-sm-pull-4' : 6 %>" id="tracking-ref">
+                    <div class="col-sm-<%= dc_used ? '4 order-sm-2 float-left' : 6 %> float-left" id="tracking-ref">
                         <%_ if (order.tracking_ref === "N/A") { _%>
                         <p>Tracking reference not applicable for this order</p>
 
@@ -39,15 +39,15 @@
                     </div>
                 </div><br>
                 <div class="row" id="order-details">
-                    <div class="detail col-sm-4">
+                    <div class="detail col-sm-4 float-left">
                         <p><b>NAME</b></p>
                         <p><%- order.customer_name %></p>
                     </div>
-                    <div class="detail col-sm-4">
+                    <div class="detail col-sm-4 float-left">
                         <p><b>EMAIL</b></p>
                         <p><%= order.customer_email %></p>
                     </div>
-                    <div class="detail col-sm-4">
+                    <div class="detail col-sm-4 float-left">
                         <p><b>ADDRESS</b></p>
                         <p>
                             <%= order.destination.line1 %><br>
@@ -75,7 +75,7 @@
                     <%_ } _%>
                 </h2>
                 <div class='table-responsive'>
-                    <table id="order-items-table" class="table table-borderless table-hover">
+                    <table id="order-items-table" class="table table-hover">
                         <thead>
                             <tr>
                                 <th>ITEM</th>

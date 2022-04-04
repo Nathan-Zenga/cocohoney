@@ -1,10 +1,11 @@
-@import url('https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css');
 @import url('https://kathirr007.github.io/FA-MD-Icons-Updated/css/pro.css');
 @import url('https://fonts.googleapis.com/css2?family=Spartan:wght@300;500;600;700&display=swap');
 
 html, body {
     background-color: black;
     color: white;
+    font-size: 14px;
     font-weight: 100;
     font-family: Spartan, Arial, sans-serif;
     font-feature-settings: 'liga' 0;
@@ -45,26 +46,38 @@ a:hover {
     background-color: transparent;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 576px) {
     .mb-view {
         display: none!important;
     }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 575px) {
     .dt-view {
         display: none!important;
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 768px) {
     .mb-view-md {
         display: none!important;
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 767px) {
     .dt-view-md {
+        display: none!important;
+    }
+}
+
+@media (min-width: 992px) {
+    .mb-view-lg {
+        display: none!important;
+    }
+}
+
+@media (max-width: 991px) {
+    .dt-view-lg {
         display: none!important;
     }
 }

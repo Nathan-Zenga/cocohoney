@@ -9,22 +9,22 @@
                 <label>PROFILE PICTURE <span>(OPTIONAL)</span></label>
                 <fieldset class="file-upload-container">
                     <div class="row">
-                        <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                        <div class="col-sm-6 col-9 float-left"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                         <input type="hidden" name="image_file">
-                        <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                        <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                        <div class="col-sm-12 float-left"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
                     </div>
                 </fieldset>
 
                 <fieldset>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label>FIRST NAME</label>
                             <input type="text" name="firstname" id="firstname" required>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label>LAST NAME</label>
                             <input type="text" name="lastname" id="lastname" required>
                         </div>
@@ -46,15 +46,15 @@
 
                 <fieldset>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="city">CITY</label>
                             <input type="text" name="city" required>
                         </div>
-                        <div class="col-sm-6">
-                            <label for="state">STATE <span>/ REGION / PROVINCE</span></label>
+                        <div class="col-sm-6 float-left">
+                            <label for="state">STATE <span>/ COUNTY / REGION</span></label>
                             <input type="text" name="state" placeholder="(OPTIONAL)">
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                             <select name="country" required>
                                 <option value="">-</option>
@@ -63,7 +63,7 @@
                                 <%_ } _%>
                             </select>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="postcode">POST <span>/ ZIP CODE</span></label>
                             <input type="text" name="postcode" required>
                         </div>

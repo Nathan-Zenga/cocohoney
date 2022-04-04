@@ -2,9 +2,9 @@
 <div class="profile-body">
     <div class="container">
         <div class="row">
-            <div class="col-sm-5">
+            <div class="col-sm-5 float-left">
                 <div class="row">
-                    <div class="col-sm-12 profile-card">
+                    <div class="col-sm-12 float-left profile-card">
                         <div class="profile-picture" style="background-image: url('<%- user.image?.url %>');"></div>
                         <div class="profile-summary">
                             <p class="name"><%- user.firstname %> <%- user.lastname %></p>
@@ -15,15 +15,16 @@
                     </div>
                 </div>
             </div>
-            <div class="col-sm-7 dashboard">
+            <div class="col-sm-7 float-left dashboard">
                 <div class="nav-pills-container">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a data-toggle="pill" href="#history">PURCHASE HISTORY</a></li>
-                        <li><a data-toggle="pill" href="#wishlist">WISH LIST</a></li>
-                    </ul>
+                    <div class="nav nav-pills">
+                        <a class="nav-link active" data-toggle="pill" href="#history">PURCHASE HISTORY</a>
+                        <a class="nav-link" data-toggle="pill" href="#wishlist">WISH LIST</a>
+                    </div>
                 </div>
                 <div class="tab-content" style="padding: 0;">
-                    <div id="history" class="tab-pane fade in active">
+
+                    <div id="history" class="tab-pane fade show active">
                         <div class="thumb-container no-wrap">
                             <div class="<%- orders.length ? 'container' : '' %>" style="<%- orders.length ? 'padding: 20px 0 20px 30px;' : '' %>">
                                 <div class="row">
@@ -35,11 +36,11 @@
                                             <div class="thumb-info">
                                                 <div class="order-header">
                                                     <div class="row">
-                                                        <div class="col-sm-6 order-name"><p>Order # <%- arr.length - i %></p></div>
+                                                        <div class="col-sm-6 float-left order-name"><p>Order # <%- arr.length - i %></p></div>
                                                         <%_ const day = order.created_at.getDate(); _%>
                                                         <%_ const month = order.created_at.getMonth() + 1; _%>
                                                         <%_ const year = order.created_at.getFullYear(); _%>
-                                                        <div class="col-sm-6 order-date">
+                                                        <div class="col-sm-6 float-left order-date">
                                                             <p><%= `${ day < 10 ? "0"+day : day }/${ month < 10 ? "0"+month : month }/${ year }` %></p>
                                                         </div>
                                                     </div>
@@ -119,64 +120,69 @@
     </div>
 </div>
 
-<div id="settings-modal" class="modal fade in" role="dialog">
-    <div class="modal-icons">
-        <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-    </div>
-    <div class="modal-body">
-        <ul class="nav nav-pills">
-            <li class="active"><a data-toggle="pill" href="#personal-details-settings">EDIT PROFILE</a></li>
-            <li><a data-toggle="pill" href="#account-settings">ACCOUNT</a></li>
-        </ul>
-        <div class="tab-content">
-            <div id="personal-details-settings" class="tab-pane fade in active">
-                <form method="post" action="/account/edit" id="personal-details-edit-form">
-                    <label>PROFILE PICTURE</label>
-                    <fieldset class="file-upload-container" style="margin-bottom: 1em">
-                        <div class="row">
-                            <div class="col-sm-6 col-xs-9"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
-                            <input type="hidden" name="image_file">
-                            <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <label>FIRST NAME</label>
-                                <input type="text" name="firstname" value="<%- user.firstname %>">
-                            </div>
-                            <div class="col-sm-6">
-                                <label>LAST NAME</label>
-                                <input type="text" name="lastname" value="<%- user.lastname %>">
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <label>PHONE NUMBER</label>
-                    <input type="tel" name="phone_number" value="<%- user.phone_number %>">
-
-                    <label>EMAIL</label>
-                    <input type="email" name="email" value="<%- user.email %>">
-
-                    <input type="hidden" name="id" value="<%= user._id %>">
-                    <input type="submit" value="UPDATE">
-                </form>
+<div id="settings-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-icons">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
+            <div class="modal-body">
+                <div class="nav nav-pills justify-content-center">
+                    <a class="nav-link active" data-toggle="pill" href="#personal-details-settings">EDIT PROFILE</a>
+                    <a class="nav-link" data-toggle="pill" href="#account-settings">ACCOUNT</a>
+                </div>
+                <div class="tab-content">
+                    <div id="personal-details-settings" class="tab-pane fade show active">
+                        <form method="post" action="/account/edit" class="settings-form">
+                            <label>PROFILE PICTURE</label>
+                            <fieldset class="file-upload-container" style="margin-bottom: 1em">
+                                <div class="row">
+                                    <div class="col-sm-6 col-9 float-left"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                                    <input type="hidden" name="image_file">
+                                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
+                                </div>
+                            </fieldset>
 
-            <div id="account-settings" class="tab-pane fade">
-                <div class="form-container">
-                    <form class="minimal" method="post" action="/account/edit" id="mail-sub-toggle" style="text-align: center; padding: 0 30px">
-                        <input type="hidden" name="id" value="<%= user._id %>">
-                        <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
-                    </form>
-                    <form class="minimal sensitive-form" method="post" action="/account/delete">
-                        <input type="hidden" name="id" value="<%- user._id %>">
-                        <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
-                    </form>
+                            <fieldset>
+                                <div class="row">
+                                    <div class="col-sm-6 float-left">
+                                        <label>FIRST NAME</label>
+                                        <input type="text" name="firstname" value="<%- user.firstname %>">
+                                    </div>
+                                    <div class="col-sm-6 float-left">
+                                        <label>LAST NAME</label>
+                                        <input type="text" name="lastname" value="<%- user.lastname %>">
+                                    </div>
+                                </div>
+                            </fieldset>
+
+                            <label>PHONE NUMBER</label>
+                            <input type="tel" name="phone_number" value="<%- user.phone_number %>">
+
+                            <label>EMAIL</label>
+                            <input type="email" name="email" value="<%- user.email %>">
+
+                            <input type="hidden" name="id" value="<%= user._id %>">
+                            <input type="submit" value="UPDATE">
+                        </form>
+                    </div>
+
+                    <div id="account-settings" class="tab-pane fade">
+                        <div class="form-container">
+                            <form class="minimal" method="post" action="/account/edit" id="mail-sub-toggle" style="text-align: center; padding: 0 30px">
+                                <input type="hidden" name="id" value="<%= user._id %>">
+                                <input type="checkbox" name="mail_sub" value="true" <%- user.mail_sub ? 'checked' : '' %>> <b>Recieve emails?</b> (for updates, promotions etc.)
+                            </form>
+
+                            <form class="minimal sensitive-form" method="post" action="/account/delete">
+                                <input type="hidden" name="id" value="<%- user._id %>">
+                                <button type="submit" class="btn-danger">DELETE ACCOUNT</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

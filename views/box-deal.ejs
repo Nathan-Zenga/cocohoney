@@ -1,24 +1,26 @@
 <%- include ('partials/header') -%>
     <section>
-        <div class="row header">
+        <div class="header">
             <div class="container">
-                <div class="col-sm-6 col-sm-push-6">
-                    <div class="img-container"><img class="img" src="<%= box.image ? box.image.url : '' %>"></div>
-                </div>
-                <div class="col-sm-6 col-sm-pull-6">
-                    <div class="text-container">
-                        <div class="text-content">
-                            <h1><%= box.name %> Box</h1><br>
-                            <%_ if (box.price_sale && !is_ambassador) { _%>
-                            <p style="font-size: 1.5em; color: rgba(240, 230, 140); margin-top: -1em">
-                                £<%- (box.price_sale / 100).toFixed(2) %> <small><del>£<%- (box.price / 100).toFixed(2) %></del></small>
-                            </p><br>
-                            <%_ } if (box.info) { _%>
-                            <p><%- box.info.replace(/\r?\n/g, "<br>") %></p><br>
-                            <%_ } if (products.length) { _%>
-                            <p>Click the images below to choose</p><br>
-                            <p><i class="dropdown-arrow fal fa-chevron-down" style="font-size: 3em"></i></p>
-                            <%_ } _%>
+                <div class="row">
+                    <div class="col-sm-6 order-sm-last float-left">
+                        <div class="img-container"><img class="img" src="<%= box.image ? box.image.url : '' %>"></div>
+                    </div>
+                    <div class="col-sm-6 order-sm-first float-left">
+                        <div class="text-container">
+                            <div class="text-content">
+                                <h1><%= box.name %> Box</h1><br>
+                                <%_ if (box.price_sale && !is_ambassador) { _%>
+                                <p style="font-size: 1.5em; color: rgba(240, 230, 140); margin-top: -1em">
+                                    £<%- (box.price_sale / 100).toFixed(2) %> <small><del>£<%- (box.price / 100).toFixed(2) %></del></small>
+                                </p><br>
+                                <%_ } if (box.info) { _%>
+                                <p><%- box.info.replace(/\r?\n/g, "<br>") %></p><br>
+                                <%_ } if (products.length) { _%>
+                                <p>Click the images below to choose</p><br>
+                                <p><i class="dropdown-arrow fal fa-chevron-down" style="font-size: 3em"></i></p>
+                                <%_ } _%>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -26,7 +28,7 @@
         </div>
         <br><br>
 
-        <div class="container" style="padding-left: 0; padding-right: 0;">
+        <div class="container">
             <form class="panel-group minimal" action="/deal/cart/add">
                 <%_ var collections = [...new Set(products.filter(p => p.product_collection).map(p => p.product_collection))].map(c => ({ collection: c }));
                     var categories = [...new Set(products.filter(p => !p.product_collection).map(p => p.category))].map(c => ({ category: c }));
@@ -45,7 +47,7 @@
                                 <div class="container">
                                     <div class="row">
                                         <%_ products.filter(p => field.collection ? field.collection === p.product_collection : field.category === p.category).forEach(p => { _%>
-                                        <div class="thumb col-md-3 col-sm-4">
+                                        <div class="thumb col-lg-3 col-md-4 float-left">
                                             <div class="thumb-inner">
                                                 <div class="thumb-img product-image" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
                                                     <div class="item-select-check">

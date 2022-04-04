@@ -63,7 +63,7 @@ $(function() {
         if (!location.hash) return;
         var $dropdown_opt = $(".section-dropdown-options select");
         if ($dropdown_opt.length) return $dropdown_opt.prop("value", location.hash).trigger("change");
-        $(".nav-pills a[href='"+ location.hash +"']").trigger("click")
+        $(".nav-pills .active[href='"+ location.hash +"']").trigger("click")
     }).on("touchstart", function() {
         var $video = $("#page-bg-underlay video").get(0);
         var playing = $video.currentTime > 0 && !$video.paused && !$video.ended && $video.readyState > 2;

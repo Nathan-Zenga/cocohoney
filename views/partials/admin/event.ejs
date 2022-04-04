@@ -1,12 +1,12 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-event">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-event">EDIT</a></li>
-    <li><a data-toggle="pill" href="#remove-event">REMOVE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-event">NEW</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-event">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-event">REMOVE</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
 
-    <div id="new-event" class="new-form-tab tab-pane fade in active">
+    <div id="new-event" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/events/post">
             <label>EVENT TITLE</label>
             <input type="text" name="title" id="event-title" required>
@@ -14,7 +14,7 @@
             <label>EVENT DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
             <fieldset>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <%_
                             var event_date = new Date();
                             var offset = event_date.getTimezoneOffset();
@@ -23,7 +23,7 @@
                         _%>
                         <input type="date" name="date" id="event-date" value="<%= event_date %>" required>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <input type="number" class="inline" name="hour" id="event-hour" min="0" max="23" value="23" required> <b>:</b>
                         <input type="number" class="inline" name="minute" id="event-minute" min="0" max="59" value="59" required>
                         <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
@@ -43,12 +43,12 @@
             <label>POSTER / FLYER</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="event-image-file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="event-image-file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="event-image-file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="event-image-file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="event-image-url" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="event-image-url" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 
@@ -72,10 +72,10 @@
             <label>EVENT DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
             <fieldset>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <input type="date" name="date" id="event-date-edit" required>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <input type="number" class="inline" name="hour" id="event-hour-edit" min="0" max="23" value="23" required> <b>:</b>
                         <input type="number" class="inline" name="minute" id="event-minute-edit" min="0" max="59" value="59" required>
                         <input type="checkbox" name="ttbc" id="event-time-tbc-edit" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
@@ -95,12 +95,12 @@
             <label>POSTER / FLYER</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="event-image-file-edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="event-image-file-edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="event-image-file-edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="event-image-file-edit">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="event-image-url-edit" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="event-image-url-edit" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 

@@ -1,11 +1,11 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-faq">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-faq">EDIT</a></li>
-    <li><a data-toggle="pill" href="#remove-faq">REMOVE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-faq">NEW</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-faq">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-faq">REMOVE</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="new-faq" class="new-form-tab tab-pane fade in active">
+    <div id="new-faq" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/admin/faqs/add">
             <label>QUESTION</label>
             <input type="text" name="question" id="question" required>

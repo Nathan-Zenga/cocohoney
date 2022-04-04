@@ -1,11 +1,11 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#about-page-text">INFO TEXT</a></li>
-    <li><a data-toggle="pill" href="#about-page-image">PAGE IMAGE</a></li>
-    <li><a data-toggle="pill" href="#about-page-image-remove">REMOVE PAGE IMAGE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#about-page-text">INFO TEXT</a>
+    <a class="nav-link" data-toggle="pill" href="#about-page-image">PAGE IMAGE</a>
+    <a class="nav-link" data-toggle="pill" href="#about-page-image-remove">REMOVE PAGE IMAGE</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="about-page-text" class="tab-pane fade in active">
+    <div id="about-page-text" class="tab-pane fade show active">
         <form method="post" action="/about/text/edit">
             <label>"ABOUT US" TEXT</label>
             <textarea name="main_text" id="main-text" rows="10"><%- info[0].main_text %></textarea>
@@ -22,12 +22,12 @@
             <label>PAGE IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="about_page_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="about_page_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="about_page_image_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="about_page_image_file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="about_page_image_url" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="about_page_image_url" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 

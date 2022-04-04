@@ -1,22 +1,22 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-overview-img">UPLOAD</a></li>
-    <li><a data-toggle="pill" href="#edit-overview-img">EDIT</a></li>
-    <li><a data-toggle="pill" href="#reorder-overview-img">REORDER</a></li>
-    <li><a data-toggle="pill" href="#remove-overview-img">REMOVE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-overview-img">UPLOAD</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-overview-img">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#reorder-overview-img">REORDER</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-overview-img">REMOVE</a>
+</div>
 
-<div class="tab-content" style="padding-top: 10px;">
-    <div id="new-overview-img" class="new-form-tab tab-pane fade in active">
+<div class="tab-content" id="overview-image" style="padding-top: 10px;">
+    <div id="new-overview-img" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/site/content/overview-images/upload" style="padding: 30px">
             <label>UPLOAD HOMEPAGE IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="overview_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="overview_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="overview_image_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="overview_image_file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="overview_image_url" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="overview_image_url" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
             <input type="submit" value="UPLOAD">
@@ -38,12 +38,12 @@
             <label>UPLOAD HOMEPAGE IMAGE <span>(REPLACES CURRENT ONE)</span></label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="overview_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="overview_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="overview_image_file_edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="overview_image_file_edit">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="overview_image_url_edit" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="overview_image_url_edit" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
             <input type="submit" value="UPLOAD">
@@ -56,7 +56,7 @@
             <label>REORDER IMAGES <span>- Edit the position number of one or more images to reorder</span></label>
             <div class="row">
                 <%_ overview_images.forEach((img, i, arr) => { _%>
-                <div class="col-sm-6 img-wrapper">
+                <div class="col-sm-6 float-left img-wrapper">
                     <div class="img" style="background-image: url('<%= img.url %>')">
                         <input type="hidden" name="id" value="<%= img._id %>">
                         <input type="number" min="1" max="<%= arr.length %>" value="<%= i+1 %>">
@@ -78,7 +78,7 @@
             <label>DELETE IMAGES <span>- Tick one or more images to delete</span></label>
             <div class="row">
                 <%_ overview_images.forEach((img, i) => { _%>
-                <div class="col-sm-6 img-wrapper">
+                <div class="col-sm-6 float-left img-wrapper">
                     <div class="img" style="background-image: url('<%= img.url %>')">
                         <input type="checkbox" name="id" value="<%= img._id %>">
                     </div>

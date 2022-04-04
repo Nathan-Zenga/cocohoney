@@ -1,6 +1,6 @@
 <form method="post" action="/admin/sale/toggle/">
     <div class="row" style="margin-bottom: 2em">
-        <div class="col-xs-6">
+        <div class="col-6 float-left">
             <label>SALE</label><br><br>
             <span class="switch-toggle-label">OFF</span>
             <label class="switch" id="sale-switch" style="margin: 0 5px">
@@ -9,7 +9,7 @@
             </label>
             <span class="switch-toggle-label">ON</span>
         </div>
-        <div class="col-xs-6">
+        <div class="col-6 float-left">
             <label>SITE-WIDE</label><br><br>
             <span class="switch-toggle-label">NO</span>
             <label class="switch" id="sitewide-switch" style="margin: 0 5px">
@@ -22,10 +22,10 @@
         </div>
     </div>
     <fieldset class="row">
-        <label class="col-xs-12">
+        <label class="col-12 float-left">
             END OF SALE DATE & TIME <span class="margin">(24-HOUR FORMAT)</span>
         </label>
-        <div class="col-xs-6">
+        <div class="col-6 float-left">
             <%_
                 var sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
                 var offset = sale_datetime.getTimezoneOffset();
@@ -34,13 +34,13 @@
             _%>
             <input type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" required>
         </div>
-        <div class="col-xs-6">
+        <div class="col-6 float-left">
             <input type="number" class="inline" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" required> <b>:</b>
             <input type="number" class="inline" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" required>
         </div>
     </fieldset>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-12 float-left">
             <%_ products.forEach((item, i) => {
                 var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
                 var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
@@ -48,10 +48,10 @@
             <%- (item.product_collection || item.category) !== (products[i-1]?.product_collection || products[i-1]?.category) ? '<div style="padding: 1em 0; margin: 1em 0">'+group+'</div>' : '' %>
             <div class="input-checkbox">
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
                     </div>
                 </div>
@@ -62,10 +62,10 @@
             <%_ } _%>
             <div class="input-checkbox">
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
                     </div>
                 </div>

@@ -22,7 +22,7 @@
     <link rel="stylesheet" type="text/css" href="/css/defaults.css">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/async/3.2.1/async.min.js"></script>
     <script src="/js/main.js"></script>
 </head>
@@ -35,12 +35,12 @@
     <header>
         <div class="inner-header container">
             <div class="row">
-                <div class="logo-section header-content-section col-xs-4">
+                <div class="logo-section header-content-section col-4 float-left">
                     <div id="chc-logo">
                         <a href="/">COCOHONEY COSMETICS</a>
                     </div>
                 </div>
-                <div class="nav-section header-content-section col-xs-4">
+                <div class="nav-section header-content-section col-4 float-left">
                     <div style="display: inline-block" id="nav-toggle">
                         <a class="fal fa-bars" style="font-size: 1.5em"></a>
                     </div>
@@ -86,7 +86,7 @@
                         <%_ } _%>
                     </nav>
                 </div>
-                <div class="links-section header-content-section col-xs-4">
+                <div class="links-section header-content-section col-4 float-left">
                     <%_ if (user) {
                         if (user.admin) { _%>
                     <a href="/admin">ADMIN</a> <span class="dt-view">&bullet;</span>
@@ -109,7 +109,7 @@
             <div id="banner-1-carousel" class="carousel slide" data-ride="carousel" data-interval="5000" data-pause="false">
                 <div class="carousel-inner">
                     <%_ banner_slides.forEach((slide, i) => { _%>
-                    <div class="item<%- i === 0 ? ' active' : '' %>">
+                    <div class="carousel-item<%- i === 0 ? ' active' : '' %>">
                         <%- slide.text %>
                     </div>
                     <%_ }) _%>

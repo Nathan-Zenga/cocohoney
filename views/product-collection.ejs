@@ -8,7 +8,7 @@
                 <div class="container">
                     <div class="row">
                         <%_ collection.forEach(product => { _%>
-                        <div class="thumb col-md-3 col-sm-4">
+                        <div class="thumb col-lg-3 col-md-4 float-left">
                             <div class="thumb-inner">
                                 <a href="/product/<%= product.category + '/' + product.name %>">
                                     <div class="thumb-img product-image<%= product.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- product.image ? product.image.url : '' %>');">

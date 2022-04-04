@@ -1,44 +1,46 @@
 <%- include ('partials/header') -%>
     <div class="product-view-container container">
-        <div class="col-sm-7 product-images">
-            <div class="product-image-single">
-                <img src="<%- product.image ? product.image.url : '' %>" alt="<%- product.name %>">
+        <div class="row">
+            <div class="col-sm-7 float-left product-images">
+                <div class="product-image-single">
+                    <img src="<%- product.image ? product.image.url : '' %>" alt="<%- product.name %>">
+                </div>
             </div>
-        </div>
-        <div class="col-sm-5 product-info">
-            <div class="details" id="name"><%= product.name %></div>
-            <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
-                const price_original = product.price_sale ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
-            <div class="details" id="price">£<%- (price / 100).toFixed(2) + price_original %></div>
-            <%_ if (product.price_sale) { _%>
-            <div class="details" id="sale-label"><span>SALE</span></div>
-            <%_ } _%>
-            <div class="details" id="category"><%= product.category.charAt(0).toUpperCase() + product.category.slice(1).replace(/_/g, " ") %></div>
-            <%_ if (product.product_collection) { _%>
-            <div class="details" id="collection"><%= product.product_collection.charAt(0).toUpperCase() + product.product_collection.slice(1).replace(/_/g, " ") %> Collection</div>
-            <%_ } if (product.info) { _%>
-            <div class="details" id="extra-info"><p><%- product.info.replace(/\r?\n/, "</p><p>") %></p></div>
-            <%_ } _%>
-            <br><br>
-            <div class="cart-options">
-                <%_ if (product.stock_qty > 0) { _%>
-                <form class="add-to-cart minimal">
-                    <div class="quantity-wrapper">
-                        <button type="button" class="quantity-control-btn" data-step="-1">-</button>
-                        <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
-                        <button type="button" class="quantity-control-btn" data-step="1">+</button>
-                    </div>
-                    <input type="hidden" name="id" value="<%- product.id %>">
-                    <%_ if (product.pre_release) { _%>
-                    <button formaction="/shop/cart/add" class="add-to-cart-btn pre-order">PRE-ORDER</button>
-                    <%_ } else { _%>
-                    <button formaction="/shop/cart/add" class="add-to-cart-btn"><i class="icon fal fa-cart-arrow-down"></i></button>
-                    <%_ } _%>
-                    <button formaction="/wishlist/add" class="add-to-cart-btn"><i class="icon fal fa-heart"></i></button>
-                </form>
-                <%_ } else { _%>
-                <div class="sold-out-label">SOLD OUT</div>
+            <div class="col-sm-5 float-left product-info">
+                <div class="details" id="name"><%= product.name %></div>
+                <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
+                    const price_original = product.price_sale ? " <del style='font-size: .75em'>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+                <div class="details" id="price">£<%- (price / 100).toFixed(2) + price_original %></div>
+                <%_ if (product.price_sale) { _%>
+                <div class="details" id="sale-label"><span>SALE</span></div>
                 <%_ } _%>
+                <div class="details" id="category"><%= product.category.charAt(0).toUpperCase() + product.category.slice(1).replace(/_/g, " ") %></div>
+                <%_ if (product.product_collection) { _%>
+                <div class="details" id="collection"><%= product.product_collection.charAt(0).toUpperCase() + product.product_collection.slice(1).replace(/_/g, " ") %> Collection</div>
+                <%_ } if (product.info) { _%>
+                <div class="details" id="extra-info"><p><%- product.info.replace(/\r?\n/, "</p><p>") %></p></div>
+                <%_ } _%>
+                <br><br>
+                <div class="cart-options">
+                    <%_ if (product.stock_qty > 0) { _%>
+                    <form class="add-to-cart minimal">
+                        <div class="quantity-wrapper">
+                            <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                            <input class="product-quantity" type="number" name="quantity" min="1" max="<%= product.stock_qty %>" value="1">
+                            <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                        </div>
+                        <input type="hidden" name="id" value="<%- product.id %>">
+                        <%_ if (product.pre_release) { _%>
+                        <button formaction="/shop/cart/add" class="add-to-cart-btn pre-order">PRE-ORDER</button>
+                        <%_ } else { _%>
+                        <button formaction="/shop/cart/add" class="add-to-cart-btn"><i class="icon fal fa-cart-arrow-down"></i></button>
+                        <%_ } _%>
+                        <button formaction="/wishlist/add" class="add-to-cart-btn"><i class="icon fal fa-heart"></i></button>
+                    </form>
+                    <%_ } else { _%>
+                    <div class="sold-out-label">SOLD OUT</div>
+                    <%_ } _%>
+                </div>
             </div>
         </div>
     </div>

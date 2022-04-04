@@ -1,12 +1,14 @@
 <%- include ('partials/header') -%>
     <div class="form-container">
-        <ul class="nav nav-pills">
-            <li><a data-toggle="none" href="/admin"><i class="fal fa-chevron-left" style="font-size: 1.2em; margin-right: 10px"></i> BACK</a></li>
-            <li class="active"><a data-toggle="pill" href="#mail-form-tab">MAIL FORM</a></li>
-            <li><a data-toggle="pill" href="#mail-sub-check">MAIL SUBSCRIBER CHECK</a></li>
-        </ul>
-        <div class="tab-content container">
-            <div id="mail-form-tab" class="tab-pane fade in active">
+        <div class="nav nav-pills justify-content-center">
+            <a class="nav-link" data-toggle="none" href="/admin">
+                <i class="fal fa-chevron-left" style="font-size: 1.2em; margin-right: 10px"></i> BACK
+            </a>
+            <a class="nav-link active" data-toggle="pill" href="#mail-form-tab">MAIL FORM</a>
+            <a class="nav-link" data-toggle="pill" href="#mail-sub-check">MAIL SUBSCRIBER CHECK</a>
+        </div>
+        <div class="tab-content container-lg">
+            <div id="mail-form-tab" class="tab-pane fade show active">
                 <div class="form">
                     <form class="minimal" method="post" id="mail-form" action="/admin/mail/send">
                         <fieldset>
@@ -34,12 +36,12 @@
 
                     <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 0">
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-6 float-left">
                                 <form class="minimal" action="/admin/mail/send/all">
                                     <button type="submit" style="margin-left: 0">SEND TO EVERYONE</button>
                                 </form>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-6 float-left">
                                 <form class="minimal" action="/admin/mail/send/ambassadors">
                                     <button type="submit" style="margin-right: 0">SEND TO AMBASSADORS</button>
                                 </form>
@@ -48,7 +50,7 @@
                     </div>
                 </div>
             </div>
-            <div id="mail-sub-check" class="tab-pane fade in">
+            <div id="mail-sub-check" class="tab-pane fade show">
                 <form method="post" id="mail-sub-check-form" action="/admin/mail/sub-toggle">
                     <fieldset>
                         <legend>MAILING LIST SUBSCRIBER CHECK</legend>

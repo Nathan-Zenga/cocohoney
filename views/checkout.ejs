@@ -7,11 +7,11 @@
                     const email = user && !is_admin ? user.email : ""; _%>
                 <fieldset>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="firstname">FIRST NAME</label>
                             <input type="text" name="firstname" value="<%- firstname %>" required>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="lastname">LAST NAME</label>
                             <input type="text" name="lastname" value="<%- lastname %>" required>
                         </div>
@@ -24,15 +24,15 @@
                 <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
                 <fieldset>
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="city">CITY</label>
                             <input type="text" name="city" required>
                         </div>
-                        <div class="col-sm-6">
-                            <label for="state">STATE <span>/ REGION / PROVINCE</span></label>
+                        <div class="col-sm-6 float-left">
+                            <label for="state">STATE <span>/ COUNTY / REGION</span></label>
                             <input type="text" name="state" placeholder="(OPTIONAL)">
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                             <select name="country" required>
                                 <option value="">-</option>
@@ -41,7 +41,7 @@
                                 <%_ } _%>
                             </select>
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <label for="postcode">POST <span>/ ZIP CODE</span></label>
                             <input type="text" name="postcode" required>
                         </div>
@@ -68,14 +68,14 @@
 
             <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <form id="stripe-payment-opt" class="minimal" action="/shop/checkout/session/create">
                             <button class="checkout-btn" type="submit">
                                 <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>PAY BY CARD</span></span>
                             </button>
                         </form>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <form id="paypal-payment-opt" class="minimal" action="/shop/checkout/paypal/create-payment">
                             <button class="checkout-btn" type="submit">
                                 <span class="btn-label"><i class="icon fab fa-paypal"></i> <span>PAY VIA PAYPAL</span></span>

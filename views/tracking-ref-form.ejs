@@ -13,13 +13,13 @@
 
             <fieldset>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <input type="text" value="<%= order.customer_name %>" disabled>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6 float-left">
                         <input type="text" value="<%= order.customer_email %>" disabled>
                     </div>
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 float-left">
                         <%_ var destination = "";
                             destination += order.destination.line1 + "\n";
                             destination += (order.destination.line2 ? order.destination.line2 + "\n" : "");

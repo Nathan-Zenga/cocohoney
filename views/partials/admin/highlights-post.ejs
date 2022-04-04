@@ -1,11 +1,11 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-highlights-post">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-highlights-post">EDIT</a></li>
-    <li><a data-toggle="pill" href="#remove-highlights-post">REMOVE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-highlights-post">NEW</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-highlights-post">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-highlights-post">REMOVE</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="new-highlights-post" class="new-form-tab tab-pane fade in active">
+    <div id="new-highlights-post" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/highlights-post/add">
             <label>TITLE / HEADLINE</label>
             <input type="text" name="title" id="highlights_post_title" required>
@@ -19,24 +19,24 @@
             <label>MAIN IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_lg_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="media_lg_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
                     <input type="hidden" name="media_lg_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_lg_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="media_lg_file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="media_lg_url" id="media_lg_url" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="media_lg_url" id="media_lg_url" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 
             <label>SECOND IMAGE / VIDEO</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_sm_file" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="media_sm_file" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
                     <input type="hidden" name="media_sm_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_sm_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="media_sm_file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="media_sm_url" id="media_sm_url" placeholder="Or enter the image / video URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="media_sm_url" id="media_sm_url" placeholder="Or enter the image / video URL"></div>
                 </div>
             </fieldset>
 
@@ -56,8 +56,8 @@
 
             <div class="img-preview-container">
                 <div class="row">
-                    <div class="col-xs-6 img-preview"></div>
-                    <div class="col-xs-6 img-preview"></div>
+                    <div class="col-6 float-left img-preview"></div>
+                    <div class="col-6 float-left img-preview"></div>
                 </div>
             </div>
 
@@ -73,24 +73,24 @@
             <label>MAIN IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_lg_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="media_lg_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="media_lg_file"></div>
                     <input type="hidden" name="media_lg_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_lg_file_edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="media_lg_file_edit">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="media_lg_url" id="media_lg_url_edit" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="media_lg_url" id="media_lg_url_edit" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 
             <label>SECOND IMAGE / VIDEO</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="media_sm_file_edit" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="media_sm_file_edit" accept=".jpg,.jpeg,.png,.bmp,.mp4,.mov,.mkv" data-fieldname="media_sm_file"></div>
                     <input type="hidden" name="media_sm_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="media_sm_file_edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="media_sm_file_edit">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="media_sm_url" id="media_sm_url_edit" placeholder="Or enter the image / video URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="media_sm_url" id="media_sm_url_edit" placeholder="Or enter the image / video URL"></div>
                 </div>
             </fieldset>
 

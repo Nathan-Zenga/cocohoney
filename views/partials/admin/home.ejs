@@ -1,11 +1,11 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#ambassadors">AMBASSADORS</a></li>
-    <li><a data-toggle="pill" href="#orders">ORDERS</a></li>
-    <li><a data-toggle="pill" href="#amb-sales-report">SALES REPORT</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#ambassadors">AMBASSADORS</a>
+    <a class="nav-link" data-toggle="pill" href="#orders">ORDERS</a>
+    <a class="nav-link" data-toggle="pill" href="#amb-sales-report">SALES REPORT</a>
+</div>
 
 <div class="tab-content" style="padding-top: 2em">
-    <div id="ambassadors" class="tab-pane fade in active">
+    <div id="ambassadors" class="tab-pane fade show active">
         <div class="info-label">
             <i class="fal fa-info-circle info-icon"></i>
             <b>Click on an ambassador for more details</b>
@@ -23,42 +23,46 @@
             <br><small><%= sold ? sold.length : 0 %> order<%= sold && /0|[2-999]|\d{2,}/.test(sold.length) ? "s" : "" %> sold</small>
         </a>
 
-        <div id="ambassador-modal-<%= random_id %>" class="modal fade in" role="dialog">
-            <div class="modal-icons">
-                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h2><%= `${amb.firstname} ${amb.lastname}` %></h2>
-                <p><%= amb.email %></p>
-                <p>Discount code: <%= amb.discount_code %></p>
-                <p><a href="<%= link %>" target="_blank" style="text-decoration: underline">View profile</a></p>
-                <br>
-                <%_ if (amb.verified === false) { _%>
-                <form class="verify-ambassador-form minimal opt" method="post" action="/ambassador/register/verify">
-                    <input type="hidden" name="token" value="<%- amb.token %>">
-                    <button type="submit">Verify</button>
-                </form>
-                <%_ } _%>
-                <form class="delete-ambassador-form minimal opt" method="post" action="/ambassador/delete">
-                    <input type="hidden" name="id" value="<%- amb._id %>">
-                    <button type="submit">Delete</button>
-                </form>
+        <div id="ambassador-modal-<%= random_id %>" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-icons">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h2><%= `${amb.firstname} ${amb.lastname}` %></h2>
+                        <p><%= amb.email %></p>
+                        <p>Discount code: <%= amb.discount_code %></p>
+                        <p><a href="<%= link %>" target="_blank" style="text-decoration: underline">View profile</a></p>
+                        <br>
+                        <%_ if (amb.verified === false) { _%>
+                        <form class="verify-ambassador-form minimal opt" method="post" action="/ambassador/register/verify">
+                            <input type="hidden" name="token" value="<%- amb.token %>">
+                            <button type="submit">Verify</button>
+                        </form>
+                        <%_ } _%>
+                        <form class="delete-ambassador-form minimal opt" method="post" action="/ambassador/delete">
+                            <input type="hidden" name="id" value="<%- amb._id %>">
+                            <button type="submit">Delete</button>
+                        </form>
 
-                <%_ const orders_sold = orders.filter(o => sold?.includes(o.id)); _%>
-                <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
-                <div class="customer-orders container">
-                    <div class="row">
-                        <%_ orders_sold.sort((a, b) => b.created_at - a.created_at).forEach(order => { _%>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="customer-order">
-                                <p class="order_id"><%= order.id %></p>
-                                <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
-                                <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
-                                <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
-                                <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
+                        <%_ const orders_sold = orders.filter(o => sold?.includes(o.id)); _%>
+                        <div class="info-label"><b><%= !orders_sold.length ? "NO " : "" %>ORDERS SOLD</b></div>
+                        <div class="customer-orders container">
+                            <div class="row">
+                                <%_ orders_sold.sort((a, b) => b.created_at - a.created_at).forEach(order => { _%>
+                                <div class="col-md-4 col-sm-6 float-left">
+                                    <div class="customer-order">
+                                        <p class="order_id"><%= order.id %></p>
+                                        <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
+                                        <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
+                                        <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
+                                        <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
+                                    </div>
+                                </div>
+                                <%_ }) _%>
                             </div>
                         </div>
-                        <%_ }) _%>
                     </div>
                 </div>
             </div>
@@ -68,14 +72,14 @@
             <%_ const ambs_verified = ambassadors.filter(amb => amb.verified === true);
                 const ambs_unverified = ambassadors.filter(amb => amb.verified === false);
                 if (ambs_unverified.length) { _%>
-            <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#verified-ambassadors">VERIFIED</a></li>
-                <li><a data-toggle="pill" href="#unverified-ambassadors">NOT VERIFIED</a></li>
-            </ul>
+            <div class="nav nav-pills justify-content-center">
+                <a class="nav-link active" data-toggle="pill" href="#verified-ambassadors">VERIFIED</a>
+                <a class="nav-link" data-toggle="pill" href="#unverified-ambassadors">NOT VERIFIED</a>
+            </div>
             <%_ } _%>
 
             <div class="tab-content" style="padding-top: <%- ambs_unverified.length ? '1em' : '0' %>">
-                <div id="verified-ambassadors" class="tab-pane fade in active">
+                <div id="verified-ambassadors" class="tab-pane fade show active">
                     <%- ambs_verified.length ? ambassadors_layout_renderer(ambs_verified, true) : "<p><b>NO REGISTERED AMBASSADORS</b></p>" %>
                 </div>
 
@@ -104,30 +108,34 @@
             <br><small><%= customer_orders.length %> order<%= /0|[2-999]|\d{2,}/.test(customer_orders.length) ? "s" : "" %></small>
         </a>
 
-        <div id="customer-orders-modal-<%= random_id %>" class="modal fade in" role="dialog">
-            <div class="modal-icons">
-                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <h2><%= customer_name %></h2>
-                <p><%= customer_email %></p>
-                <div class="info-label"><b>ORDERS</b></div>
-                <div class="customer-orders container">
-                    <div class="row">
-                        <%_ customer_orders.forEach(order => { _%>
-                        <div class="col-md-4 col-sm-6">
-                            <div class="customer-order">
-                                <p class="order_id"><%= order.id %></p>
-                                <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
-                                <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
-                                <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
-                                <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
-                                <%_ if (!order.tracking_ref) { _%>
-                                <p><a class="link" href="/shipping/tracking/ref/send?id=<%= order.id %>" target="_blank">Add tracking number</a></p>
-                                <%_ } _%>
+        <div id="customer-orders-modal-<%= random_id %>" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-icons">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h2><%= customer_name %></h2>
+                        <p><%= customer_email %></p>
+                        <div class="info-label"><b>ORDERS</b></div>
+                        <div class="customer-orders container">
+                            <div class="row">
+                                <%_ customer_orders.forEach(order => { _%>
+                                <div class="col-md-4 col-sm-6 float-left">
+                                    <div class="customer-order">
+                                        <p class="order_id"><%= order.id %></p>
+                                        <p><small><%= order.created_at.toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) %></small></p>
+                                        <%_ const cart_count = order.cart.map(p => p.qty).reduce((qty, sum) => sum + qty, 0) _%>
+                                        <p><small><%= cart_count %> item<%= /0|[2-999]|\d{2,}/.test(cart_count) ? "s" : "" %></small></p>
+                                        <p><a class="link" href="/order/<%= order.id %>" target="_blank">See more</a></p>
+                                        <%_ if (!order.tracking_ref) { _%>
+                                        <p><a class="link" href="/shipping/tracking/ref/send?id=<%= order.id %>" target="_blank">Add tracking number</a></p>
+                                        <%_ } _%>
+                                    </div>
+                                </div>
+                                <%_ }) _%>
                             </div>
                         </div>
-                        <%_ }) _%>
                     </div>
                 </div>
             </div>
@@ -138,14 +146,14 @@
                 const discounted_orders = orders.filter(o => o.tracking_ref && o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
                 const other_orders = orders.filter(o => o.tracking_ref && !o.discounted).sort((a, b) => b.created_at.getTime() - a.created_at.getTime()); _%>
 
-            <ul class="nav nav-pills">
-                <li class="active"><a data-toggle="pill" href="#untracked-orders">UNTRACKED (<%= order_untracked.length %>)</a></li>
-                <li><a data-toggle="pill" href="#discounted-orders">DISCOUNTED (<%= discounted_orders.length %>)</a></li>
-                <li><a data-toggle="pill" href="#normal-orders">OTHERS (<%= other_orders.length %>)</a></li>
-            </ul>
+            <div class="nav nav-pills justify-content-center">
+                <a class="nav-link active" data-toggle="pill" href="#untracked-orders">UNTRACKED (<%= order_untracked.length %>)</a>
+                <a class="nav-link" data-toggle="pill" href="#discounted-orders">DISCOUNTED (<%= discounted_orders.length %>)</a>
+                <a class="nav-link" data-toggle="pill" href="#normal-orders">OTHERS (<%= other_orders.length %>)</a>
+            </div>
 
             <div class="tab-content" style="padding-top: 1em">
-                <div id="untracked-orders" class="tab-pane fade in active">
+                <div id="untracked-orders" class="tab-pane fade show active">
                     <%- order_untracked.length ? orders_layout_renderer(order_untracked) : "<p><b>NO UNTRACKED ORDERS</b></p>" %>
                 </div>
 
@@ -165,7 +173,7 @@
             <fieldset>
                 <legend>AMBASSADOR SALES REPORT</legend>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>MONTH <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                         <select name="month">
                             <%_ const months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
@@ -174,7 +182,7 @@
                             <%_ }) _%>
                         </select>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>YEAR <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                         <select name="year">
                             <%_ const current_year = new Date().getFullYear();

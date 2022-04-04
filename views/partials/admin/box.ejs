@@ -1,11 +1,11 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-box">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-box">EDIT</a></li>
-    <li><a data-toggle="pill" href="#remove-box">REMOVE</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-box">NEW</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-box">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-box">REMOVE</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="new-box" class="new-form-tab tab-pane fade in active">
+    <div id="new-box" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/deal/box/add">
             <label>NAME</label>
             <input type="text" name="name" id="box_name" required>
@@ -18,19 +18,19 @@
 
             <label>ITEMS TO INCLUDE</label>
             <%_ const categories = [...new Set(products.map(p => p.category))]; _%>
-            <ul class="nav nav-pills">
+            <div class="nav nav-pills justify-content-center">
                 <%_ categories.forEach((c, i) => {
                     const c_name = c.charAt(0).toUpperCase() + c.slice(1); _%>
-                <li class="<%= i == 0 ? 'active' : '' %>"><a data-toggle="pill" href="#<%= c %>"><%= c_name %></a></li>
+                <a class="nav-link<%= i == 0 ? ' active' : '' %>" data-toggle="pill" href="#<%= c %>"><%= c_name %></a>
                 <%_ }) _%>
-            </ul>
+            </div>
             <div class="tab-content" style="padding-top: 10px;">
                 <%_ categories.forEach((c, i) => { _%>
                 <div id="<%= c %>" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
                     <%_ const filtered = products.filter(p => p.category === c); _%>
                     <%_ if (filtered.length > 1) { _%>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 float-left">
                             <div class="input-checkbox">
                                 <input type="checkbox" class="box_item_all" value="true"> <span>Select all</span></input>
                             </div>
@@ -39,7 +39,7 @@
                     <%_ } _%>
                     <div class="row">
                         <%_ filtered.forEach(p => { _%>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <div class="input-checkbox">
                                 <input type="checkbox" class="box_item" name="box_item" value="<%= p._id %>"> <span><%= p.name %></span></input>
                             </div>
@@ -56,12 +56,12 @@
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="box_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="box_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="box_image_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="box_image_file">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="box_image_url" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="box_image_url" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 
@@ -89,19 +89,19 @@
             <input type="number" name="max_items" id="box_max_items_edit" min="0">
 
             <label>ITEMS TO INCLUDE</label>
-            <ul class="nav nav-pills">
+            <div class="nav nav-pills justify-content-center">
                 <%_ categories.forEach((c, i) => {
                     const c_name = c.charAt(0).toUpperCase() + c.slice(1); _%>
-                <li class="<%= i == 0 ? 'active' : '' %>"><a data-toggle="pill" href="#<%= c %>_edit"><%= c_name %></a></li>
+                <a class="nav-link<%= i == 0 ? ' active' : '' %>" data-toggle="pill" href="#<%= c %>_edit"><%= c_name %></a>
                 <%_ }) _%>
-            </ul>
+            </div>
             <div class="tab-content" style="padding-top: 10px;">
                 <%_ categories.forEach((c, i) => { _%>
                 <div id="<%= c %>_edit" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
                     <%_ const filtered = products.filter(p => p.category === c); _%>
                     <%_ if (filtered.length > 1) { _%>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12 float-left">
                             <div class="input-checkbox">
                                 <input type="checkbox" class="box_item_all" value="true"> <span>Select all</span></input>
                             </div>
@@ -110,7 +110,7 @@
                     <%_ } _%>
                     <div class="row">
                         <%_ filtered.forEach(p => { _%>
-                        <div class="col-sm-6">
+                        <div class="col-sm-6 float-left">
                             <div class="input-checkbox">
                                 <input type="checkbox" class="box_item_edit" name="box_item" value="<%= p._id %>"> <span><%= p.name %></span></input>
                             </div>
@@ -127,12 +127,12 @@
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="box_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="box_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="box_image_file_edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="box_image_file_edit">CLEAR</button></div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12"><input type="url" name="image_url" id="box_image_url_edit" placeholder="Or enter the image URL"></div>
+                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="box_image_url_edit" placeholder="Or enter the image URL"></div>
                 </div>
             </fieldset>
 
