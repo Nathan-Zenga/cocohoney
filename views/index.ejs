@@ -67,7 +67,7 @@
                 <div class="carousel-inner">
                     <%_ reviews.forEach((review, i) => { _%>
                     <div class="review carousel-item <%= i == 0 ? 'active' : '' %>">
-                        <div class="container" style="max-width: 900px">
+                        <div class="container">
                             <%_ if (review.headline) { _%>
                             <div class="review-headline"><%- review.headline %></div>
                             <%_ } _%>

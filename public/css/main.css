@@ -1428,6 +1428,11 @@ label .dropdown-arrow {
     margin-bottom: 4em;
 }
 
+.file-upload-container .clear-uploads {
+    padding: 2.75px 12px 2.75px 10px;
+    margin: 0;
+}
+
 #new-lookbook-media .file-upload-container {
     border: 1.5px solid rgba(255, 255, 255, .5);
     padding: 20px 15px;

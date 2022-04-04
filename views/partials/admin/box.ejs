@@ -26,7 +26,7 @@
             </div>
             <div class="tab-content" style="padding-top: 10px;">
                 <%_ categories.forEach((c, i) => { _%>
-                <div id="<%= c %>" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
+                <div id="<%= c %>" class="tab-pane fade <%= i === 0 ? 'show active' : '' %>">
                     <%_ const filtered = products.filter(p => p.category === c); _%>
                     <%_ if (filtered.length > 1) { _%>
                     <div class="row">
@@ -55,14 +55,17 @@
 
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
-                <div class="row">
-                    <div class="col-sm-6 col-9 float-left"><input type="file" id="box_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="box_image_file" accept="image/*" data-fieldname="image_file">
+                        <label class="custom-file-label">Upload image</label>
+                    </div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="box_image_file">CLEAR</button></div>
+                    <div class="input-group-append">
+                        <button class="clear-uploads" type="button" data-id="box_image_file">CLEAR</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="box_image_url" placeholder="Or enter the image URL"></div>
-                </div>
+                <input type="url" name="image_url" id="box_image_url" placeholder="Or enter the image URL">
             </fieldset>
 
             <input type="submit" value="SAVE">
@@ -97,7 +100,7 @@
             </div>
             <div class="tab-content" style="padding-top: 10px;">
                 <%_ categories.forEach((c, i) => { _%>
-                <div id="<%= c %>_edit" class="tab-pane fade <%= i === 0 ? 'in active' : '' %>">
+                <div id="<%= c %>_edit" class="tab-pane fade <%= i === 0 ? 'show active' : '' %>">
                     <%_ const filtered = products.filter(p => p.category === c); _%>
                     <%_ if (filtered.length > 1) { _%>
                     <div class="row">
@@ -126,14 +129,17 @@
 
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
-                <div class="row">
-                    <div class="col-sm-6 col-9 float-left"><input type="file" id="box_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="box_image_file_edit" accept="image/*" data-fieldname="image_file">
+                        <label class="custom-file-label">Upload image</label>
+                    </div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="box_image_file_edit">CLEAR</button></div>
+                    <div class="input-group-append">
+                        <button class="clear-uploads" type="button" data-id="box_image_file_edit">CLEAR</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="box_image_url_edit" placeholder="Or enter the image URL"></div>
-                </div>
+                <input type="url" name="image_url" id="box_image_url_edit" placeholder="Or enter the image URL">
             </fieldset>
 
             <input type="submit" value="SAVE">

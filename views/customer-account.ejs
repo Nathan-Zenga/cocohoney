@@ -136,14 +136,17 @@
                         <form method="post" action="/account/edit" class="settings-form">
                             <label>PROFILE PICTURE</label>
                             <fieldset class="file-upload-container" style="margin-bottom: 1em">
-                                <div class="row">
-                                    <div class="col-sm-6 col-9 float-left"><input type="file" id="profile_picture_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="profile_picture_file" accept="image/*" data-fieldname="image_file">
+                                        <label class="custom-file-label">Upload profile picture</label>
+                                    </div>
                                     <input type="hidden" name="image_file">
-                                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="profile_picture_file">CLEAR</button></div>
+                                    <div class="input-group-append">
+                                        <button class="clear-uploads" type="button" data-id="profile_picture_file">CLEAR</button>
+                                    </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL"></div>
-                                </div>
+                                <input type="url" name="image_url" id="profile_picture_url" placeholder="Or paste the image URL">
                             </fieldset>
 
                             <fieldset>

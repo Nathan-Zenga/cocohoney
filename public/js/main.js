@@ -84,8 +84,12 @@ $(function() {
         var fieldname = this.dataset.fieldname;
         var $container = $(this).closest(".file-upload-container");
         var $image_url = $container.find("input[type=url]").attr("disabled", false).val("");
+        var $file_label = $container.find(".custom-file-label");
+        var initial_label_value = $file_label.data("initial-value") || $file_label.text();
+        $file_label.data("initial-value", initial_label_value).text(initial_label_value);
         $container.find("input:hidden").remove();
         if (!files || !files.length) return;
+        $file_label.text("Loading...");
         var $submitInput = $(this).closest("form").find(":submit").attr("disabled", true);
         async.each(files, function(file, cb) {
             var reader = new FileReader();
@@ -100,8 +104,10 @@ $(function() {
             };
             reader.readAsDataURL(file)
         }, function(err) {
-            if (err) return alert(err.message || err);
-            $image_url.attr("disabled", true).val(files.length > 1 ? files.length+" files selected" : files[0].name);
+            if (err) { $file_label.text(initial_label_value); return alert(err.message || err) }
+            var label_text = files.length > 1 ? files.length+" files selected" : files[0].name;
+            $file_label.text(label_text);
+            $image_url.attr("disabled", true).val(label_text);
             $submitInput.attr("disabled", false);
         });
     });

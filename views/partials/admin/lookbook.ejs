@@ -11,14 +11,17 @@
             <%_ var suffix = Date.now(); _%>
             <label>UPLOAD LOOKBOOK IMAGE</label>
             <fieldset class="file-upload-container">
-                <div class="row">
-                    <div class="col-sm-6 col-9 float-left"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file" multiple></div>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="lookbook_media_file_<%- suffix %>" accept="image/*" data-fieldname="image_file" multiple>
+                        <label class="custom-file-label">Upload image files</label>
+                    </div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
+                    <div class="input-group-append">
+                        <button class="clear-uploads" type="button" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 float-left"><input type="url" name="image_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the image URL"></div>
-                </div>
+                <input type="url" name="image_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the image URL">
                 <div class="row">
                     <div class="col-sm-12 float-left add-remove-control" style="text-align: right">
                         <button type="button" class="add" data-prefix="lookbook_media_file_">ADD</button>
@@ -36,14 +39,17 @@
             <%_ var suffix = Date.now()+1; _%>
             <label>UPLOAD TUTORIAL VIDEO</label>
             <fieldset class="file-upload-container">
-                <div class="row">
-                    <div class="col-sm-6 col-9 float-left"><input type="file" id="lookbook_media_file_<%- suffix %>" accept=".mp4,.mov,.wav" data-fieldname="video_file" multiple></div>
+                <div class="input-group">
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="lookbook_media_file_<%- suffix %>" accept="video/*" data-fieldname="video_file" multiple>
+                        <label class="custom-file-label">Upload video files</label>
+                    </div>
                     <input type="hidden" name="video_file">
-                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button></div>
+                    <div class="input-group-append">
+                        <button class="clear-uploads" type="button" data-id="lookbook_media_file_<%- suffix %>">CLEAR</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12 float-left"><input type="url" name="video_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the video URL"></div>
-                </div>
+                <input type="url" name="video_url" id="lookbook_media_url_<%- suffix %>" placeholder="Or enter the video URL">
                 <div class="row">
                     <div class="col-sm-12 float-left add-remove-control" style="text-align: right">
                         <button type="button" class="add" data-prefix="lookbook_media_file_">ADD</button>

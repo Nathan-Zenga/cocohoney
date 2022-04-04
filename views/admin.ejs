@@ -93,6 +93,10 @@
     </section>
     <script src="/socket.io/socket.io.js"></script>
     <script>
+        $("#nav-pills-collapse").click(function() {
+            $(this).closest(".nav-pills-container").toggleClass("expanded");
+        });
+
         var showMessage = function(result) {
             var reload = confirm(result + "\n\nRefresh page?");
             if (reload) location.reload();
