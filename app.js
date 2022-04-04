@@ -7,12 +7,13 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { CHCDB, NODE_ENV, PORT, TEST_EMAIL } = process.env;
+const { CHCDB, NODE_ENV, PORT = 2020, TEST_EMAIL } = process.env;
 const { Banner_slide, Sale, Product, Box } = require("./models/models");
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
-const port = PORT || 2020;
+const socketio = require('./config/socket.io');
+const { createServer } = require('http');
 const production = NODE_ENV === "production";
 var timeout = null;
 
@@ -47,7 +48,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.is_admin = req.user?.admin;
     res.locals.is_ambassador = req.user?.ambassador;
     res.locals.is_customer = req.user && !res.locals.is_ambassador && !res.locals.is_admin;
-    res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${port}`;
+    res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${PORT}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = !GET && res.locals.boxes_all ? res.locals.boxes_all : await Box.find();
     res.locals.banner_slides = !GET && res.locals.banner_slides ? res.locals.banner_slides : await Banner_slide.find().sort({ _id: -1 }).exec();
@@ -101,8 +102,11 @@ app.get("*", (req, res) => {
 
 app.post("*", (req, res) => res.status(400).send("Sorry, your request currently cannot be processed"));
 
-app.listen(port, async () => {
-    console.log(`Server started${production ? "" : " on port " + port}`);
+const server = createServer(app);
+socketio(server);
+
+server.listen(PORT, async () => {
+    console.log(`Server started${production ? "" : " on port " + PORT}`);
 
     if (production) try {
         await new MailTransporter({ email: TEST_EMAIL }).sendMail({ subject: "Re: test email", message: "Test email" });
