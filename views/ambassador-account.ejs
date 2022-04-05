@@ -176,51 +176,55 @@
                             </div>
 
                             <%_ subscriptions.forEach((subscription, i) => { _%>
-                            <div id="subscription-<%= subscription.id %>-modal" class="modal fade in" role="dialog">
-                                <div class="modal-icons">
-                                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <form method="post" action="/account/subscription/edit" class="settings-form">
-                                        <label>NAME</label>
-                                        <input type="text" name="name" value="<%- subscription.customer.name %>">
+                            <div id="subscription-<%= subscription.id %>-modal" class="modal fade" role="dialog">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-icons">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form method="post" action="/account/subscription/edit" class="settings-form">
+                                                <label>NAME</label>
+                                                <input type="text" name="name" value="<%- subscription.customer.name %>">
 
-                                        <label>PHONE NUMBER</label>
-                                        <input type="tel" name="phone_number" value="<%- subscription.customer.phone %>">
+                                                <label>PHONE NUMBER</label>
+                                                <input type="tel" name="phone_number" value="<%- subscription.customer.phone %>">
 
-                                        <label>EMAIL</label>
-                                        <input type="email" name="email" value="<%- subscription.customer.email %>">
+                                                <label>EMAIL</label>
+                                                <input type="email" name="email" value="<%- subscription.customer.email %>">
 
-                                        <label>SHIPPING ADDRESS</label>
-                                        <input type="text" name="line1" value="<%= subscription.customer.shipping.address.line1 %>">
-                                        <input type="text" name="line2" value="<%= subscription.customer.shipping.address.line2 %>">
+                                                <label>SHIPPING ADDRESS</label>
+                                                <input type="text" name="line1" value="<%= subscription.customer.shipping.address.line1 %>">
+                                                <input type="text" name="line2" value="<%= subscription.customer.shipping.address.line2 %>">
 
-                                        <fieldset>
-                                            <div class="row">
-                                                <div class="col-sm-4">
-                                                    <label for="city">CITY</label>
-                                                    <input type="text" name="city" value="<%= subscription.customer.shipping.address.city %>">
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                                                    <select name="country">
-                                                        <option value="">-</option>
-                                                        <%_ for (var k in countries) { _%>
-                                                        <%_ const selected = k === subscription.customer.shipping.address.country ? "selected" : "" _%>
-                                                        <option value="<%- k %>" <%- selected %>><%- countries[k] %></option>
-                                                        <%_ } _%>
-                                                    </select>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <label for="postcode">POST CODE</label>
-                                                    <input type="text" name="postcode" value="<%- subscription.customer.shipping.address.postal_code %>">
-                                                </div>
-                                            </div>
-                                        </fieldset>
+                                                <fieldset>
+                                                    <div class="row">
+                                                        <div class="col-sm-4">
+                                                            <label for="city">CITY</label>
+                                                            <input type="text" name="city" value="<%= subscription.customer.shipping.address.city %>">
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                                            <select name="country">
+                                                                <option value="">-</option>
+                                                                <%_ for (var k in countries) { _%>
+                                                                <%_ const selected = k === subscription.customer.shipping.address.country ? "selected" : "" _%>
+                                                                <option value="<%- k %>" <%- selected %>><%- countries[k] %></option>
+                                                                <%_ } _%>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <label for="postcode">POST CODE</label>
+                                                            <input type="text" name="postcode" value="<%- subscription.customer.shipping.address.postal_code %>">
+                                                        </div>
+                                                    </div>
+                                                </fieldset>
 
-                                        <input type="hidden" name="subscriber_id" value="<%= subscription.customer.id %>">
-                                        <button type="submit">UPDATE</button>
-                                    </form>
+                                                <input type="hidden" name="subscriber_id" value="<%= subscription.customer.id %>">
+                                                <button type="submit">UPDATE</button>
+                                            </form>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <%_ }) _%>

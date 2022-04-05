@@ -15,11 +15,15 @@
         <%_ if (overflow_length || overflow_lines) { _%>
         <a id="summary-expand" data-toggle="modal" data-target="#summary-modal">SEE MORE</a>
         <div id="summary-modal" class="modal fade" role="dialog">
-            <div class="modal-icons">
-                <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="summary-body-expanded"><p><%- info.replace(/\r?\n/g, "</p><p>") %></p></div>
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-icons">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="summary-body-expanded"><p><%- info.replace(/\r?\n/g, "</p><p>") %></p></div>
+                    </div>
+                </div>
             </div>
         </div>
         <%_ } _%>
@@ -29,7 +33,7 @@
             <form id="subscription-options" method="post" action="/shop/subscription/setup" class="minimal">
                 <div class="row">
                     <%_ subscription_plans.forEach(plan => { _%>
-                    <div class="col-md-3 col-sm-4">
+                    <div class="col-md-3 col-sm-4 float-left">
                         <div class="subscription-opt">
                             <p class="sub-label"><%= plan.name %></p>
                             <div class="img" style="background-image: url(<%- plan.image.url || '/favicon.ico' %>);<%- plan.image.url ? '' : ' opacity: .5' %>"></div>
@@ -51,63 +55,67 @@
                     <button type="button" class="submit" data-toggle="modal" data-target="#customer-details-modal">START TODAY</button>
                 </div>
 
-                <div id="customer-details-modal" class="modal fade in" role="dialog">
-                    <div class="modal-icons">
-                        <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form">
-                            <fieldset>
-                                <legend>CHECKOUT DETAILS</legend>
-                                <%_ const firstname = user && !is_admin ? user.firstname : "";
-                                    const lastname = user && !is_admin ? user.lastname : "";
-                                    const email = user && !is_admin ? user.email : ""; _%>
-                                <fieldset>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <label for="firstname">FIRST NAME</label>
-                                            <input type="text" name="firstname" value="<%- firstname %>" required>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="lastname">LAST NAME</label>
-                                            <input type="text" name="lastname" value="<%- lastname %>" required>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <label for="email">EMAIL</label>
-                                <input type="email" name="email" value="<%= email %>" required>
-                                <label for="address_l1">ADDRESS</label>
-                                <input type="text" name="address_l1" placeholder="LINE 1" required>
-                                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
-                                <fieldset>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <label for="city">CITY</label>
-                                            <input type="text" name="city" required>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="state">STATE <span>/ COUNTY / REGION</span></label>
-                                            <input type="text" name="state" placeholder="(OPTIONAL)">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                                            <select name="country" required>
-                                                <option value="">-</option>
-                                                <%_ for (var k in countries) { _%>
-                                                <option value="<%- k %>"><%- countries[k] %></option>
-                                                <%_ } _%>
-                                            </select>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="postcode">POST <span>/ ZIP CODE</span></label>
-                                            <input type="text" name="postcode" required>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                                <button type="submit">
-                                    <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>BUY NOW</span></span>
-                                </button>
-                            </fieldset>
+                <div id="customer-details-modal" class="modal fade" role="dialog">
+                    <div class="modal-dialog modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-icons">
+                                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form">
+                                    <fieldset>
+                                        <legend>CHECKOUT DETAILS</legend>
+                                        <%_ const firstname = user && !is_admin ? user.firstname : "";
+                                            const lastname = user && !is_admin ? user.lastname : "";
+                                            const email = user && !is_admin ? user.email : ""; _%>
+                                        <fieldset>
+                                            <div class="row">
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="firstname">FIRST NAME</label>
+                                                    <input type="text" name="firstname" value="<%- firstname %>" required>
+                                                </div>
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="lastname">LAST NAME</label>
+                                                    <input type="text" name="lastname" value="<%- lastname %>" required>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <label for="email">EMAIL</label>
+                                        <input type="email" name="email" value="<%= email %>" required>
+                                        <label for="address_l1">ADDRESS</label>
+                                        <input type="text" name="address_l1" placeholder="LINE 1" required>
+                                        <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+                                        <fieldset>
+                                            <div class="row">
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="city">CITY</label>
+                                                    <input type="text" name="city" required>
+                                                </div>
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="state">STATE <span>/ COUNTY / REGION</span></label>
+                                                    <input type="text" name="state" placeholder="(OPTIONAL)">
+                                                </div>
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                                    <select name="country" required>
+                                                        <option value="">-</option>
+                                                        <%_ for (var k in countries) { _%>
+                                                        <option value="<%- k %>"><%- countries[k] %></option>
+                                                        <%_ } _%>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6 float-left">
+                                                    <label for="postcode">POST <span>/ ZIP CODE</span></label>
+                                                    <input type="text" name="postcode" required>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <button type="submit">
+                                            <span class="btn-label"><i class="icon fal fa-credit-card"></i> <span>BUY NOW</span></span>
+                                        </button>
+                                    </fieldset>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

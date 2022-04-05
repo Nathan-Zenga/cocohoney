@@ -1,21 +1,21 @@
-<ul class="nav nav-pills">
-    <li class="active"><a data-toggle="pill" href="#new-subscription">NEW</a></li>
-    <li><a data-toggle="pill" href="#edit-subscription">EDIT</a></li>
-    <li><a data-toggle="pill" href="#remove-subscription">REMOVE</a></li>
-    <li><a data-toggle="pill" href="#subscription-page-info">PAGE INFO</a></li>
-    <li><a data-toggle="pill" href="#subscription-list">LIST</a></li>
-</ul>
+<div class="nav nav-pills justify-content-center">
+    <a class="nav-link active" data-toggle="pill" href="#new-subscription">NEW</a>
+    <a class="nav-link" data-toggle="pill" href="#edit-subscription">EDIT</a>
+    <a class="nav-link" data-toggle="pill" href="#remove-subscription">REMOVE</a>
+    <a class="nav-link" data-toggle="pill" href="#subscription-page-info">PAGE INFO</a>
+    <a class="nav-link" data-toggle="pill" href="#subscription-list">LIST</a>
+</div>
 
 <div class="tab-content" style="padding-top: 10px;">
-    <div id="new-subscription" class="new-form-tab tab-pane fade in active">
+    <div id="new-subscription" class="new-form-tab tab-pane fade show active">
         <form method="post" action="/subscription/add">
             <fieldset>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>NUMBER OF TIMES</label>
                         <input type="number" name="interval_count" id="sub_interval_count" min="1" max="365" value="1" required>
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>PER MONTH, YEAR, etc.</label>
                         <select name="interval" id="sub_interval" required>
                             <option value="">-</option>
@@ -60,11 +60,11 @@
 
             <fieldset>
                 <div class="row">
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>NUMBER OF TIMES</label>
                         <input type="number" name="interval_count" id="sub_interval_count_edit" min="1" max="365" value="1">
                     </div>
-                    <div class="col-xs-6">
+                    <div class="col-6 float-left">
                         <label>PER MONTH, YEAR, etc.</label>
                         <select name="interval" id="sub_interval_edit">
                             <option value="">-</option>
@@ -153,32 +153,36 @@
                                 <i class="fal fa-search modal-toggler"></i>
                             </a>
 
-                            <div id="plan-subscribers-modal-<%= i %>" class="modal fade in" role="dialog">
-                                <div class="modal-icons">
-                                    <button type="button" class="close-view" data-dismiss="modal">&times;</button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="container">
-                                        <h1 class="modal-title"><%= plan.name %> Subscription Members</h1>
-                                        <div class="row">
-                                            <%_ const products = subscription_products.data.filter(s => RegExp(`^${plan.name}`).test(s.name));
-                                                const subs = subscriptions_all.data.filter(s => s.items.data.find(itm => products.map(p => p.id).includes(itm.price.product)));
-                                                if (!subs.length) { _%>
-                                            <h2>No members</h2>
-                                            <%_ } subs.forEach(sub => { _%>
-                                            <div class="col-md-4 col-sm-6">
-                                                <div class="subscriber-details">
-                                                    <p><b><%- sub.customer.name; %></b></p>
-                                                    <p><%- sub.customer.email; %></p>
-                                                    <p><%- sub.customer.shipping.address.line1; %></p>
-                                                    <%- sub.customer.shipping.address.line2 ? `<p>${sub.customer.shipping.address.line2}</p>` : ""; %>
-                                                    <p><%- sub.customer.shipping.address.city +", "+ (sub.customer.shipping.address.state ? `${sub.customer.shipping.address.state}, ` : "") + sub.customer.shipping.address.country; %></p>
-                                                    <p><%- sub.customer.shipping.address.postal_code; %></p>
-                                                    <p><small>Date joined: <%- new Date(sub.created * 1000).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }); %></small></p>
-                                                    <p><small style="opacity: .5"><a href="<%- sub.latest_invoice.hosted_invoice_url %>">View latest invoice</a></small></p>
+                            <div id="plan-subscribers-modal-<%= i %>" class="modal fade" role="dialog">
+                                <div class="modal-dialog modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                        <div class="modal-icons">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="container">
+                                                <h1 class="modal-title"><%= plan.name %> Subscription Members</h1>
+                                                <div class="row">
+                                                    <%_ const products = subscription_products.data.filter(s => RegExp(`^${plan.name}`).test(s.name));
+                                                        const subs = subscriptions_all.data.filter(s => s.items.data.find(itm => products.map(p => p.id).includes(itm.price.product)));
+                                                        if (!subs.length) { _%>
+                                                    <h2>No members</h2>
+                                                    <%_ } subs.forEach(sub => { _%>
+                                                    <div class="col-md-4 col-sm-6">
+                                                        <div class="subscriber-details">
+                                                            <p><b><%- sub.customer.name; %></b></p>
+                                                            <p><%- sub.customer.email; %></p>
+                                                            <p><%- sub.customer.shipping.address.line1; %></p>
+                                                            <%- sub.customer.shipping.address.line2 ? `<p>${sub.customer.shipping.address.line2}</p>` : ""; %>
+                                                            <p><%- sub.customer.shipping.address.city +", "+ (sub.customer.shipping.address.state ? `${sub.customer.shipping.address.state}, ` : "") + sub.customer.shipping.address.country; %></p>
+                                                            <p><%- sub.customer.shipping.address.postal_code; %></p>
+                                                            <p><small>Date joined: <%- new Date(sub.created * 1000).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }); %></small></p>
+                                                            <p><small style="opacity: .5"><a href="<%- sub.latest_invoice.hosted_invoice_url %>">View latest invoice</a></small></p>
+                                                        </div>
+                                                    </div>
+                                                    <%_ }) _%>
                                                 </div>
                                             </div>
-                                            <%_ }) _%>
                                         </div>
                                     </div>
                                 </div>

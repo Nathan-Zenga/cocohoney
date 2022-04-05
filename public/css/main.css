@@ -2498,7 +2498,7 @@ img[data-target='#image-lg-modal'] {
 
 #subscription-options .subscription-opt .img {
     height: 200px;
-    margin: -15px -20px 0;
+    margin: -15px -20px 20px;
     border-radius: 10px 10px 0 0;
     background-position: center;
     background-size: cover;
@@ -2506,7 +2506,7 @@ img[data-target='#image-lg-modal'] {
 
 #subscription-options .subscription-opt .info {
     margin: 1.5em 0 1em;
-    height: 5em;
+    height: 5.5em;
     overflow: auto;
 }
 
