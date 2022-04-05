@@ -42,7 +42,7 @@
                     <div class="nav nav-pills">
                         <a class="nav-link active" data-toggle="pill" href="#sales">SALES</a>
                         <a class="nav-link" data-toggle="pill" href="#wishlist">WISH LIST</a>
-                        <%_ if (subscription && subscription_plan) { _%>
+                        <%_ if (subscriptions.length) { _%>
                         <a class="nav-link" data-toggle="pill" href="#subscriptions">SUBSCRIPTION</a>
                         <%_ } _%>
                         <a class="nav-link" data-toggle="pill" href="#personal-info">INFO</a>
@@ -147,7 +147,7 @@
                         </div>
                     </div>
 
-                    <%_ if (subscriptions && subscriptions.length) { _%>
+                    <%_ if (subscriptions.length) { _%>
                     <div id="subscriptions" class="tab-pane fade" style="overflow: hidden">
                         <div id="subscriptions-carousel" class="carousel slide">
                             <div class="carousel-inner" style="overflow: initial;">
