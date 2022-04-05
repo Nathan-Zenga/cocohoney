@@ -71,10 +71,12 @@
                             <%_ if (review.headline) { _%>
                             <div class="review-headline"><%- review.headline %></div>
                             <%_ } _%>
-                            <div class="review-rating"><%- "★ ".repeat(review.rating) %></div>
+                            <div class="review-rating"><%- "★ ".repeat(review.rating).trim() %></div>
                             <br>
-                            <%_ var commentry = review.commentry.length > 140 ? review.commentry.slice(0, 140).replace(/\r?\n/g, '<br>')+"..." : review.commentry.replace(/\r?\n/g, '<br>') _%>
-                            <div class="review-commentry"><%- commentry %><%- review.commentry.length > 140 ? ` <a class="read-more-link" href="/reviews#${review.created_at.getTime()}">Read more</a>` : '' %></div>
+                            <%_ const max = 140;
+                                const overflow = review.commentry.length > max;
+                                const commentry = (overflow ? review.commentry.slice(0, max) : review.commentry).replace(/\r?\n/g, '</p><p>') + (overflow ? "..." : "") _%>
+                            <div class="review-commentry"><p><%- commentry %></p><%- overflow ? `<p><a class="read-more-link" href="/reviews#${review.created_at.getTime()}">Read more</a></p>` : '' %></div>
                             <br>
                             <div class="review-author-name"><small>- <%= review.author_name %></small> <%- review.author_verified ? '<i class="arrow fal fa-badge-check"></i>' : '' %></div>
                         </div>
