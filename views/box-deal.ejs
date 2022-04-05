@@ -11,14 +11,14 @@
                             <div class="text-content">
                                 <h1><%= box.name %> Box</h1><br>
                                 <%_ if (box.price_sale && !is_ambassador) { _%>
-                                <p style="font-size: 1.5em; color: rgba(240, 230, 140); margin-top: -1em">
+                                <p id="price">
                                     £<%- (box.price_sale / 100).toFixed(2) %> <small><del>£<%- (box.price / 100).toFixed(2) %></del></small>
                                 </p><br>
                                 <%_ } if (box.info) { _%>
-                                <p><%- box.info.replace(/\r?\n/g, "<br>") %></p><br>
+                                <p id="info"><%- box.info.replace(/\r?\n/g, "<br>") %></p><br>
                                 <%_ } if (products.length) { _%>
                                 <p>Click the images below to choose</p><br>
-                                <p><i class="dropdown-arrow fal fa-chevron-down" style="font-size: 3em"></i></p>
+                                <p><i id="smooth-scroll-arrow" class="fal fa-chevron-down"></i></p>
                                 <%_ } _%>
                             </div>
                         </div>
@@ -37,8 +37,8 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h2 class="panel-title collapsed" data-toggle="collapse" data-target="#collapse<%= i %>">
-                            <i class="fal fa-chevron-down dropdown-arrow" style="margin-right: 5px;"></i>
                             <%= field.collection ? field.collection + " Collection" : field.category.charAt(0).toUpperCase() + field.category.slice(1).replace(/_/g, " ") %>
+                            <i class="fal fa-chevron-down dropdown-arrow" style="margin-left: 5px;"></i>
                         </h2>
                     </div>
                     <div id="collapse<%= i %>" class="panel-collapse collapse">
