@@ -1226,6 +1226,11 @@ label .dropdown-arrow {
     color: rgb(124, 76, 76);
 }
 
+.table-hover tbody tr:hover {
+    color: inherit;
+    background-color: rgba(0, 0, 0, .15);
+}
+
 @media (max-width: 767px) {
     #admin-page #home ul {
         padding-left: 20px;
