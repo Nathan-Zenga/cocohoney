@@ -7,10 +7,14 @@
             </div>
         </div>
         <section id="overview">
-            <div class="bg-layer bg-reel">
-                <%_ overview_images.forEach(img => { _%>
-                <div class="bg-img" style="background-image: url('<%- img.url %>');"></div>
+            <div id="overview-images-carousel" class="carousel slide carousel-fade" data-ride="carousel" data-interval="5000" data-pause="false">
+                <div class="carousel-inner">
+                <%_ overview_images.forEach((img, i) => { _%>
+                    <div class="carousel-item <%- i === 0 ? 'active' : '' %>">
+                        <div class="bg-img" style="background-image: url('<%- img.url %>')"></div>
+                    </div>
                 <%_ }) _%>
+                </div>
             </div>
         </section>
         <section id="highlights" class="section-overlapped">
@@ -86,20 +90,6 @@
             </div>
         </section>
         <script>
-            $(".bg-reel").each(function() { // bg auto-playing slideshow
-                var bgreel = this;
-                $(bgreel).children("div:gt(0)").fadeTo(0, 0);
-                setInterval(function() {
-                    $(bgreel).children('div:first')
-                        .fadeTo(2000, 0)
-                        .dequeue()
-                        .next()
-                        .fadeTo(0, 1)
-                        .end()
-                        .appendTo(bgreel);
-                }, 5000);
-            });
-
             $(window).on("load", function() {
                 $("#loadscreen").fadeOut(1000, function() { $(this).remove() })
             });
