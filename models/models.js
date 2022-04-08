@@ -21,23 +21,32 @@ module.exports.Product = model('Product', new Schema({
     pre_release: { type: Boolean, default: false }
 }));
 
-module.exports.Member = model('Member', new Schema({
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    image: { p_id: String, url: String },
-    phone_number: String,
-    password_reset_token: String,
-    mail_sub: { type: Boolean, default: true }
-}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
+module.exports.Member = model('Member', (() => {
+    const schema = new Schema({
+        firstname: { type: String, required: true },
+        lastname: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        password: { type: String, required: true },
+        image: { p_id: String, url: String },
+        phone_number: String,
+        password_reset_token: String,
+        mail_sub: { type: Boolean, default: true }
+    }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
 
-module.exports.Admin = model('Admin', new Schema({
-    email: { type: String, index: true, required: true },
-    password: { type: String, required: true },
-    admin: { type: Boolean, default: true },
-    token_expiry_date: Date
-}));
+    schema.virtual("role").get(_ => "member");
+    return schema;
+})());
+
+module.exports.Admin = model('Admin', (() => {
+    const schema = new Schema({
+        email: { type: String, index: true, required: true },
+        password: { type: String, required: true },
+        token_expiry_date: Date
+    });
+
+    schema.virtual("role").get(_ => "admin");
+    return schema;
+})());
 
 module.exports.Lookbook_media = model('Lookbook_media', new Schema({
     p_id: String,
@@ -86,43 +95,47 @@ module.exports.Order = model('Order', new Schema({
     mail_sub: { type: Boolean, default: true }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
-module.exports.Ambassador = model('Ambassador', new Schema({
-    firstname: { type: String, required: true },
-    lastname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone_number: String,
-    address: {
-        line1: { type: String, default: "" },
-        line2: { type: String, default: "" },
-        city: { type: String, default: "" },
-        country: { type: String, default: "" },
-        state: { type: String, default: "" },
-        postcode: { type: String, default: "" }
-    },
-    instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
-    password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
-    sort_code: {
-        type: String,
-        validate: {
-            validator: v => /^\d{2}-\d{2}-\d{2}$/.test(v),
-            message: () => `Sort code is not valid or in the right format (e.g. 22-03-15)`
-        }
-    },
-    account_number: {
-        type: String,
-        validate: {
-            validator: v => /^[0-9]*$/.test(v),
-            message: () => `No letters, special characters or spaces allowed for the account number`
-        }
-    },
-    image: { p_id: String, url: String },
-    token: String,
-    verified: { type: Boolean, default: false },
-    discount_code: { type: String, default: "null" },
-    ambassador: { type: Boolean, default: true },
-    password_reset_token: String,
-    mail_sub: { type: Boolean, default: true }
-}, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
+module.exports.Ambassador = model('Ambassador', (() => {
+    const schema = new Schema({
+        firstname: { type: String, required: true },
+        lastname: { type: String, required: true },
+        email: { type: String, required: true, unique: true },
+        phone_number: String,
+        address: {
+            line1: { type: String, default: "" },
+            line2: { type: String, default: "" },
+            city: { type: String, default: "" },
+            country: { type: String, default: "" },
+            state: { type: String, default: "" },
+            postcode: { type: String, default: "" }
+        },
+        instagram: { type: String, set: v => v.trim().replace(/^\@/, "") },
+        password: { type: String, required: [() => this.verified === true, "Account needs to be verified first to set a new password"] },
+        sort_code: {
+            type: String,
+            validate: {
+                validator: v => /^\d{2}-\d{2}-\d{2}$/.test(v),
+                message: () => `Sort code is not valid or in the right format (e.g. 22-03-15)`
+            }
+        },
+        account_number: {
+            type: String,
+            validate: {
+                validator: v => /^[0-9]*$/.test(v),
+                message: () => `No letters, special characters or spaces allowed for the account number`
+            }
+        },
+        image: { p_id: String, url: String },
+        token: String,
+        verified: { type: Boolean, default: false },
+        discount_code: { type: String, default: "null" },
+        password_reset_token: String,
+        mail_sub: { type: Boolean, default: true }
+    }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } });
+
+    schema.virtual("role").get(_ => "ambassador");
+    return schema;
+})());
 
 module.exports.FAQ = model('FAQ', new Schema({
     question: String,

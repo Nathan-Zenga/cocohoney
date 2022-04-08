@@ -88,7 +88,7 @@
                 </div>
                 <div class="links-section header-content-section col-4 float-left">
                     <%_ if (user) {
-                        if (user.admin) { _%>
+                        if (is_admin) { _%>
                     <a href="/admin">ADMIN</a> <span class="dt-view">&bullet;</span>
                     <%_ } else { _%>
                     <a href="/<%= is_ambassador ? 'ambassador/' : '' %>account">PROFILE</a> <span class="dt-view">&bullet;</span>

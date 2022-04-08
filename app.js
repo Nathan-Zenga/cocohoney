@@ -44,10 +44,10 @@ app.use(async (req, res, next) => { // global variables
     const sale_doc = GET ? (await Sale.find())[0] : null;
     res.locals.production = production;
     res.locals.url = req.originalUrl;
-    res.locals.user = req.user || null;
-    res.locals.is_admin = req.user?.admin;
-    res.locals.is_ambassador = req.user?.ambassador;
-    res.locals.is_customer = req.user && !res.locals.is_ambassador && !res.locals.is_admin;
+    res.locals.user = req.user;
+    res.locals.is_admin = req.user?.role === "admin";
+    res.locals.is_ambassador = req.user?.role === "ambassador";
+    res.locals.is_customer = req.user?.role === "member";
     res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${PORT}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = !GET && res.locals.boxes_all ? res.locals.boxes_all : await Box.find();
