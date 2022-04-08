@@ -7,8 +7,8 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { CHCDB, NODE_ENV, PORT = 2020, TEST_EMAIL } = process.env;
-const { Banner_slide, Sale, Product, Box } = require("./models/models");
+const { CHCDB, NODE_ENV, PORT = 2020 } = process.env;
+const { Banner_slide, Sale, Product, Box, MailTest } = require("./models/models");
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
@@ -109,6 +109,10 @@ server.listen(PORT, async () => {
     console.log(`Server started${production ? "" : " on port " + PORT}`);
 
     if (production) try {
-        await new MailTransporter({ email: TEST_EMAIL }).sendMail({ subject: "Re: test email", message: "Test email" });
+        const test = await MailTest.findOne() || new MailTest();
+        const { email, subject, message, newDay } = test;
+        newDay && await new MailTransporter({ email }).sendMail({ subject, message });
+        newDay && (test.last_sent_date = Date.now());
+        newDay && await test.save();
     } catch (err) { console.error(err.message) }
 });
