@@ -123,12 +123,12 @@
                                 <%_ subscriptions.forEach((subscription, i) => { _%>
                                 <div class="item<%= i === 0 ? ' active' : '' %>">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 float-left">
                                             <p style="font-weight: 500"><%- subscription_products.data.find(p => p.id === subscription.items.data[0].price.product).name %></p>
                                             <p>£<%- (subscription.items.data[0].price.unit_amount / 100).toFixed(2) %></p><br>
                                             <p><a class="invoice-link" target="_blank" href="<%- subscription.latest_invoice.hosted_invoice_url %>">Click here</a> to view your latest invoice.</p><br>
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-md-6 float-left">
                                             <form class="minimal sensitive-form subscription-opts-form">
                                                 <input type="hidden" name="sub_id" value="<%- subscription.id %>">
                                                 <button type="button" class="submit" data-toggle="modal" data-target="#subscription-<%= subscription.id %>-modal">CHANGE DETAILS</button>
@@ -168,11 +168,11 @@
 
                                                 <fieldset>
                                                     <div class="row">
-                                                        <div class="col-sm-4">
+                                                        <div class="col-sm-4 float-left">
                                                             <label for="city">CITY</label>
                                                             <input type="text" name="city" value="<%= subscription.customer.shipping.address.city %>">
                                                         </div>
-                                                        <div class="col-sm-4">
+                                                        <div class="col-sm-4 float-left">
                                                             <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                                                             <select name="country">
                                                                 <option value="">-</option>
@@ -182,7 +182,7 @@
                                                                 <%_ } _%>
                                                             </select>
                                                         </div>
-                                                        <div class="col-sm-4">
+                                                        <div class="col-sm-4 float-left">
                                                             <label for="postcode">POST CODE</label>
                                                             <input type="text" name="postcode" value="<%- subscription.customer.shipping.address.postal_code %>">
                                                         </div>

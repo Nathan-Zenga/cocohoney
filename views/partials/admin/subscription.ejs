@@ -35,9 +35,9 @@
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="plan_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="plan_image_file" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="plan_image_file">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="plan_image_file">CLEAR</button></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12"><input type="url" name="image_url" id="plan_image_url" placeholder="Or enter the image URL"></div>
@@ -84,9 +84,9 @@
             <label>IMAGE</label>
             <fieldset class="file-upload-container">
                 <div class="row">
-                    <div class="col-sm-6 col-xs-9"><input type="file" id="plan_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
+                    <div class="col-sm-6 col-9 float-left"><input type="file" id="plan_image_file_edit" accept=".jpg,.jpeg,.png,.bmp" data-fieldname="image_file"></div>
                     <input type="hidden" name="image_file">
-                    <div class="col-sm-6 col-xs-3"><button type="button" class="clear-uploads" data-id="plan_image_file_edit">CLEAR</button></div>
+                    <div class="col-sm-6 col-3 float-left"><button type="button" class="clear-uploads" data-id="plan_image_file_edit">CLEAR</button></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12"><input type="url" name="image_url" id="plan_image_url_edit" placeholder="Or enter the image URL"></div>
@@ -168,7 +168,7 @@
                                                         if (!subs.length) { _%>
                                                     <h2>No members</h2>
                                                     <%_ } subs.forEach(sub => { _%>
-                                                    <div class="col-md-4 col-sm-6">
+                                                    <div class="col-md-4 col-sm-6 float-left">
                                                         <div class="subscriber-details">
                                                             <p><b><%- sub.customer.name; %></b></p>
                                                             <p><%- sub.customer.email; %></p>
