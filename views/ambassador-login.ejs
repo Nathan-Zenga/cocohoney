@@ -19,8 +19,10 @@
     </div>
     <script>
         var href = $(".note-link").attr("href");
+        var href2 = $("nav a[href='/ambassador/account/login']").attr("href");
         var $form = $(".note-link").closest("form");
         $(".note-link").attr("href", href + location.search);
+        $("nav a[href='/ambassador/account/login']").attr("href", href2 + location.search);
         !location.search || $form.append($("<input>").attr({ type: "hidden", name: "qs", value: location.search.slice(1) }));
 
         $("form").submit(function(e) {

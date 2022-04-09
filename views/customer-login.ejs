@@ -72,6 +72,8 @@
             $(this).attr("href", href + location.search);
             !location.search || $form.append($("<input>").attr({ type: "hidden", name: "qs", value: location.search.slice(1) }));
         });
+        var href = $("nav a[href='/ambassador/account/login']").attr("href");
+        $("nav a[href='/ambassador/account/login']").attr("href", href + location.search);
 
         $("form").submit(function(e) {
             e.preventDefault();
