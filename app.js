@@ -12,8 +12,6 @@ const { Banner_slide, Sale, Product, Box, MailTest } = require("./models/models"
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
-const socketio = require('./config/socket.io');
-const { createServer } = require('http');
 const production = NODE_ENV === "production";
 var timeout = null;
 
@@ -102,10 +100,7 @@ app.get("*", (req, res) => {
 
 app.post("*", (req, res) => res.status(400).send("Sorry, your request currently cannot be processed"));
 
-const server = createServer(app);
-socketio(server);
-
-server.listen(PORT, async () => {
+app.listen(PORT, async () => {
     console.log(`Server started${production ? "" : " on port " + PORT}`);
 
     if (production) try {

@@ -104,6 +104,27 @@ router.post("/activate", async (req, res) => {
     } catch (err) { res.status(500).send(err.message) }
 });
 
+router.post("/search", isAuthed, (req, res) => {
+    Collections(db => {
+        const docs = [];
+        docs.push(...db.members);
+        docs.push(...db.ambassadors);
+        docs.push(...db.banner_slides);
+        docs.push(...db.discount_codes);
+        docs.push(...db.products);
+        docs.push(...db.faqs);
+        docs.push(...db.shipping_methods);
+        docs.push(...db.boxes);
+        docs.push(...db.overview_images);
+        docs.push(...db.lookbook_media);
+        docs.push(...db.highlights_posts);
+        docs.push(...db.shipping_page_info);
+        docs.push(...db.events);
+        docs.push(...db.info);
+        res.send(docs);
+    })
+});
+
 router.post('/discount_code/add', isAuthed, (req, res) => {
     const { code, percentage, expiry_date } = req.body;
     Discount_code.create({ code, percentage, expiry_date }, err => {
