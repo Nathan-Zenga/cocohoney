@@ -172,7 +172,7 @@
 
                 $form.find("#highlights_post_title_edit").val(result.title);
                 $form.find("#highlights_post_text_body_edit").val(result.text_body);
-                $form.find("#highlights_post_link_edit").val((result.link.charAt(0) === "/" ? location.origin : "") + result.link);
+                $form.find("#highlights_post_link_edit").val((result.link && result.link.charAt(0) === "/" ? location.origin : "") + result.link);
                 $form.find(".img-preview:first-child").toggleClass("show", !!result.media_lg).append(result.media_lg ? $("<img src='" + result.media_lg.url + "'>") : "");
                 var media_sm = result.media_sm ? $(result.media_sm.media_type === "image" ? "<img src='" + result.media_sm.url + "'>" : "<video playsinline autoplay muted loop><source src='"+ result.media_sm.url +"'></source></video>") : "";
                 $form.find(".img-preview:last-child").toggleClass("show", !!result.media_sm).append(media_sm);
