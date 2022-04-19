@@ -4,40 +4,38 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-5 float-left">
-                <div class="row">
-                    <div class="col-sm-12 float-left profile-card">
-                        <div class="profile-picture" style="background-image: url('<%- amb.image?.url %>');"></div>
-                        <div class="profile-summary">
-                            <p class="name"><%- amb.firstname %> <%- amb.lastname %></p>
-                            <p class="role">Ambassador <i class="fal fa-badge-check"></i></p>
-                            <br>
-                            <a class="insta" href="https://www.instagram.com/<%- amb.instagram %>/">
-                                <i class="fab fa-instagram" style="font-size: 1.5em"></i>
-                            </a>
-                            <br><br>
-                            <%_ if (is_admin) { _%>
-                            <form id="amb-dc-form" class="minimal" method="post" action="/ambassador/discount_code/edit">
-                                <div class="row">
-                                    <div class="col-12 float-left">
-                                        <label for="code">Edit discount code <span><i class="fal fa-info-circle" style="margin-left: 10px"></i> case sensitive</span></label>
-                                    </div>
-                                    <div class="col-8 float-left">
-                                        <input id="amb_id" type="hidden" name="id" value="<%- amb._id %>">
-                                        <input id="amb_dc" type="text" name="code" value="<%- amb.discount_code %>">
-                                    </div>
-                                    <div class="col-4 float-left">
-                                        <input type="submit" value="Update">
-                                    </div>
+                <div class="profile-card">
+                    <div class="profile-picture" style="background-image: url('<%- amb.image?.url %>');"></div>
+                    <div class="profile-summary">
+                        <p class="name"><%- amb.firstname %> <%- amb.lastname %></p>
+                        <p class="role">Ambassador <i class="fal fa-badge-check"></i></p>
+                        <br>
+                        <a class="insta" href="https://www.instagram.com/<%- amb.instagram %>/">
+                            <i class="fab fa-instagram" style="font-size: 1.5em"></i>
+                        </a>
+                        <br><br>
+                        <%_ if (is_admin) { _%>
+                        <form id="amb-dc-form" class="minimal" method="post" action="/ambassador/discount_code/edit">
+                            <div class="row">
+                                <div class="col-12 float-left">
+                                    <label for="code">Edit discount code <span><i class="fal fa-info-circle" style="margin-left: 10px"></i> case sensitive</span></label>
                                 </div>
-                            </form>
-                            <%_ } else { _%>
-                            <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
-                            <br>
-                            <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
-                                <span>SETTINGS</span>
-                            </button>
-                            <%_ } _%>
-                        </div>
+                                <div class="col-8 float-left">
+                                    <input id="amb_id" type="hidden" name="id" value="<%- amb._id %>">
+                                    <input id="amb_dc" type="text" name="code" value="<%- amb.discount_code %>">
+                                </div>
+                                <div class="col-4 float-left">
+                                    <input type="submit" value="Update">
+                                </div>
+                            </div>
+                        </form>
+                        <%_ } else { _%>
+                        <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
+                        <br>
+                        <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
+                            <span>SETTINGS</span>
+                        </button>
+                        <%_ } _%>
                     </div>
                 </div>
             </div>

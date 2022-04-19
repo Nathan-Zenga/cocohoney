@@ -19,19 +19,18 @@
                     <div class="col-sm-6 float-left">
                         <input type="text" value="<%= order.customer_email %>" disabled>
                     </div>
-                    <div class="col-sm-12 float-left">
-                        <%_ var destination = "";
-                            destination += order.destination.line1 + "\n";
-                            destination += (order.destination.line2 ? order.destination.line2 + "\n" : "");
-                            destination += order.destination.city + "\n";
-                            destination += order.destination.state ? order.destination.state + "\n" : "";
-                            destination += order.destination.country == "GB" ? "UK\n" : order.destination.country + "\n";
-                            destination += order.destination.postal_code || order.destination.postcode || "";
-                        _%>
-                        <textarea rows="10" disabled><%- destination %></textarea>
-                    </div>
                 </div>
             </fieldset>
+
+            <%_ var destination = "";
+                destination += order.destination.line1 + "\n";
+                destination += (order.destination.line2 ? order.destination.line2 + "\n" : "");
+                destination += order.destination.city + "\n";
+                destination += order.destination.state ? order.destination.state + "\n" : "";
+                destination += order.destination.country == "GB" ? "UK\n" : order.destination.country + "\n";
+                destination += order.destination.postal_code || order.destination.postcode || "";
+            _%>
+            <textarea rows="10" disabled><%- destination %></textarea>
 
             <input type="hidden" name="id" value="<%= order.id %>" required>
             <input type="submit" value="SEND">

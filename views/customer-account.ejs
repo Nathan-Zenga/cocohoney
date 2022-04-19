@@ -3,15 +3,13 @@
     <div class="container">
         <div class="row">
             <div class="col-sm-5 float-left">
-                <div class="row">
-                    <div class="col-sm-12 float-left profile-card">
-                        <div class="profile-picture" style="background-image: url('<%- user.image?.url %>');"></div>
-                        <div class="profile-summary">
-                            <p class="name"><%- user.firstname %> <%- user.lastname %></p>
-                            <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
-                                <span>SETTINGS</span>
-                            </button>
-                        </div>
+                <div class="profile-card">
+                    <div class="profile-picture" style="background-image: url('<%- user.image?.url %>');"></div>
+                    <div class="profile-summary">
+                        <p class="name"><%- user.firstname %> <%- user.lastname %></p>
+                        <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
+                            <span>SETTINGS</span>
+                        </button>
                     </div>
                 </div>
             </div>
