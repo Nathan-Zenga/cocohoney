@@ -27,7 +27,6 @@ router.post('/register', async (req, res) => {
         const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) ambassador.image = { p_id: result.public_id, url: result.secure_url };
         const saved = await ambassador.save();
-        const mail_transporter = new MailTransporter();
         const subject = `Account verification: ${saved.firstname} ${saved.lastname} wants to be an Ambassador`;
         const message = "The following candidate wants to sign up as an ambassador.\n\n" +
             `${saved.firstname} ${saved.lastname} (${saved.email})\n\n` +
@@ -38,8 +37,7 @@ router.post('/register', async (req, res) => {
             `((ADD DISCOUNT CODE))[${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id}]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/discount_code/add?src=email&id=${saved._id})</small>\n\n`;
 
-        mail_transporter.setRecipient({ email: process.env.CHC_EMAIL });
-        await mail_transporter.sendMail({ subject, message });
+        await new MailTransporter({ email: process.env.CHC_EMAIL }).sendMail({ subject, message });
         res.send("Registered. Submitted to administration for verification")
     } catch (err) { return res.status(err.http_code || 500).send(err.message) }
 });
@@ -222,7 +220,6 @@ router.get('/password-reset', async (req, res) => {
 
 router.post('/password-reset-request', async (req, res) => {
     const ambassador = await Ambassador.findOne({ email: req.body.email });
-    const mail_transporter = new MailTransporter();
     if (!ambassador) return res.status(404).send("Cannot find you on our system");
     ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await ambassador.save();
@@ -231,7 +228,7 @@ router.post('/password-reset-request', async (req, res) => {
     "Please click the link below to proceed:\n\n" +
     `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
     `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`;
-    mail_transporter.setRecipient({ email: saved.email }).sendMail({ subject, message }, err => {
+    new MailTransporter({ email: saved.email }).sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message);
         res.send("An email has been sent your email to reset your password");
     });

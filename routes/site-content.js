@@ -32,20 +32,22 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
     const image_files = (image_file instanceof Array ? image_file : [image_file]).filter(e => e);
     const image_urls = (image_url instanceof Array ? image_url : [image_url]).filter(e => e);
     if (!image_files.length && !image_urls.length) return res.status(400).send("No images uploaded");
-    const arr = await Overview_image.find();
+    const ovv_images = await Overview_image.find();
+    const saved_p_ids = [];
     forEachOf([...image_files, ...image_urls], (file, i, cb) => {
         const overview_img = new Overview_image();
         const public_id = "cocohoney/site-content/pages/index/overview/" + overview_img.id;
         cloud.uploader.upload(file, { public_id, resource_type: "image" }, (err, result) => {
             if (err) return cb(err);
+            saved_p_ids.push(public_id);
             overview_img.p_id = result.public_id;
             overview_img.url = result.secure_url;
-            overview_img.position = arr.length + (i+1);
-            overview_img.save().then(_ => cb()).catch(err => cb(err));
+            overview_img.position = ovv_images.length + (i+1);
+            overview_img.save(e => e ? cb(e) : cb());
         });
     }, err => {
-        if (err) return res.status(err.http_code || 500).send(err.message);
-        res.send("Overview images(s) saved");
+        if (!err) return res.send("Overview images(s) saved");
+        cloud.api.delete_resources(saved_p_ids, () => res.status(err.http_code || 500).send(err.message));
     })
 });
 
