@@ -1,8 +1,8 @@
 <%- include ('partials/header') -%>
-    <%_ if (error()) { _%>
+    <%_ if (error) { _%>
     <section>
         <div class="container" style="text-align: center;">
-            <h1><%= error() %></h1>
+            <h1><%= error %></h1>
         </div>
     </section>
     <%_ } else { _%>

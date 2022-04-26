@@ -45,17 +45,13 @@ router.post('/remove', isAuthed, (req, res) => {
 router.get("/tracking/ref/send", async (req, res, next) => {
     const { id } = req.query;
     if (!id) return next();
-    try {
-        const order = await Order.findById(Array.isArray(id) ? id[0] : id);
-        const title = "Submit Tracking Reference";
-        const pagename = "tracking-ref-form";
-        const error = () => {
-            if (!order) return res.status(404), "Cannot find order";
-            if (order?.tracking_ref) return res.status(400), "A tracking number has already been provided for this order";
-            return "";
-        };
-        res.render('tracking-ref-form', { title, pagename, order, error })
-    } catch (err) { res.status(400).send("Invalid URL query") }
+    const pagename = "tracking-ref-form";
+    const order = await Order.findById(Array.isArray(id) ? id[0] : id).catch(e => e);
+    const opts = { title: "Submit Tracking Reference", pagename, error: null };
+    if (!order) return res.status(404).render(pagename, { ...opts, error: "Cannot find order" });
+    if (order instanceof Error) return res.status(400).render(pagename, { ...opts, error: "Invalid URL query" });
+    if (order.tracking_ref) return res.status(400).render(pagename, { ...opts, error: "A tracking number has already been provided for this order" });
+    res.render(pagename, { ...opts, order })
 });
 
 router.post("/tracking/ref/send", async (req, res) => {
