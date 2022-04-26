@@ -1,72 +1,81 @@
 <%- include ('partials/header') -%>
     <div id="payment-form-container" style="margin-top: 2em">
         <div class="content container">
-            <form id="payment-form">
-                <%_ const firstname = user && !is_admin ? user.firstname : "";
-                    const lastname = user && !is_admin ? user.lastname : "";
-                    const email = user && !is_admin ? user.email : ""; _%>
-                <fieldset>
-                    <div class="row">
-                        <div class="col-sm-6 float-left">
-                            <label for="firstname">FIRST NAME</label>
-                            <input type="text" name="firstname" value="<%- firstname %>" required>
+            <div class="form">
+                <form id="payment-form" class="minimal">
+                    <%_ const firstname = user && !is_admin ? user.firstname : "";
+                        const lastname = user && !is_admin ? user.lastname : "";
+                        const email = user && !is_admin ? user.email : ""; _%>
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-6 float-left">
+                                <label for="firstname">FIRST NAME</label>
+                                <input type="text" name="firstname" value="<%- firstname %>" required>
+                            </div>
+                            <div class="col-sm-6 float-left">
+                                <label for="lastname">LAST NAME</label>
+                                <input type="text" name="lastname" value="<%- lastname %>" required>
+                            </div>
                         </div>
-                        <div class="col-sm-6 float-left">
-                            <label for="lastname">LAST NAME</label>
-                            <input type="text" name="lastname" value="<%- lastname %>" required>
-                        </div>
-                    </div>
-                </fieldset>
-                <label for="email">EMAIL</label>
-                <input type="email" name="email" value="<%= email %>" required>
-                <label for="address_l1">ADDRESS</label>
-                <input type="text" name="address_l1" placeholder="LINE 1" required>
-                <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
-                <fieldset>
-                    <div class="row">
-                        <div class="col-sm-6 float-left">
-                            <label for="city">CITY</label>
-                            <input type="text" name="city" required>
-                        </div>
-                        <div class="col-sm-6 float-left">
-                            <label for="state">STATE <span>/ COUNTY / REGION</span></label>
-                            <input type="text" name="state" placeholder="(OPTIONAL)">
-                        </div>
-                        <div class="col-sm-6 float-left">
-                            <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-                            <select name="country" required>
-                                <option value="">-</option>
-                                <%_ for (var k in countries) { _%>
-                                <option value="<%- k %>"><%- countries[k] %></option>
-                                <%_ } _%>
-                            </select>
-                        </div>
-                        <div class="col-sm-6 float-left">
-                            <label for="postcode">POST <span>/ ZIP CODE</span></label>
-                            <input type="text" name="postcode" required>
-                        </div>
-                    </div>
-                </fieldset>
-                <br>
-                <label for="discount_code">DISCOUNT CODE <br><span>(OPTIONAL - You may have to enter it again on the payment page for verification)</span></label>
-                <input type="text" name="discount_code">
-                <%_ if (shipping_methods.length) { _%>
-                <label>CHOOSE DELIVERY METHOD</label><br><br>
-                <%_ shipping_methods.forEach(method => { _%>
-                <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
-                    <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
-                <br>
-                <%_ })} else { _%>
-                <label style="display: block; text-align: center">FREE DELIVERY</label><br>
-                <%_ } _%>
-                <br>
-                <%_ if (!user || !user.mail_sub) { _%>
-                <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
-                <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
-                <%_ } _%>
-            </form>
+                    </fieldset>
 
-            <div class="form-container" style="max-width: 600px; margin: 0 auto; padding: 1em 0">
+                    <label for="email">EMAIL</label>
+                    <input type="email" name="email" value="<%= email %>" required>
+
+                    <label for="address_l1">ADDRESS</label>
+                    <input type="text" name="address_l1" placeholder="LINE 1" required>
+                    <input type="text" name="address_l2" placeholder="LINE 2 (OPTIONAL)">
+
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-6 float-left">
+                                <label for="city">CITY</label>
+                                <input type="text" name="city" required>
+                            </div>
+
+                            <div class="col-sm-6 float-left">
+                                <label for="state">STATE <span>/ COUNTY / REGION</span></label>
+                                <input type="text" name="state" placeholder="(OPTIONAL)">
+                            </div>
+
+                            <div class="col-sm-6 float-left">
+                                <label for="country">COUNTRY <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                                <select name="country" required>
+                                    <option value="">-</option>
+                                    <%_ for (var k in countries) { _%>
+                                    <option value="<%- k %>"><%- countries[k] %></option>
+                                    <%_ } _%>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6 float-left">
+                                <label for="postcode">POST <span>/ ZIP CODE</span></label>
+                                <input type="text" name="postcode" required>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <br>
+
+                    <label for="discount_code">DISCOUNT CODE <br><span>(OPTIONAL - You may have to enter it again on the payment page for verification)</span></label>
+                    <input type="text" name="discount_code">
+
+                    <%_ if (shipping_methods.length) { _%>
+                    <label>CHOOSE DELIVERY METHOD</label><br><br>
+                    <%_ shipping_methods.forEach(method => { _%>
+                    <input type="radio" name="shipping_method_id" value="<%= method.id %>" required>
+                        <%= method.name %> (£<%= (method.fee / 100).toFixed(2) %>)<%- method.info ? ' <small>' + method.info + '</small>' : '' %>
+                    <br>
+                    <%_ })} else { _%>
+                    <label style="display: block; text-align: center">FREE DELIVERY</label><br>
+                    <%_ } _%>
+                    <br>
+
+                    <%_ if (!user || !user.mail_sub) { _%>
+                    <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
+                    <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
+                    <%_ } _%>
+                </form>
+
                 <div class="row">
                     <div class="col-sm-6 float-left">
                         <form id="stripe-payment-opt" class="minimal" action="/shop/checkout/session/create">
@@ -75,6 +84,7 @@
                             </button>
                         </form>
                     </div>
+
                     <div class="col-sm-6 float-left">
                         <form id="paypal-payment-opt" class="minimal" action="/shop/checkout/paypal/create-payment">
                             <button class="checkout-btn" type="submit">

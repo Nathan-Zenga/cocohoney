@@ -4,6 +4,7 @@ const countries = require("../modules/country-list");
 const { Product, Shipping_method, Discount_code, Order } = require('../models/models');
 const MailTransporter = require('../modules/mail-transporter');
 const checkout_cancel = require('../modules/checkout-cancel');
+const { each } = require('async');
 const production = process.env.NODE_ENV === "production";
 
 router.get("/", async (req, res) => {
@@ -107,79 +108,77 @@ router.get("/session/complete", async (req, res) => {
 
     try {
         const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
-        const { customer } = session;
-
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",
             error: "The checkout session is invalid, expired or already completed"
         });
 
+        const { customer } = session;
         const order = new Order({
             customer_name: customer.name,
             customer_email: customer.email,
-            shipping_method: shipping_method.name,
+            shipping_method: shipping_method?.name,
             destination: customer.shipping.address,
             cart,
             mail_sub
         });
 
-        if (production) cart.forEach(item => {
+        if (production) await each(cart, (item, cb) => {
             if (item.deal) {
-                item.items.forEach(itm => {
+                each(item.items, (itm, cb2) => {
                     const product = products.find(p => p.id == itm.id);
                     if (product) {
                         product.stock_qty -= itm.qty;
                         if (product.stock_qty < 0) product.stock_qty = 0;
-                        product.save();
+                        product.save(e => e ? cb2(e) : cb2());
                     }
-                })
+                }, err => err ? cb(err) : cb())
             } else {
                 const product = products.find(p => p.id == item.id);
                 if (product) {
                     product.stock_qty -= item.qty;
                     if (product.stock_qty < 0) product.stock_qty = 0;
-                    product.save();
+                    product.save(e => e ? cb(e) : cb());
                 }
             }
         });
 
         req.session.cart = [];
         req.session.checkout_session = undefined;
+        req.session.shipping_method = undefined;
         req.session.mail_sub = undefined;
         if (dc_doc) {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
-            if (production) dc_doc.save();
+            if (production) await dc_doc.save();
             req.session.current_dc_doc = undefined;
         }
 
         if (production) await order.save();
 
         const transporter = new MailTransporter();
-        transporter.setRecipient({ email: customer.email }).sendMail({
-            subject: "Payment Successful - Cocohoney Cosmetics",
-            message: `Hi ${customer.name},\n\n` +
-            "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
-            `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
-            `((Click here for further details))[${res.locals.location_origin}/order/${order.id}]\n` +
+        const subject = "Payment Successful - Cocohoney Cosmetics";
+        const message = `Hi ${customer.name},\n\n` +
+        "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
+        `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
+        `((Click here for further details))[${res.locals.location_origin}/order/${order.id}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
+        (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
+        "A tracking number / reference will be sent to you via email as soon as possible. " +
+        "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
+        "Thank you for shopping with us!\n\n- Cocohoney Cosmetics";
+        transporter.setRecipient({ email: customer.email }).sendMail({ subject, message }, err => {
+            if (err) console.error(err), res.status(500);
+            const subject = "Purchase Report: You Got Paid!";
+            const message = "You've received a new purchase from a new customer.\n\n" +
+            `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
             (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
-            "A tracking number / reference will be sent to you via email as soon as possible. " +
-            "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
-            "Thank you for shopping with us!\n\n- Cocohoney Cosmetics"
-        }, err => {
-            if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({
-                subject: "Purchase Report: You Got Paid!",
-                message: "You've received a new purchase from a new customer.\n\n" +
-                `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-                (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
-                "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
-                `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n`
-            }, err => {
+            "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
+            `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n`;
+            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({ subject, message }, err => {
                 if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
             });

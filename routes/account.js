@@ -80,9 +80,8 @@ router.post('/edit', isAuthed, async (req, res) => {
 });
 
 router.post('/delete', isAuthed, async (req, res) => {
-    const id = req.body.id || req.query.id;
     try {
-        const member = await Member.findById(id);
+        const member = await Member.findById(req.body.id || req.query.id);
         if (!member) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: member.id });
         await cloud.api.delete_resources([member.image?.p_id || "blank"]);
@@ -92,7 +91,7 @@ router.post('/delete', isAuthed, async (req, res) => {
         "Your account is now successfully deleted. Sorry to see you go!\n\n- Cocohoney Cosmetics";
         await new MailTransporter({ email: member.email }).sendMail({ subject, message });
 
-        if (req.user && req.user._id == member.id) {
+        if (req.user?._id == member.id) {
             req.logout();
             res.locals.cart = req.session.cart = [];
         }
@@ -107,8 +106,7 @@ router.get('/password-reset-request', (req, res) => {
 });
 
 router.get('/password-reset', async (req, res) => {
-    const { token } = req.query;
-    const member = await Member.findOne({ password_reset_token: token });
+    const member = await Member.findOne({ password_reset_token: req.query.token });
     if (!member) return res.status(400).send("Invalid password reset token");
     const title = "Password Reset";
     const pagename = "password-reset";
@@ -116,8 +114,7 @@ router.get('/password-reset', async (req, res) => {
 });
 
 router.post('/password-reset-request', async (req, res) => {
-    const { email } = req.body;
-    const member = await Member.findOne({ email });
+    const member = await Member.findOne({ email: req.body.email });
     const mail_transporter = new MailTransporter();
     if (!member) return res.status(404).send("Cannot find you on our system");
     member.password_reset_token = crypto.randomBytes(20).toString("hex");

@@ -1570,12 +1570,18 @@ input.product-quantity:disabled {
     background-image: none;
 }
 
-.chc .carousel-control > .arrow {
-    top: 50%;
+.chc .carousel-control-next-icon, .chc .carousel-control-prev-icon {
     position: relative;
+    background-image: none;
     font-size: 1.5em;
-    -webkit-transform: translateY(-50%);
-    transform: translateY(-50%);
+}
+
+.chc .carousel-control-next-icon:before, .chc .carousel-control-prev-icon:before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 .chc .carousel-indicators li {
@@ -1894,6 +1900,10 @@ input.product-quantity:disabled {
 
 #customer-reviews-page .review .comment-wrapper.expanded + .comment-toggle span.collapse {
     display: inline;
+}
+
+#customer-reviews-page .review .comment p:last-child {
+    margin-bottom: 0;
 }
 
 #customer-reviews-page .review .images {

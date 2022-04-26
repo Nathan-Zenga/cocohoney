@@ -94,7 +94,7 @@
             </div>
 
             <div id="reviews">
-                <%_ reviews.forEach(review => { _%>
+                <%_ reviews.forEach((review, i) => { _%>
                 <div class="review" id="<%= review.created_at.getTime() %>">
                     <div class="header">
                         <div class="row">
@@ -138,7 +138,7 @@
                     <div class="row">
                         <%_ if (review.images.length) { _%>
                         <div class="col-sm-4 float-left">
-                            <div id="carousel-<% review._id %>" class="carousel slide images" data-ride="carousel" data-interval="5000" data-pause="false">
+                            <div id="review-images-carousel-<%= i %>" class="carousel slide images" data-interval="false">
                                 <div class="carousel-inner">
                                     <%_ review.images.forEach((img, i) => { _%>
                                     <div class="carousel-item<%- i === 0 ? ' active' : '' %>">
@@ -147,12 +147,12 @@
                                     <%_ }) _%>
                                 </div>
                                 <%_ if (review.images.length > 1) { _%>
-                                <a class="left carousel-control" href="#carousel-<% review._id %>" data-slide="prev">
-                                    <span class="arrow fal fa-chevron-left"></span>
+                                <a class="carousel-control-prev" href="#review-images-carousel-<%= i %>" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon fal fa-chevron-left"></span>
                                     <span class="sr-only">Previous</span>
                                 </a>
-                                <a class="right carousel-control" href="#carousel-<% review._id %>" data-slide="next">
-                                    <span class="arrow fal fa-chevron-right"></span>
+                                <a class="carousel-control-next" href="#review-images-carousel-<%= i %>" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon fal fa-chevron-right"></span>
                                     <span class="sr-only">Next</span>
                                 </a>
                                 <%_ } _%>
@@ -216,19 +216,24 @@
                 $("#image-lg-modal .img").css("background-image", "url(" + img + ")");
             });
 
-            var target = location.hash.replace('#', '');
+            var target = location.hash.replace('#', ''), timer = null;
             location.hash = "";
 
             $(window).on("load resize", function(e) {
-                $(".comment-wrapper").each(function(i, cw) {
-                    var height = parseFloat($(cw).css("height"));
-                    var max_height = parseFloat($(cw).css("max-height"));
-                    var initial_max_height = $(cw).css("max-height");
-                    $(cw).next(".comment-toggle").toggleClass("hide", height < max_height).off("click").click(function() {
-                        var height = !$(cw).hasClass("expanded") ? parseFloat($(cw).find(".comment").css("height")) + 10 : initial_max_height;
-                        $(cw).toggleClass("expanded").css("max-height", height);
+                $(".comment-wrapper").removeAttr("style").filter(".expanded").removeClass("expanded").find(".comment-toggle").click();
+                clearTimeout(timer);
+                timer = setTimeout(function() {
+                    $(".comment-wrapper").each(function(i, cw) {
+                        var height = parseFloat($(cw).find(".comment").css("height"));
+                        var max_height = parseFloat($(cw).css("max-height"));
+                        var margin_bottom = parseFloat($(cw).css("margin-bottom"));
+                        var initial_max_height = $(cw).data("initial_max_height") || $(cw).data("initial_max_height", $(cw).css("max-height")).data("initial_max_height");
+                        $(cw).next(".comment-toggle")[height < max_height ? "hide" : "show"]().off("click").click(function() {
+                            var height = !$(cw).hasClass("expanded") ? parseFloat($(cw).find(".comment").css("height")) + margin_bottom : initial_max_height;
+                            $(cw).toggleClass("expanded").css("max-height", height);
+                        });
                     });
-                });
+                }, e.type === "load" ? 0 : 400);
 
                 var offsetTop = ($(target ? "#"+target : document.documentElement).offset() || {}).top;
                 if (target && e.type === "load") $('html, body').animate({ scrollTop: offsetTop - 50 });

@@ -47,7 +47,8 @@ passport.use("local-register-admin", new Strategy({ passReqToCallback: true }, a
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
     try {
-        const user = await Ambassador.findById(id) || await Member.findById(id) || await Admin.findById(id);
+        const queries = [Ambassador.findById(id), Member.findById(id), Admin.findById(id)];
+        const user = (await Promise.all(queries)).find(u => u);
         done(null, user);
     } catch (err) { done(err) }
 });

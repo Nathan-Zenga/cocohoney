@@ -149,7 +149,7 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
     var ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     Discount_code.deleteMany({_id : { $in: ids }}, (err, result) => {
-        if (err) return res.status(500).send(err ? err.message : "Error occurred");
+        if (err) return res.status(500).send(err.message);
         if (!result.deletedCount) return res.status(404).send("Discount code(s) not found");
         res.send("Discount code"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })
@@ -243,7 +243,7 @@ router.post('/faqs/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
     FAQ.deleteMany({_id : { $in: ids }}, (err, result) => {
-        if (err) return res.status(500).send(err ? err.message : "Error occurred");
+        if (err) return res.status(500).send(err.message);
         if (!result.deletedCount) return res.status(404).send("FAQ(s) not found");
         res.send("FAQ"+ (ids.length > 1 ? "s" : "") +" removed successfully")
     })

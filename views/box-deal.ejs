@@ -111,9 +111,9 @@
                 var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
                 $("#cart-item-count").text(item_count);
                 $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });
-                $(".thumb-img").removeClass("checked");
+                $(".thumb").removeClass("checked");
                 $(".product-quantity").attr({ disabled: true, required: false });
-                e.target.reset();
+                form.reset();
             }).fail(function(err) {
                 alert(err.responseText);
             }).always(function() {

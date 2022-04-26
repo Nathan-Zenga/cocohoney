@@ -45,7 +45,7 @@ router.post("/cart/add", async (req, res) => {
             if (quantities[i] < 1) { item_qty_excess.min = true; item_qty_excess.name = name; break }
             if (quantities[i] > stock_qty) { item_qty_excess.max = true; item_qty_excess.name = name; break }
             deal_item.items.unshift({ id, name, category, image, info, stock_qty, qty: quantities[i] });
-        };
+        }
         if (item_qty_excess.min) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is below the minimum limit`);
         if (item_qty_excess.max) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is above the maximum limit`);
 
@@ -54,20 +54,16 @@ router.post("/cart/add", async (req, res) => {
     } catch (err) { res.status(500).send(err.message) }
 });
 
-router.post('/box/add', isAuthed, (req, res) => {
+router.post('/box/add', isAuthed, async (req, res) => {
     const { name, price, info, image_file, image_url, max_items, box_item } = req.body;
     const box = new Box({ name, price, info, max_items });
-    const error = box.validateSync();
-    if (error) return res.status(400).send(error.message);
     box.products_inc = (Array.isArray(box_item) ? box_item : [box_item]).filter(e => e);
-    if (!image_file && !image_url) return box.save(err => res.send("Box deal saved"));
-
-    const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
-    cloud.uploader.upload(image_url || image_file, { public_id }, (err, result) => {
-        if (err) return res.status(err.http_code).send(err.message);
-        box.image = { p_id: result.public_id, url: result.secure_url };
-        box.save(() => res.send("Box deal saved"));
-    });
+    try {
+        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
+        const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
+        if (result) box.image = { p_id: result.public_id, url: result.secure_url };
+        await box.save(); res.send("Box deal saved");
+    } catch(err) { res.status(err.http_code || 400).send(err.message) }
 });
 
 router.post('/box/edit', isAuthed, async (req, res) => {

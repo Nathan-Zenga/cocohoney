@@ -143,20 +143,17 @@ router.post('/delete', async (req, res) => {
         await cloud.api.delete_resources([amb.image?.p_id || "blank"]);
         await Discount_code.findOneAndDelete({ code: amb.discount_code });
         await Ambassador.findByIdAndDelete(amb.id);
-
         if (res.locals.is_admin) return res.send("The account is now successfully deleted.");
-        new MailTransporter({ email: amb.email }).sendMail({
-            subject: "Your account is now deleted",
-            message: `Hi ${amb.firstname},\n\nYour account is now successfully deleted.\n` +
-            "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics"
-        }, err => {
-            if (err) return res.status(500).send(err.message);
-            if (req.user && req.user._id == amb.id) {
-                req.logout();
-                res.locals.cart = req.session.cart = [];
-            }
-            res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
-        });
+
+        const subject = "Your account is now deleted";
+        const message = `Hi ${amb.firstname},\n\nYour account is now successfully deleted.\n` +
+        "Thank you for your service as an ambassador!\n\n- Cocohoney Cosmetics";
+        await new MailTransporter({ email: amb.email }).sendMail({ subject, message });
+        if (req.user?._id == amb.id) {
+            req.logout();
+            res.locals.cart = req.session.cart = [];
+        }
+        res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
     } catch (err) { res.status(err.statusCode || 500).send(err.message) }
 });
 
@@ -224,10 +221,11 @@ router.post('/password-reset-request', async (req, res) => {
     ambassador.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await ambassador.save();
     const subject = "Your Password Reset Token";
+    const password_reset_link = `${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}`;
     const message = "You are receiving this email because you requested to reset your password.\n\n" +
     "Please click the link below to proceed:\n\n" +
-    `((RESET PASSWORD))[${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token}]\n` +
-    `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/ambassador/password-reset?token=${saved.password_reset_token})</small>\n\n`;
+    `((RESET PASSWORD))[${password_reset_link}]\n` +
+    `<small>(Copy the URL if the above link is not working - ${password_reset_link})</small>\n\n`;
     new MailTransporter({ email: saved.email }).sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message);
         res.send("An email has been sent your email to reset your password");
