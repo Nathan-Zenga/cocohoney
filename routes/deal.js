@@ -15,7 +15,7 @@ router.get('/:name', async (req, res, next) => {
 router.post("/cart/add", async (req, res) => {
     const { box_id, product_id, quantity, cart } = Object.assign(req.body, req.session);
     const product_ids = (Array.isArray(product_id) ? product_id : [product_id]).filter(e => e);
-    const quantities = (Array.isArray(quantity) ? quantity : [quantity]).filter(e => e);
+    const quantities = (Array.isArray(quantity) ? quantity : [quantity]).map(q => parseInt(q)).filter(q => !isNaN(q));
     if (product_ids.length !== quantities.length) return res.status(400).send("Number of products and quantities don't match");
 
     try {
@@ -42,12 +42,16 @@ router.post("/cart/add", async (req, res) => {
         const item_qty_excess = {};
         for (let i = 0; i < product_ids.length; i++) {
             const { id, name, category, image, info, stock_qty } = products.find(p => p.id == product_ids[i]);
+            const products_selected = cart.filter(item => item.deal).map(item => item.items).flat().filter(itm => itm.id === id);
+            const qty_total = products_selected?.reduce((sum, item) => sum + item.qty, 0) || 0;
             if (quantities[i] < 1) { item_qty_excess.min = true; item_qty_excess.name = name; break }
             if (quantities[i] > stock_qty) { item_qty_excess.max = true; item_qty_excess.name = name; break }
+            if (qty_total + quantities[i] > stock_qty) { item_qty_excess.over = true; item_qty_excess.name = name; break }
             deal_item.items.unshift({ id, name, category, image, info, stock_qty, qty: quantities[i] });
         }
         if (item_qty_excess.min) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is below the minimum limit`);
         if (item_qty_excess.max) return res.status(400).send(`Quantity specified for "${item_qty_excess.name}" is above the maximum limit`);
+        if (item_qty_excess.over) return res.status(400).send(`You already have the last remaining "${item_qty_excess.name}" items added to your basket`);
 
         cart.unshift(deal_item);
         res.send(`${cart.length}`);

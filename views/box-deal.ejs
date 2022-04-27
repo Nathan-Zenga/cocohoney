@@ -86,12 +86,13 @@
     </section>
 
     <script>
-        $(window).on("load scroll resize", function() {
+        $(window).on("load scroll resize", function(e) {
             var windowOffsetBottom = window.pageYOffset + window.innerHeight;
             var footerMarginTop = parseFloat($("footer").css("margin-top"));
             var footerOffsetTop = $("footer").offset().top - footerMarginTop;
             var bottom = windowOffsetBottom >= footerOffsetTop + footerMarginTop ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
             $("#submit-btn").css("bottom", bottom);
+            if (e.type === "load") $("form").trigger("reset").find("input[type=checkbox]").change();
         });
 
         $(".panel-collapse").on("shown.bs.collapse hidden.bs.collapse", function() {
