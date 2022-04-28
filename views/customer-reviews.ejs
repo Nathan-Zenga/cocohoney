@@ -216,7 +216,7 @@
                 $("#image-lg-modal .img").css("background-image", "url(" + img + ")");
             });
 
-            var target = location.hash.replace('#', ''), timer = null;
+            var target = location.hash.replace(/^#+/, ''), timer = null;
             location.hash = "";
 
             $(window).on("load resize", function(e) {
@@ -233,10 +233,10 @@
                             $(cw).toggleClass("expanded").css("max-height", height);
                         });
                     });
-                }, e.type === "load" ? 0 : 400);
 
-                var offsetTop = ($(target ? "#"+target : document.documentElement).offset() || {}).top;
-                if (target && e.type === "load") $('html, body').animate({ scrollTop: offsetTop - 50 });
+                    var offsetTop = target && $("#"+target).length ? $("#"+target).offset().top : 0;
+                    if (target && e.type === "load") $('html, body').animate({ scrollTop: offsetTop - 50 });
+                }, e.type === "load" ? 0 : parseFloat($(".comment-wrapper").css("transition-duration")) * 1000);
             });
 
             $(".review .images.carousel .carousel-control").click(function () {
