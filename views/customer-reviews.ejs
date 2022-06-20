@@ -200,12 +200,12 @@
                 if (!$(this).find(":submit").is(":hover, :focus")) return;
                 var btnController = new submitBtnController(this);
                 $.post(this.action, $(this).serializeArray(), function(result) {
-                    alert(result);
+                    Alert(result);
                     $(".star").css("color", "");
                     $(".clear-uploads").click();
                     location.reload();
                 }).fail(function(err) {
-                    alert(err.responseText);
+                    Alert(err.responseText);
                 }).always(function() {
                     btnController.finish();
                 });
@@ -245,7 +245,7 @@
                 if (confirmation) $.post(this.action, $(this).serializeArray(), function(res) {
                     $(e.target).closest(".review").slideUp(function() { $(this).remove() });
                 }).fail(function(err) {
-                    alert(err.responseText);
+                    Alert(err.responseText);
                 })
             })
             <%_ } _%>

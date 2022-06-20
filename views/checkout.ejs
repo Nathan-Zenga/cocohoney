@@ -113,7 +113,7 @@
                 location.href = href;
             }).fail(function(err, status, codeMessage) {
                 btnControl.finish();
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
         });
 
@@ -124,10 +124,10 @@
                 var stripe = Stripe(data.pk);
                 return stripe.redirectToCheckout({ sessionId: data.id });
             }).then(function(result) {
-                if (result.error) { btnControl.finish(); alert(result.error.message); }
+                if (result.error) { btnControl.finish(); Alert(result.error.message); }
             }).fail(function(err, status, codeMessage) {
                 btnControl.finish();
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             });
         });
     </script>

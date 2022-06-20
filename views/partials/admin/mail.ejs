@@ -96,10 +96,10 @@
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $("#mail-form").serializeArray(), function(result) {
-            alert(result);
+            Alert(result);
             e.target.reset();
         }).fail(function(err) {
-            alert(err.responseText);
+            Alert(err.responseText);
         }).always(function() {
             btnController.finish();
         });
@@ -109,9 +109,9 @@
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {
-            alert(result);
+            Alert(result);
         }).fail(function(err) {
-            alert(err.responseText);
+            Alert(err.responseText);
         }).always(function() {
             btnController.finish();
         });

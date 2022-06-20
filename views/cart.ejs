@@ -84,7 +84,7 @@
                 $("#cart-item-count").text($(".cart-item:not(.deleted)").length);
                 if ($("#cart-item-count").text() == 0) $("#cart-icon").removeClass("visible");
             }).fail(function(err) {
-                alert(err.responseText);
+                Alert(err.responseText);
             })
         });
         $("#price-total span").text(function() {

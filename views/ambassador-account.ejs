@@ -308,9 +308,9 @@
         e.preventDefault();
         var btnController = new submitBtnController(this, "Updating");
         $.post(this.action, $(this).serializeArray(), function(result) {
-            alert(result);
+            Alert(result);
         }).fail(function(err) {
-            alert(err.responseText);
+            Alert(err.responseText);
         }).always(function() {
             btnController.finish();
         });
@@ -324,11 +324,11 @@
         e.preventDefault();
         var btnController = new submitBtnController(this);
         $.post(this.action, $(this).serializeArray(), function(result) {
-            alert(result);
+            Alert(result);
             location.reload();
         }).fail(function(err) {
             btnController.finish();
-            alert(err.responseText);
+            Alert(err.responseText);
         });
     });
 
@@ -338,9 +338,9 @@
         var data = $(form).serializeArray().slice();
         $(this).attr("disabled", true);
         $.post(form.action, data, function(result) {
-            alert(result);
+            Alert(result);
         }).fail(function(err) {
-            alert(err.responseText);
+            Alert(err.responseText);
         }).always(function() {
             $(e.target).attr("disabled", false);
         });
@@ -352,11 +352,11 @@
         if (confirmation) {
             var btnController = new submitBtnController(this);
             $.post(this.action, $(this).serializeArray(), function(result) {
-                alert(result);
+                Alert(result);
                 location.reload();
             }).fail(function(err) {
                 btnController.finish();
-                alert(err.responseText);
+                Alert(err.responseText);
             });
         }
     });

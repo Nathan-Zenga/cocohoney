@@ -72,9 +72,9 @@
             $.post(this.action, $(this).serializeArray(), function(result) {
                 e.target.reset();
                 if (e.target.action.includes("/account/login")) location.href = result
-                else alert(result);
+                else Alert(result);
             }).fail(function(err) {
-                alert(err.responseText);
+                Alert(err.responseText);
             }).always(function() {
                 btnController.finish();
             });

@@ -198,7 +198,7 @@
                 $(form).find(".clear-uploads").click();
                 form.reset();
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnController.finish();
             });
@@ -213,7 +213,7 @@
                 var confirmation2 = confirm(result + "\nReload to see changes?");
                 if (confirmation2) location.reload();
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnController.finish();
             });
@@ -228,7 +228,7 @@
                 var confirmation2 = confirm(result + "\nReload to see changes?");
                 if (confirmation2) location.reload();
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnController.finish();
             });
@@ -248,7 +248,7 @@
                     data.forEach(function(field) { $("option[value="+ field.value +"]").remove() });
                 });
             }).fail(function(err, status, codeMessage) {
-                alert(codeMessage + (err ? ": " + err.responseText : ""));
+                Alert(codeMessage + (err ? ": " + err.responseText : ""));
             }).always(function() {
                 btnController.finish();
             });

@@ -15,6 +15,11 @@ $(function() {
         this.submitBtn[this.method](this.originalVal).attr("disabled", false);
     };
 
+    window.Alert = function(text) {
+        var $div = $("<div>").addClass("translated-alert-msg").text(text).appendTo(document.body);
+        setTimeout(function() { alert($div.text()); $div.remove() }, 500)
+    };
+
     $("#context-menu-link").click(function() { $("#link-context-menu").stop().fadeToggle(200) });
 
     $(window).click(function() {
@@ -49,7 +54,7 @@ $(function() {
             $("#cart-item-count").text(item_count);
             $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });
         }).fail(function(err) {
-            alert(err.responseText);
+            Alert(err.responseText);
         }).always(function() {
             $("#clicked").attr("id", "");
             btnControl.finish();
@@ -101,7 +106,7 @@ $(function() {
             };
             reader.readAsDataURL(file)
         }, function(err) {
-            if (err) { $file_label.text(initial_label_value); return alert(err.message || err) }
+            if (err) { $file_label.text(initial_label_value); return Alert(err.message || err) }
             var label_text = files.length > 1 ? files.length+" files selected" : files[0].name;
             $file_label.text(label_text);
             $image_url.attr("disabled", true).val(label_text);

@@ -42,10 +42,10 @@
             if (confirm("Are you sure this is the right tracking number?")) {
                 var btnController = new submitBtnController(this);
                 $.post(this.action, $(this).serializeArray(), function(result) {
-                    alert(result);
+                    Alert(result);
                     e.target.reset();
                 }).fail(function(err) {
-                    alert(err.responseText);
+                    Alert(err.responseText);
                 }).always(function() {
                     btnController.finish();
                 });

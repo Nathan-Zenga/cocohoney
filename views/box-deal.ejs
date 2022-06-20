@@ -118,7 +118,7 @@
                 $(".product-quantity").attr({ disabled: true, required: false });
                 e.target.reset();
             }).fail(function(err) {
-                alert(err.responseText);
+                Alert(err.responseText);
             }).always(function() {
                 btnController.finish();
             });

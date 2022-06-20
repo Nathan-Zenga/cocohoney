@@ -38,10 +38,10 @@
             if (!$(this).find(":submit").is(":hover, :focus")) return;
             var btnController = new submitBtnController(this);
             $.post(this.action, $(this).serializeArray(), function(result) {
-                alert(result);
+                Alert(result);
                 e.target.reset();
             }).fail(function(err) {
-                alert(err.responseText);
+                Alert(err.responseText);
             }).always(function() {
                 btnController.finish();
                 grecaptcha.reset();

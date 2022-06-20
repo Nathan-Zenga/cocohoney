@@ -2392,3 +2392,12 @@ img[data-target='#image-lg-modal'] {
 #new-review-form > fieldset > label:nth-last-of-type(1) + fieldset {
     display: none;
 }
+
+.translated-alert-msg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
