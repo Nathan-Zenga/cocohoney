@@ -16,6 +16,7 @@ $(function() {
     };
 
     window.Alert = function(text) {
+        if (document.documentElement.lang === "en") return alert(text);
         var $div = $("<div>").addClass("translated-alert-msg").text(text).appendTo(document.body);
         setTimeout(function() { alert($div.text()); $div.remove() }, 500)
     };
