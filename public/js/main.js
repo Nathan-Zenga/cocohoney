@@ -111,6 +111,24 @@ $(function() {
 
     $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("focus");
 
+    $(window).on("load", function() {
+        var cookies = !document.cookie ? null : document.cookie.split(/; ?/).map(function(cookie) {
+            var keyvalue = cookie.split("=");
+            return { [keyvalue[0]]: keyvalue[1] };
+        }).reduce(function(p, c) { return {...p, ...c} });
+
+        if (cookies) JSON.parse(cookies.active_tab_hrefs || "[]").forEach(function(href, i) {
+            if (i == 0) $(".section-dropdown-options select:visible").val(href);
+            $(".nav.nav-pills a[href='"+ href +"']").click();
+        });
+
+        $(".nav.nav-pills a").on("shown.bs.tab", function(e) {
+            var $a = $(".nav.nav-pills:visible a.active[data-toggle='pill']");
+            $a = $(".section-dropdown-options select:visible").add($a);
+            document.cookie = "active_tab_hrefs=" + JSON.stringify($a.map(function() { return $(this).attr("href") || $(this).val() }).get()) + "; path="+ location.pathname +";";
+        });
+    });
+
     if ($(".slider-container").length) {
         var repeat = false;
         var noArrows = false;
