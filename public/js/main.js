@@ -44,6 +44,7 @@ $(function() {
         var action = formaction || this.action;
         $.post(action, $(this).serializeArray(), function(item_count) {
             if (action === "/wishlist/remove") $(e.target).closest(".thumb").slideUp();
+            if (action === "/wishlist/add") alert("Item now added to your wishlist");
             var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
             $("#cart-item-count").text(item_count);
             $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });

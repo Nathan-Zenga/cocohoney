@@ -74,15 +74,14 @@ router.post("/session/create", async (req, res) => {
                 },
                 description: item.items?.map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined,
                 quantity: item.qty
-            })).concat([{
-                price_data: {
-                    product_data: { name: shipping_method.name },
-                    unit_amount: parseInt(shipping_method.fee),
-                    currency: "gbp"
-                },
-                description: shipping_method.info || undefined,
-                quantity: 1
-            }]),
+            })),
+            shipping_options: [{
+                shipping_rate_data: {
+                    type: "fixed_amount",
+                    fixed_amount: { amount: shipping_method.fee, currency: "gbp" },
+                    display_name: shipping_method.name
+                }
+            }],
             mode: "payment",
             allow_promotion_codes: !!promotion_code,
             success_url: location_origin + "/shop/checkout/session/complete",

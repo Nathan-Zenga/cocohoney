@@ -1555,11 +1555,11 @@ input.product-quantity:disabled {
 
 .sold-out-label {
     font-weight: 400;
-    padding: 39px 0;
+    padding: 10px 0 38px;
 }
 
 #product-view-page .sold-out-label {
-    padding: 0;
+    padding: 0 0 24px;
 }
 
 #box-deal-page .sold-out-label {
