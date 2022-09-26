@@ -39,15 +39,14 @@
                     </div>
                 </div><br>
                 <div class="row" id="order-details">
-                    <div class="detail col-sm-4 float-left">
+                    <div class="detail col-lg-4 col-md-6 float-left">
                         <p><b>NAME</b></p>
                         <p><%- order.customer_name %></p>
-                    </div>
-                    <div class="detail col-sm-4 float-left">
+
                         <p><b>EMAIL</b></p>
                         <p><%= order.customer_email %></p>
                     </div>
-                    <div class="detail col-sm-4 float-left">
+                    <div class="detail col-lg-4 col-md-6 float-left">
                         <p><b>ADDRESS</b></p>
                         <p>
                             <%= order.destination.line1 %><br>
@@ -58,22 +57,24 @@
                             <%= order.destination.postal_code || order.destination.postcode || "" %>
                         </p>
                     </div>
+                    <div class="col-lg-4 col-12 float-left">
+                        <h2>
+                            <%_ var sum = order.cart.map(item => ({ price: item.price, qty: item.qty })).reduce((sum, item) => sum + (item.price * item.qty), 0);
+                                const method = shipping_method || { name: "Free", fee: 0 }
+                                const discount_calc = dc_used ? (dc_used.percentage / 100) * sum : 0;
+                                const sum_original = sum;
+                                sum = (sum + method.fee) - discount_calc; _%>
+                            <small>£<%= (sum_original > 1 ? sum_original / 100 : 0).toFixed(2) %> <span>(Sub-total)</span></small><br>
+                            <small>+ £<%= (method.fee > 1 ? method.fee / 100 : 0).toFixed(2) %> <span>(<%= method.name %> delivery)</span></small><br>
+                            <%_ if (dc_used) { _%>
+                            <small>- £<%= (discount_calc / 100).toFixed(2) %> <span>(Discount, excl. delivery)</span></small>
+                            <br><br>
+                            TOTAL: <b>£<%= (sum > 1 ? sum / 100 : 0).toFixed(2) %></b>
+                            <%_ } _%>
+                        </h2>
+                    </div>
                 </div>
 
-                <h2>
-                    TOTAL:
-                    <%_ var sum = order.cart.map(item => ({ price: item.price, qty: item.qty })).reduce((sum, item) => sum + (item.price * item.qty), 0);
-                        const method = shipping_method || { name: "Free", fee: 0 }
-                        const discount_calc = dc_used ? (dc_used.percentage / 100) * sum : 0;
-                        const sum_original = sum;
-                        sum = (sum + method.fee) - discount_calc; _%>
-                    <b>£<%= (sum > 1 ? sum / 100 : 0).toFixed(2) %></b><br><br>
-                    <small style="color: inherit;">£<%= (sum_original > 1 ? sum_original / 100 : 0).toFixed(2) %> (Original total)</small><br>
-                    <small style="color: inherit;">+ £<%= (method.fee > 1 ? method.fee / 100 : 0).toFixed(2) %> (<%= method.name %> delivery)</small><br>
-                    <%_ if (dc_used) { _%>
-                    <small style="color: inherit;">- £<%= (discount_calc / 100).toFixed(2) %> (Discounted from total, excluding delivery)</small>
-                    <%_ } _%>
-                </h2>
                 <div class='table-responsive'>
                     <table id="order-items-table" class="table table-hover">
                         <thead>

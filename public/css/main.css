@@ -2253,6 +2253,14 @@ input.product-quantity:disabled {
     margin-bottom: 1.5em;
 }
 
+#orders-page small {
+    color: inherit;
+}
+
+#orders-page small span {
+    font-size: .7em;
+}
+
 #orders-page .order h1 {
     text-align: center;
 }

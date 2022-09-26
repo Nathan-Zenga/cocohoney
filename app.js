@@ -46,7 +46,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.is_admin = req.user?.role === "admin";
     res.locals.is_ambassador = req.user?.role === "ambassador";
     res.locals.is_customer = req.user?.role === "member";
-    res.locals.location_origin = production ? `https://${req.hostname}` : `http://localhost:${PORT}`;
+    res.locals.location_origin = `http${req.hostname != "localhost" ? "s" : ""}://${req.headers.host}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = !GET && res.locals.boxes_all ? res.locals.boxes_all : await Box.find();
     res.locals.banner_slides = !GET && res.locals.banner_slides ? res.locals.banner_slides : await Banner_slide.find().sort({ _id: -1 }).exec();

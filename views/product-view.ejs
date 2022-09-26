@@ -36,8 +36,9 @@
                         </button>
                         <%_ } else { _%>
                         <div class="sold-out-label">SOLD OUT</div>
-                        <%_ } _%>
+                        <%_ } if (!is_admin) { _%>
                         <button formaction="/wishlist/add" class="add-to-cart-btn"><i class="icon fal fa-heart"></i></button>
+                        <%_ } _%>
                     </form>
                 </div>
             </div>
