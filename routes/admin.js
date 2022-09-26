@@ -18,7 +18,7 @@ router.get('/login', (req, res) => {
     res.render('admin-login', { title: "Admin Login", pagename: "admin" })
 });
 
-router.get('/logout', (req, res) => { req.logout(); res.redirect("/") });
+router.get('/logout', (req, res) => { req.logout(() => res.redirect("/")) });
 
 router.get('/mail/form', async (req, res) => {
     if (!res.locals.is_admin) return res.redirect("/admin/login?redirect_to=" + req.originalUrl);

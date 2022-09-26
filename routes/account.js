@@ -35,9 +35,10 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-    req.logout();
-    req.session.cart = [];
-    res.redirect("/");
+    req.logout(() => {
+        req.session.cart = [];
+        res.redirect("/");
+    });
 });
 
 router.post('/signup', async (req, res) => {
@@ -92,8 +93,7 @@ router.post('/delete', isAuthed, async (req, res) => {
         await new MailTransporter({ email: member.email }).sendMail({ subject, message });
 
         if (req.user?._id == member.id) {
-            req.logout();
-            res.locals.cart = req.session.cart = [];
+            req.logout(() => { res.locals.cart = req.session.cart = [] });
         }
         res.send("Your account is now successfully deleted. Check your inbox for confirmation.\n\n- Cocohoney Cosmetics");
     } catch (err) { res.status(err.statusCode || 500).send(err.message) }
