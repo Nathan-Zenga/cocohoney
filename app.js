@@ -12,6 +12,7 @@ const { Banner_slide, Sale, Product, Box, MailTest } = require("./models/models"
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
+const visitor = require('./modules/visitor-info');
 const production = NODE_ENV === "production";
 var timeout = null;
 
@@ -38,6 +39,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(async (req, res, next) => { // global variables
+    res.on("finish", () => console.log(visitor(req, res)));
     const GET = req.method === "GET";
     const sale_doc = GET ? (await Sale.find())[0] : null;
     res.locals.production = production;
@@ -104,10 +106,12 @@ app.listen(PORT, async () => {
     console.log(`Server started${production ? "" : " on port " + PORT}`);
 
     if (production) try {
-        const test = await MailTest.findOne() || new MailTest();
-        const { email, subject, message, newDay } = test;
-        newDay && await new MailTransporter({ email }).sendMail({ subject, message });
-        newDay && (test.last_sent_date = Date.now());
-        newDay && await test.save();
+        setInterval(async () => {
+            const test = await MailTest.findOne() || new MailTest();
+            const { email, subject, message, newDay } = test;
+            newDay && await new MailTransporter({ email }).sendMail({ subject, message });
+            newDay && (test.last_sent_date = Date.now());
+            newDay && await test.save();
+        }, 1000 * 60 * 10);
     } catch (err) { console.error(err.message) }
 });
