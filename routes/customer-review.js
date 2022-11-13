@@ -21,23 +21,26 @@ router.post('/submit', async (req, res) => {
     const saved_p_ids = [];
 
     const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
-    const verifyURL = `https://google.com/recaptcha/api/siteverify?${params.toString()}`;
+    const verifyURL = "https://google.com/recaptcha/api/siteverify?" + params.toString();
     const { data: result } = await axios.get(verifyURL).catch(e => e);
-    if (!result.success) return res.status(400).send("Failed CAPTCHA verification");
+    if (!result?.success) return res.status(400).send("Failed CAPTCHA verification");
 
-    if (!images.length) return review.save(e => res.status(e ? 500 : 200).send(e ? e.message : "Review submitted"));
-    forEachOf(images, (image, i, cb) => {
-        const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
-        cloud.uploader.upload(image, { public_id }, (err, result) => {
-            if (err) return cb(err);
-            saved_p_ids.push(result.public_id);
-            review.images.push({ p_id: result.public_id, url: result.secure_url });
-            cb();
+    try {
+        await forEachOf(images, (image, i, cb) => {
+            const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
+            cloud.uploader.upload(image, { public_id }, (err, result) => {
+                if (err) return cb(err);
+                saved_p_ids.push(result.public_id);
+                review.images.push({ p_id: result.public_id, url: result.secure_url });
+                cb();
+            });
         });
-    }, err => {
-        if (!err) return review.save(e => res.status(e ? 500 : 200).send(e ? e.message : "Review submitted"));
-        cloud.api.delete_resources(saved_p_ids, () => res.status(err.http_code || 500).send(err.message));
-    })
+        await review.save();
+        res.send("Review submitted");
+    } catch (err) {
+        await cloud.api.delete_resources(saved_p_ids).catch(e => null);
+        res.status(err.http_code || 500).send(err.message)
+    }
 });
 
 router.post('/update', async (req, res) => {
