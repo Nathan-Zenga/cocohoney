@@ -158,7 +158,8 @@ module.exports.Review = model('Review', new Schema({
     author_name: { type: String, required: true },
     author_verified: { type: Boolean, default: false },
     rating: { type: Number, min: 0, max: 5, default: 0 },
-    images: [{ p_id: String, url: String }]
+    images: [{ p_id: String, url: String }],
+    approved: { type: Boolean, default: false }
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Highlights_post = model('Highlights_post', new Schema({

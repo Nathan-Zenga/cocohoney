@@ -6,7 +6,8 @@ const recaptcha = require('../modules/recaptcha');
 const { RECAPTCHA_SITE_KEY: recaptcha_site_key } = process.env;
 
 router.get('/', async (req, res) => {
-    const reviews = await Review.find().sort({ created_at: -1 }).exec();
+    const filter = res.locals.is_admin ? {} : { approved: true };
+    const reviews = await Review.find(filter).sort({ created_at: -1 }).exec();
     res.render('customer-reviews', { title: "Reviews", pagename: "customer-reviews", reviews, recaptcha_site_key });
 });
 
@@ -32,7 +33,10 @@ router.post('/submit', recaptcha, async (req, res) => {
             });
         });
         !honeypot && await review.save();
-        res.send("Review submitted");
+
+        const note = "\n\nNote: due to recent spam posts found on this page, we must now assess customer reviews before we can publish them, for contents that are " +
+        "indelicate, profane or do not reflect your thoughts toward Cocohoney Cosmetics. Please be advised that the approval or disapproval of your review submission will not be subject to bias.";
+        res.send("Review submitted" + (req.user ? "" : note));
     } catch (err) {
         await cloud.api.delete_resources(saved_p_ids).catch(e => null);
         res.status(err.http_code || 500).send(err.message)
@@ -61,6 +65,16 @@ router.post('/delete', async (req, res) => {
         await Review.findByIdAndDelete(review.id);
         res.send("Review deleted");
     } catch (err) { res.status(err.http_code || 400).send(err.message) }
+});
+
+router.post('/approve', async (req, res) => {
+    if (!res.locals.is_admin) return res.sendStatus(401);
+    const review = await Review.findById(req.body.id).catch(e => null);
+    if (!review) return res.status(404).send("Review not found");
+    if (review.approved) return res.status(400).send("You have already approved this review post");
+    review.approved = true;
+    await review.save();
+    res.send("Review approved");
 });
 
 module.exports = router;
