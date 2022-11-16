@@ -21,11 +21,9 @@
                                             <fieldset>
                                                 <legend>WRITE A REVIEW</legend>
 
-                                                <%_ if (!user) { _%>
                                                 <label>YOUR NAME</label>
-                                                <input type="text" name="author_name" required>
+                                                <input type="text" name="author_name" value="<%= user ? user.firstname + ' ' +  user.lastname : '' %>" required>
 
-                                                <%_ } _%>
                                                 <label>HEADLINE <span>(OPTIONAL)</span></label>
                                                 <input type="text" name="headline">
 
