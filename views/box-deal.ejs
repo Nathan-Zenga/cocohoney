@@ -29,55 +29,63 @@
         <br><br>
 
         <div class="container">
-            <form class="panel-group minimal" action="/deal/cart/add">
-                <%_ var collections = [...new Set(products.filter(p => p.product_collection).map(p => p.product_collection))].map(c => ({ collection: c }));
-                    var categories = [...new Set(products.filter(p => !p.product_collection).map(p => p.category))].map(c => ({ category: c }));
-                    const groups = [...collections, ...categories];
-                    groups.forEach((field, i) => { _%>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h2 class="panel-title collapsed" data-toggle="collapse" data-target="#collapse<%= i %>">
-                            <%= field.collection ? field.collection + " Collection" : field.category.charAt(0).toUpperCase() + field.category.slice(1).replace(/_/g, " ") %>
-                            <i class="fal fa-chevron-down dropdown-arrow" style="margin-left: 5px;"></i>
-                        </h2>
+            <form class="minimal" id="box-deal-form" action="/deal/cart/add">
+                <%_ const collections = [...new Set(products.filter(p => p.product_collection).map(p => p.product_collection))].map(c => ({ collection: c }));
+                    const categories = [...new Set(products.filter(p => !p.product_collection).map(p => p.category))].map(c => ({ category: c }));
+                    const groups = [...collections, ...categories]; _%>
+                <div class="mb-view-md section-dropdown-options">
+                    <label>SELECT COLLECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
+                    <select>
+                    <%_ groups.forEach((field, i) => { _%>
+                        <%_ const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
+                        <option value="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></option>
+                    <%_ }) _%>
+                    </select>
+                </div>
+                <div class="nav-pills-container dt-view-md">
+                    <div class="nav nav-pills">
+                    <%_ groups.forEach((field, i) => { _%>
+                        <%_ const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
+                        <a class="nav-link" data-toggle="pill" href="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></a>
+                    <%_ }) _%>
                     </div>
-                    <div id="collapse<%= i %>" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            <div class="thumb-container">
-                                <div class="container">
-                                    <div class="row">
-                                        <%_ products.filter(p => field.collection ? field.collection === p.product_collection : field.category === p.category).forEach(p => { _%>
-                                        <div class="thumb col-lg-3 col-md-4 float-left">
-                                            <div class="thumb-inner">
-                                                <div class="thumb-img product-image<%= p.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
-                                                    <div class="item-select-check">
-                                                        <i class="check-symbol fal fa-circle"></i>
-                                                        <i class="check-symbol fas fa-check-circle"></i>
-                                                    </div>
-                                                    <input type="checkbox" name="product_id" value="<%= p.id %>" <%- p.stock_qty > 0 ? '' : 'disabled' %>>
-                                                </div>
-                                                <div class="thumb-info">
-                                                    <div class="product-name"><p><%= p.name %></p></div>
-                                                    <%_ if (p.stock_qty > 0) { _%>
-                                                    <div class="quantity-wrapper">
-                                                        <button type="button" class="quantity-control-btn" data-step="-1">-</button>
-                                                        <input class="product-quantity" type="number" name="quantity" min="1" max="<%= p.stock_qty %>" value="1" disabled>
-                                                        <button type="button" class="quantity-control-btn" data-step="1">+</button>
-                                                    </div>
-                                                    <%_ } else { _%>
-                                                    <div class="sold-out-label">SOLD OUT</div>
-                                                    <%_ } _%>
-                                                </div>
-                                            </div>
+                </div>
+
+                <div class="tab-content container">
+                    <%_ groups.forEach(field => {
+                        const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
+                    <div id="<%= section.replace(/ /g, '-').toLowerCase() %>" class="tab-pane fade">
+                        <div class="row">
+                            <%_ products.filter(p => field.collection ? field.collection === p.product_collection : field.category === p.category).forEach(p => { _%>
+                            <div class="thumb col-lg-3 col-md-4 float-left">
+                                <div class="thumb-inner">
+                                    <div class="thumb-img product-image<%= p.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
+                                        <div class="item-select-check">
+                                            <i class="check-symbol fal fa-circle"></i>
+                                            <i class="check-symbol fas fa-check-circle"></i>
                                         </div>
-                                        <%_ }) _%>
+                                        <input type="checkbox" name="product_id" value="<%= p.id %>" <%- p.stock_qty > 0 ? '' : 'disabled' %>>
+                                    </div>
+                                    <div class="thumb-info">
+                                        <div class="product-name"><p><%= p.name %></p></div>
+                                        <%_ if (p.stock_qty > 0) { _%>
+                                        <div class="quantity-wrapper">
+                                            <button type="button" class="quantity-control-btn" data-step="-1">-</button>
+                                            <input class="product-quantity" type="number" name="quantity" min="1" max="<%= p.stock_qty %>" value="1" disabled>
+                                            <button type="button" class="quantity-control-btn" data-step="1">+</button>
+                                        </div>
+                                        <%_ } else { _%>
+                                        <div class="sold-out-label">SOLD OUT</div>
+                                        <%_ } _%>
                                     </div>
                                 </div>
                             </div>
+                            <%_ }) _%>
                         </div>
                     </div>
+                    <%_ }) _%>
                 </div>
-                <%_ }) _%>
+
                 <br>
                 <input type="hidden" name="box_id" value="<%= box.id %>" required>
                 <input type="submit" id="submit-btn" value="ADD TO CART">
@@ -95,7 +103,7 @@
             if (e.type === "load") $("form").trigger("reset").find("input[type=checkbox]").change();
         });
 
-        $(".panel-collapse").on("shown.bs.collapse hidden.bs.collapse", function() {
+        $(".nav-link").on("shown.bs.tab hidden.bs.tab", function() {
             $(window).trigger("resize");
         });
 
@@ -105,16 +113,14 @@
 
         $("form").submit(function(e) {
             e.preventDefault();
-            var form = this;
-            var btnController = new submitBtnController(form);
-
-            $.post(form.action, $(form).serializeArray(), function(item_count) {
+            var btnController = new submitBtnController(e.target);
+            $.post(e.target.action, $(e.target).serializeArray(), function(item_count) {
                 var $btn = $("#cart-icon").toggleClass("visible", item_count > 0);
                 $("#cart-item-count").text(item_count);
                 $btn.clone(true).insertAfter($btn).animate({ fontSize: "+=3em", opacity: "0" }, function() { $(this).remove() });
                 $(".thumb").removeClass("checked");
                 $(".product-quantity").attr({ disabled: true, required: false });
-                form.reset();
+                e.target.reset();
             }).fail(function(err) {
                 alert(err.responseText);
             }).always(function() {
