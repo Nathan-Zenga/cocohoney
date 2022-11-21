@@ -67,7 +67,7 @@ $(function() {
     });
 
     $(".section-dropdown-options select").change(function() {
-        if (this.value.charAt(0) !== "#") location.href = this.value;
+        if (this.value && this.value.charAt(0) !== "#") location.href = this.value;
         $(".nav-pills a[href='"+ this.value +"']").click()
     });
 

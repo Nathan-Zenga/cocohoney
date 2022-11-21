@@ -36,16 +36,17 @@
                 <div class="mb-view-md section-dropdown-options">
                     <label>SELECT COLLECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                     <select>
-                    <%_ groups.forEach((field, i) => { _%>
-                        <%_ const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
+                        <option value="">-</option>
+                        <%_ groups.forEach((field, i) => {
+                            const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
                         <option value="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></option>
-                    <%_ }) _%>
+                        <%_ }) _%>
                     </select>
                 </div>
                 <div class="nav-pills-container dt-view-md">
                     <div class="nav nav-pills">
-                    <%_ groups.forEach((field, i) => { _%>
-                        <%_ const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
+                    <%_ groups.forEach((field, i) => {
+                        const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
                         <a class="nav-link" data-toggle="pill" href="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></a>
                     <%_ }) _%>
                     </div>
