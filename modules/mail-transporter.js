@@ -10,7 +10,7 @@ const { OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN, NODE_ENV, CHC
 class MailTransporter {
     #recipient; #recipients; #oauth2Client;
 
-    /** @param {(Doc | Doc[])} recipient new or already registered recipient(s) */
+    /** @param {(Doc | Doc[])} recipient registered recipient(s) */
     constructor(recipient) {
         this.#recipient = !Array.isArray(recipient) ? recipient : null;
         this.#recipients = Array.isArray(recipient) ? recipient : [];
@@ -61,7 +61,7 @@ class MailTransporter {
             if (!this.#recipient && !this.#recipients.length) throw Error("Recipient(s) not set");
             if (!subject || !message) throw Error("Subject and message cannot be empty");
             const template = path.join(__dirname, '../views/templates/mail.ejs');
-            const html = await renderFile(template, { message, recipient: this.#recipient });
+            const html = await renderFile(template, { message, recipient: this.#recipient, location_origin: MailTransporter.location_origin });
             const options = await this.#getTransportOpts();
             const from = { name: "Cocohoney Cosmetics", address: CHC_EMAIL };
             const to = this.#recipient?.email || this.#recipients.map(m => m.email);
@@ -70,19 +70,21 @@ class MailTransporter {
         } catch(err) { if (!cb) throw err; cb(err) }
     };
 
-    /** @param {Doc} recipient new or already registered recipient */
+    /** @param {Doc} recipient registered recipient */
     setRecipient(recipient) {
         this.#recipient = recipient;
         this.#recipients = [];
         return this
     };
 
-    /** @param {Doc[]} recipients new or already registered recipients */
+    /** @param {Doc[]} recipients registered recipients */
     setRecipients(recipients) {
         this.#recipient = null;
         this.#recipients = recipients;
         return this
     };
 };
+
+MailTransporter.location_origin = "";
 
 module.exports = MailTransporter;

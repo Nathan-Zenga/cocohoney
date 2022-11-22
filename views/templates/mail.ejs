@@ -87,7 +87,7 @@
             <p>&copy; Cocohoney Cosmetics <%= new Date().getFullYear() %></p>
             <%_ if (recipient?.email && recipient?.mail_sub) { _%>
             <p>You are receiving this email because you are subscribed to special updates (such as promo codes, etc.) from us.</p>
-            <p>If you no longer want to receive any more emails, please <a style="color: inherit" href="/mail/unsubscribe?email=<%- recipient.email %>" target="_blank">unsubscribe here</a>.</p>
+            <p>If you no longer want to receive any more emails, please <a style="color: inherit" href="<%- location_origin %>/mail/unsubscribe?email=<%- recipient.email %>" target="_blank">unsubscribe here</a>.</p>
             <%_ } _%>
         </div>
     </body>

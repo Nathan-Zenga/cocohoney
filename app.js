@@ -20,6 +20,7 @@ mongoose.connect(CHCDB).then(() => { console.log("Connected to DB") });
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+app.set('trust proxy', 1);
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
@@ -31,7 +32,7 @@ app.use(session({ // express session
     name: 'sesh' + require("crypto").randomBytes(20).toString("hex"),
     saveUninitialized: true,
     resave: true,
-    cookie: { secure: false },
+    cookie: { secure: 'auto' },
     store: new MemoryStore({ checkPeriod: 1000 * 60 * 60 * 12 })
 }));
 
@@ -48,7 +49,7 @@ app.use(async (req, res, next) => { // global variables
     res.locals.is_admin = req.user?.role === "admin";
     res.locals.is_ambassador = req.user?.role === "ambassador";
     res.locals.is_customer = req.user?.role === "member";
-    res.locals.location_origin = `http${req.hostname != "localhost" ? "s" : ""}://${req.headers.host}`;
+    res.locals.location_origin = MailTransporter.location_origin = `${req.protocol}://${req.headers.host}`;
     res.locals.products_all = !GET && res.locals.products_all ? res.locals.products_all : await Product.find().sort({ product_collection: -1, category: 1, name: 1 }).exec();
     res.locals.boxes_all = !GET && res.locals.boxes_all ? res.locals.boxes_all : await Box.find();
     res.locals.banner_slides = !GET && res.locals.banner_slides ? res.locals.banner_slides : await Banner_slide.find().sort({ _id: -1 }).exec();
