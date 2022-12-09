@@ -40,9 +40,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(async (req, res, next) => { // global variables
-    res.on("finish", () => console.log(visitor(req, res)));
     const GET = req.method === "GET";
     const sale_doc = GET ? (await Sale.find())[0] : null;
+    req.hostname != "localhost" && res.on("finish", () => console.log(visitor(req, res)));
     res.locals.production = production;
     res.locals.url = req.originalUrl;
     res.locals.user = req.user;

@@ -1,7 +1,7 @@
 <form method="post" action="/admin/sale/toggle/">
-    <div class="row" style="margin-bottom: 2em">
-        <div class="col-6 float-left">
-            <label>SALE</label><br><br>
+    <fieldset class="row" style="margin-bottom: 2em">
+        <div class="col float-left">
+            <label>SALE</label>
             <span class="switch-toggle-label">OFF</span>
             <label class="switch" id="sale-switch" style="margin: 0 5px">
                 <input type="checkbox" name="sale_on" <%- !!sale ? 'checked' : '' %>>
@@ -9,8 +9,9 @@
             </label>
             <span class="switch-toggle-label">ON</span>
         </div>
-        <div class="col-6 float-left">
-            <label>SITE-WIDE</label><br><br>
+
+        <div class="col float-left">
+            <label>SITE-WIDE</label>
             <span class="switch-toggle-label">NO</span>
             <label class="switch" id="sitewide-switch" style="margin: 0 5px">
                 <input type="checkbox" name="sitewide" <%- !!sale_sitewide ? 'checked' : '' %> <%- !sale_sitewide ? 'disabled' : '' %>>
@@ -18,76 +19,84 @@
             </label>
             <span class="switch-toggle-label">YES</span>
             <br><br>
-            <input id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0"> % off
-        </div>
-    </div>
-    <fieldset class="row">
-        <label class="col-12 float-left">
-            END OF SALE DATE & TIME <span class="margin">(24-HOUR FORMAT)</span>
-        </label>
-        <div class="col-6 float-left">
-            <%_
-                var sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
-                var offset = sale_datetime.getTimezoneOffset();
-                var sale_date = new Date(sale_datetime.getTime() - (offset * 60 * 1000));
-                sale_date = sale_date.toISOString().split('T')[0];
-            _%>
-            <input type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" required>
-        </div>
-        <div class="col-6 float-left">
-            <input type="number" class="inline" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" required> <b>:</b>
-            <input type="number" class="inline" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" required>
+            <div class="input-group">
+                <input class="form-control" id="sitewide-sale-percentage" type="number" name="percentage" min="1" max="100" value="<%= sale_percentage || 0  %>" <%- !sale_sitewide ? 'disabled' : '' %>>
+                <div class="input-group-append">
+                    <span class="input-group-text">% off</span>
+                </div>
+            </div>
         </div>
     </fieldset>
-    <div class="row">
-        <div class="col-12 float-left">
-            <%_ products.forEach((item, i) => {
-                var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
-                var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
-                var group = product_collection ? product_collection + " Collection" : category ? category : "Others"; _%>
-            <%- (item.product_collection || item.category) !== (products[i-1]?.product_collection || products[i-1]?.category) ? '<div style="padding: 1em 0; margin: 1em 0">'+group+'</div>' : '' %>
-            <div class="input-checkbox">
-                <div class="row">
-                    <div class="col-6 float-left">
-                        <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
-                    </div>
-                    <div class="col-6 float-left">
-                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
-                    </div>
-                </div>
+
+    <fieldset id="sale-end-date-section">
+        <label>END OF SALE DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
+        <%_
+            var sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
+            var offset = sale_datetime.getTimezoneOffset();
+            var sale_date = new Date(sale_datetime.getTime() - (offset * 60 * 1000));
+            sale_date = sale_date.toISOString().split('T')[0];
+        _%>
+        <div class="input-group">
+            <input class="form-control" type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" required>
+            <div class="input-group-append">
+                <input class="input-group-text form-control" type="number" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" style="background-color: white" required>
+                <span class="input-group-text"><b>:</b></span>
+                <input class="input-group-text form-control" type="number" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" style="background-color: white" required>
             </div>
-            <%_ }); boxes.forEach((item, i) => {
-                if (i == 0) { _%>
-            <div style="padding: 1em 0; margin: 1em 0">Box Deals</div>
-            <%_ } _%>
-            <div class="input-checkbox">
-                <div class="row">
-                    <div class="col-6 float-left">
-                        <input class="sale-product" type="checkbox" name="id" value="<%= item._id %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %>> <span><%= item.name %></span>
-                    </div>
-                    <div class="col-6 float-left">
-                        <input class="sale-percentage" type="number" name="percentage" min="1" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- !sale_sitewide && item.price_sale ? 'checked' : '' %> <%- !sale_sitewide && item.price_sale ? '' : 'disabled' %> style="display: inline-block; width: 50px; margin: 0; padding: 5px; border-radius: 0" required> % off
-                    </div>
-                </div>
-            </div>
-            <%_ }); _%>
         </div>
-    </div>
-    <br><br>
+    </fieldset>
+
+    <fieldset id="sale-percentage-section">
+        <%_ products.forEach((item, i) => {
+            var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+            var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
+            var group = product_collection ? product_collection + " Collection" : category ? category : "Others"; _%>
+        <%- (item.product_collection || item.category) !== (products[i-1]?.product_collection || products[i-1]?.category) ? '<label>'+group+'</label>' : '' %>
+        <div class="row">
+            <label class="col float-left">
+                <span><%= item.name %></span>
+            </label>
+            <div class="col float-left">
+                <input type="hidden" name="id" value="<%= item._id %>">
+                <div class="input-group">
+                    <input class="form-control" type="number" name="percentage" min="0" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- sale_sitewide ? 'disabled' : '' %> required>
+                    <div class="input-group-append">
+                        <span class="input-group-text">% off</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%_ }); _%>
+        <div style="padding: 1em 0; margin: 1em 0">Box Deals</div>
+        <%_ boxes.forEach((item, i) => { _%>
+        <div class="row">
+            <label class="col float-left">
+                <span><%= item.name %></span>
+            </label>
+            <div class="col float-left">
+                <input type="hidden" name="id" value="<%= item._id %>">
+                <div class="input-group">
+                    <input class="form-control" type="number" name="percentage" min="0" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- sale_sitewide ? 'disabled' : '' %> required>
+                    <div class="input-group-append">
+                        <span class="input-group-text">% off</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <%_ }); _%>
+    </fieldset>
+
     <input type="submit" value="TURN ON / OFF">
 </form>
 <script>
     $("#sale-switch input").change(function() {
         $("#sitewide-switch input").prop("checked", false).trigger("change").attr("disabled", !this.checked);
-        $(".sale-product").prop("checked", false).attr("disabled", !this.checked).trigger("change");
+        !this.checked && $("#sale-percentage-section input[type=number]").val(0);
     });
 
     $("#sitewide-switch input").change(function() {
-        $("#sitewide-sale-percentage").attr("disabled", !this.checked).val("0");
-        $(".sale-product").prop("checked", false).attr("disabled", this.checked).trigger("change");
-    });
-
-    $(".sale-product").change(function() {
-        $(this).closest(".input-checkbox").find(".sale-percentage").attr("disabled", !this.checked);
+        $("#sitewide-sale-percentage").attr("disabled", !this.checked).val(0);
+        this.checked && $("#sale-percentage-section input[type=number]").val(0);
+        $("#sale-percentage-section input").attr("disabled", this.checked);
     });
 </script>

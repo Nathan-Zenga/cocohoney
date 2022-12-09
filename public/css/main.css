@@ -783,7 +783,6 @@ input, textarea, select {
 
 input, textarea, select, button {
     border: none;
-    border-radius: 5px;
     color: inherit;
 }
 
@@ -801,7 +800,6 @@ input[type=tel],
 textarea, select {
     padding: 10px;
     border-bottom: 1px solid white;
-    border-radius: 0;
     outline: none;
 }
 
@@ -1408,6 +1406,24 @@ label .dropdown-arrow {
     border: 2px solid rgb(124, 76, 76);
     background-color: white;
     color: black;
+}
+
+#admin-page #sale fieldset {
+    margin-bottom: 2em;
+}
+
+#admin-page #sale label:not(.switch),
+#admin-page #sale #sale-percentage-section .row {
+    margin-bottom: 1em;
+}
+
+#admin-page #sale label:not(.switch) {
+    display: block;
+    margin-bottom: 2em;
+}
+
+#admin-page #sale #sale-percentage-section .row label {
+    margin-bottom: 0;
 }
 
 .tab-content {

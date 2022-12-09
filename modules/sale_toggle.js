@@ -8,9 +8,13 @@ module.exports = async req => {
     const ids = (Array.isArray(id) ? id : [id]).filter(e => e);
     const percentages = (Array.isArray(percentage) ? percentage : [percentage]).filter(e => e);
     if (percentages.find(p => isNaN(parseInt(p)))) return { status: 400, response: "Percentage is invalid" };
-    if (percentages.find(p => parseInt(p) <= 0)) return { status: 400, response: "Percentage cannot be less than or equal to 0" };
-    if (ids.length !== percentages.length && !sitewide) return { status: 400, response: "Uneven number of selected items and specified percentages" };
-    if (!ids.length && !sitewide && sale_on) return { status: 400, response: "Please select items to put on sale" };
+    if (!sitewide && ids.length !== percentages.length) return { status: 400, response: "Uneven number of selected items and specified percentages" };
+    if (sale_on && !sitewide && !ids.length) return { status: 400, response: "Please select items to put on sale" };
+    if (sale_on && sitewide && percentage == 0) return { status: 400, response: "Sitewide sale discount percentage cannot be set to 0" };
+
+    const datetime = new Date(end_date);
+    datetime.setHours(end_hour, end_minute, 0, 0);
+    if (sale_on && datetime < Date.now()) return { status: 400, response: "Cannot set past date" };
 
     sale.active = false;
     sale.sitewide = false;
@@ -18,17 +22,13 @@ module.exports = async req => {
     sale.end_datetime = undefined;
     await Product.updateMany({}, { $set: { price_sale: undefined } });
     await Box.updateMany({}, { $set: { price_sale: undefined } });
-    if (!sale_on) return sale.save(err => ({ response: "Sale period now turned off" }));
+    if (!sale_on) { await sale.save(); return { response: "Sale period now turned off" } }
 
     sale.active = true;
+    sale.end_datetime = datetime;
     const products = await Product.find();
     const boxes = await Box.find();
     const result = {};
-
-    const datetime = new Date(end_date);
-    datetime.setHours(end_hour, end_minute, 0, 0);
-    if (datetime < Date.now()) return { status: 400, response: "Cannot set past date" };
-    sale.end_datetime = datetime;
 
     try {
         if (sitewide) {
@@ -47,7 +47,7 @@ module.exports = async req => {
                 const box = boxes.find(p => p.id == product_id);
                 const item = product || box;
                 const percent = parseInt(percentages[i]);
-                if (!item) return cb();
+                if (!item || percent == 0) return cb();
                 const sale_discount = (percent / 100) * item.price;
                 item.price_sale = ((item.price - sale_discount) / 100).toFixed(2);
                 item.save(err => err ? cb(err) : cb());

@@ -4,7 +4,7 @@ Schema.Types.String.set('trim', true);
 module.exports.Sale = model('Sale', new Schema({
     active: { type: Boolean, default: false },
     sitewide: { type: Boolean, default: false },
-    percentage: { type: Number, min: 1, max: 100 },
+    percentage: { type: Number, min: 0, max: 100 },
     end_datetime: { type: Date, default: Date.now() }
 }));
 

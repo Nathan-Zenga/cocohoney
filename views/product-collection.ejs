@@ -21,7 +21,7 @@
                                     <div class="product-name"><p><%= product.name %></p></div>
                                     <div class="product-price">
                                         <%_ const price = is_ambassador ? product.price_amb : sale_sitewide || sale && product.price_sale ? product.price_sale : product.price;
-                                            const price_original = product.price_sale? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
+                                            const price_original = product.price_sale ? " <del>£" + (product.price / 100).toFixed(2) + "</del>" : "" _%>
                                         <p>£<%- (price / 100).toFixed(2) + price_original %></p>
                                     </div>
                                     <div class="cart-options">

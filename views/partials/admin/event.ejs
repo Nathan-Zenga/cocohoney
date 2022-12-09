@@ -13,22 +13,23 @@
 
             <label>EVENT DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
             <fieldset>
-                <div class="row">
-                    <div class="col-sm-6 float-left">
-                        <%_
-                            var event_date = new Date();
-                            var offset = event_date.getTimezoneOffset();
-                            event_date = new Date(event_date.getTime() - (offset * 60 * 1000));
-                            event_date = event_date.toISOString().split('T')[0];
-                        _%>
-                        <input type="date" name="date" id="event-date" value="<%= event_date %>" required>
-                    </div>
-                    <div class="col-sm-6 float-left">
-                        <input type="number" class="inline" name="hour" id="event-hour" min="0" max="23" value="23" required> <b>:</b>
-                        <input type="number" class="inline" name="minute" id="event-minute" min="0" max="59" value="59" required>
-                        <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
+                <%_
+                    var event_date = new Date();
+                    var offset = event_date.getTimezoneOffset();
+                    event_date = new Date(event_date.getTime() - (offset * 60 * 1000));
+                    event_date = event_date.toISOString().split('T')[0];
+                _%>
+                <div class="input-group">
+                    <input class="form-control" type="date" id="event-date" name="date" value="<%= event_date %>" required>
+                    <div class="input-group-append">
+                        <input class="input-group-text form-control" type="number" id="event-hour" name="hour" value="23" min="0" max="23" style="background-color: white" required>
+                        <span class="input-group-text"><b>:</b></span>
+                        <input class="input-group-text form-control" type="number" id="event-minute" name="minute" value="59" min="0" max="59" style="background-color: white" required>
                     </div>
                 </div>
+                <br>
+                <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
+                <br><br>
             </fieldset>
 
             <label>EVENT INFO</label>
