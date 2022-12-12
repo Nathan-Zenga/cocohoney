@@ -4,10 +4,9 @@ const isAuthed = require('../modules/auth-check-admin');
 const { Highlights_post } = require('../models/models');
 
 router.post('/add', isAuthed, async (req, res) => {
-    const { title, text_body, link: lnk, media_lg_file, media_lg_url, media_sm_file, media_sm_url } = req.body;
-    const rgx = RegExp(`^${res.locals.location_origin.replace(/^https?:\/\//, "(https?:\\/\\/)?")}`);
-    const link = rgx.test(lnk) ? lnk.replace(rgx, "") : lnk;
-    const slide = new Highlights_post({ title, text_body, link });
+    const { title, text_body, link, media_lg_file, media_lg_url, media_sm_file, media_sm_url } = req.body;
+    const rgx = RegExp("^" + res.locals.location_origin.replace(/^https?:\/\//, "(https?:\\/\\/)?"));
+    const slide = new Highlights_post({ title, text_body, link: rgx.test(link) ? link.replace(rgx, "") : link });
     const media_lg = media_lg_url || media_lg_file;
     const media_sm = media_sm_url || media_sm_file;
     const p_id_lg = "cocohoney/site-content/pages/index/highlights-media/media-lg-" + slide.id;
@@ -15,15 +14,19 @@ router.post('/add', isAuthed, async (req, res) => {
     try {
         if (!media_lg) return res.status(400).send("Please upload at least a main image for this post");
         const result1 = await cloud.uploader.upload(media_lg, { public_id: p_id_lg });
-        const result2 = media_sm ? await cloud.uploader.upload(media_sm, { public_id: p_id_sm, resource_type: "auto" }) : {};
+        const result2 = media_sm ? await cloud.uploader.upload(media_sm, { public_id: p_id_sm, resource_type: "auto" }) : null;
         slide.media_lg.p_id = result1.public_id;
         slide.media_lg.url = result1.secure_url;
         slide.media_lg.media_type = result1.resource_type;
-        slide.media_sm.p_id = result2.public_id;
-        slide.media_sm.url = result2.secure_url;
-        slide.media_sm.media_type = result2.resource_type;
+        slide.media_sm.p_id = result2?.public_id;
+        slide.media_sm.url = result2?.secure_url;
+        slide.media_sm.media_type = result2?.resource_type;
         await slide.save(); res.send("Saved");
-    } catch(err) { res.status(err.http_code || 500).send(err.message) }
+    } catch(err) {
+        await cloud.api.delete_resources([p_id_lg], { resource_type: slide.media_lg.media_type }).catch(e => e);
+        await cloud.api.delete_resources([p_id_sm], slide.media_sm?.media_type ? { resource_type: slide.media_sm.media_type } : {}).catch(e => e);
+        res.status(err.http_code || 500).send(err.message)
+    }
 });
 
 router.post('/edit', isAuthed, async (req, res) => {
