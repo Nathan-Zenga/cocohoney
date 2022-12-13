@@ -11,7 +11,8 @@ router.get('/', async (req, res) => {
 
 router.post('/post', isAuthed, async (req, res) => {
     const { title, date, hour, minute, info, ttbc, price, stock_qty, image_url, image_file } = req.body;
-    const d = new Date(date); d.setHours(!isNaN(parseInt(hour)) ? hour : 0, !isNaN(parseInt(minute)) ? minute : 0);
+    const d = new Date(date); d.setHours(hour, minute, 0, 0);
+    if (!d.getDate()) return res.status(400).send("Invalid date");
     const event = new Event({ title, date: d, ttbc: !!ttbc, info, price, stock_qty });
     try {
         if (!image_url && !image_file) { await event.save(); return res.send("Event saved and posted") }
@@ -32,21 +33,20 @@ router.post('/edit', isAuthed, async (req, res) => {
         event.ttbc = !!ttbc;
 
         if (title) event.title = title;
-        if (date) { event.date.setDate(d.getDate()); event.date.setMonth(d.getMonth()); event.date.setFullYear(d.getFullYear()) }
-        if (hour) event.date.setHours(!isNaN(parseInt(hour)) ? hour : event.date.getHours());
-        if (minute) event.date.setMinutes(!isNaN(parseInt(minute)) ? minute : event.date.getMinutes());
+        if (date) event.date.setFullYear(d.getFullYear(), d.getMonth(), d.getDate());
+        if (hour) event.date.setHours(hour);
+        if (minute) event.date.setMinutes(minute);
         if (info) event.info = info;
         if (price) event.price = price;
         if (stock_qty) event.stock_qty = stock_qty;
-        if (date || minute || hour) event.markModified("date");
+        if (date || minute || hour) { event.markModified("date"); if (!event.date.getDate()) return res.status(400).send("Invalid date") }
 
-        const saved = await event.save();
-        if (!image_url && !image_file) return res.send("Event details updated");
+        if (!image_url && !image_file) { await event.save(); return res.send("Event details updated") }
         await cloud.api.delete_resources([p_id_prev]);
-        const public_id = `cocohoney/event/flyer/${saved.title}-${saved.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/event/flyer/${event.title}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
-        saved.image = { p_id: result.public_id, url: result.secure_url };
-        saved.save(() => { res.send("Event details updated") });
+        event.image = { p_id: result.public_id, url: result.secure_url };
+        await event.save(); res.send("Event details updated")
     } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });
 

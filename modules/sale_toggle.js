@@ -14,6 +14,7 @@ module.exports = async req => {
 
     const datetime = new Date(end_date);
     datetime.setHours(end_hour, end_minute, 0, 0);
+    if (sale_on && !datetime.getDate()) return { status: 400, response: "Invalid date" };
     if (sale_on && datetime < Date.now()) return { status: 400, response: "Cannot set past date" };
 
     sale.active = false;
