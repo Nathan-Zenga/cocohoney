@@ -42,9 +42,9 @@ router.post('/edit', isAuthed, async (req, res) => {
         if (date || minute || hour) { event.markModified("date"); if (!event.date.getDate()) return res.status(400).send("Invalid date") }
 
         if (!image_url && !image_file) { await event.save(); return res.send("Event details updated") }
-        await cloud.api.delete_resources([p_id_prev]);
         const public_id = `cocohoney/event/flyer/${event.title}-${event.id}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
+        p_id_prev != public_id && await cloud.api.delete_resources([p_id_prev]).catch(e => e);
         event.image = { p_id: result.public_id, url: result.secure_url };
         await event.save(); res.send("Event details updated")
     } catch(err) { res.status(err.http_code || 500).send(err.message) }

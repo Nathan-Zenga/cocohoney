@@ -83,13 +83,12 @@ router.post('/box/edit', isAuthed, async (req, res) => {
         if (max_items) box.max_items = max_items;
                        box.products_inc = box_item ? Array.isArray(box_item) ? box_item : [box_item] : [];
 
-        const saved = await box.save();
-        if (!image_url && !image_file) return res.send("Box details updated successfully");
-        const public_id = `cocohoney/product/box_deals/${saved.name}`.replace(/[ ?&#\\%<>]/g, "_");
-        await cloud.api.delete_resources([p_id_prev]);
+        if (!image_url && !image_file) { await box.save(); return res.send("Box details updated successfully") }
+        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
-        saved.image = { p_id: result.public_id, url: result.secure_url };
-        await saved.save(); res.send("Box details updated successfully");
+        p_id_prev != public_id && await cloud.api.delete_resources([p_id_prev]).catch(e => e);
+        box.image = { p_id: result.public_id, url: result.secure_url };
+        await box.save(); res.send("Box details updated successfully");
     } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 

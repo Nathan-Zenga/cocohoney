@@ -60,13 +60,12 @@ router.post('/stock/edit', isAuthed, async (req, res) => {
         if (stock_qty)                product.stock_qty = stock_qty;
                                       product.pre_release = !!pre_release;
 
-        const saved = await product.save();
-        if (!image_url && !image_file) return res.send("Product details updated successfully");
-        const public_id = `cocohoney/product/stock/${saved.name}`.replace(/[ ?&#\\%<>]/g, "_");
-        await cloud.api.delete_resources([p_id_prev]);
+        if (!image_url && !image_file) { await product.save(); return res.send("Product details updated successfully") }
+        const public_id = `cocohoney/product/stock/${product.name}`.replace(/[ ?&#\\%<>]/g, "_");
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
-        saved.image = { p_id: result.public_id, url: result.secure_url };
-        await saved.save(); res.send("Product details updated successfully");
+        p_id_prev != public_id && await cloud.api.delete_resources([p_id_prev]).catch(e => e);
+        product.image = { p_id: result.public_id, url: result.secure_url };
+        await product.save(); res.send("Product details updated successfully");
     } catch (err) { res.status(err.http_code || 500).send(err.message) }
 });
 
