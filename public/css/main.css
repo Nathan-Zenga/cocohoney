@@ -1266,7 +1266,7 @@ label .dropdown-arrow {
     transform: rotateX(180deg);
 }
 
-#admin-page form .new-product-category {
+#admin-page form .new-opt {
     display: none;
 }
 
@@ -2297,10 +2297,6 @@ input.product-quantity:disabled {
         font-size: 16px;
         margin-top: 1em;
     }
-}
-
-#product.tab-pane form .new-product-category {
-    display: none;
 }
 
 .event-item {

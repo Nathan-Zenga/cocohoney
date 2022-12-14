@@ -31,28 +31,34 @@
             <label>TOTAL IN STOCK</label>
             <input type="number" name="stock_qty" id="stock_qty" min="0" value="1" required>
 
-            <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+            <label>PRODUCT CATEGORY <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="category" id="product_category" required>
                 <option value="">Select category</option>
-                <option value="new">Make new type</option>
+                <option value="new">Make new category</option>
                 <%_ const categories = [...new Set(products.map(p => p.category))];
                     categories.forEach(c => { _%>
                 <option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option>
                 <%_ }) _%>
             </select>
 
-            <div class="new-product-category">
-                <label>NEW PRODUCT TYPE</label>
+            <div class="new-product-category new-opt">
+                <label>NEW PRODUCT CATEGORY</label>
                 <input type="text" name="category_new" id="product_category_new" disabled required>
             </div>
 
             <label>COLLECTION <span>(OPTIONAL)</span><i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="product_collection" id="product_collection">
                 <option value="">Select collection</option>
+                <option value="new">Add new collection</option>
                 <option value="Original">Original</option>
                 <option value="Honey Drip">Honey Drip</option>
                 <option value="Emerald">Emerald</option>
             </select>
+
+            <div class="new-product-collection new-opt">
+                <label>NEW COLLECTION</label>
+                <input type="text" name="product_collection_new" id="product_collection_new" disabled required>
+            </div>
 
             <label>PRODUCT INFO <span>(OPTIONAL)</span></label>
             <textarea name="info" id="product_info" rows="10"></textarea>
@@ -109,27 +115,33 @@
             <label>TOTAL IN STOCK</label>
             <input type="number" name="stock_qty" id="stock_qty_edit" min="0" value="1">
 
-            <label>PRODUCT TYPE <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
+            <label>PRODUCT CATEGORY <i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="category" id="product_category_edit">
                 <option value="">Select category</option>
-                <option value="new">Make new type</option>
+                <option value="new">Add new category</option>
                 <%_ categories.forEach(c => { _%>
                 <option value="<%= c %>"><%= c.charAt(0).toUpperCase() + c.slice(1) %></option>
                 <%_ }) _%>
             </select>
 
-            <div class="new-product-category">
-                <label>NEW PRODUCT TYPE</label>
+            <div class="new-product-category new-opt">
+                <label>NEW CATEGORY</label>
                 <input type="text" name="category_new" id="product_category_new_edit" disabled required>
             </div>
 
             <label>COLLECTION<i class="dropdown-arrow fal fa-chevron-down"></i></label></label>
             <select name="product_collection" id="product_collection_edit">
                 <option value="">Select collection</option>
+                <option value="new">Add new collection</option>
                 <option value="Original">Original</option>
                 <option value="Honey Drip">Honey Drip</option>
                 <option value="Emerald">Emerald</option>
             </select>
+
+            <div class="new-product-collection new-opt">
+                <label>NEW COLLECTION</label>
+                <input type="text" name="product_collection_new" id="product_collection_new_edit" disabled required>
+            </div>
 
             <label>PRODUCT INFO</label>
             <textarea name="info" id="product_info_edit" rows="10"></textarea>
@@ -212,7 +224,7 @@
     $("#product.tab-pane select").change(function() {
         var isNew = this.value === "new";
         var method = isNew ? "show" : "hide";
-        $(this).closest("form").find(".new-product-category")[method]().find(":input").attr("disabled", !isNew);
+        $(this).next(".new-opt")[method]().find(":input").attr("disabled", !isNew);
     });
 
     $("nav a:link").get().forEach(function(e, i, a) {

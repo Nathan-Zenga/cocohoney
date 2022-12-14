@@ -31,8 +31,8 @@
     <fieldset id="sale-end-date-section">
         <label>END OF SALE DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
         <%_
-            var sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
-            var offset = sale_datetime.getTimezoneOffset();
+            const sale_datetime = !!sale ? sale_docs[0].end_datetime : new Date();
+            const offset = sale_datetime.getTimezoneOffset();
             var sale_date = new Date(sale_datetime.getTime() - (offset * 60 * 1000));
             sale_date = sale_date.toISOString().split('T')[0];
         _%>
@@ -47,28 +47,12 @@
     </fieldset>
 
     <fieldset id="sale-percentage-section">
-        <%_ products.forEach((item, i) => {
-            var product_collection = item.product_collection.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
-            var category = item.category.split("_").map(char => char.charAt(0).toUpperCase() + char.slice(1).replace(/_/g, " ")).join(" ");
-            var group = product_collection ? product_collection + " Collection" : category ? category : "Others"; _%>
-        <%- (item.product_collection || item.category) !== (products[i-1]?.product_collection || products[i-1]?.category) ? '<label>'+group+'</label>' : '' %>
-        <div class="row">
-            <label class="col float-left">
-                <span><%= item.name %></span>
-            </label>
-            <div class="col float-left">
-                <input type="hidden" name="id" value="<%= item._id %>">
-                <div class="input-group">
-                    <input class="form-control" type="number" name="percentage" min="0" max="100" value="<%- !sale_sitewide && item.price_sale ? 100 - parseInt((item.price_sale / item.price) * 100) : 0  %>" <%- sale_sitewide ? 'disabled' : '' %> required>
-                    <div class="input-group-append">
-                        <span class="input-group-text">% off</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <%_ }); _%>
-        <div style="padding: 1em 0; margin: 1em 0">Box Deals</div>
-        <%_ boxes.forEach((item, i) => { _%>
+        <%_ [...products, ...boxes].forEach((item, i, arr) => {
+            const product_collection = item.product_collection?.replace(/_/g, " ").replace(/\b./g, m => m.toUpperCase());
+            const category = item.category?.replace(/_/g, " ").replace(/\b./g, m => m.toUpperCase());
+            const box_deals = item.collection.name === "boxes" ? "Box Deals" : "";
+            const label = product_collection ? product_collection + " Collection" : box_deals || category || "Others"; _%>
+        <%- (item.product_collection || item.category) !== (arr[i-1]?.product_collection || arr[i-1]?.category) ? '<label>'+label+'</label>' : '' %>
         <div class="row">
             <label class="col float-left">
                 <span><%= item.name %></span>
