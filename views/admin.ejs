@@ -16,7 +16,7 @@
                 <option value="#faqs">FAQs</option>
                 <option value="#shipping">SHIPPING & DELIVERY</option>
                 <option value="#box">BOX DEALS</option>
-                <option value="/admin/mail/form">MAIL</option>
+                <option value="#mail">MAIL</option>
             </select>
         </div>
         <div class="nav-pills-container dt-view-md">
@@ -34,7 +34,7 @@
                 <a class="nav-link" data-toggle="pill" href="#faqs">FAQs</a>
                 <a class="nav-link" data-toggle="pill" href="#shipping">SHIPPING & DELIVERY</a>
                 <a class="nav-link" data-toggle="pill" href="#box">BOX DEALS</a>
-                <a class="nav-link" data-toggle="none" href="/admin/mail/form">MAIL</a>
+                <a class="nav-link" data-toggle="pill" href="#mail">MAIL</a>
             </div>
         </div>
         <div class="tab-content container">
@@ -71,7 +71,7 @@
             </div>
 
             <div id="discount_code" class="tab-pane fade">
-            <%- include ('partials/admin/discount_code') -%>
+            <%- include ('partials/admin/discount-code') -%>
             </div>
 
             <div id="lookbook" class="tab-pane fade">
@@ -83,11 +83,15 @@
             </div>
 
             <div id="shipping" class="tab-pane fade">
-            <%- include ('partials/admin/shipping_method') -%>
+            <%- include ('partials/admin/shipping-method') -%>
             </div>
 
             <div id="box" class="tab-pane fade">
             <%- include ('partials/admin/box') -%>
+            </div>
+
+            <div id="mail" class="tab-pane fade">
+            <%- include ('partials/admin/mail') -%>
             </div>
         </div>
     </section>

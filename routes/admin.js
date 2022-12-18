@@ -8,9 +8,14 @@ const sale_toggle = require('../modules/sale_toggle');
 const { Admin, Discount_code, FAQ, Member, Ambassador, Order, Product, Wishlist } = require('../models/models');
 const passport = require('../config/passport');
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
     if (!res.locals.is_admin) return res.redirect("/admin/login");
-    Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db }))
+    const members = await Member.find().sort({ firstname: 1 }).exec();
+    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
+    const orders = await Order.find().sort({ customer_email: 1 }).exec();
+    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
+    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
+    Collections(db => res.render('admin', { title: "Admin", pagename: "admin", ...db, recipients }))
 });
 
 router.get('/login', (req, res) => {
@@ -19,18 +24,6 @@ router.get('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => { req.logout(() => res.redirect("/")) });
-
-router.get('/mail/form', async (req, res) => {
-    if (!res.locals.is_admin) return res.redirect("/admin/login?redirect_to=" + req.originalUrl);
-    const members = await Member.find().sort({ firstname: 1 }).exec();
-    const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
-    const orders = await Order.find().sort({ customer_email: 1 }).exec();
-    const customers = orders.filter((o, i, a) => ![...ambassadors, ...members].find(m => m.email === o.customer_email) && o.customer_email !== a[i+1]?.customer_email).sort((a, b) => a.customer_name - b.customer_name);
-    const title = "Admin - Compose Mail";
-    const pagename = "admin-mail-form";
-    const recipients = [...ambassadors.filter(a => !members.find(m => m.email === a.email)), ...members, ...customers];
-    res.render('admin-mail-form', { title, pagename, recipients })
-});
 
 router.get('/ambassador/account', isAuthed, async (req, res, next) => {
     const { firstname: fn, lastname: ln } = req.query;
