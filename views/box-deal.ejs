@@ -37,15 +37,16 @@
                     <label>SELECT COLLECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                     <select>
                         <option value="">-</option>
-                        <%_ groups.forEach((field, i) => {
+                        <%_ groups.forEach(field => {
                             const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
                         <option value="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></option>
                         <%_ }) _%>
                     </select>
                 </div>
+
                 <div class="nav-pills-container dt-view-md">
                     <div class="nav nav-pills">
-                    <%_ groups.forEach((field, i) => {
+                    <%_ groups.forEach(field => {
                         const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
                         <a class="nav-link" data-toggle="pill" href="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></a>
                     <%_ }) _%>
@@ -102,6 +103,9 @@
             var bottom = windowOffsetBottom >= footerOffsetTop + footerMarginTop ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
             $("#submit-btn").css("bottom", bottom);
             if (e.type === "load") $("form").trigger("reset").find("input[type=checkbox]").change();
+            if (e.type !== "scroll" || $("#box-deal-form .nav-link").is(".active")) return;
+            var isPastFormOffsetTop = windowOffsetBottom - 200 > $("#box-deal-form").offset().top;
+            isPastFormOffsetTop && $("#box-deal-form .nav-link:first").click();
         });
 
         $(".nav-link").on("shown.bs.tab hidden.bs.tab", function() {
