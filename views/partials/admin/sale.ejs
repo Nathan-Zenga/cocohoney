@@ -37,12 +37,12 @@
             sale_date = sale_date.toISOString().split('T')[0];
         _%>
         <div class="input-group">
-            <input class="form-control" type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" required>
+            <input class="form-control" type="date" name="end_date" id="sale-end-date" value="<%= sale_date %>" style="flex: 0 0 60%" required>
+            <input class="form-control" type="number" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" required>
             <div class="input-group-append">
-                <input class="input-group-text form-control" type="number" name="end_hour" id="sale-end-hour" min="0" max="23" value="<%= !!sale ? sale_datetime.getHours() : 23 %>" style="background-color: white" required>
                 <span class="input-group-text"><b>:</b></span>
-                <input class="input-group-text form-control" type="number" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" style="background-color: white" required>
             </div>
+            <input class="form-control" type="number" name="end_minute" id="sale-end-minute" min="0" max="59" value="<%= !!sale ? sale_datetime.getMinutes() : 59 %>" required>
         </div>
     </fieldset>
 

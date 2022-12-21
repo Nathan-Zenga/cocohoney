@@ -26,14 +26,12 @@ router.get('/login', (req, res) => {
 router.get('/logout', (req, res) => { req.logout(() => res.redirect("/")) });
 
 router.get('/ambassador/account', isAuthed, async (req, res, next) => {
-    const { firstname: fn, lastname: ln } = req.query;
-    const firstname = new RegExp(`^${fn}$`, "i");
-    const lastname = new RegExp(`^${ln}$`, "i");
+    const firstname = new RegExp(`^${req.query.firstname}$`, "i");
+    const lastname = new RegExp(`^${req.query.lastname}$`, "i");
     const ambassador = await Ambassador.findOne({ firstname, lastname });
     if (!ambassador) return next();
     const discount_code = await Discount_code.findOne({ code: ambassador.discount_code });
-    const { orders_applied } = discount_code || {};
-    const orders = await Order.find({ _id: { $in: orders_applied || [] } }).sort({ created_at: -1 }).exec();
+    const orders = await Order.find({ _id: { $in: discount_code?.orders_applied || [] } }).sort({ created_at: -1 }).exec();
     const products = await Product.find();
     const wishlist = await Wishlist.findOne({ customer_id: ambassador.id });
     const wishlist_items = await Product.find({ _id: { $in: wishlist?.items || [] } });
@@ -235,7 +233,7 @@ router.post('/faqs/edit', isAuthed, (req, res) => {
 router.post('/faqs/remove', isAuthed, (req, res) => {
     const ids = Object.values(req.body);
     if (!ids.length) return res.status(400).send("Nothing selected");
-    FAQ.deleteMany({_id : { $in: ids }}, (err, result) => {
+    FAQ.deleteMany({ _id: { $in: ids } }, (err, result) => {
         if (err) return res.status(500).send(err.message);
         if (!result.deletedCount) return res.status(404).send("FAQ(s) not found");
         res.send("FAQ"+ (ids.length > 1 ? "s" : "") +" removed successfully")

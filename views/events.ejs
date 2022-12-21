@@ -30,7 +30,7 @@
                             <%_ const hour = event.date.getHours() === 0 ? "12" : event.date.getHours() <= 12 ? event.date.getHours() : event.date.getHours() - 12;
                                 const minutes = (event.date.getMinutes() < 10 ? "0" : "") + event.date.getMinutes();
                                 const ampm = event.date.getHours() > 12 ? "PM" : "AM"; _%>
-                            <span class="event-time"><%= event.ttbc ? "Time TBC" : `${hour}:${minutes} ${ampm}` %></span>
+                            <span class="event-time"><%= event.ttbc ? "Time to be confirmed" : `${hour}:${minutes} ${ampm}` %></span>
                         </p>
                         <button type="button" class="submit event-checkout-modal-btn" data-toggle="modal" data-target="#event-checkout-modal-<%= i %>" <%- Date.now() > event.date.getTime() || event.stock_qty < 1 ? "disabled" : "" %>>
                             <%= Date.now() > event.date.getTime() ? "TICKETS NO LONGER AVAILABLE" : event.stock_qty < 1 ? "SOLD OUT" : "BUY TICKETS" %>

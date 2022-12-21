@@ -20,15 +20,16 @@
                     event_date = event_date.toISOString().split('T')[0];
                 _%>
                 <div class="input-group">
-                    <input class="form-control" type="date" id="event-date" name="date" value="<%= event_date %>" required>
+                    <input class="form-control" type="date" id="event-date" name="date" value="<%= event_date %>" style="flex: 0 0 60%" required>
+                    <input class="form-control" type="number" id="event-hour" name="hour" value="23" min="0" max="23" required>
                     <div class="input-group-append">
-                        <input class="input-group-text form-control" type="number" id="event-hour" name="hour" value="23" min="0" max="23" style="background-color: white" required>
                         <span class="input-group-text"><b>:</b></span>
-                        <input class="input-group-text form-control" type="number" id="event-minute" name="minute" value="59" min="0" max="59" style="background-color: white" required>
                     </div>
+                    <input class="form-control" type="number" id="event-minute" name="minute" value="59" min="0" max="59" required>
                 </div>
                 <br>
-                <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
+                <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true">
+                <label for="event-time-tbc">Time to be confirmed?</label>
                 <br><br>
             </fieldset>
 
@@ -75,16 +76,18 @@
 
             <label>EVENT DATE & TIME <span class="margin">(24-HOUR FORMAT)</span></label>
             <fieldset>
-                <div class="row">
-                    <div class="col-sm-6 float-left">
-                        <input type="date" name="date" id="event-date-edit" required>
+                <div class="input-group">
+                    <input class="form-control" type="date" id="event-date-edit" name="date" value="<%= event_date %>" style="flex: 0 0 60%" required>
+                    <input class="form-control" type="number" id="event-hour-edit" name="hour" value="23" min="0" max="23" required>
+                    <div class="input-group-append">
+                        <span class="input-group-text"><b>:</b></span>
                     </div>
-                    <div class="col-sm-6 float-left">
-                        <input type="number" class="inline" name="hour" id="event-hour-edit" min="0" max="23" value="23" required> <b>:</b>
-                        <input type="number" class="inline" name="minute" id="event-minute-edit" min="0" max="59" value="59" required>
-                        <input type="checkbox" name="ttbc" id="event-time-tbc-edit" style="margin-left: 5px" value="true"> <label>Time TBC?</label>
-                    </div>
+                    <input class="form-control" type="number" id="event-minute-edit" name="minute" value="59" min="0" max="59" required>
                 </div>
+                <br>
+                <input type="checkbox" name="ttbc" id="event-time-tbc-edit" style="margin-left: 5px" value="true">
+                <label for="event-time-tbc-edit">Time to be confirmed?</label>
+                <br><br>
             </fieldset>
 
             <label>EVENT INFO</label>
