@@ -54,6 +54,12 @@
                                                     <input type="url" name="image_url" id="review_image_url" placeholder="Or enter the image URL">
                                                 </fieldset>
 
+                                                <label>Have you purchased with us before?</label>
+                                                <fieldset>
+                                                    <input type="radio" name="purchased" value="no" id="not-purchased"> <span>No</span>
+                                                    <input type="radio" name="purchased" value="yes" id="purchased"> <span>Yes</span>
+                                                </fieldset>
+
                                                 <fieldset>
                                                     <div class="g-recaptcha" data-sitekey="<%= recaptcha_site_key %>"></div>
                                                 </fieldset>
@@ -231,7 +237,7 @@
                     });
 
                     var offsetTop = target && $("#"+target).length ? $("#"+target).offset().top : 0;
-                    if (target && e.type === "load") $('html, body').animate({ scrollTop: offsetTop - 50 });
+                    target && e.type === "load" && $('html, body').animate({ scrollTop: offsetTop - 50 });
                 }, e.type === "load" ? 0 : parseFloat($(".comment-wrapper").css("transition-duration")) * 1000);
             });
 

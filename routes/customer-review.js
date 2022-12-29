@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/submit', async (req, res) => {
-    const { author_name, headline, rating, commentry, image_file, image_url, "g-recaptcha-response": captcha } = req.body;
+    const { author_name, headline, rating, commentry, image_file, image_url, "g-recaptcha-response": captcha, purchased: honeypot } = req.body;
     if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot.\nPlease tick the box to proceed.");
     const review = new Review({ author_name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
@@ -25,7 +25,7 @@ router.post('/submit', async (req, res) => {
     if (!result?.success) return res.status(400).send("Failed CAPTCHA verification");
 
     try {
-        await forEachOf(images, (image, i, cb) => {
+        !honeypot && await forEachOf(images, (image, i, cb) => {
             const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
             cloud.uploader.upload(image, { public_id }, (err, result) => {
                 if (err) return cb(err);
@@ -34,7 +34,7 @@ router.post('/submit', async (req, res) => {
                 cb();
             });
         });
-        await review.save();
+        !honeypot && await review.save();
         res.send("Review submitted");
     } catch (err) {
         await cloud.api.delete_resources(saved_p_ids).catch(e => null);

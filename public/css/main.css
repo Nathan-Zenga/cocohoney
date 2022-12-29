@@ -2383,3 +2383,8 @@ input.product-quantity:disabled {
         max-height: 500px;
     }
 }
+
+#new-review-form > fieldset > label:nth-last-of-type(1),
+#new-review-form > fieldset > label:nth-last-of-type(1) + fieldset {
+    display: none;
+}
