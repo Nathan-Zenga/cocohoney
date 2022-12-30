@@ -1,8 +1,8 @@
 const router = require('express').Router();
-const { default: axios } = require('axios');
 const MailTransporter = require('../modules/mail-transporter');
 const { FAQ, Review, Overview_image, Order, Shipping_method, Discount_code, Highlights_post, Ambassador, Member } = require('../models/models');
-const { RECAPTCHA_SITE_KEY, RECAPTCHA_SECRET_KEY, CHC_EMAIL } = process.env;
+const recaptcha = require('../modules/recaptcha');
+const { RECAPTCHA_SITE_KEY, CHC_EMAIL } = process.env;
 
 router.get('/', async (req, res) => {
     const overview_images = await Overview_image.find().sort({ position: 1 }).exec();
@@ -39,19 +39,11 @@ router.get('/mail/unsubscribe', async (req, res) => {
     res.render('mail-unsubscribe-msg', { email: saved.email || saved.customer_email });
 });
 
-router.post('/contact/mail/send', async (req, res) => {
-    const { firstname, lastname, email, message, "g-recaptcha-response": captcha } = req.body;
-    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot.\nPlease tick the box to proceed.");
-
-    const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
-    const verifyURL = "https://google.com/recaptcha/api/siteverify?" + params.toString();
-    const { data: result } = await axios.get(verifyURL).catch(e => e);
-    if (!result?.success) return res.status(400).send("Failed CAPTCHA verification");
-
-    const transporter = new MailTransporter({ email: CHC_EMAIL });
+router.post('/contact/mail/send', recaptcha, async (req, res) => {
+    const { firstname, lastname, email, message } = req.body;
     const subject = "New message / enquiry";
     const msg = `New message from <b>${firstname} ${lastname} (${email})</b>:\n\n${message}`;
-    transporter.sendMail({ subject, message: msg }, err => {
+    new MailTransporter({ email: CHC_EMAIL }).sendMail({ subject, message: msg }, err => {
         if (err) return res.status(500).send(err.message);
         res.send("Email sent");
     });

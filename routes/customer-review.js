@@ -1,18 +1,17 @@
 const router = require('express').Router();
 const cloud = require('cloudinary').v2;
-const { default: axios } = require('axios');
 const { forEachOf } = require('async');
 const { Review } = require('../models/models');
-const { RECAPTCHA_SITE_KEY: recaptcha_site_key, RECAPTCHA_SECRET_KEY } = process.env;
+const recaptcha = require('../modules/recaptcha');
+const { RECAPTCHA_SITE_KEY: recaptcha_site_key } = process.env;
 
 router.get('/', async (req, res) => {
     const reviews = await Review.find().sort({ created_at: -1 }).exec();
     res.render('customer-reviews', { title: "Reviews", pagename: "customer-reviews", reviews, recaptcha_site_key });
 });
 
-router.post('/submit', async (req, res) => {
-    const { author_name, headline, rating, commentry, image_file, image_url, "g-recaptcha-response": captcha, purchased: honeypot } = req.body;
-    if (!captcha) return res.status(400).send("Sorry, we need to verify that you're not a robot.\nPlease tick the box to proceed.");
+router.post('/submit', recaptcha, async (req, res) => {
+    const { author_name, headline, rating, commentry, image_file, image_url, purchased: honeypot } = req.body;
     const review = new Review({ author_name, headline, rating, commentry, author_verified: req.isAuthenticated() });
     const image_files = (Array.isArray(image_file) ? image_file : [image_file]).filter(e => e);
     const image_urls = (Array.isArray(image_url) ? image_url : [image_url]).filter(e => e);
@@ -21,11 +20,6 @@ router.post('/submit', async (req, res) => {
 
     const url_regex = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
     if (url_regex.test(`${headline} ${commentry}`)) return res.status(400).send("Please do not include links in your submitted review");
-
-    const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
-    const verifyURL = "https://google.com/recaptcha/api/siteverify?" + params.toString();
-    const { data: result } = await axios.get(verifyURL).catch(e => e);
-    if (!result?.success) return res.status(400).send("Failed CAPTCHA verification");
 
     try {
         !honeypot && await forEachOf(images, (image, i, cb) => {
