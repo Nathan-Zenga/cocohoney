@@ -19,6 +19,9 @@ router.post('/submit', async (req, res) => {
     const images = [...image_files, ...image_urls];
     const saved_p_ids = [];
 
+    const url_regex = /(?:(?:https?|ftp|file|data):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/gi;
+    if (url_regex.test(`${headline} ${commentry}`)) return res.status(400).send("Please do not include links in your submitted review");
+
     const params = new URLSearchParams({ secret: RECAPTCHA_SECRET_KEY, response: captcha, remoteip: req.socket.remoteAddress });
     const verifyURL = "https://google.com/recaptcha/api/siteverify?" + params.toString();
     const { data: result } = await axios.get(verifyURL).catch(e => e);

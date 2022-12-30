@@ -200,6 +200,7 @@
 
             $("#new-review-form").submit(function(e) {
                 e.preventDefault();
+                if (!$(this).find(":submit").is(":hover, :focus")) return;
                 var btnController = new submitBtnController(this);
                 $.post(this.action, $(this).serializeArray(), function(result) {
                     alert(result);
