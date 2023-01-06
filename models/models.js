@@ -162,8 +162,8 @@ module.exports.Review = model('Review', new Schema({
 }, { timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' } }));
 
 module.exports.Highlights_post = model('Highlights_post', new Schema({
-    media_lg: { p_id: String, url: String, media_type: String },
-    media_sm: { p_id: String, url: String, media_type: String },
+    media_lg: { p_id: String, url: String, media_type: String, orientation: String },
+    media_sm: { p_id: String, url: String, media_type: String, orientation: String },
     title: String,
     text_body: String,
     link: String

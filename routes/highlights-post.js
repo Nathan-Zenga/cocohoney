@@ -18,9 +18,11 @@ router.post('/add', isAuthed, async (req, res) => {
         slide.media_lg.p_id = result1.public_id;
         slide.media_lg.url = result1.secure_url;
         slide.media_lg.media_type = result1.resource_type;
+        slide.media_lg.orientation = result1.width > result1.height ? "landscape" : result1.width < result1.height ? "portrait" : "square";
         slide.media_sm.p_id = result2?.public_id;
         slide.media_sm.url = result2?.secure_url;
         slide.media_sm.media_type = result2?.resource_type;
+        if (result2) slide.media_sm.orientation = result2.width > result2.height ? "landscape" : result2.width < result2.height ? "portrait" : "square";
         await slide.save(); res.send("Saved");
     } catch(err) {
         await cloud.api.delete_resources([p_id_lg], { resource_type: slide.media_lg.media_type }).catch(e => e);
@@ -48,9 +50,11 @@ router.post('/edit', isAuthed, async (req, res) => {
         if (result1) slide.media_lg.p_id = result1.public_id;
         if (result1) slide.media_lg.url = result1.secure_url;
         if (result1) slide.media_lg.media_type = result1.resource_type;
+        if (result1) slide.media_lg.orientation = result1.width > result1.height ? "landscape" : result1.width < result1.height ? "portrait" : "square";        
         if (result2) slide.media_sm.p_id = result2.public_id;
         if (result2) slide.media_sm.url = result2.secure_url;
         if (result2) slide.media_sm.media_type = result2.resource_type;
+        if (result2) slide.media_sm.orientation = result2.width > result2.height ? "landscape" : result2.width < result2.height ? "portrait" : "square";        
         await slide.save(); res.send("Slide updated");
     } catch(err) { res.status(err.http_code || 500).send(err.message) }
 });

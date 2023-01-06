@@ -365,6 +365,11 @@ footer #copyright {
         max-width: 130%;
     }
 
+    #highlights .media-group .main-media.large.landscape {
+        -webkit-transform: translate(-50%, -50%) rotate(90deg);
+        transform: translate(-50%, -50%) rotate(90deg);
+    }
+
     #highlights .media-group .main-media-small-wrapper {
         top: auto;
         right: auto;
@@ -372,6 +377,7 @@ footer #copyright {
         bottom: 36px;
         height: 180px;
         width: 150px;
+        -webkit-transform: none;
         transform: none;
     }
 
