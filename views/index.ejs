@@ -22,22 +22,23 @@
                 <div class="carousel-inner" style="overflow: initial;">
                     <%_ highlights.forEach((slide, i) => { _%>
                     <div class="carousel-item<%- i === 0 ? ' active' : '' %>">
-                        <div class="content-layer container">
-                            <div class="row carousel-item-row">
-                                <div class="col-sm-5 float-left media-wrapper">
-                                    <div class="main-media-large-wrapper" style="background-image: url('<%- slide.media_lg.url %>')">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-5 float-left media-group">
+                                    <div class="main-media-large-wrapper">
                                         <img class="main-media large" src="<%- slide.media_lg.url %>" alt="<%- slide.media_lg.url.slice(slide.media_lg.url.lastIndexOf('/') + 1) %>">
                                     </div>
                                     <%_ if (slide.media_sm.url) { _%>
-                                    <div class="main-media small dt-view">
+                                    <div class="main-media-small-wrapper">
                                         <%_ if (slide.media_sm.media_type === "video") { _%>
-                                        <video playsinline autoplay muted loop>
+                                        <video class="main-media small" playsinline autoplay muted loop>
                                             <source src="<%- slide.media_sm.url %>">
                                         </video>
                                         <%_ } else { _%>
-                                        <img src="<%- slide.media_sm.url %>" alt="<%- slide.media_sm.url.slice(slide.media_sm.url.lastIndexOf('/') + 1) %>">
-                                        <%_ }} _%>
+                                        <img class="main-media small" src="<%- slide.media_sm.url %>" alt="<%- slide.media_sm.url.slice(slide.media_sm.url.lastIndexOf('/') + 1) %>">
+                                        <%_ } _%>
                                     </div>
+                                    <%_ } _%>
                                 </div>
                                 <div class="col-sm-7 float-left text-wrapper">
                                     <div class="text">
@@ -52,12 +53,12 @@
                 </div>
 
                 <%_ if (highlights.length > 1) { _%>
-                <a class="left carousel-control" href="#highlights-carousel" data-slide="prev">
-                    <span class="arrow fal fa-chevron-left"></span>
+                <a class="carousel-control-prev" href="#highlights-carousel" data-slide="prev">
+                    <span class="carousel-control-prev-icon arrow fal fa-chevron-left"></span>
                     <span class="sr-only">Previous</span>
                 </a>
-                <a class="right carousel-control" href="#highlights-carousel" data-slide="next">
-                    <span class="arrow fal fa-chevron-right"></span>
+                <a class="carousel-control-next" href="#highlights-carousel" data-slide="next">
+                    <span class="carousel-control-next-icon arrow fal fa-chevron-right"></span>
                     <span class="sr-only">Next</span>
                 </a>
                 <%_ } _%>
@@ -92,6 +93,11 @@
         <script>
             $(window).on("load", function() {
                 $("#loadscreen").fadeOut(1000, function() { $(this).remove() })
+            }).on("touchstart", function() {
+                $(".media-group video:visible").each(function() {
+                    var playing = this.currentTime > 0 && !this.paused && !this.ended && this.readyState > 2;
+                    if (!playing) this.play();
+                });
             });
         </script>
 <%- include ('partials/footer') -%>
