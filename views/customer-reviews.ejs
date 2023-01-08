@@ -242,7 +242,7 @@
                 }, e.type === "load" ? 0 : parseFloat($(".comment-wrapper").css("transition-duration")) * 1000);
             });
 
-            $(".review .images.carousel .carousel-control").click(function () {
+            $(".review .images.carousel [class*=carousel-control]").click(function () {
                 $(this).closest(".images.carousel").carousel({ interval: false })
             });
 
