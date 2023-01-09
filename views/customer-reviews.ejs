@@ -214,11 +214,6 @@
                 });
             });
 
-            $(".images img").click(function() {
-                var img = $(this).attr("src");
-                $("#image-lg-modal .img").css("background-image", "url(" + img + ")");
-            });
-
             var target = location.hash.replace(/^#+/, ''), timer = null;
             location.hash = "";
 
