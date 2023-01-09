@@ -67,6 +67,11 @@ header .links-section #link-context-menu .link:not(:last-child) {
     text-align: right;
 }
 
+#nav-icon {
+    display: inline-block;
+    font-size: 1.5em;
+}
+
 nav {
     position: fixed;
     display: none;

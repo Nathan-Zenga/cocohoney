@@ -22,7 +22,7 @@ $(function() {
         $("#link-context-menu").fadeOut()
     });
 
-    $("#nav-toggle").click(function() { $("nav").fadeIn() });
+    $("#nav-icon").click(function() { $("nav").fadeIn() });
 
     $("#nav-close-icon").click(function() { $("nav").fadeOut() });
 
