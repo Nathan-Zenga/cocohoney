@@ -48,16 +48,15 @@ router.post('/signup', async (req, res) => {
         const existing = await Member.findOne({ email: email_new });
         if (existing) return res.status(400).send("This email is already registered");
         if (password_new !== password_confirm) return res.status(400).send("Confirmed password does not match");
-        const member = new Member({ firstname, lastname, email: email_new, phone_number });
-        member.password = await bcrypt.hash(password_new, 10);
-        const saved = await member.save();
+        const password = await bcrypt.hash(password_new, 10);
+        const member = await Member.create({ firstname, lastname, email: email_new, password, phone_number });
         const subject = `You have successfully signed up with Cocohoney Cosmetics!`;
-        const message = `Hi ${saved.firstname} ${saved.lastname},\n\n` +
+        const message = `Hi ${member.firstname} ${member.lastname},\n\n` +
             "This is a confirmation email to let you know that your account has been successfully set up\n\n" +
             `((LOGIN))[${res.locals.location_origin}/account/login]\n` +
             `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/login)</small>\n\n` +
             "Thank you for signing up with Cocohoney Cosmetics!";
-        await new MailTransporter({ email: saved.email }).sendMail({ subject, message });
+        await new MailTransporter({ email: member.email }).sendMail({ subject, message });
         res.send("You have successfully signed up and can now log in");
     } catch (err) { res.status(500).send(err.message) }
 });

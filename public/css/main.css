@@ -1,4 +1,4 @@
-h1 {
+﻿h1 {
     font-size: 2.5em;
 }
 
@@ -27,15 +27,24 @@ header .links-section > .link:not(:first-child) {
     margin-left: 10px;
 }
 
+header .links-section #context-menu-link {
+    position: relative;
+    z-index: 50;
+}
+
+header .links-section #context-menu-link:hover {
+    opacity: 1;
+}
+
 header .links-section #link-context-menu {
     position: absolute;
     display: none;
-    top: 120%;
-    right: -2px;
-    min-width: 175px;
+    top: -30px;
+    right: -20px;
+    min-width: 180px;
     background-color: rgba(0, 0, 0, .7);
-    padding: 15px;
-    border-radius: 10px 0 10px 10px;
+    padding: 65px 20px 20px;
+    border-radius: 0 0 10px 10px;
     z-index: 20;
 }
 
@@ -140,13 +149,13 @@ main {
     min-height: 70vh;
 }
 
-div::-webkit-scrollbar-thumb {
-    background-color: rgba(240, 230, 140, .5);
-}
-
-section {
+main section {
     position: relative;
     margin: 30px 0;
+}
+
+div::-webkit-scrollbar-thumb {
+    background-color: rgba(240, 230, 140, .5);
 }
 
 .section-padding {
@@ -182,7 +191,7 @@ section {
     z-index: 5;
 }
 
-#page-bg-underlay video, #page-bg-underlay > div {
+#page-bg-underlay video {
     position: absolute;
     left: 50%;
     height: inherit;
@@ -1522,7 +1531,7 @@ input.product-quantity:disabled {
     color: inherit;
 }
 
-#box-deal-page section {
+#box-deal-page main section {
     margin-bottom: 7em;
 }
 

@@ -35,22 +35,22 @@
     <header>
         <div class="inner-header container">
             <div class="row">
-                <div class="logo-section header-content-section col-sm-9 col-8 float-left">
+                <section class="logo-section header-content-section col-sm-9 col-8 float-left">
                     <a id="chc-logo" href="/">COCOHONEY COSMETICS</a>
-                </div>
+                </section>
                 <%_ if (!user) { _%>
-                <div class="links-section header-content-section col float-left">
+                <section class="links-section header-content-section col float-left">
                     <a class="link fab fa-instagram" href="https://www.instagram.com/cocohoney_cosmetics/"></a>
-                </div>
-                <div class="links-section header-content-section col float-left">
+                </section>
+                <section class="links-section header-content-section col float-left">
                     <a class="link fal fa-user" id="context-menu-link"></a>
                     <div id="link-context-menu">
                         <a class="link" href="/account/login">Customer Login</a>
                         <a class="link" href="/ambassador/account/login">Ambassador Login</a>
                     </div>
-                </div>
+                </section>
                 <%_ } else { _%>
-                <div class="links-section header-content-section col-2 float-left">
+                <section class="links-section header-content-section col-2 float-left">
                     <div class="row">
                         <div class="col-sm-6 float-left">
                             <%_ if (is_admin) { _%>
@@ -63,9 +63,9 @@
                             <a href="/<%= is_admin ? 'admin' : 'account' %>/logout">LOGOUT</a>
                         </div>
                     </div>
-                </div>
+                </section>
                 <%_ } _%>
-                <div class="nav-section header-content-section col float-left">
+                <section class="nav-section header-content-section col float-left">
                     <a class="fal fa-bars" id="nav-icon"></a>
                     <nav>
                         <a class="container fal fa-times" id="nav-close-icon"></a>
@@ -108,7 +108,7 @@
                         <a class="link" href="/ambassador/account/login">AMBASSADOR LOGIN</a>
                         <%_ } _%>
                     </nav>
-                </div>
+                </section>
             </div>
         </div>
         <div id="banner-1">

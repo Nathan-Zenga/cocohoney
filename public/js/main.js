@@ -15,16 +15,16 @@ $(function() {
         this.submitBtn[this.method](this.originalVal).attr("disabled", false);
     };
 
-    $("#context-menu-link").click(function() { $("#link-context-menu").stop().fadeToggle(300) });
+    $("#context-menu-link").click(function() { $("#link-context-menu").stop().fadeToggle(200) });
 
     $(window).click(function() {
         if ($("#link-context-menu:hover, #context-menu-link:hover").length) return;
         $("#link-context-menu").fadeOut()
     });
 
-    $("#nav-icon").click(function() { $("nav").fadeIn() });
+    $("#nav-icon").click(function() { $("nav").fadeIn(200) });
 
-    $("#nav-close-icon").click(function() { $("nav").fadeOut() });
+    $("#nav-close-icon").click(function() { $("nav").fadeOut(200) });
 
     $("nav .sub-list-toggle").click(function() {
         $("nav .sub-list").stop().slideUp(300);
