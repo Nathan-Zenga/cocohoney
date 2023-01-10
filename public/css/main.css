@@ -1,4 +1,4 @@
-﻿h1 {
+h1 {
     font-size: 2.5em;
 }
 
@@ -906,6 +906,13 @@ input[type=radio] + small {
     color: rgb(255, 255, 255, .7);
     font-size: .75em;
     padding: 0 30px;
+}
+
+input[type=password] + small {
+    display: block;
+    margin-top: -1em;
+    margin-bottom: 2em;
+    opacity: .5;
 }
 
 select, textarea {
