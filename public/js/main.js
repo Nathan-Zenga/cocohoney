@@ -24,7 +24,7 @@ $(function() {
 
     $("#nav-icon").click(function() { $("nav").fadeIn(200) });
 
-    $("#nav-close-icon").click(function() { $("nav").fadeOut(200) });
+    $("#nav-close-icon, nav a[data-toggle=pill]").click(function() { $("nav").fadeOut(200) });
 
     $("nav .sub-list-toggle").click(function() {
         $("nav .sub-list").stop().slideUp(300);
@@ -112,19 +112,22 @@ $(function() {
     $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("focus");
 
     $(window).on("load", function() {
-        var cookies = !document.cookie ? null : document.cookie.split(/; ?/).map(function(cookie) {
-            var keyvalue = cookie.split("=");
-            return { [keyvalue[0]]: keyvalue[1] };
-        }).reduce(function(p, c) { return {...p, ...c} });
+        var cookies = Object.fromEntries(document.cookie.split(/; */).map(function(c) {
+            var index = c.indexOf("=");
+            var key   = c.slice(0, index);
+            var value = c.slice(index + 1);
+            return [decodeURIComponent(key), decodeURIComponent(value)];
+        }));
 
         if (cookies) JSON.parse(cookies.active_tab_hrefs || "[]").forEach(function(href, i) {
             if (i == 0) $(".section-dropdown-options select:visible").val(href);
             $(".nav.nav-pills a[href='"+ href +"']").click();
         });
 
-        $(".nav.nav-pills a").on("shown.bs.tab", function(e) {
-            var $a = $(".nav.nav-pills:visible a.active[data-toggle='pill']");
+        $(".nav.nav-pills a").on("shown.bs.tab", function() {
+            var $a = $(".nav.nav-pills:visible a.active[data-toggle=pill]");
             $a = $(".section-dropdown-options select:visible").add($a);
+            $a = $("nav a.active[data-toggle=pill]").add($a);
             document.cookie = "active_tab_hrefs=" + JSON.stringify($a.map(function() { return $(this).attr("href") || $(this).val() }).get()) + "; path="+ location.pathname +";";
         });
     });

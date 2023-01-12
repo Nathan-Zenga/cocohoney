@@ -64,11 +64,31 @@
                         </div>
                     </div>
                 </section>
-                <%_ } _%>
+                <%_ }
+                const admin_mode = is_admin && url === "/admin"; _%>
                 <section class="nav-section header-content-section col float-left">
-                    <a class="fal fa-bars" id="nav-icon"></a>
+                    <a class="fal fa-<%= admin_mode ? 'cog' : 'bars' %>" id="nav-icon"></a>
                     <nav>
                         <a class="container fal fa-times" id="nav-close-icon"></a>
+
+                        <%_ if (admin_mode) { _%>
+                        <div class="nav nav-pills flex-column">
+                            <a class="link nav-link" data-toggle="pill" href="#home">DASHBOARD</a>
+                            <a class="link nav-link" data-toggle="pill" href="#about">ABOUT PAGE</a>
+                            <a class="link nav-link" data-toggle="pill" href="#highlights-posts">HIGHLIGHTS POSTS</a>
+                            <a class="link nav-link" data-toggle="pill" href="#sale">SALE</a>
+                            <a class="link nav-link" data-toggle="pill" href="#event">EVENTS</a>
+                            <a class="link nav-link" data-toggle="pill" href="#product">PRODUCTS</a>
+                            <a class="link nav-link" data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a>
+                            <a class="link nav-link" data-toggle="pill" href="#banner">BANNER SLIDES</a>
+                            <a class="link nav-link" data-toggle="pill" href="#discount-code">DISCOUNT CODES</a>
+                            <a class="link nav-link" data-toggle="pill" href="#lookbook">LOOKBOOK UPLOAD</a>
+                            <a class="link nav-link" data-toggle="pill" href="#faqs">FAQs</a>
+                            <a class="link nav-link" data-toggle="pill" href="#shipping">SHIPPING & DELIVERY</a>
+                            <a class="link nav-link" data-toggle="pill" href="#box">BOX DEALS</a>
+                            <a class="link nav-link" data-toggle="pill" href="#mail">MAIL</a>
+                        </div>
+                        <%_ } else { _%>
                         <a class="link" href="/">HOME</a>
                         <a class="link" href="/about">ABOUT US</a>
                         <a class="link sub-list-toggle">3D MINK EYELASHES</a>
@@ -106,7 +126,7 @@
                         <a class="link" href="/events">EVENTS</a>
                         <%_ if (!user) { _%>
                         <a class="link" href="/ambassador/account/login">AMBASSADOR LOGIN</a>
-                        <%_ } _%>
+                        <%_ } } _%>
                     </nav>
                 </section>
             </div>

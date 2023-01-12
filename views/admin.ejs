@@ -1,97 +1,73 @@
 <%- include ('partials/header') -%>
     <section>
-        <div class="mb-view-md section-dropdown-options">
-            <label>SELECT SECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
-            <select>
-                <option value="#home">HOME</option>
-                <option value="#about">ABOUT PAGE</option>
-                <option value="#highlights">HIGHLIGHTS POSTS</option>
-                <option value="#sale">SALE</option>
-                <option value="#event">EVENTS</option>
-                <option value="#product">PRODUCTS</option>
-                <option value="#overview-image">OVERVIEW IMAGES</option>
-                <option value="#banner">BANNER SLIDES</option>
-                <option value="#discount_code">DISCOUNT CODES</option>
-                <option value="#lookbook">LOOKBOOK UPLOAD</option>
-                <option value="#faqs">FAQs</option>
-                <option value="#shipping">SHIPPING & DELIVERY</option>
-                <option value="#box">BOX DEALS</option>
-                <option value="#mail">MAIL</option>
-            </select>
-        </div>
-        <div class="nav-pills-container dt-view-md">
-            <div class="nav nav-pills justify-content-center">
-                <a class="nav-link active" data-toggle="pill" href="#home">HOME</a>
-                <a class="nav-link" data-toggle="pill" href="#about">ABOUT PAGE</a>
-                <a class="nav-link" data-toggle="pill" href="#highlights">HIGHLIGHTS POSTS</a>
-                <a class="nav-link" data-toggle="pill" href="#sale">SALE</a>
-                <a class="nav-link" data-toggle="pill" href="#event">EVENTS</a>
-                <a class="nav-link" data-toggle="pill" href="#product">PRODUCTS</a>
-                <a class="nav-link" data-toggle="pill" href="#overview-image">OVERVIEW IMAGES</a>
-                <a class="nav-link" data-toggle="pill" href="#banner">BANNER SLIDES</a>
-                <a class="nav-link" data-toggle="pill" href="#discount_code">DISCOUNT CODES</a>
-                <a class="nav-link" data-toggle="pill" href="#lookbook">LOOKBOOK UPLOAD</a>
-                <a class="nav-link" data-toggle="pill" href="#faqs">FAQs</a>
-                <a class="nav-link" data-toggle="pill" href="#shipping">SHIPPING & DELIVERY</a>
-                <a class="nav-link" data-toggle="pill" href="#box">BOX DEALS</a>
-                <a class="nav-link" data-toggle="pill" href="#mail">MAIL</a>
-            </div>
-        </div>
         <div class="tab-content container">
             <div id="home" class="tab-pane fade show active">
-            <%- include ('partials/admin/home') -%>
+                <%- include ('partials/admin/home') -%>
             </div>
 
             <div id="about" class="tab-pane fade">
-            <%- include ('partials/admin/about') -%>
+                <h1>ABOUT PAGE</h1>
+                <%- include ('partials/admin/about') -%>
             </div>
 
-            <div id="highlights" class="tab-pane fade">
-            <%- include ('partials/admin/highlights-post') -%>
+            <div id="highlights-posts" class="tab-pane fade">
+                <h1>HIGHLIGHTS POSTS</h1>
+                <%- include ('partials/admin/highlights-post') -%>
             </div>
 
             <div id="sale" class="tab-pane fade">
-            <%- include ('partials/admin/sale') -%>
+                <h1>SALE</h1>
+                <%- include ('partials/admin/sale') -%>
             </div>
 
             <div id="event" class="tab-pane fade">
-            <%- include ('partials/admin/event') -%>
+                <h1>EVENTS</h1>
+                <%- include ('partials/admin/event') -%>
             </div>
 
             <div id="product" class="tab-pane fade">
-            <%- include ('partials/admin/product') -%>
+                <h1>PRODUCTS</h1>
+                <%- include ('partials/admin/product') -%>
             </div>
 
             <div id="overview-image" class="tab-pane fade">
-            <%- include ('partials/admin/overview-image') -%>
+                <h1>OVERVIEW IMAGES</h1>
+                <%- include ('partials/admin/overview-image') -%>
             </div>
 
             <div id="banner" class="tab-pane fade">
-            <%- include ('partials/admin/banner') -%>
+                <h1>BANNER SLIDES</h1>
+                <%- include ('partials/admin/banner') -%>
             </div>
 
-            <div id="discount_code" class="tab-pane fade">
-            <%- include ('partials/admin/discount-code') -%>
+            <div id="discount-code" class="tab-pane fade">
+                <h1>DISCOUNT CODES</h1>
+                <%- include ('partials/admin/discount-code') -%>
             </div>
 
             <div id="lookbook" class="tab-pane fade">
-            <%- include ('partials/admin/lookbook') -%>
+                <h1>LOOKBOOK UPLOAD</h1>
+                <%- include ('partials/admin/lookbook') -%>
             </div>
 
             <div id="faqs" class="tab-pane fade">
-            <%- include ('partials/admin/faqs') -%>
+                <h1>FAQs</h1>
+                <%- include ('partials/admin/faqs') -%>
             </div>
 
             <div id="shipping" class="tab-pane fade">
-            <%- include ('partials/admin/shipping-method') -%>
+                <h1>SHIPPING & DELIVERY</h1>
+                <%- include ('partials/admin/shipping-method') -%>
             </div>
 
             <div id="box" class="tab-pane fade">
-            <%- include ('partials/admin/box') -%>
+                <h1>BOX DEALS</h1>
+                <%- include ('partials/admin/box') -%>
             </div>
 
             <div id="mail" class="tab-pane fade">
-            <%- include ('partials/admin/mail') -%>
+                <h1>MAIL</h1>
+                <%- include ('partials/admin/mail') -%>
             </div>
         </div>
     </section>

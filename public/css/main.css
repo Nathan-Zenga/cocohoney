@@ -88,7 +88,7 @@ nav {
     right: 0;
     height: 100%;
     width: 100%;
-    padding: 30px;
+    padding: 30px 0;
     background-image: linear-gradient(to left, rgb(124, 76, 76) 20%, rgba(124, 76, 76, .85));
     overflow: auto;
     z-index: 1000;
@@ -97,8 +97,9 @@ nav {
 
 nav a.link {
     display: block;
-    margin: 0 auto 1.5em;
     text-align: center;
+    margin: 0 auto 1.5em;
+    padding: 0 30px;
 }
 
 nav .sub-list {
@@ -110,18 +111,13 @@ nav .sub-list {
 }
 
 #nav-close-icon {
-    position: absolute;
-    left: 50%;
-    font-size: 1.5em;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%);
+    display: block;
+    font-size: 1.75em;
     text-align: right;
     padding-left: 20px;
     padding-right: 20px;
-}
-
-#nav-close-icon + a.link {
-    margin-top: 3em;
+    margin-bottom: 1.5em;
+    margin-top: -2px;
 }
 
 #banner-1 {
@@ -1194,6 +1190,12 @@ label .dropdown-arrow {
     transform: rotateX(180deg);
 }
 
+#admin-page .tab-pane > h1 {
+    text-align: center;
+    font-size: 1.5em;
+    margin-bottom: 30px;
+}
+
 #admin-page form .new-opt {
     display: none;
 }
@@ -1352,6 +1354,12 @@ label .dropdown-arrow {
 
 #admin-page #sale #sale-percentage-section .row label {
     margin-bottom: 0;
+}
+
+#admin-page #mail-sub-check-form .input-checkbox {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .tab-content {
