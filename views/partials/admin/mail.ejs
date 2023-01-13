@@ -59,10 +59,18 @@
                 <legend>MAILING LIST SUBSCRIBER CHECK</legend>
                 <div class="note">Edit the list below to include / exclude recipients from email updates (note: ambassadors will still recieve updates nonetheless when you send ambassadors-only emails).</div>
 
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text form-control"><i class="fal fa-search"></i></label>
+                    </div>
+                    <input class="form-control filter-search-input" type="search">
+                </div>
+                <br>
+
                 <div class="row check-option-group">
                     <%_ recipients.forEach(r => {
                         const gen_id = Math.round(Math.random() * 100000); _%>
-                    <div class="col-sm-6 float-left">
+                    <div class="col-sm-6 float-left list-item">
                         <div class="input-group check-option">
                             <div class="input-group-prepend">
                                 <div class="input-group-text">

@@ -35,9 +35,18 @@
         <%_ if (banner_slides.length) { _%>
         <form action="/site/content/banner/remove" method="post">
             <label>DELETE SLIDE(S) FROM BANNER</label>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text form-control"><i class="fal fa-search"></i></label>
+                </div>
+                <input class="form-control filter-search-input" type="search">
+            </div>
+            <br>
+
             <%_ banner_slides.forEach((slide, i) => {
                 const gen_id = Math.round(Math.random() * 100000); _%>
-            <div class="input-group check-option">
+            <div class="input-group check-option list-item">
                 <div class="input-group-prepend">
                     <div class="input-group-text">
                         <input type="checkbox" id="<%= gen_id %>" name="slide<%= i %>" value="<%= slide._id %>">
