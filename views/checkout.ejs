@@ -71,8 +71,14 @@
                     <br>
 
                     <%_ if (!user || !user.mail_sub) { _%>
-                    <label for="mail_sub">If you wish to receive exclusive email updates in future, tick below:</label><br>
-                    <input type="checkbox" name="mail_sub" id="mail_sub" value="true" checked>
+                    <div class="input-group check-option">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" id="mail_sub" name="mail_sub" value="true" checked>
+                            </div>
+                        </div>
+                        <label class="form-control" for="mail_sub" style="height: auto">Tick here if you wish to receive exclusive email updates in future</label>
+                    </div>
                     <%_ } _%>
                 </form>
 

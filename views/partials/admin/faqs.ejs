@@ -41,12 +41,19 @@
         <%_ if (faqs.length) { _%>
         <form action="/admin/faqs/remove" method="post">
             <label>DELETE FAQs</label>
-            <%_ faqs.forEach((faq, i) => { _%>
-            <div class="input-checkbox">
-                <input type="checkbox" name="faq<%= i %>" value="<%= faq._id %>"><span><%= faq.question %></span><br>
+            <%_ faqs.forEach((faq, i) => {
+                const gen_id = Math.round(Math.random() * 100000); _%>
+            <div class="input-group check-option">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="checkbox" id="<%= gen_id %>" name="faq<%= i %>" value="<%= faq._id %>">
+                    </div>
+                </div>
+                <label class="form-control" for="<%= gen_id %>"><%= faq.question %></label>
             </div>
             <%_ }) _%>
             <br>
+
             <input type="submit" value="DELETE FAQs">
         </form>
         <%_ } else { _%>

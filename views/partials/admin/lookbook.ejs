@@ -90,14 +90,15 @@
             <label>DELETE IMAGES / VIDEOS <span>- Tick one or more images to delete</span></label>
             <div class="row">
                 <%_ lookbook_media.forEach((img, i, arr) => {
-                    const style = img.media_type === "image" ? `background-image: url('${img.url}')` : ""; _%>
+                    const style = img.media_type === "image" ? `background-image: url('${img.url}')` : "";
+                    const gen_id = Math.round(Math.random() * 100000); _%>
                 <div class="col-sm-6 float-left img-wrapper">
-                    <div class="img" style="<%- style %>">
+                    <label class="img" for="<%= gen_id %>" style="<%- style %>">
                         <%_ if (img.media_type === "video") { _%>
                         <video playsinline autoplay muted loop><source src="<%= img.url %>"></video>
                         <%_ } _%>
-                        <input type="checkbox" name="id" value="<%= img._id %>">
-                    </div>
+                        <input type="checkbox" id="<%= gen_id %>" name="id" value="<%= img._id %>">
+                    </label>
                 </div>
                 <%_ }) _%>
             </div>

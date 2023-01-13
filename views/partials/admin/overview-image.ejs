@@ -83,11 +83,12 @@
         <form action="/site/content/overview-images/remove" method="post">
             <label>DELETE IMAGES <span>- Tick one or more images to delete</span></label>
             <div class="row">
-                <%_ overview_images.forEach((img, i) => { _%>
+                <%_ overview_images.forEach((img, i) => {
+                    const gen_id = Math.round(Math.random() * 100000); _%>
                 <div class="col-sm-6 float-left img-wrapper">
-                    <div class="img" style="background-image: url('<%= img.url %>')">
-                        <input type="checkbox" name="id" value="<%= img._id %>">
-                    </div>
+                    <label class="img" for="<%= gen_id %>" style="background-image: url('<%= img.url %>')">
+                        <input type="checkbox" id="<%= gen_id %>" name="id" value="<%= img._id %>">
+                    </label>
                 </div>
                 <%_ }) _%>
             </div>

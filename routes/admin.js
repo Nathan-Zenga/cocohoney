@@ -146,7 +146,8 @@ router.post('/discount_code/remove', isAuthed, (req, res) => {
     })
 });
 
-router.post('/mail/send', isAuthed, async (req, res) => {
+router.post('/mail/send', isAuthed, async (req, res, next) => {
+    if (req.body.bulk_send === "everyone") return next();
     const { email, email2, subject, message } = req.body;
     const member = email ? await Member.findOne({ email }, { mail_sub: 0 }) : null;
     const ambassador = email ? await Ambassador.findOne({ email }, { mail_sub: 0 }) : null;
@@ -157,9 +158,9 @@ router.post('/mail/send', isAuthed, async (req, res) => {
         if (err) return res.status(500).send(err.message);
         res.send(`Email sent`);
     });
-});
 
-router.post('/mail/send/all', isAuthed, async (req, res) => {
+}, async (req, res, next) => { // TO EVERYONE
+    if (req.body.bulk_send === "ambassadors") return next();
     const { subject, message } = req.body;
     const members = await Member.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
     const ambassadors = await Ambassador.find({ mail_sub: true }).sort({ firstname: 1 }).exec();
@@ -184,9 +185,8 @@ router.post('/mail/send/all', isAuthed, async (req, res) => {
         }, i * 2000);
     }
     res.send(`Email${everyone.length > 1 ? "s" : ""} sent`);
-});
 
-router.post('/mail/send/ambassadors', isAuthed, async (req, res) => {
+}, async (req, res) => { // TO AMBASSADORS ONLY
     const { subject, message } = req.body;
     const ambassadors = await Ambassador.find().sort({ firstname: 1 }).exec();
     const transporter = new MailTransporter();

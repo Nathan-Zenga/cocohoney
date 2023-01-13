@@ -23,6 +23,7 @@
                 <option value="<%= slide._id %>"><%= slide.text %></option>
                 <%_ }) _%>
             </select>
+
             <label>TEXT</label>
             <input type="text" name="text" id="banner_text_edit" required>
 
@@ -34,12 +35,19 @@
         <%_ if (banner_slides.length) { _%>
         <form action="/site/content/banner/remove" method="post">
             <label>DELETE SLIDE(S) FROM BANNER</label>
-            <%_ banner_slides.forEach((slide, i) => { _%>
-            <div class="input-checkbox">
-                <input type="checkbox" name="slide<%= i %>" value="<%= slide._id %>"><span><%= slide.text %></span>
+            <%_ banner_slides.forEach((slide, i) => {
+                const gen_id = Math.round(Math.random() * 100000); _%>
+            <div class="input-group check-option">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="checkbox" id="<%= gen_id %>" name="slide<%= i %>" value="<%= slide._id %>">
+                    </div>
+                </div>
+                <label class="form-control" for="<%= gen_id %>"><%= slide.text %></label>
             </div>
             <%_ }) _%>
             <br>
+
             <input type="submit" value="DELETE BANNER SLIDES">
         </form>
         <%_ } else { _%>

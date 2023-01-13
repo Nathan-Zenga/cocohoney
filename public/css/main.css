@@ -796,7 +796,8 @@ footer #copyright {
 }
 
 .form-container {
-    padding: 2em 0;
+    padding-top: 2em;
+    padding-bottom: 2em;
 }
 
 form, .form {
@@ -829,6 +830,7 @@ form.minimal {
     border-radius: 0;
     background-color: transparent;
     padding: 0;
+    margin-bottom: 0;
 }
 
 input, textarea, select {
@@ -979,13 +981,35 @@ label .dropdown-arrow {
     margin-left: 5px;
 }
 
-.input-checkbox {
-    margin-bottom: 10px;
+.check-option-group {
+    margin-bottom: 2em;
 }
 
-.input-checkbox img,
-.input-checkbox video {
-    height: 70px
+.check-option.input-group {
+    background-color: rgba(255, 255, 255, .15);
+    border-radius: 7px;
+    margin-bottom: 1em;
+}
+
+.check-option.input-group * {
+    color: white!important;
+}
+
+.check-option.input-group .input-group-text,
+.check-option.input-group .form-control {
+    background-color: transparent;
+    border: none;
+    line-height: 1.8;
+}
+
+.check-option.input-group input {
+    margin: 0;
+}
+
+@media (min-width: 576px) {
+    .check-option.input-group {
+        margin-bottom: 1.5em;
+    }    
 }
 
 .g-recaptcha {
@@ -1321,12 +1345,14 @@ label .dropdown-arrow {
 
 #admin-page .media-mgmt-pane form .img {
     position: relative;
+    display: block;
     padding-top: 100%;
     background-position: center;
     background-color: rgba(0, 0, 0, .25);
     background-size: contain;
     background-repeat: no-repeat;
     margin-bottom: 30px;
+    cursor: pointer;
 }
 
 #admin-page .media-mgmt-pane form .img video {
@@ -1378,7 +1404,7 @@ label .dropdown-arrow {
     margin-bottom: 0;
 }
 
-#admin-page #mail-sub-check-form .input-checkbox {
+#admin-page #mail-sub-check-form .check-option.input-group {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
