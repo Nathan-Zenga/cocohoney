@@ -1138,12 +1138,34 @@ label .dropdown-arrow {
     display: inline-block;
 }
 
+.nav.nav-pills .nav-link {
+    position: relative;
+}
+
+.nav.nav-pills .nav-link::before {
+    position: absolute;
+    display: block;
+    content: " ";
+    bottom: -1.5px;
+    left: 50%;
+    width: 0;
+    height: 1px;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    background-color: white;
+    transition: .25s width;
+}
+
 .nav.nav-pills .nav-link.active,
 .nav.nav-pills .nav-link.active:focus,
 .nav.nav-pills .nav-link.active:hover {
     background-color: transparent;
-    border-bottom: 1px solid white;
     border-radius: 0;
+    opacity: 1;
+}
+
+.nav.nav-pills .nav-link.active::before {
+    width: 100%;
 }
 
 .nav > li > a:focus, .nav > li > a:hover {
