@@ -10,16 +10,22 @@
             <i class="fal fa-info-circle info-icon"></i>
             <b>Click on an ambassador for more details</b>
         </div>
-        <%_ const ambassadors_layout_renderer = (ambassadors, categorise) => {
-            ambassadors.forEach((amb, i, arr) => {
+
+        <%_ const ambassadors_layout_renderer = (ambassadors, categorise) => { _%>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text form-control"><i class="fal fa-search"></i></label>
+            </div>
+            <input class="form-control filter-search-input" type="search" placeholder="Search order by name">
+        </div>
+        <br>
+
+        <%_ ambassadors.forEach((amb, i, arr) => {
                 const random_id = Math.round(Math.random() * 10000000);
                 const link = `/admin/ambassador/account?firstname=${amb.firstname}&lastname=${amb.lastname}`;
-                const { orders_applied: sold } = discount_codes.find(dc => dc.code === amb.discount_code) || {};
-                if (categorise && (i === 0 || amb.firstname.charAt(0).toUpperCase() != arr[i-1].firstname.charAt(0).toUpperCase())) { _%>
-        <div class="letter-category"><b><%= amb.firstname.charAt(0).toUpperCase() %></b></div>
-        <%_ } _%>
+                const { orders_applied: sold } = discount_codes.find(dc => dc.code === amb.discount_code) || {}; _%>
         <a class="list-item" data-toggle="modal" data-target="#ambassador-modal-<%= random_id %>">
-            <%= `${amb.firstname} ${amb.lastname}` %>
+            <span class="search-option"><%= `${amb.firstname} ${amb.lastname}` %></span>
             <br><small><%= sold ? sold.length : 0 %> order<%= sold && /0|[2-999]|\d{2,}/.test(sold.length) ? "s" : "" %> sold</small>
         </a>
 
@@ -35,12 +41,14 @@
                         <p>Discount code: <%= amb.discount_code %></p>
                         <p><a href="<%= link %>" target="_blank" style="text-decoration: underline">View profile</a></p>
                         <br>
+
                         <%_ if (amb.verified === false) { _%>
                         <form class="verify-ambassador-form minimal opt" method="post" action="/ambassador/register/verify">
                             <input type="hidden" name="token" value="<%- amb.token %>">
                             <button type="submit">Verify</button>
                         </form>
                         <%_ } _%>
+
                         <form class="delete-ambassador-form minimal opt" method="post" action="/ambassador/delete">
                             <input type="hidden" name="id" value="<%- amb._id %>">
                             <button type="submit">Delete</button>
@@ -79,12 +87,12 @@
             <%_ } _%>
 
             <div class="tab-content" style="padding-top: <%- ambs_unverified.length ? '1em' : '0' %>">
-                <div id="verified-ambassadors" class="tab-pane fade show active">
+                <div id="verified-ambassadors" class="tab-pane search-scope fade show active">
                     <%- ambs_verified.length ? ambassadors_layout_renderer(ambs_verified, true) : "<p><b>NO REGISTERED AMBASSADORS</b></p>" %>
                 </div>
 
                 <%_ if (ambs_unverified.length) { _%>
-                <div id="unverified-ambassadors" class="tab-pane fade">
+                <div id="unverified-ambassadors" class="tab-pane search-scope fade">
                     <%- ambassadors_layout_renderer(ambs_unverified, true) %>
                 </div>
                 <%_ } _%>
@@ -98,13 +106,22 @@
             <b>Click on an order for more details</b>
         </div>
         <%_ const orders_layout_renderer = orders => {
-            const emails_set = [...new Set(orders.map(o => o.customer_email.toLowerCase()))];
-            emails_set.forEach(email => {
+            const emails_set = [...new Set(orders.map(o => o.customer_email.toLowerCase()))]; _%>
+        
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text form-control"><i class="fal fa-search"></i></label>
+            </div>
+            <input class="form-control filter-search-input" type="search" placeholder="Search order by name">
+        </div>
+        <br>
+
+        <%_ emails_set.forEach(email => {
                 const random_id = Math.round(Math.random() * 10000000);
                 const { customer_name, customer_email } = orders.find(o => email === o.customer_email.toLowerCase());
                 const customer_orders = orders.filter(o => email === o.customer_email.toLowerCase()); _%>
         <a class="list-item" data-toggle="modal" data-target="#customer-orders-modal-<%= random_id %>">
-            <%= customer_name %>
+            <span class="search-option"><%= customer_name %></span>
             <br><small><%= customer_orders.length %> order<%= /0|[2-999]|\d{2,}/.test(customer_orders.length) ? "s" : "" %></small>
         </a>
 
@@ -153,15 +170,15 @@
             </div>
 
             <div class="tab-content" style="padding-top: 1em">
-                <div id="untracked-orders" class="tab-pane fade show active">
+                <div id="untracked-orders" class="tab-pane search-scope fade show active">
                     <%- order_untracked.length ? orders_layout_renderer(order_untracked) : "<p><b>NO UNTRACKED ORDERS</b></p>" %>
                 </div>
 
-                <div id="discounted-orders" class="tab-pane fade">
+                <div id="discounted-orders" class="tab-pane search-scope fade">
                     <%- discounted_orders.length ? orders_layout_renderer(discounted_orders) : "<p><b>NO DISCOUNTED ORDERS</b></p>" %>
                 </div>
 
-                <div id="normal-orders" class="tab-pane fade">
+                <div id="normal-orders" class="tab-pane search-scope fade">
                     <%- other_orders.length ? orders_layout_renderer(other_orders) : "<p><b>NO ORDERS</b></p>" %>
                 </div>
             </div>
