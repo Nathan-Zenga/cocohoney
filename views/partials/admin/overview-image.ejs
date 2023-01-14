@@ -32,7 +32,7 @@
             <select name="id" id="overview_image_id">
                 <option value="">-</option>
                 <%_ overview_images.forEach(img => { _%>
-                <option value="<%= img._id %>">Image <%= img.position %></option>
+                <option value="<%= img._id %>">Image <%= img.position + 1 %></option>
                 <%_ }) _%>
             </select>
 

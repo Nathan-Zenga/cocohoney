@@ -261,5 +261,20 @@
                 return regex.test($(this).find("label").text())
             }).show();
         });
+
+        var $info = $("<div>").addClass("info-bubble");
+
+        $(window).on("load resize scroll", function(e) {
+            let top = ($("#nav-icon").offset().top + $("#nav-icon").height() + 10) - window.pageYOffset;
+            let left = $("#nav-icon").offset().left + $("#nav-icon").width();
+            $info.css({ top, left });
+
+            if (e.type == "load" && !cookies.first_page_load) {
+                let text = "You can now click the settings icon for links to the other admin pages";
+                text = "<p>"+ text.replace(/\n/g, "</p><p>") +"</p>";
+                $info.addClass("align-right point-top-right").appendTo(document.body).html(text).fadeIn().delay(4000).fadeOut();
+                document.cookie = "first_page_load=true; path="+ location.pathname +";";
+            }
+        })
     </script>
 <%- include ('partials/footer') -%>

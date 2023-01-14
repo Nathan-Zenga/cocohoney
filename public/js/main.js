@@ -111,15 +111,15 @@ $(function() {
 
     $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("focus");
 
-    $(window).on("load", function() {
-        var cookies = Object.fromEntries(document.cookie.split(/; */).map(function(c) {
-            var index = c.indexOf("=");
-            var key   = c.slice(0, index);
-            var value = c.slice(index + 1);
-            return [decodeURIComponent(key), decodeURIComponent(value)];
-        }));
+    window.cookies = Object.fromEntries(document.cookie.split(/; */).map(function(c) {
+        var index = c.indexOf("=");
+        var key   = c.slice(0, index);
+        var value = c.slice(index + 1);
+        return [decodeURIComponent(key), decodeURIComponent(value)];
+    }));
 
-        if (cookies) JSON.parse(cookies.active_tab_hrefs || "[]").forEach(function(href, i) {
+    $(window).on("load", function() {
+        JSON.parse(cookies.active_tab_hrefs || "[]").forEach(function(href, i) {
             if (i == 0) $(".section-dropdown-options select:visible").val(href);
             $(".nav.nav-pills a[href='"+ href +"']").click();
         });

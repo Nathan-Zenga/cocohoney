@@ -1410,6 +1410,30 @@ label .dropdown-arrow {
     text-overflow: ellipsis;
 }
 
+.info-bubble {
+    position: fixed;
+    display: none;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, .5);
+    min-width: 250px;
+    max-width: 400px;
+    font-weight: 500;
+}
+
+.info-bubble.point-top-right {
+    padding-top: calc(15px * 2);
+    clip-path: polygon(0 15px, calc(100% - 15px) 15px, 100% 0, 100% 100%, 0 100%, 0 15px);
+}
+
+.info-bubble.align-right {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+}
+
+.info-bubble p:last-child {
+    margin-bottom: 0;
+}
+
 .tab-content {
     padding-top: 2em;
     padding-bottom: 2em;
