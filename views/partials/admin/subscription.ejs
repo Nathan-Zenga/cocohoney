@@ -107,12 +107,28 @@
         <%_ if (subscription_plans.length) { _%>
         <form action="/subscription/remove" method="post">
             <label>DELETE SUBSCRIPTION PLAN(S)</label>
-            <%_ subscription_plans.forEach((plan, i) => { _%>
-            <div class="input-checkbox">
-                <input type="checkbox" name="plan<%= i %>" value="<%= plan._id %>"><span><%= plan.name %> Plan</span>
+
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <label class="input-group-text form-control"><i class="fal fa-search"></i></label>
+                </div>
+                <input class="form-control filter-search-input" type="search">
+            </div>
+            <br>
+
+            <%_ subscription_plans.forEach((plan, i) => {
+                const gen_id = Math.round(Math.random() * 100000); _%>
+            <div class="input-group check-option list-item">
+                <div class="input-group-prepend">
+                    <div class="input-group-text">
+                        <input type="checkbox" id="<%= gen_id %>" name="plan<%= i %>" value="<%= plan._id %>">
+                    </div>
+                </div>
+                <label class="form-control" for="<%= gen_id %>"><%= plan.name %> Plan</label>
             </div>
             <%_ }) _%>
             <br>
+
             <input type="submit" value="DELETE PLAN(S)">
         </form>
         <%_ } else { _%>
