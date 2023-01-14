@@ -33,7 +33,7 @@
 
     <div id="remove-banner" class="remove-form-tab tab-pane fade">
         <%_ if (banner_slides.length) { _%>
-        <form action="/site/content/banner/remove" method="post">
+        <form action="/site/content/banner/remove" method="post" class="search-scope">
             <label>DELETE SLIDE(S) FROM BANNER</label>
 
             <div class="input-group">
@@ -52,7 +52,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="slide<%= i %>" value="<%= slide._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= slide.text %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= slide.text %></label>
             </div>
             <%_ }) _%>
             <br>

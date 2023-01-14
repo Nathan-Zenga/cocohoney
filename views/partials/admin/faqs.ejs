@@ -39,7 +39,7 @@
 
     <div id="remove-faq" class="remove-form-tab tab-pane fade">
         <%_ if (faqs.length) { _%>
-        <form action="/admin/faqs/remove" method="post">
+        <form action="/admin/faqs/remove" method="post" class="search-scope">
             <label>DELETE FAQs</label>
 
             <div class="input-group">
@@ -58,7 +58,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="faq<%= i %>" value="<%= faq._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= faq.question %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= faq.question %></label>
             </div>
             <%_ }) _%>
             <br>

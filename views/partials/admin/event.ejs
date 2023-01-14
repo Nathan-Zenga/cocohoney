@@ -28,9 +28,16 @@
                     <input class="form-control" type="number" id="event-minute" name="minute" value="59" min="0" max="59" required>
                 </div>
                 <br>
-                <input type="checkbox" name="ttbc" id="event-time-tbc" style="margin-left: 5px" value="true">
-                <label for="event-time-tbc">Time to be confirmed?</label>
-                <br><br>
+
+                <div class="input-group check-option">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="checkbox" name="ttbc" id="event-time-tbc" value="true">
+                        </div>
+                    </div>
+                    <label class="form-control" for="event-time-tbc">Time to be confirmed?</label>
+                </div>
+                <br>
             </fieldset>
 
             <label>EVENT INFO</label>
@@ -85,9 +92,16 @@
                     <input class="form-control" type="number" id="event-minute-edit" name="minute" value="59" min="0" max="59" required>
                 </div>
                 <br>
-                <input type="checkbox" name="ttbc" id="event-time-tbc-edit" style="margin-left: 5px" value="true">
-                <label for="event-time-tbc-edit">Time to be confirmed?</label>
-                <br><br>
+
+                <div class="input-group check-option">
+                    <div class="input-group-prepend">
+                        <div class="input-group-text">
+                            <input type="checkbox" name="ttbc" id="event-time-tbc-edit" value="true">
+                        </div>
+                    </div>
+                    <label class="form-control" for="event-time-tbc-edit">Time to be confirmed?</label>
+                </div>
+                <br>
             </fieldset>
 
             <label>EVENT INFO</label>
@@ -120,7 +134,7 @@
 
     <div id="remove-event" class="remove-form-tab tab-pane fade">
         <%_ if (events.length) { _%>
-        <form action="/events/remove" method="post">
+        <form action="/events/remove" method="post" class="search-scope">
             <label>DELETE EVENT(S)</label>
 
             <div class="input-group">
@@ -139,7 +153,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="e<%= i %>" value="<%= e._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= e.title %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= e.title %></label>
             </div>
             <%_ }) _%>
             <br>

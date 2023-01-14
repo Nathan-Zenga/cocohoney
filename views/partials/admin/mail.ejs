@@ -54,7 +54,7 @@
     </div>
 
     <div id="mail-sub-check" class="tab-pane fade show">
-        <form method="post" id="mail-sub-check-form" action="/admin/mail/sub-toggle">
+        <form method="post" id="mail-sub-check-form" action="/admin/mail/sub-toggle" class="search-scope">
             <fieldset>
                 <legend>MAILING LIST SUBSCRIBER CHECK</legend>
                 <div class="note">Edit the list below to include / exclude recipients from email updates (note: ambassadors will still recieve updates nonetheless when you send ambassadors-only emails).</div>
@@ -77,7 +77,7 @@
                                     <input type="checkbox" id="<%= gen_id %>" name="email" value="<%= r.customer_email || r.email %>" <%- r.mail_sub ? "checked" : "" %>>
                                 </div>
                             </div>
-                            <label class="form-control" for="<%= gen_id %>"><%= r.customer_name || r.firstname+" "+r.lastname %></label>
+                            <label class="form-control search-option" for="<%= gen_id %>"><%= r.customer_name || r.firstname+" "+r.lastname %></label>
                         </div>
                     </div>
                     <%_ }) _%>

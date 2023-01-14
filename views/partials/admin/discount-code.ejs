@@ -46,7 +46,7 @@
 
     <div id="remove-discount-code" class="remove-form-tab tab-pane fade">
         <%_ if (discount_codes.length) { _%>
-        <form action="/admin/discount_code/remove" method="post">
+        <form action="/admin/discount_code/remove" method="post" class="search-scope">
             <label>DELETE DISCOUNT CODE(S)</label>
 
             <div class="input-group">
@@ -65,7 +65,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="dc<%= i %>" value="<%= dc._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= dc.code %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= dc.code %></label>
             </div>
             <%_ }) _%>
             <br>

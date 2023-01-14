@@ -179,7 +179,7 @@
 
     <div id="remove-product" class="remove-form-tab tab-pane fade">
         <%_ if (products.length) { _%>
-        <form action="/product/stock/remove" method="post">
+        <form action="/product/stock/remove" method="post" class="search-scope">
             <label>DELETE PRODUCT(S) FROM STOCK</label>
 
             <div class="input-group">
@@ -202,7 +202,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="product<%= i %>" value="<%= item._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= item.name %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= item.name %></label>
             </div>
             <%_ }) _%>
             <br>

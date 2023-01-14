@@ -172,7 +172,7 @@
 
     <div id="remove-box" class="remove-form-tab tab-pane fade">
         <%_ if (boxes.length) { _%>
-        <form action="/deal/box/remove" method="post">
+        <form action="/deal/box/remove" method="post" class="search-scope">
             <label>DELETE BOX(S)</label>
 
             <div class="input-group">
@@ -191,7 +191,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="box<%= i %>" value="<%= box._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= box.name %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= box.name %></label>
             </div>
             <%_ }) _%>
             <br>

@@ -112,7 +112,7 @@
 
     <div id="remove-highlights-post" class="remove-form-tab tab-pane fade">
         <%_ if (highlights_posts.length) { _%>
-        <form action="/highlights-post/remove" method="post">
+        <form action="/highlights-post/remove" method="post" class="search-scope">
             <label>DELETE HIGHLIGHTS POSTS(S)</label>
 
             <div class="input-group">
@@ -131,7 +131,7 @@
                         <input type="checkbox" id="<%= gen_id %>" name="post<%= i %>" value="<%= item._id %>">
                     </div>
                 </div>
-                <label class="form-control" for="<%= gen_id %>"><%= item.title %></label>
+                <label class="form-control search-option" for="<%= gen_id %>"><%= item.title %></label>
             </div>
             <%_ }) _%>
             <br>
