@@ -16,22 +16,20 @@
                         <br><br>
                         <%_ if (is_admin) { _%>
                         <form id="amb-dc-form" class="minimal" method="post" action="/ambassador/discount_code/edit">
-                            <div class="row">
-                                <div class="col-12 float-left">
-                                    <label for="code">Edit discount code <span><i class="fal fa-info-circle" style="margin-left: 10px"></i> case sensitive</span></label>
-                                </div>
-                                <div class="col-8 float-left">
-                                    <input id="amb_id" type="hidden" name="id" value="<%- amb._id %>">
-                                    <input id="amb_dc" type="text" name="code" value="<%- amb.discount_code %>">
-                                </div>
-                                <div class="col-4 float-left">
-                                    <input type="submit" value="Update">
+                            <label for="code">
+                                Edit discount code
+                                <span><i class="fal fa-info-circle" style="margin-left: 10px"></i> case sensitive</span>
+                            </label>
+                            <div class="input-group">
+                                <input id="amb_dc" class="form-control" type="text" name="code" value="<%- amb.discount_code %>">
+                                <input id="amb_id" type="hidden" name="id" value="<%- amb._id %>">
+                                <div class="input-group-append">
+                                    <input class="btn" type="submit" value="Update">
                                 </div>
                             </div>
                         </form>
                         <%_ } else { _%>
                         <p class="dc">Discount code<br><b><%- amb.discount_code %></b></p>
-                        <br>
                         <button class="minimal" type="button" id="settings-button" data-toggle="modal" data-target="#settings-modal">
                             <span>SETTINGS</span>
                         </button>
@@ -317,6 +315,10 @@
             btnController.finish();
         });
     });
+
+    $(window).on("load", function() {
+        $("form :input").not(":button, :checkbox, :file, :radio, :submit, :button, [type=number]").first().trigger("blur");
+    })
 <%_ } else { _%>
     $("#personal-details-edit-form").submit(function(e) {
         e.preventDefault();

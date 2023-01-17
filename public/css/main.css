@@ -991,6 +991,14 @@ label .dropdown-arrow {
     margin-right: auto;
 }
 
+.input-group button,
+.input-group input[type=submit] {
+    padding: 2.75px 12px 2.75px 10px;
+    margin: 0;
+    background-color: rgb(240, 230, 140);
+    color: rgb(124, 76, 76);
+}
+
 .check-option.input-group {
     background-color: rgba(255, 255, 255, .15);
     border-radius: 7px;
@@ -1472,13 +1480,6 @@ label .dropdown-arrow {
 .file-upload-container {
     display: block;
     margin-bottom: 4em;
-}
-
-.file-upload-container .clear-uploads {
-    padding: 2.75px 12px 2.75px 10px;
-    margin: 0;
-    background-color: rgb(240, 230, 140);
-    color: rgb(124, 76, 76);
 }
 
 #new-lookbook-media .file-upload-container {
@@ -1986,6 +1987,10 @@ input.product-quantity:disabled {
     font-size: .85em;
 }
 
+#account-page .profile-summary .dc {
+    margin-bottom: 1.5em;
+}
+
 #account-page .dashboard .nav.nav-pills {
     margin: 30px auto;
     -ms-flex-pack: center;
@@ -2040,17 +2045,7 @@ input.product-quantity:disabled {
 }
 
 #account-page #amb-dc-form {
-    text-align: left;
-}
-
-#account-page #amb-dc-form input[type=text] {
-    padding: 3px;
-    border-bottom: 1px solid;
-    border-radius: 0;
-}
-
-#account-page #amb-dc-form input[type=submit] {
-    padding: 4px 16px 3px;
+    max-width: 300px;
 }
 
 #account-page .invoice-link {
