@@ -96,19 +96,11 @@
 
     <script>
         $(window).on("load scroll resize", function(e) {
-            var windowOffsetBottom = window.pageYOffset + window.innerHeight;
-            var footerMarginTop = parseFloat($("footer").css("margin-top"));
-            var footerOffsetTop = $("footer").offset().top - footerMarginTop;
-            var bottom = windowOffsetBottom >= footerOffsetTop + footerMarginTop ? (window.innerHeight - (footerOffsetTop - window.pageYOffset))+"px" : "";
-            $("#submit-btn").css("bottom", bottom);
             if (e.type === "load") $("form").trigger("reset").find("input[type=checkbox]").change();
             if (e.type !== "scroll" || $("#box-deal-form .nav-link").is(".active")) return;
+            var windowOffsetBottom = window.pageYOffset + window.innerHeight;
             var isPastFormOffsetTop = windowOffsetBottom - 200 > $("#box-deal-form").offset().top;
             isPastFormOffsetTop && $("#box-deal-form .nav-link:first").click();
-        });
-
-        $(".nav-link").on("shown.bs.tab hidden.bs.tab", function() {
-            $(window).trigger("resize");
         });
 
         $("input[type=checkbox]").change(function() {

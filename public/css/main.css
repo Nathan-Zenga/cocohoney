@@ -1636,7 +1636,7 @@ input.product-quantity:disabled {
 }
 
 #box-deal-page main section {
-    margin-bottom: 7em;
+    margin-bottom: 5em;
 }
 
 #box-deal-page #box-deal-form {
@@ -1677,10 +1677,11 @@ input.product-quantity:disabled {
 }
 
 #box-deal-page #submit-btn {
-    position: fixed;
+    position: -webkit-sticky;
+    position: sticky;
     z-index: 100;
-    left: 15px;
     bottom: 2em;
+    margin-left: 0;
     margin-bottom: 0;
 }
 
