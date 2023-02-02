@@ -706,7 +706,7 @@ footer #copyright {
 
 .thumb .thumb-img {
     position: relative;
-    height: 240px;
+    height: 150px;
     overflow: hidden;
     background-position: center;
     background-size: cover;
@@ -740,6 +740,10 @@ footer #copyright {
     text-align: center;
 }
 
+.thumb .quantity-wrapper {
+    margin: 0 -10px;
+}
+
 .thumb .thumb-info .product-price del {
     font-size: .8em;
     opacity: .5;
@@ -748,7 +752,7 @@ footer #copyright {
 .add-to-cart-btn {
     background-color: transparent;
     color: inherit;
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .add-to-cart-btn.pre-order {
@@ -771,8 +775,12 @@ footer #copyright {
 }
 
 @media (min-width: 576px) {
-    .add-to-cart-btn {
-        font-size: 1.5em;
+    .thumb .thumb-img {
+        height: 240px;
+    }
+
+    .thumb .quantity-wrapper {
+        margin: 0;
     }
 }
 
@@ -1586,17 +1594,26 @@ input.product-quantity:disabled {
     color: white;
 }
 
+@media (max-width: 575px) {
+    input.product-quantity {
+        max-width: 50px;
+        margin-bottom: 0;
+    }
+}
+
 .sold-out-label {
     font-weight: 400;
-    padding: 10px 0 38px;
+    padding: 10px 0 22px;
+}
+
+@media (min-width: 576px) {
+    .sold-out-label {
+        padding: 10px 0 38px;
+    }
 }
 
 #product-view-page .sold-out-label {
     padding: 0 0 24px;
-}
-
-#box-deal-page .sold-out-label {
-    padding: 24px 0;
 }
 
 #faq-page .question {

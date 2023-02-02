@@ -86,23 +86,23 @@ a:hover {
     border: none;
 }
 
-.chc .hamburger {
+#chc .hamburger {
     padding-top: 0;
     padding-bottom: 0;
 }
 
-.chc .hamburger:hover,
-.chc .hamburger.is-active:hover {
+#chc .hamburger:hover,
+#chc .hamburger.is-active:hover {
     opacity: 1;
 }
 
-.chc .hamburger-box {
+#chc .hamburger-box {
     width: 24px;
 }
 
-.chc .hamburger-inner:before,
-.chc .hamburger-inner:after,
-.chc .hamburger-inner {
+#chc .hamburger-inner:before,
+#chc .hamburger-inner:after,
+#chc .hamburger-inner {
     background-color: white!important;
     width: 100%;
     height: 2px;

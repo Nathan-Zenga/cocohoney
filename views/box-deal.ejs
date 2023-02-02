@@ -36,7 +36,6 @@
                 <div class="mb-view-md section-dropdown-options">
                     <label>SELECT COLLECTION <i class="dropdown-arrow fal fa-chevron-down"></i></label>
                     <select>
-                        <option value="">-</option>
                         <%_ groups.forEach(field => {
                             const section = field.collection ? field.collection + " Collection" : field.category.replace(/^./, m => m.toUpperCase()).replace(/_/g, " "); _%>
                         <option value="#<%= section.replace(/ /g, '-').toLowerCase() %>"><%= section %></option>
@@ -59,7 +58,7 @@
                     <div id="<%= section.replace(/ /g, '-').toLowerCase() %>" class="tab-pane fade">
                         <div class="row">
                             <%_ products.filter(p => field.collection ? field.collection === p.product_collection : field.category === p.category).forEach(p => { _%>
-                            <div class="thumb col-lg-3 col-md-4 float-left">
+                            <div class="thumb col-lg-3 col-md-4 col-6 float-left">
                                 <div class="thumb-inner">
                                     <div class="thumb-img product-image<%= p.stock_qty < 1 ? ' sold-out' : '' %>" style="background-image: url('<%- p.image ? p.image.url : '' %>');">
                                         <div class="item-select-check">
