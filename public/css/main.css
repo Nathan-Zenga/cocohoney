@@ -1,4 +1,4 @@
-﻿h1 {
+h1 {
     font-size: 2.5em;
 }
 
@@ -15,8 +15,7 @@ body {
 }
 
 header .inner-header {
-    padding-top: 30px;
-    padding-bottom: 30px;
+    padding: 30px 20px;
 }
 
 header .links-section > .link {
@@ -55,21 +54,6 @@ header .links-section #link-context-menu .link {
 
 header .links-section #link-context-menu .link:not(:last-child) {
     margin-bottom: 1em;
-}
-
-.header-content-section:first-child {
-    padding-left: 20px;
-}
-
-.header-content-section:last-child {
-    padding-right: 20px;
-}
-.header-content-section:not(:first-child) {
-    padding-left: 0;
-}
-
-.header-content-section:not(:last-child) {
-    padding-right: 0;
 }
 
 .header-content-section:nth-child(1n + 2) {
@@ -1945,6 +1929,10 @@ input.product-quantity:disabled {
     margin-right: 10px;
 }
 
+#customer-reviews-page .count {
+    text-align: center;
+}
+
 #customer-reviews-page .rating-meter {
     position: relative;
     background-color: white;
@@ -1954,14 +1942,14 @@ input.product-quantity:disabled {
     margin-bottom: 1em;
 }
 
-#customer-reviews-page .rating-meter span {
+#customer-reviews-page .rating-meter .stars {
     position: absolute;
     top: 50%;
-    left: 50%;
+    width: 100%;
+    padding: 0 5px;
     color: rgb(124, 76, 76);
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    line-height: 1;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
     z-index: 5;
 }
 

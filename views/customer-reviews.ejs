@@ -77,16 +77,13 @@
                         <%_ for (i = 5; i >= 1; i--) {
                             const count = reviews.filter(r => r.rating == i).length;
                             const avg = count / reviews.length * 100; _%>
-                        <div class="row">
-                            <div class="col-sm-4 col-5 float-left" style="text-align: right">
-                                <%_ for(j = 1; j <= i; j++) { _%>
-                                <span>★</span>
-                                <%_ } _%>
+                        <div class="row no-gutters">
+                            <div class="col-2 float-left count">
+                                <span><%= count %></span>
                             </div>
-                            <div class="col-2 float-left" style="text-align: center; padding: 0">(<%= count %>)</div>
-                            <div class="col-sm-6 col-5 float-left">
+                            <div class="col float-left">
                                 <div class="rating-meter">
-                                    <span><%= avg % 1 == 0 ? avg : avg.toFixed(1) %>%</span>
+                                    <div class="stars"><%- "<span>★</span> ".repeat(i).trim() %></div>
                                     <div class="bar" style="width: <%= avg %>%"></div>
                                 </div>
                             </div>
