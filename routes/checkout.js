@@ -127,19 +127,15 @@ router.get("/session/complete", async (req, res) => {
             if (item.deal) {
                 each(item.items, (itm, cb2) => {
                     const product = products.find(p => p.id == itm.id);
-                    if (product) {
-                        product.stock_qty -= itm.qty;
-                        if (product.stock_qty < 0) product.stock_qty = 0;
-                        product.save(e => e ? cb2(e) : cb2());
-                    }
+                    if (!product) return cb2();
+                    product.stock_qty = Math.max(0, product.stock_qty - itm.qty);
+                    product.save(e => e ? cb2(e) : cb2());
                 }, err => err ? cb(err) : cb())
             } else {
                 const product = products.find(p => p.id == item.id);
-                if (product) {
-                    product.stock_qty -= item.qty;
-                    if (product.stock_qty < 0) product.stock_qty = 0;
-                    product.save(e => e ? cb(e) : cb());
-                }
+                if (!product) return cb();
+                product.stock_qty = Math.max(0, product.stock_qty - item.qty);
+                product.save(e => e ? cb(e) : cb());
             }
         });
 

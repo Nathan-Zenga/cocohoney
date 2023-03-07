@@ -80,8 +80,7 @@ router.get("/session/complete", async (req, res) => {
         });
 
         if (production) {
-            event.stock_qty -= qty;
-            if (event.stock_qty < 0) event.stock_qty = 0;
+            event.stock_qty = Math.max(0, event.stock_qty - qty);
             await event.save();
             await order.save();
         };
@@ -91,34 +90,28 @@ router.get("/session/complete", async (req, res) => {
         req.session.mail_sub = undefined;
 
         const transporter = new MailTransporter();
-        transporter.setRecipient({ email: customer.email }).sendMail({
-            subject: "Ticket Payment Successful - Cocohoney Cosmetics",
-            message: `Hi ${customer.name},\n\n` +
-            `Thank you for signing up to participate on our "${event.title}" event on ${event.date}! ` +
-            "We are happy to confirm your ticket payment was successful.\n\n" +
-            `((Click here to view order summary))[${res.locals.location_origin}/order/${order.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-            "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics"
-        }, err => {
+        const subject = "Ticket Payment Successful - Cocohoney Cosmetics";
+        const message = `Hi ${customer.name},\n\n` +
+        `Thank you for signing up to participate on our "${event.title}" event on ${event.date}! ` +
+        "We are happy to confirm your ticket payment was successful.\n\n" +
+        `((Click here to view order summary))[${res.locals.location_origin}/order/${order.id}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
+        "Thank you for purchasing with us!\n\n- Cocohoney Cosmetics";
+        transporter.setRecipient({ email: customer.email }).sendMail({ subject, message }, err => {
             if (err) console.error(err), res.status(500);
-            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({
-                subject: "Purchase Report: Someone bought tickets!",
-                message: "You've received a new purchase from a new customer for a ticket for the " +
-                `${event.title} event on ${event.date}.\n\n` +
-                `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
-                `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n`
-            }, err => {
+            const subject = "Purchase Report: Someone bought tickets!";
+            const message = "You've received a new purchase from a new customer for a ticket for the " +
+            `${event.title} event on ${event.date}.\n\n` +
+            `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n`;
+            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({ subject, message }, err => {
                 if (err) { console.error(err); if (res.statusCode !== 500) res.status(500) }
                 res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
             });
         });
     } catch(err) {
         console.error(err.message);
-        res.status(500).render('checkout-error', {
-            title: "Payment Error",
-            pagename: "checkout-error",
-            error: err.message
-        })
+        res.status(500).render('checkout-error', { title: "Payment Error", pagename: "checkout-error", error: err.message })
     }
 });
 
