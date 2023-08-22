@@ -79,7 +79,7 @@ router.post("/create-payment", async (req, res) => {
         }]
     }, (err, payment) => {
         if (err) return res.status(err.httpStatusCode).send(`${err.message}\n${(err.response.details || []).map(d => d.issue).join(",\n")}`);
-        req.session.current_dc_doc = dc_doc;
+        req.session.current_dc_doc_id = dc_doc.id;
         req.session.shipping_method = shipping_method;
         req.session.mail_sub = !!mail_sub;
         res.send(payment.links.find(link => link.rel === "approval_url").href);
@@ -87,9 +87,9 @@ router.post("/create-payment", async (req, res) => {
 });
 
 router.get("/complete", async (req, res) => {
-    const { cart, current_dc_doc, shipping_method, mail_sub, paymentId, PayerID } = Object.assign(req.session, req.query);
+    const { cart, current_dc_doc_id, shipping_method, mail_sub, paymentId, PayerID } = Object.assign(req.session, req.query);
     const products = await Product.find();
-    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
+    const dc_doc = current_dc_doc_id ? await Discount_code.findById(current_dc_doc_id) : null;
 
     paypal.payment.execute(paymentId, { payer_id: PayerID }, async (err, payment) => {
         if (err) return res.status(err.httpStatusCode).render('checkout-error', {
@@ -141,7 +141,7 @@ router.get("/complete", async (req, res) => {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
             if (production) await dc_doc.save();
-            req.session.current_dc_doc = undefined;
+            req.session.current_dc_doc_id = undefined;
         }
 
         if (production) await order.save();

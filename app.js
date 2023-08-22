@@ -71,7 +71,7 @@ app.use(async (req, res, next) => { // global variables
         }, sale_ended ? 0 : time_left)
     }
 
-    if (!req.session.checkout_session || /^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return next();
+    if (!req.session.checkout_session_id || /^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return next();
     checkout_cancel(req, res, next);
 });
 

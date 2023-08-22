@@ -88,8 +88,8 @@ router.post("/session/create", async (req, res) => {
             cancel_url: location_origin + "/shop/checkout/cancel"
         });
 
-        req.session.checkout_session = session;
-        req.session.current_dc_doc = dc_doc;
+        req.session.checkout_session_id = session.id;
+        req.session.current_dc_doc_id = dc_doc.id;
         req.session.shipping_method = shipping_method;
         req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
@@ -97,16 +97,16 @@ router.post("/session/create", async (req, res) => {
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { checkout_session, cart, current_dc_doc, shipping_method, mail_sub } = req.session;
+    const { checkout_session_id, cart, current_dc_doc_id, shipping_method, mail_sub } = req.session;
     const products = await Product.find();
-    const dc_doc = current_dc_doc ? await Discount_code.findById(current_dc_doc._id) : null;
+    const dc_doc = current_dc_doc_id ? await Discount_code.findById(current_dc_doc_id) : null;
     const purchase_summary = cart.map(item => {
         const description = item.deal && item.items.length ? `(${item.items.map(i => `${i.qty}x ${i.name}`).join(", ")}) ` : "";
         return `${item.qty} X ${item.name} ${description}- £${(item.price / 100).toFixed(2)}`
     }).join("\n");
 
     try {
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
+        const session = await Stripe.checkout.sessions.retrieve(checkout_session_id, { expand: ["customer"] });
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
             pagename: "checkout-error",
@@ -140,14 +140,14 @@ router.get("/session/complete", async (req, res) => {
         });
 
         req.session.cart = [];
-        req.session.checkout_session = undefined;
+        req.session.checkout_session_id = undefined;
         req.session.shipping_method = undefined;
         req.session.mail_sub = undefined;
         if (dc_doc) {
             order.discounted = true;
             dc_doc.orders_applied.push(order.id);
             if (production) await dc_doc.save();
-            req.session.current_dc_doc = undefined;
+            req.session.current_dc_doc_id = undefined;
         }
 
         if (production) await order.save();

@@ -48,19 +48,19 @@ router.post("/session/create", async (req, res) => {
         });
 
         req.session.event_id = event.id;
-        req.session.checkout_session = session;
+        req.session.checkout_session_id = session.id;
         req.session.mail_sub = !!mail_sub;
         res.send({ id: session.id, pk: process.env.STRIPE_PK });
     } catch(err) { console.error(err.message); res.status(err.statusCode || 500).send(err.message) };
 });
 
 router.get("/session/complete", async (req, res) => {
-    const { event_id, checkout_session, mail_sub } = req.session;
+    const { event_id, checkout_session_id, mail_sub } = req.session;
 
     try {
         const event = await Event.findById(event_id);
         const id = event.id, name = event.title, price = event.price, image = event.image, info = event.info;
-        const session = await Stripe.checkout.sessions.retrieve(checkout_session.id, { expand: ["customer"] });
+        const session = await Stripe.checkout.sessions.retrieve(checkout_session_id, { expand: ["customer"] });
 
         if (!session) return res.status(400).render('checkout-error', {
             title: "Payment Error",
@@ -86,7 +86,7 @@ router.get("/session/complete", async (req, res) => {
         };
 
         req.session.event_id = undefined;
-        req.session.checkout_session = undefined;
+        req.session.checkout_session_id = undefined;
         req.session.mail_sub = undefined;
 
         const transporter = new MailTransporter();
