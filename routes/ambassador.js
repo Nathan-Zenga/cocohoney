@@ -141,7 +141,7 @@ router.post('/delete', async (req, res) => {
         const amb = await Ambassador.findById(req.body.id);
         if (!amb) return res.status(404).send("Account does not exist or already deleted");
         await Wishlist.findOneAndDelete({ customer_id: amb.id });
-        await cloud.api.delete_resources([amb.image?.p_id || "blank"]);
+        await cloud.api.delete_resources([amb.image?.p_id]).catch(e => e);
         await Discount_code.findOneAndDelete({ code: amb.discount_code });
         await Ambassador.findByIdAndDelete(amb.id);
         if (res.locals.is_admin) return res.send("The account is now successfully deleted.");

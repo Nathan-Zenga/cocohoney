@@ -7,13 +7,14 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { CHCDB, NODE_ENV, PORT = 2020 } = process.env;
 const { Banner_slide, Sale, Product, Box, MailTest } = require("./models/models");
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
 const visitor = require('./modules/visitor-info');
-const production = NODE_ENV === "production";
+const production = process.env.NODE_ENV === "production";
+if (!production) require('dotenv').config();
+const { CHCDB, PORT = 2020 } = process.env;
 var timeout = null;
 
 mongoose.connect(CHCDB).then(() => { console.log("Connected to DB") });
@@ -62,13 +63,12 @@ app.use(async (req, res, next) => { // global variables
     if (end_datetime_updated) { clearTimeout(timeout); timeout = null }
     if (sale_doc?.active && !timeout) {
         const time_left = sale_doc.end_datetime.getTime() - Date.now();
-        const sale_ended = time_left < 0;
         req.session.current_end_datetime = sale_doc.end_datetime.getTime();
         timeout = setTimeout(async () => {
             await sale_toggle(req);
             clearTimeout(timeout);
             timeout = null;
-        }, sale_ended ? 0 : time_left)
+        }, Math.max(0, time_left))
     }
 
     if (!req.session.checkout_session_id || /^\/(shop|events)\/checkout\/(cancel|session\/complete)$/.test(req.originalUrl)) return next();

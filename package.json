@@ -30,5 +30,8 @@
     "npm": "*"
   },
   "author": "Nathan Zengamambu",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "dotenv": "^16.3.1"
+  }
 }
