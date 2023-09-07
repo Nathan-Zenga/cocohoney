@@ -68,11 +68,13 @@ router.post("/session/create", async (req, res) => {
             payment_intent_data: { description: "Cocohoney Cosmetics Online Store Purchase" },
             line_items: cart.map(item => ({
                 price_data: {
-                    product_data: { name: item.name, images: item.image ? [item.image.url] : undefined },
+                    product_data: {
+                        name: item.name, images: item.image ? [item.image.url] : undefined,
+                        description: item.items?.map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined
+                    },
                     unit_amount: parseInt(item.price),
                     currency: "gbp"
                 },
-                description: item.items?.map(p => `${p.qty}x ${p.name}`).join(", ") || item.info || undefined,
                 quantity: item.qty
             })),
             shipping_options: [{
