@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "async": "^3.2.2",
-    "axios": "^0.24.0",
+    "axios": "^1.6.5",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.27.1",
