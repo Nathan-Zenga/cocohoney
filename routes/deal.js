@@ -63,7 +63,7 @@ router.post('/box/add', isAuthed, async (req, res) => {
     const box = new Box({ name, price, info, max_items });
     box.products_inc = (Array.isArray(box_item) ? box_item : [box_item]).filter(e => e);
     try {
-        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>+]/g, "_");
         const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) box.image = { p_id: result.public_id, url: result.secure_url };
         await box.save(); res.send("Box deal saved");
@@ -75,7 +75,7 @@ router.post('/box/edit', isAuthed, async (req, res) => {
     try {
         const box = await Box.findById(id);
         if (!box) return res.status(404).send("Box deal not found");
-        const p_id_prev = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
+        const p_id_prev = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>+]/g, "_");
 
         if (name)      box.name = name;
         if (price)     box.price = price;
@@ -84,7 +84,7 @@ router.post('/box/edit', isAuthed, async (req, res) => {
                        box.products_inc = box_item ? Array.isArray(box_item) ? box_item : [box_item] : [];
 
         if (!image_url && !image_file) { await box.save(); return res.send("Box details updated successfully") }
-        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/product/box_deals/${box.name}`.replace(/[ ?&#\\%<>+]/g, "_");
         const result = await cloud.uploader.upload(image_url || image_file, { public_id });
         p_id_prev != public_id && await cloud.api.delete_resources([p_id_prev]).catch(e => e);
         box.image = { p_id: result.public_id, url: result.secure_url };

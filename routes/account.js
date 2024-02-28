@@ -72,7 +72,7 @@ router.post('/edit', isAuthed, async (req, res) => {
         if (phone_number) member.phone_number = phone_number;
         member.mail_sub = !!mail_sub;
 
-        const public_id = `cocohoney/customer/profile-img/${member.firstname}-${member.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/customer/profile-img/${member.firstname}-${member.id}`.replace(/[ ?&#\\%<>+]/g, "_");
         const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) member.image = { p_id: result.public_id, url: result.secure_url };
         await member.save(); res.send("Account details updated");
@@ -114,7 +114,6 @@ router.get('/password-reset', async (req, res) => {
 
 router.post('/password-reset-request', async (req, res) => {
     const member = await Member.findOne({ email: req.body.email });
-    const mail_transporter = new MailTransporter();
     if (!member) return res.status(404).send("Cannot find you on our system");
     member.password_reset_token = crypto.randomBytes(20).toString("hex");
     const saved = await member.save();
@@ -123,7 +122,7 @@ router.post('/password-reset-request', async (req, res) => {
     "Please click the link below to proceed:\n\n" +
     `((RESET PASSWORD))[${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token}]\n` +
     `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/account/password-reset?token=${saved.password_reset_token})</small>`;
-    mail_transporter.setRecipient({ email: saved.email }).sendMail({ subject, message }, err => {
+    new MailTransporter({ email: saved.email }).sendMail({ subject, message }, err => {
         if (err) return res.status(500).send(err.message);
         res.send("An email has been sent your email to reset your password");
     });

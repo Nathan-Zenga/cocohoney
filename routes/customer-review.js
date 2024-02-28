@@ -23,7 +23,7 @@ router.post('/submit', recaptcha, async (req, res) => {
 
     try {
         !honeypot && await forEachOf(images, (image, i, cb) => {
-            const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>]/g, "_");
+            const public_id = `cocohoney/reviews/images/${review.id}-${i}`.replace(/[ ?&#\\%<>+]/g, "_");
             cloud.uploader.upload(image, { public_id }, (err, result) => {
                 if (err) return cb(err);
                 saved_p_ids.push(result.public_id);

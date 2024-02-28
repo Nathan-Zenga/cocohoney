@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
         const ambassador = new Ambassador({ firstname, lastname, email, phone_number, instagram });
         ambassador.address = { line1, line2, city, state, country, postcode };
         ambassador.token = crypto.randomBytes(20).toString("hex");
-        const public_id = `cocohoney/ambassador/profile-img/${ambassador.firstname}-${ambassador.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/ambassador/profile-img/${ambassador.firstname}-${ambassador.id}`.replace(/[ ?&#\\%<>+]/g, "_");
         const result = image_file || image_url ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) ambassador.image = { p_id: result.public_id, url: result.secure_url };
         const saved = await ambassador.save();
@@ -128,7 +128,7 @@ router.post('/account/edit', isAuthed, async (req, res) => {
         if (postcode)       amb.address.postcode = postcode;
                             amb.mail_sub = !!mail_sub;
 
-        const public_id = `cocohoney/ambassador/profile-img/${amb.firstname}-${amb.id}`.replace(/[ ?&#\\%<>]/g, "_");
+        const public_id = `cocohoney/ambassador/profile-img/${amb.firstname}-${amb.id}`.replace(/[ ?&#\\%<>+]/g, "_");
         const result = image_url || image_file ? await cloud.uploader.upload(image_url || image_file, { public_id }) : null;
         if (result) await cloud.api.delete_resources([amb.image.p_id]).catch(err => console.error(err.message));
         if (result) amb.image = { p_id: result.public_id, url: result.secure_url };
