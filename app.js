@@ -12,10 +12,14 @@ const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
 const visitor = require('./modules/visitor-info');
+const { v2: cloud } = require('cloudinary');
 const production = process.env.NODE_ENV === "production";
 if (!production) require('dotenv').config();
 const { CHCDB, PORT = 2020 } = process.env;
 var timeout = null;
+
+const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
+cloud.config({ cloud_name: CLOUDINARY_CLOUD_NAME, api_key: CLOUDINARY_API_KEY, api_secret: CLOUDINARY_API_SECRET });
 
 mongoose.connect(CHCDB).then(() => { console.log("Connected to DB") });
 

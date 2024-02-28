@@ -128,7 +128,8 @@ $(function() {
             var $a = $(".nav.nav-pills:visible a.active[data-toggle=pill]");
             $a = $(".section-dropdown-options select:visible").add($a);
             $a = $("nav a.active[data-toggle=pill]").add($a);
-            document.cookie = "active_tab_hrefs=" + JSON.stringify($a.map(function() { return $(this).attr("href") || $(this).val() }).get()) + "; path="+ location.pathname +";";
+            var activeTabHrefs = $a.map(function() { return $(this).attr("href") || $(this).val() }).get();
+            document.cookie = "active_tab_hrefs=" + JSON.stringify(activeTabHrefs) + "; path="+ location.pathname +";";
         });
     });
 

@@ -154,9 +154,8 @@ router.get("/session/complete", async (req, res) => {
 
         if (production) await order.save();
 
-        const transporter = new MailTransporter();
-        const subject = "Payment Successful - Cocohoney Cosmetics";
-        const message = `Hi ${customer.name},\n\n` +
+        const mail1 = { subject: "Payment Successful - Cocohoney Cosmetics" };
+        mail1.message = `Hi ${customer.name},\n\n` +
         "Thank you for shopping with us! We are happy to confirm your payment was successful. " +
         `Here is a summery of your order:\n\n${purchase_summary}\n\n` +
         `((Click here for further details))[${res.locals.location_origin}/order/${order.id}]\n` +
@@ -165,21 +164,21 @@ router.get("/session/complete", async (req, res) => {
         "A tracking number / reference will be sent to you via email as soon as possible. " +
         "In the event that there is a delay in receiving one, please do not hesitate to contact us.\n\n" +
         "Thank you for shopping with us!\n\n- Cocohoney Cosmetics";
-        transporter.setRecipient({ email: customer.email }).sendMail({ subject, message }, err => {
-            if (err) console.error(err), res.status(500);
-            const subject = "Purchase Report: You Got Paid!";
-            const message = "You've received a new purchase from a new customer.\n\n" +
-            `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
-            (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
-            "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
-            `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
-            `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n`;
-            transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail({ subject, message }, err => {
-                if (err) console.error(err); if (err && res.statusCode !== 500) res.status(500);
-                res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
-            });
-        });
+
+        const mail2 = { subject: "Purchase Report: You Got Paid!" };
+        mail2.message = "You've received a new purchase from a new customer.\n\n" +
+        `((VIEW ORDER SUMMARY))[${res.locals.location_origin}/order/${order.id}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/order/${order.id})</small>\n\n` +
+        (dc_doc ? `Discount code applied: <b>${dc_doc.code}</b> (${dc_doc.percentage}% off)\n\n` : "") +
+        "<b>Click below to send the customer a Tracking Number:</b>\n\n" +
+        `((ADD TRACKING REF))[${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id}]\n` +
+        `<small>(Copy the URL if the above link is not working - ${res.locals.location_origin}/shipping/tracking/ref/send?id=${order.id})</small>\n\n`;
+
+        const transporter = new MailTransporter();
+        await transporter.setRecipient({ email: customer.email }).sendMail(mail1).catch(console.error);
+        await transporter.setRecipient({ email: process.env.CHC_EMAIL }).sendMail(mail2).catch(console.error);
+
+        res.render('checkout-success', { title: "Payment Successful", pagename: "checkout-success" })
     } catch(err) {
         console.error(err.message);
         const pagename = "checkout-error";

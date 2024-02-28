@@ -46,8 +46,8 @@ router.post('/overview-images/upload', isAuthed, async (req, res) => {
             overview_img.save(e => e ? cb(e) : cb());
         });
     }, err => {
-        if (!err) return res.send("Overview images(s) saved");
-        cloud.api.delete_resources(saved_p_ids, () => res.status(err.http_code || 500).send(err.message));
+        if (err) return cloud.api.delete_resources(saved_p_ids, () => res.status(err.http_code || 500).send(err.message));
+        res.send("Overview images(s) saved");
     })
 });
 
