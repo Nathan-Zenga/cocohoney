@@ -7,15 +7,16 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const passport = require('passport');
-const { Banner_slide, Sale, Product, Box, MailTest } = require("./models/models");
+const { Banner_slide, Sale, Product, Box } = require("./models/models");
 const checkout_cancel = require('./modules/checkout-cancel');
 const sale_toggle = require('./modules/sale_toggle');
 const MailTransporter = require('./modules/mail-transporter');
 const visitor = require('./modules/visitor-info');
 const { v2: cloud } = require('cloudinary');
+const { OAuth2 } = (require("googleapis")).google.auth;
 const production = process.env.NODE_ENV === "production";
 if (!production) require('dotenv').config();
-const { CHCDB, PORT = 2020 } = process.env;
+const { CHCDB, PORT = 2020, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, OAUTH_REFRESH_TOKEN } = process.env;
 var timeout = null;
 
 const { CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET } = process.env;
@@ -110,13 +111,12 @@ app.post("*", (req, res) => res.status(400).send("Sorry, your request currently 
 app.listen(PORT, async () => {
     console.log(`Server started${production ? "" : " on port " + PORT}`);
 
-    if (production) try {
-        setInterval(async () => {
-            const test = await MailTest.findOne() || new MailTest();
-            const { email, subject, message, newDay } = test;
-            newDay && await new MailTransporter({ email }).sendMail({ subject, message });
-            newDay && (test.last_sent_date = Date.now());
-            newDay && await test.save();
-        }, 1000 * 60 * 10);
-    } catch (err) { console.error(err.message) }
+    if (production) setInterval(async () => {
+        try {
+            const oauth2Client = new OAuth2( OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, "https://developers.google.com/oauthplayground" );
+            oauth2Client.setCredentials({ refresh_token: OAUTH_REFRESH_TOKEN });
+            const response = await oauth2Client.getAccessToken();
+            if (!response.token) throw Error("Null token");
+        } catch (err) { console.error(err.message) }
+    }, 1000 * 60 * 60 * 24 * 7)
 });

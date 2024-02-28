@@ -189,15 +189,3 @@ module.exports.Info = model('Info', new Schema({
     founder_text: String,
     image: { p_id: String, url: String }
 }), 'info');
-
-module.exports.MailTest = model('MailTest', (() => {
-    const schema = new Schema({
-        last_sent_date: { type: Date, default: new Date(0) },
-        email: { type: String, default: process.env.TEST_EMAIL },
-        subject: { type: String, default: "Re: test email" },
-        message: { type: String, default: "Test email" }
-    });
-
-    schema.virtual("newDay").get((val, vt, doc) => doc.last_sent_date.toDateString() != new Date().toDateString());
-    return schema;
-})(), "mail_test");
